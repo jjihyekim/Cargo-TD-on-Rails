@@ -1,0 +1,77 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4b64c1bf62b866d4d896e8c4a0e7121a, type: 3}
+  m_Name: Unexpected Visitors
+  m_EditorClassIdentifier: 
+  trainLength: 5
+  starterModules:
+  - uniqueName: Engine
+    count: 1
+  - uniqueName: Civilian Supplies
+    count: 4
+  - uniqueName: Army Supplies
+    count: 2
+  enemyWaves:
+  - enemyUniqueName: Biker
+    enemyData: 1
+    isLeft: 1
+    enemyPathType: 3
+    startDistance: 10
+    headsUpTime: 15
+  - enemyUniqueName: Supply
+    enemyData: 1
+    isLeft: 0
+    enemyPathType: 4
+    startDistance: 0
+    headsUpTime: 15
+  - enemyUniqueName: Supply
+    enemyData: 2
+    isLeft: 0
+    enemyPathType: 4
+    startDistance: 60
+    headsUpTime: 15
+  - enemyUniqueName: Biker
+    enemyData: 4
+    isLeft: 1
+    enemyPathType: 3
+    startDistance: 90
+    headsUpTime: 30
+  - enemyUniqueName: Truck
+    enemyData: 1
+    isLeft: 0
+    enemyPathType: 1
+    startDistance: 150
+    headsUpTime: 30
+  - enemyUniqueName: Biker
+    enemyData: 9
+    isLeft: 0
+    enemyPathType: 3
+    startDistance: 250
+    headsUpTime: 30
+  - enemyUniqueName: Biker
+    enemyData: 6
+    isLeft: 0
+    enemyPathType: 2
+    startDistance: 300
+    headsUpTime: 30
+  - enemyUniqueName: Truck
+    enemyData: 2
+    isLeft: 0
+    enemyPathType: 1
+    startDistance: 300
+    headsUpTime: 30
+  startingMoney: 65
+  moneyGainSpeed: 1
+  missionDistance: 800
+  bestEngineSpeed: 160
+  mediumEngineSpeed: 130
+  worstEngineSpeed: 100

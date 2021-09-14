@@ -1,0 +1,45 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4b64c1bf62b866d4d896e8c4a0e7121a, type: 3}
+  m_Name: Bumpy Ride
+  m_EditorClassIdentifier: 
+  trainLength: 5
+  starterModules:
+  - uniqueName: Engine
+    count: 1
+  - uniqueName: Cargo
+    count: 4
+  enemyWaves:
+  - enemyUniqueName: Buggy
+    enemyData: 2
+    isLeft: 1
+    enemyPathType: 0
+    startDistance: 10
+    headsUpTime: 15
+  - enemyUniqueName: Buggy
+    enemyData: 9
+    isLeft: 0
+    enemyPathType: 0
+    startDistance: 60
+    headsUpTime: 30
+  - enemyUniqueName: Buggy
+    enemyData: 6
+    isLeft: 1
+    enemyPathType: 0
+    startDistance: 120
+    headsUpTime: 30
+  startingMoney: 65
+  moneyGainSpeed: 1
+  missionDistance: 500
+  bestEngineSpeed: 160
+  mediumEngineSpeed: 130
+  worstEngineSpeed: 100
