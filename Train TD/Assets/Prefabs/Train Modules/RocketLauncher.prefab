@@ -771,6 +771,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f5b56326a28e8a24c91959aa3382ef6a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  uniqueName: Rocket
   Icon: {fileID: 21300000, guid: fec227fc5b9ef8848bc5c349d122d353, type: 3}
   mySlot: {fileID: 0}
   mySlotIndex: 0
@@ -813,7 +814,7 @@ MonoBehaviour:
   bulletPrefab: {fileID: 7110668419382630654, guid: 38d2797b60af6b3449dea991dc05d6f3, type: 3}
   muzzleFlashPrefab: {fileID: 9155879028066676231, guid: 20718e1ecbf4a0a48851a1815d4ceeaa, type: 3}
   target: {fileID: 0}
-  fireDelay: 2
+  fireDelay: 3
   fireBarrageCount: 1
   fireBarrageDelay: 0.1
   projectileDamage: 20

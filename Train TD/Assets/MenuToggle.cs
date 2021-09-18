@@ -12,12 +12,17 @@ public class MenuToggle : MonoBehaviour {
     
     static GenericCallback  hideAllToggleMenus;
 
+
+    public bool singleMode = false;
+
     private void OnEnable() {
-        hideAllToggleMenus += HideMenu;
+        if(!singleMode)
+            hideAllToggleMenus += HideMenu;
     }
 
     private void OnDisable() {
-        hideAllToggleMenus -= HideMenu;
+        if(!singleMode)
+            hideAllToggleMenus -= HideMenu;
     }
 
     private void Start() {
@@ -57,13 +62,14 @@ public class MenuToggle : MonoBehaviour {
         }
     }
 
-    void ShowMenu() {
-        hideAllToggleMenus?.Invoke();
+    public void ShowMenu() {
+        if(!singleMode)
+            hideAllToggleMenus?.Invoke();
         isMenuActive = true;
         menu.SetActive(true);
     }
 
-    void HideMenu() {
+    public void HideMenu() {
         isMenuActive = false;
         menu.SetActive(false);
     }

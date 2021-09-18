@@ -8,8 +8,6 @@ public class LevelReferences : MonoBehaviour {
 
     public static LevelReferences s;
 
-    public bool isFakeThings = false;
-
     public Transform playerTransform {
         get {
             return transform;
@@ -28,6 +26,8 @@ public class LevelReferences : MonoBehaviour {
     public GameObject waveDisplayPrefab;
     public GameObject partHealthPrefab;
     public Transform uiDisplayParent;
+
+    public float healthBarPositionOffset = 0.1f;
 
     public float speed = 1f;
 

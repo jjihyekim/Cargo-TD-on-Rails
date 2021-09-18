@@ -10,8 +10,5 @@ public abstract class Upgrade : MonoBehaviour {
     public int cost = 100;
     //public int starRequirement;
 
-    public Sprite icon;
-
-    public Image iconImage;
     public TMP_Text costText;
 }

@@ -21,9 +21,15 @@ public class ModuleHealth : MonoBehaviour, IHealth {
     public static int buildingsDestroyed;
     
     public void DealDamage(float damage) {
-        currentHealth -= damage;
-        if (!isDead && currentHealth <= 0) {
-            Die();
+        if (!isDead) {
+            currentHealth -= damage;
+            if(currentHealth <= 0) {
+                Die();
+            }
+
+            if (currentHealth > maxHealth) {
+                currentHealth = maxHealth;
+            }
         }
     }
 
@@ -40,6 +46,12 @@ public class ModuleHealth : MonoBehaviour, IHealth {
         Destroy(gameObject);
         
         buildingsDestroyed += 1;
+    }
+
+    private void OnDestroy() {
+        if(healthBar != null)
+            if(healthBar.gameObject != null)
+                Destroy(healthBar.gameObject);
     }
 
     public bool IsPlayer() {

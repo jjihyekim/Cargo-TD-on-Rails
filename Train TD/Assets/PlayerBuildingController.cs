@@ -74,39 +74,6 @@ public class PlayerBuildingController : MonoBehaviour {
         } 
     }
     
-/*void CastRayToActivateBuildingOptions() {
-    RaycastHit hit;
-    Ray ray = LevelReferences.s.mainCam.ScreenPointToRay(Mouse.current.position.ReadValue());
-
-    if (Physics.Raycast(ray, out hit, 100f, buildingLayerMask)) {
-        var slot = hit.collider.gameObject.GetComponentInParent<Slot>();
-
-        if (slot != activeSlot) {
-            var index = NormalToIndex(hit.normal);
-            
-            activeSlot = slot;
-            if (index != -1 && index != lastRaycastIndex) {
-                activeIndex = index;
-                lastRaycastIndex = index;
-            }
-
-            activeIndex = tempBuilding.SetRotationBasedOnIndex(activeIndex);
-            UpdateCanBuildable();
-            
-        } else { //if it is still the same slot but a different side, then rotate our building
-            var index = NormalToIndex(hit.normal);
-
-            if (index != -1 && index != lastRaycastIndex) {
-                lastRaycastIndex = index;
-                activeIndex = index;
-                activeIndex = tempBuilding.SetRotationBasedOnIndex(index);
-                UpdateCanBuildable();
-            }
-        }
-    } else {
-        activeSlot = null;
-    }
-}*/
 
     private int lastRaycastIndex = 0;
     void CastRayToUpdateBuildingSlot() {
@@ -231,47 +198,56 @@ public class PlayerBuildingController : MonoBehaviour {
     }
 
     private void LogData(bool currentlyMultiBuilding, TrainBuilding newBuilding) {
-        var buildingName = tempBuilding.gameObject.name;
-        var bData = new BuildingBuildData() {
+        var buildingName = newBuilding.uniqueName;
+        var cData = new ConstructionData() {
             buildTrainPercent = activeSlot.DistancePercent(),
             isMultiBuild = currentlyMultiBuilding,
             buildLevelDistance = SpeedController.s.currentDistance,
             buildRotation = newBuilding.myRotation,
         };
 
-        if (currentLevelBuilds.TryGetValue(buildingName, out List<BuildingBuildData> data)) {
-            data.Add(bData);
+        if (currentLevelStats.TryGetValue(buildingName, out BuildingData data)) {
+            data.constructionData.Add(cData);
         } else {
-            currentLevelBuilds.Add(buildingName, new List<BuildingBuildData>() { bData });
+            var toAdd = new BuildingData();
+            toAdd.uniqueName = buildingName;
+            toAdd.constructionData.Add(cData);
+            currentLevelStats.Add(buildingName, toAdd);
         }
     }
 
+    public Transform statsParent;
+    public GameObject statsPrefab;
+
     public void LogCurrentLevelBuilds(bool isWon) {
-        foreach (var keyValPair in currentLevelBuilds) {
+        foreach (var keyValPair in currentLevelStats) {
             var bName = keyValPair.Key;
-            var statsList = keyValPair.Value;
+            var bData = keyValPair.Value;
+            var constStats = bData.constructionData;
 
             Dictionary<string, object> resultingDictionary = new Dictionary<string, object>();
 
             resultingDictionary["currentLevel"] = LevelLoader.s.currentLevel.levelName;
             resultingDictionary["isWon"] = isWon;
 
-            resultingDictionary["buildCount"] = statsList.Count;
+            resultingDictionary["buildCount"] = constStats.Count;
 
-            var averageTrainPosition = statsList.Average(x => x.buildTrainPercent);
+            var averageTrainPosition = constStats.Average(x => x.buildTrainPercent);
             resultingDictionary["buildTrainPercent"] = RatioToStatsPercent(averageTrainPosition);
 
-            var multiBuildRatio = (float)statsList.Count(x => x.isMultiBuild) / (float)statsList.Count;
+            var multiBuildRatio = (float)constStats.Count(x => x.isMultiBuild) / (float)constStats.Count;
             resultingDictionary["isMultiBuild"] = RatioToStatsPercent(multiBuildRatio);
             
             
-            var averageBuildLevelDistance = statsList.Average(x => x.buildLevelDistance);
+            var averageBuildLevelDistance = constStats.Average(x => x.buildLevelDistance);
             resultingDictionary["buildMissionDistance"] = DistanceToStats(averageBuildLevelDistance);
             
-            TrainBuilding.Rots maxRepeated = statsList.GroupBy(s => s.buildRotation)
+            TrainBuilding.Rots maxRepeated = constStats.GroupBy(s => s.buildRotation)
                 .OrderByDescending(s => s.Count())
                 .First().Key;
             resultingDictionary["buildRotation"] = maxRepeated;
+
+            resultingDictionary["buildDamage"] = (int)bData.damageData;
 
             //print(resultingDictionary);
 
@@ -281,6 +257,9 @@ public class PlayerBuildingController : MonoBehaviour {
                 );
             
             Debug.Log("Building Build Data Analytics " + analyticsResult);
+            
+            Instantiate(statsPrefab, statsParent).GetComponent<MiniGUI_StatDisplay>().SetUp(bName + " Build Count", (constStats.Count).ToString());
+            Instantiate(statsPrefab, statsParent).GetComponent<MiniGUI_StatDisplay>().SetUp(bName + " Damage", ((int)bData.damageData).ToString());
         }
     }
 
@@ -293,9 +272,17 @@ public class PlayerBuildingController : MonoBehaviour {
         return Mathf.RoundToInt(ratio * 20) * 5;
     }
 
-    public Dictionary<string, List<BuildingBuildData>> currentLevelBuilds = new Dictionary<string, List<BuildingBuildData>>();
+    public Dictionary<string, BuildingData> currentLevelStats = new Dictionary<string, BuildingData>();
 
-    public struct BuildingBuildData {
+
+    public class BuildingData {
+        public string uniqueName;
+        public float damageData = 0;
+        public List<ConstructionData> constructionData = new List<ConstructionData>();
+    }
+    
+    
+    public struct ConstructionData {
         public float buildTrainPercent;
         public bool isMultiBuild;
         public float buildLevelDistance;

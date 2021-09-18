@@ -61,6 +61,19 @@ public class Projectile : MonoBehaviour {
         GetComponent<Rigidbody>().MovePosition(transform.position + transform.forward * curSpeed * Time.deltaTime);
     }
 
+    void SmartDestroySelf() {
+
+        var particles = GetComponentsInChildren<ParticleSystem>();
+
+        foreach (var particle in particles) {
+            particle.transform.SetParent(null);
+            particle.Stop();
+            Destroy(particle.gameObject, 5f);
+        }
+        
+        Destroy(gameObject);
+    }
+
     private void DestroyFlying() {
         //print("destroyflying");
         GameObject hitPrefab = null;
@@ -80,7 +93,7 @@ public class Projectile : MonoBehaviour {
         }
 
         Instantiate(hitPrefab, transform.position, transform.rotation);
-        Destroy(gameObject);
+        SmartDestroySelf();
     }
 
 
@@ -95,7 +108,7 @@ public class Projectile : MonoBehaviour {
                     break;
             }
 
-            Destroy(gameObject);
+            SmartDestroySelf();
         }
     }
 

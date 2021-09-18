@@ -26,7 +26,7 @@ public class MiniGUI_StarterBuildingButton : MonoBehaviour {
 		if (isSuccess) {
 			count -= 1;
 		} else {
-			count += 1;
+			//count += 1;
 		}
 
 		if (count <= 0) {

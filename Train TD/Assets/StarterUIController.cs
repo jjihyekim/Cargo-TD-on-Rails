@@ -31,6 +31,10 @@ public class StarterUIController : MonoBehaviour {
 
 	public GameObject starterUI;
 	public GameObject gameUI;
+
+
+	public Transform enemyInfoParent;
+	public GameObject enemyInfoPrefab;
 	
 	private void Start() {
 		allLevelButtons = new MiniGUI_LevelButton[allLevels.Length];
@@ -70,7 +74,7 @@ public class StarterUIController : MonoBehaviour {
 		ModuleHealth.buildingsDestroyed = 0;
 		EnemyHealth.enemySpawned = 0;
 		EnemyHealth.enemyKilled = 0;
-		PlayerBuildingController.s.currentLevelBuilds = new Dictionary<string, List<PlayerBuildingController.BuildingBuildData>>();
+		PlayerBuildingController.s.currentLevelStats = new Dictionary<string, PlayerBuildingController.BuildingData>();
 	}
 
 	public void SelectLevel(LevelData data) {
@@ -91,6 +95,20 @@ public class StarterUIController : MonoBehaviour {
 		UpdateCanStartStatus();
 		OnLevelChanged?.Invoke();
 		SetCurrentSelectedLevel();
+		UpdateEnemies();
+	}
+
+	void UpdateEnemies() {
+		var childCount = enemyInfoParent.childCount;
+		for (int i = childCount-1; i >= 0 ; i--) {
+			Destroy(enemyInfoParent.GetChild(i).gameObject);
+		}
+
+
+		var waves = LevelLoader.s.currentLevel.enemyWaves;
+		for (int i = 0; i < waves.Length; i++) {
+			Instantiate(enemyInfoPrefab, enemyInfoParent).GetComponent<MiniGUI_EnemyInfoPanel>().SetUp(waves[i]);
+		}
 	}
 
 	public void UpdateCanStartStatus() {

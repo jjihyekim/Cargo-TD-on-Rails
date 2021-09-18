@@ -5,6 +5,8 @@ using UnityEngine;
 
 public class TrainBuilding : MonoBehaviour {
 
+    public string uniqueName = "unnamed";
+
     public Sprite Icon;
 
     public Slot mySlot;

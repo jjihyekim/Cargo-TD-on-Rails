@@ -357,7 +357,7 @@ GameObject:
   - component: {fileID: 5979747418293226766}
   - component: {fileID: 5228073955104434930}
   m_Layer: 0
-  m_Name: ShieldModule
+  m_Name: Barricades
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -392,17 +392,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f5b56326a28e8a24c91959aa3382ef6a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  uniqueName: Barricade
   Icon: {fileID: 21300000, guid: d9c0d923f9c40054192fa54d6dcfab6f, type: 3}
   mySlot: {fileID: 0}
   mySlotIndex: 0
   canPointSide: 1
   canPointUp: 0
-  canBeRotated: 1
+  canBeRotatedSides: 1
+  canBeRotatedUp: 1
   disabledWhenBuilding:
   - {fileID: 8749129171857330258}
   - {fileID: 8437430307720242801}
   - {fileID: 5979747418293226766}
-  cost: 50
+  cost: 25
   myRotation: 0
   occupiesEntireSlot: 0
   sideGfx: {fileID: 8290846909691743464}

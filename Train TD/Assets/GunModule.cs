@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -41,11 +42,25 @@ public class GunModule : MonoBehaviour, IComponentWithTarget {
     }
 
 
+    private Cart myCart = null;
+    private void Start() {
+        myCart = GetComponentInParent<Cart>();
+    }
+
+    float GetAttackSpeedMultiplier() {
+        if (myCart != null) {
+            return 1f / myCart.attackSpeedModifier;
+        } else {
+            return 1f;
+        }
+    }
+
+
     private IEnumerator ActiveShootCycle;
     private bool isShooting = false;
     IEnumerator ShootCycle() {
         while (true) {
-            yield return new WaitForSeconds(fireDelay);
+            yield return new WaitForSeconds(fireDelay*GetAttackSpeedMultiplier());
             StartCoroutine(ShootBarrage());
         }
     }
@@ -68,9 +83,24 @@ public class GunModule : MonoBehaviour, IComponentWithTarget {
             
             
             projectile.target = target;
+
+            LogShotData(projectileDamage);
             
 
             yield return new WaitForSeconds(fireBarrageDelay);
+        }
+    }
+
+    void LogShotData(float damage) {
+        var currentLevelStats = PlayerBuildingController.s.currentLevelStats;
+        var buildingName = GetComponent<TrainBuilding>().uniqueName;
+        if (currentLevelStats.TryGetValue(buildingName, out PlayerBuildingController.BuildingData data)) {
+            data.damageData += damage;
+        } else {
+            var toAdd = new PlayerBuildingController.BuildingData();
+            toAdd.uniqueName = buildingName;
+            toAdd.damageData += damage;
+            currentLevelStats.Add(buildingName, toAdd);
         }
     }
 

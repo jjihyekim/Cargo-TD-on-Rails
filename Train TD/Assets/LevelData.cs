@@ -57,7 +57,10 @@ public class EnemyWaveData {
 
 	public int startDistance = 10;
 	public float headsUpTime = 30f;
-	
+
+	public float accurateDistance {
+		get { return (startDistance + headsUpTime * 2); }
+	}
 }
 
 public interface IData {
