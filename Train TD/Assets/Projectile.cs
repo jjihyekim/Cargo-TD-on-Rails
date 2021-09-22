@@ -17,7 +17,15 @@ public class Projectile : MonoBehaviour {
 
     public bool isTargetSeeking = true;
     public float seekStrength = 180f;
-    public Transform target;
+
+    public bool isPlayerBullet = false;
+
+    public Transform target {
+        get {
+            return source.target;
+        }
+    }
+    public GunModule source;
 
     
     public enum HitType {
@@ -38,77 +46,110 @@ public class Projectile : MonoBehaviour {
     }
 
     void Update() {
-        if (isTargetSeeking) {
+        if (!isDead) {
+            if (isTargetSeeking) {
+                if (target != null) {
+                    var targetLook = Quaternion.LookRotation(target.position - transform.position);
+                    transform.rotation = Quaternion.RotateTowards(transform.rotation, targetLook, curSeekStrength * Time.deltaTime);
+                } else {
+                    isTargetSeeking = false;
+                }
+            }
+
+            if (myHitType == HitType.Rocket) {
+                curSpeed = Mathf.MoveTowards(curSpeed, speed, acceleration * Time.deltaTime);
+                curSeekStrength = Mathf.MoveTowards(curSeekStrength, seekStrength, seekAcceleration * Time.deltaTime);
+            }
+
             if (target != null) {
-                var targetLook = Quaternion.LookRotation(target.position - transform.position);
-                transform.rotation = Quaternion.RotateTowards(transform.rotation, targetLook, curSeekStrength * Time.deltaTime);
-            } else {
-                isTargetSeeking = false;
+                if (Vector3.Distance(transform.position, target.position) < (curSpeed+0.1f) * Time.deltaTime) {
+                    DestroyFlying();
+                }
             }
-        }
 
-        if (myHitType == HitType.Rocket) {
-            curSpeed = Mathf.MoveTowards(curSpeed, speed, acceleration * Time.deltaTime);
-            curSeekStrength = Mathf.MoveTowards(curSeekStrength, seekStrength, seekAcceleration * Time.deltaTime);
+            GetComponent<Rigidbody>().MovePosition(transform.position + transform.forward * curSpeed * Time.deltaTime);
         }
-
-        if (target != null) {
-            if (Vector3.Distance(transform.position, target.position) < curSpeed * Time.deltaTime) {
-                DestroyFlying();
-            }
-        }
-
-        GetComponent<Rigidbody>().MovePosition(transform.position + transform.forward * curSpeed * Time.deltaTime);
     }
 
+    private bool isDead = false;
+
     void SmartDestroySelf() {
+        if (!isDead) {
+            isDead = true;
 
-        var particles = GetComponentsInChildren<ParticleSystem>();
+            var particles = GetComponentsInChildren<ParticleSystem>();
 
-        foreach (var particle in particles) {
-            particle.transform.SetParent(null);
-            particle.Stop();
-            Destroy(particle.gameObject, 5f);
+            foreach (var particle in particles) {
+                particle.transform.SetParent(null);
+                particle.Stop();
+                Destroy(particle.gameObject, 5f);
+            }
+
+            Destroy(gameObject);
         }
-        
-        Destroy(gameObject);
     }
 
     private void DestroyFlying() {
-        //print("destroyflying");
-        GameObject hitPrefab = null;
-        switch (myHitType) {
-            case HitType.Bullet:
-                hitPrefab = LevelReferences.s.metalBulletHitEffectPrefab;
-                break;
-            case HitType.Rocket:
-                hitPrefab = LevelReferences.s.rocketExplosionEffectPrefab;
-                break;
+        if (!isDead) {
+            //print("destroyflying");
+            GameObject hitPrefab = null;
+            switch (myHitType) {
+                case HitType.Bullet:
+                    hitPrefab = LevelReferences.s.metalBulletHitEffectPrefab;
+                    break;
+                case HitType.Rocket:
+                    hitPrefab = LevelReferences.s.rocketExplosionEffectPrefab;
+                    break;
+            }
+
+            var health = target.GetComponentInParent<IHealth>();
+
+            if (health != null) {
+                health.DealDamage(damage);
+            }
+
+            Instantiate(hitPrefab, transform.position, transform.rotation);
+            SmartDestroySelf();
         }
-
-        var health = target.GetComponentInParent<IHealth>();
-
-        if (health != null) {
-            health.DealDamage(damage);
-        }
-
-        Instantiate(hitPrefab, transform.position, transform.rotation);
-        SmartDestroySelf();
     }
 
 
     private void OnCollisionEnter(Collision other) {
-        if (other.transform.root.gameObject != myOriginObject) {
-            switch (myHitType) {
-                case HitType.Bullet:
-                    ContactDamage(other);
-                    break;
-                case HitType.Rocket:
-                    ExplosiveDamage(other);
-                    break;
-            }
+        if (!isDead) {
+            if (other.transform.root.gameObject != myOriginObject) {
+                var otherProjectile = other.transform.root.GetComponent<Projectile>();
+                if (otherProjectile != null) {
+                    if (otherProjectile.isPlayerBullet == isPlayerBullet) {
+                        // we don't want projectiles from the same faction collide with each other
+                        return;
+                    }
+                }
 
-            SmartDestroySelf();
+                var train = other.transform.root.GetComponent<Train>();
+
+                if (train != null && isPlayerBullet) {
+                    // make player bullets dont hit the player
+                    return;
+                }
+
+                var enemy = other.transform.root.GetComponent<EnemyTypeData>();
+                
+                if (enemy != null && !isPlayerBullet) {
+                    // make enemy projectiles not hit the player
+                    return;
+                }
+                
+                switch (myHitType) {
+                    case HitType.Bullet:
+                        ContactDamage(other);
+                        break;
+                    case HitType.Rocket:
+                        ExplosiveDamage(other);
+                        break;
+                }
+
+                SmartDestroySelf();
+            }
         }
     }
 

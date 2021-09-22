@@ -27,8 +27,6 @@ public class LevelReferences : MonoBehaviour {
     public GameObject partHealthPrefab;
     public Transform uiDisplayParent;
 
-    public float healthBarPositionOffset = 0.1f;
-
     public float speed = 1f;
 
     public static List<PossibleTarget> allTargets = new List<PossibleTarget>();
@@ -41,6 +39,9 @@ public class LevelReferences : MonoBehaviour {
     
     public Material hologramBuildable;
     public Material hologramCantBuild;
+    
+    
+    public LayerMask groundLayer;
     
     private void Awake() {
         s = this;

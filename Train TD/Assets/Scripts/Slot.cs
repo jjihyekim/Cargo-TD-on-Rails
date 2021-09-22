@@ -7,10 +7,6 @@ using UnityEngine.EventSystems;
 public class Slot : MonoBehaviour/*, IPointerEnterHandler, IPointerExitHandler*/ {
 	public bool isFrontSlot = false;
 	
-	public GameObject highlight;
-
-	public bool isHighlighted = false;
-	
 	public TrainBuilding[] myBuildings = new TrainBuilding[3];
 	public bool isCompletelyEmpty() {
 		var isAllSlotsEmpty = true;
@@ -50,15 +46,25 @@ public class Slot : MonoBehaviour/*, IPointerEnterHandler, IPointerExitHandler*/
 	}
 
 	public void AddBuilding(TrainBuilding building, int slot) {
-		myBuildings[slot] = building;
-		myBuildings[slot].mySlotIndex = slot;
+		if (building.occupiesEntireSlot) {
+			for (int i = 0; i < myBuildings.Length; i++) {
+				myBuildings[i] = building;
+			}
+			building.mySlotIndex = 1;
+		} else {
+			myBuildings[slot] = building;
+			myBuildings[slot].mySlotIndex = slot;
+		}
+
 		myBuildings[slot].transform.SetParent(transform);
 		myBuildings[slot].transform.localPosition = Vector3.zero;
 	}
 
-	/*public void RemoveBuilding(TrainBuilding building, int slot) {
-		myBuildings[slot] = building;
-		myBuildings[slot].transform.SetParent(transform);
-		myBuildings[slot].transform.localPosition = Vector3.zero;
-	}*/
+	public void RemoveBuilding(TrainBuilding building) {
+		for (int i = 0; i < myBuildings.Length; i++) {
+			if (myBuildings[i] == building) {
+				myBuildings[i] = null;
+			}
+		}
+	}
 }

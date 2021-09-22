@@ -2,7 +2,7 @@
     "name": "Actions",
     "maps": [
         {
-            "name": "Gameplay",
+            "name": "Shared",
             "id": "8e11a806-753d-41d8-af38-51876e9ea8b1",
             "actions": [
                 {
@@ -38,9 +38,17 @@
                     "interactions": ""
                 },
                 {
-                    "name": "Quick Start",
+                    "name": "Cheat",
                     "type": "Button",
                     "id": "550dc06a-443d-4dc3-8f2c-133196cab8e8",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": ""
+                },
+                {
+                    "name": "Rotate Camera",
+                    "type": "Button",
+                    "id": "000bc962-ea98-48f6-b06f-b6a658784a5c",
                     "expectedControlType": "Button",
                     "processors": "",
                     "interactions": ""
@@ -164,7 +172,18 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "Keyboard",
-                    "action": "Quick Start",
+                    "action": "Cheat",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "07f48865-7fe2-41fa-bb61-a88c5440ccc3",
+                    "path": "<Mouse>/middleButton",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Keyboard",
+                    "action": "Rotate Camera",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }
@@ -254,6 +273,14 @@
                     "expectedControlType": "Button",
                     "processors": "",
                     "interactions": ""
+                },
+                {
+                    "name": "OpenBuildingActionMenu",
+                    "type": "Button",
+                    "id": "bef9d661-35bf-4525-9840-6da950dac743",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": ""
                 }
             ],
             "bindings": [
@@ -276,6 +303,17 @@
                     "processors": "",
                     "groups": "Keyboard",
                     "action": "Fast Forward",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "f99c9cdd-1ebf-470f-9731-d4c08df8f295",
+                    "path": "<Mouse>/leftButton",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Keyboard",
+                    "action": "OpenBuildingActionMenu",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

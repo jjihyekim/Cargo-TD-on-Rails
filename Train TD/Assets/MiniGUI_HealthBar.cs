@@ -20,28 +20,14 @@ public class MiniGUI_HealthBar : MonoBehaviour{
     public Color healthyColor = Color.green;
     public Color deadColor = Color.red;
 
-
-    private Dictionary<TrainBuilding.Rots, Vector3> rotToOffset;
-
-    void InitializeDict() {
-        rotToOffset = new Dictionary<TrainBuilding.Rots, Vector3>() {
-            { TrainBuilding.Rots.left, Vector3.left * LevelReferences.s.healthBarPositionOffset },
-            { TrainBuilding.Rots.right, Vector3.right* LevelReferences.s.healthBarPositionOffset },
-            { TrainBuilding.Rots.forward , Vector3.up * LevelReferences.s.healthBarPositionOffset},
-            { TrainBuilding.Rots.backwards , Vector3.up * LevelReferences.s.healthBarPositionOffset},
-        };
-    }
-
-    private Vector3 offset;
+    
     public void SetUp(ModuleHealth moduleHealth) {
         myModuleHealth = moduleHealth;
-        sourceTransform = myModuleHealth.transform;
+        sourceTransform = myModuleHealth.GetComponent<TrainBuilding>().uiTargetTransform;
         CanvasRect = transform.root.GetComponent<RectTransform>();
         UIRect = GetComponent<RectTransform>();
         ParentRect = transform.parent.GetComponent<RectTransform>();
         mainCam = LevelReferences.s.mainCam;
-        InitializeDict();
-        offset = rotToOffset[myModuleHealth.GetComponent<TrainBuilding>().myRotation];
         Update();
     }
 
@@ -58,7 +44,8 @@ public class MiniGUI_HealthBar : MonoBehaviour{
         //then you calculate the position of the UI element
         //0,0 for the canvas is at the center of the screen, whereas WorldToViewPortPoint
         //treats the lower left corner as 0,0. Because of this, you need to subtract the height / width of the canvas * 0.5 to get the correct position.
-        Vector2 ViewportPosition = mainCam.WorldToViewportPoint(sourceTransform.position + offset);
+        //SetOffset(); // for debugging
+        Vector2 ViewportPosition = mainCam.WorldToViewportPoint(sourceTransform.position );
         Vector2 WorldObject_ScreenPosition = new Vector2(
             ((ViewportPosition.x * CanvasRect.sizeDelta.x) - (CanvasRect.sizeDelta.x * 0.5f)),
             ((ViewportPosition.y * CanvasRect.sizeDelta.y) - (CanvasRect.sizeDelta.y * 0.5f)));

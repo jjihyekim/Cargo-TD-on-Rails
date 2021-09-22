@@ -1,0 +1,77 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4b64c1bf62b866d4d896e8c4a0e7121a, type: 3}
+  m_Name: Ramping up the spices
+  m_EditorClassIdentifier: 
+  trainLength: 5
+  starterModules:
+  - uniqueName: Engine
+    count: 1
+  - uniqueName: Cargo
+    count: 3
+  - uniqueName: Civilian Supplies
+    count: 4
+  enemyWaves:
+  - enemyUniqueName: Army
+    enemyData: 2
+    isLeft: 1
+    enemyPathType: 0
+    startDistance: 10
+    headsUpTime: 30
+  - enemyUniqueName: Supplies
+    enemyData: 2
+    isLeft: 0
+    enemyPathType: 4
+    startDistance: 20
+    headsUpTime: 30
+  - enemyUniqueName: Bikes
+    enemyData: 5
+    isLeft: 0
+    enemyPathType: 3
+    startDistance: 90
+    headsUpTime: 30
+  - enemyUniqueName: Army
+    enemyData: 4
+    isLeft: 1
+    enemyPathType: 0
+    startDistance: 180
+    headsUpTime: 30
+  - enemyUniqueName: Bikes
+    enemyData: 9
+    isLeft: 1
+    enemyPathType: 3
+    startDistance: 270
+    headsUpTime: 30
+  - enemyUniqueName: Bikes
+    enemyData: 9
+    isLeft: 0
+    enemyPathType: 3
+    startDistance: 270
+    headsUpTime: 30
+  - enemyUniqueName: Army
+    enemyData: 4
+    isLeft: 1
+    enemyPathType: 0
+    startDistance: 380
+    headsUpTime: 30
+  - enemyUniqueName: Army
+    enemyData: 4
+    isLeft: 0
+    enemyPathType: 0
+    startDistance: 380
+    headsUpTime: 30
+  startingMoney: 150
+  moneyGainSpeed: 0.5
+  missionDistance: 800
+  bestEngineSpeed: 180
+  mediumEngineSpeed: 140
+  worstEngineSpeed: 100

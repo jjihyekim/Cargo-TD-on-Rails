@@ -94,6 +94,7 @@ public class PlayerBuildingController : MonoBehaviour {
 
                 activeIndex = tempBuilding.SetRotationBasedOnIndex(activeIndex);
                 
+                PlayerModuleSelector.s.playerBuildingDisableOverride = false;
             } else { //if it is still the same slot but a different side, then rotate our building
                 var index = NormalToIndex(hit.normal);
 
@@ -101,6 +102,7 @@ public class PlayerBuildingController : MonoBehaviour {
                     lastRaycastIndex = index;
                     activeIndex = index;
                     activeIndex = tempBuilding.SetRotationBasedOnIndex(index);
+                    PlayerModuleSelector.s.playerBuildingDisableOverride = false;
                 }
             }
         } else {
@@ -110,7 +112,7 @@ public class PlayerBuildingController : MonoBehaviour {
         UpdateCanBuildable();
     }
 
-    int NormalToIndex(Vector3 normal) {
+    public static int NormalToIndex(Vector3 normal) {
         var index = -1;
         if (Vector3.Angle(normal, Vector3.right) < 10) {
             index = 0;
@@ -142,6 +144,8 @@ public class PlayerBuildingController : MonoBehaviour {
                 UpdateCanBuildable();
                 curScrollTime = scrollTime;
             }
+
+            PlayerModuleSelector.s.playerBuildingDisableOverride = true;
         } else {
             curScrollTime -= Time.deltaTime;
         }
@@ -165,7 +169,7 @@ public class PlayerBuildingController : MonoBehaviour {
                     // This means we are doing building in menu
                     canBuildMore = finishBuildingCallback.Invoke(true);
                 } else {
-                    canBuildMore = MoneyController.s.money >= tempBuilding.cost;
+                    canBuildMore = MoneyController.s.money >= tempBuilding.cost*2;
                 }
 
                 var newBuilding = tempBuilding;
@@ -191,8 +195,12 @@ public class PlayerBuildingController : MonoBehaviour {
                 
                     StopBuilding();
                 } else {
+                    PlayerModuleSelector.s.SelectBuilding(newBuilding, false);
                     UpdateCanBuildable();
                 }
+                
+                PlayerModuleSelector.s.playerBuildingDisableOverride = false;
+                PlayerModuleSelector.s.playerBuildingSkipOneTimeOverride = true;
             }
         }
     }
@@ -294,6 +302,9 @@ public class PlayerBuildingController : MonoBehaviour {
             finishBuildingCallback?.Invoke(false);
             finishBuildingCallback = null;
             StopBuilding();
+            
+            PlayerModuleSelector.s.playerBuildingDisableOverride = false;
+            PlayerModuleSelector.s.playerBuildingSkipOneTimeOverride = false;
         }
     }
 

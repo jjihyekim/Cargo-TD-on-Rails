@@ -60,8 +60,8 @@ public class MiniGUI_IncomingWave : MonoBehaviour {
             halfWidthLimit
         );
         WorldObject_ScreenPosition.y = Mathf.Clamp(WorldObject_ScreenPosition.y,
-            -halfHeightLimit + (0.1f * CanvasRect.rect.height),
-            halfHeightLimit - (0.1f * CanvasRect.rect.height)
+            -halfHeightLimit + (0.2f * CanvasRect.rect.height),
+            halfHeightLimit - (0.2f * CanvasRect.rect.height)
         );
 
         myVecRef.vector2 = WorldObject_ScreenPosition;
@@ -107,5 +107,14 @@ public class MiniGUI_IncomingWave : MonoBehaviour {
         var minutes = (int) (time / 60);
         var remainingSeconds = (int) (time - minutes * 60);
         return (minutes.ToString("00") + ':' + remainingSeconds.ToString("00"));
+    }
+
+
+    public void PointerEnter() {
+        myWave.ShowPath();
+    }
+
+    public void PointerExit() {
+        myWave.HidePath();
     }
 }

@@ -16,6 +16,8 @@ public class RangeVisualizer : MonoBehaviour {
         targetingRenderer.positionCount = 2;
         //ChangeVisualizerStatus(false);
         DrawRangeEdge();
+
+        trainBuilding.rotationChangedEvent += DrawRangeEdge;
     }
 
 
@@ -26,7 +28,15 @@ public class RangeVisualizer : MonoBehaviour {
             if (targeter != null) {
                 var origin = targeter.GetRangeOrigin();
                 if (origin != null) {
-                    var radians = Mathf.Deg2Rad * targetPicker.rotationSpan;
+                    var rotationSpan = targetPicker.rotationSpan;
+                    if (targetPicker.myOverride != null && targetPicker.myOverride.isOverride) {
+                        if (targetPicker.myOverride.rotations.Contains(trainBuilding.myRotation)) {
+                            rotationSpan = targetPicker.myOverride.rotationSpanOverride;
+                        }
+                    }
+                    
+                    
+                    var radians = Mathf.Deg2Rad * rotationSpan;
                     var scaleAdjustment = (1f / origin.lossyScale.x);
 
                     DrawSide(radians, origin, range, scaleAdjustment, points, false);

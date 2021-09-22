@@ -40,7 +40,7 @@ public class CarLikeMovementOffsetsController : MonoBehaviour{
     private void Update() {
         target.y = transform.localPosition.y;
         if (stickToGround) {
-            if (Physics.Raycast(transform.position + Vector3.up * 20, Vector3.down, out RaycastHit hit, 100, groundLayer)) {
+            if (Physics.Raycast(transform.position + Vector3.up * 20, Vector3.down, out RaycastHit hit, 100, LevelReferences.s.groundLayer)) {
                 target.y = hit.point.y + 0.1f;
             }
         }

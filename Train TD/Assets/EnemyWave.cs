@@ -92,6 +92,46 @@ public class EnemyWave : MonoBehaviour {
         lineRenderer.SetPositions(points.ToArray());
         var enemyType = DataHolder.s.GetEnemy(myData.enemyUniqueName).GetComponent<EnemyTypeData>().myType;
         lineRenderer.material = enemyType == EnemyTypeData.EnemyType.Deadly ? deadlyMaterial : safeMaterial;
+        targetAlpha = 0f;
+        lineRenderer.material.SetFloat("alpha", targetAlpha);
         lineRenderer.enabled = true;
+    }
+
+    private float targetAlpha = 0;
+    private float currentAlpha = 0;
+    private float currentLerpSpeed = 2f;
+    
+    [Header("line alpha lerp options")]
+    public float activeAlpha = 0.8f;
+    public float disabledAlpha = 0.2f;
+    public float onLerpSpeed = 2f;
+    public float offLerpSpeed = 0.5f;
+
+    public bool isLerp = true;
+
+    public void ShowPath() {
+        //lineRenderer.enabled = true;
+        targetAlpha = activeAlpha;
+        currentLerpSpeed = onLerpSpeed;
+    }
+
+    public void HidePath() {
+        //lineRenderer.enabled = false;
+        targetAlpha = disabledAlpha;
+        currentLerpSpeed = offLerpSpeed;
+    }
+
+
+    private void Update() {
+        LerpLineRenderedAlpha();
+    }
+
+    void LerpLineRenderedAlpha() {
+        if(isLerp)
+            currentAlpha = Mathf.Lerp(currentAlpha, targetAlpha, currentLerpSpeed * Time.deltaTime);
+        else
+            currentAlpha = Mathf.MoveTowards(currentAlpha, targetAlpha, currentLerpSpeed * Time.deltaTime);
+        
+        lineRenderer.material.SetFloat("alpha", currentAlpha);
     }
 }

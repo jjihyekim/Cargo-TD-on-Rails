@@ -77,4 +77,13 @@ public class CargoController : MonoBehaviour {
         }
     }
 
+
+    public float GetCargoRatio() {
+        if (totalCargo > 0) {
+            return (float)aliveCargo / (float)totalCargo;
+        } else {
+            return 0;
+        }
+    }
+
 }

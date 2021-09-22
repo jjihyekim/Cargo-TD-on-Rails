@@ -5,6 +5,14 @@ using UnityEngine;
 public class PreStartEffects : MonoBehaviour {
 
     public bool isDestroyStarted = false;
+    
+    
+    private void Start() {
+        // instant destroy if we begin with the level playing
+        if (LevelLoader.s.isLevelStarted)
+            DestroyNow();
+    }
+    
     void Update() {
         if (LevelLoader.s.isLevelStarted && ! isDestroyStarted) {
             isDestroyStarted = true;

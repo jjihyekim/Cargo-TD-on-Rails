@@ -24,6 +24,8 @@ public class GunModule : MonoBehaviour, IComponentWithTarget {
     public float rotateSpeed = 10f;
 
     public bool CanShoot = false;
+
+    public bool isPlayer = false;
     private void Update() {
         if (target != null) {
             for (int i = 0; i < rotateTransforms.Length; i++) {
@@ -80,11 +82,12 @@ public class GunModule : MonoBehaviour, IComponentWithTarget {
             projectile.myOriginObject = this.gameObject;
             projectile.damage = projectileDamage;
             projectile.isTargetSeeking = true;
-            
-            
-            projectile.target = target;
 
-            LogShotData(projectileDamage);
+            projectile.isPlayerBullet = isPlayer;
+            projectile.source = this;
+
+            if(myCart != null)
+                LogShotData(projectileDamage);
             
 
             yield return new WaitForSeconds(fireBarrageDelay);

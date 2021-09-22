@@ -866,6 +866,8 @@ MonoBehaviour:
     data: {fileID: 5055315991105005710, guid: 2435e3645a7ab1c46ad8aa27ff70b2b6, type: 3}
   - uniqueName: Supply
     data: {fileID: 8567764965066828291, guid: 167eb19127e4fa74aa76b56e51367d6b, type: 3}
+  - uniqueName: Army
+    data: {fileID: 3387775018460824596, guid: e4c52cae8d2083a4cb1df1e0ed443938, type: 3}
 --- !u!1 &3704651199334984236
 GameObject:
   m_ObjectHideFlags: 0
@@ -1287,9 +1289,6 @@ MonoBehaviour:
   upgradeName: gun
   isUnlocked: 1
   cost: 0
-  icon: {fileID: 0}
-  iconImage: {fileID: 0}
-  costText: {fileID: 0}
   starRequirement: 0
   module: {fileID: 1944673793999917900, guid: cff0a9005e5d2d549a05c9f2c4642474, type: 3}
 --- !u!1 &8318530020442988204
@@ -1413,6 +1412,3 @@ MonoBehaviour:
   upgradeName: unset
   isUnlocked: 0
   cost: 100
-  icon: {fileID: 0}
-  iconImage: {fileID: 0}
-  costText: {fileID: 0}

@@ -47,16 +47,20 @@ MonoBehaviour:
   myData:
     enemyUniqueName: unset
     enemyData: -1
-    enemyPathType: 0
     isLeft: 1
+    enemyPathType: 0
     startDistance: 10
     headsUpTime: 15
-    spawnTime: 10
   myCircuit: {fileID: 0}
   waveDisplay: {fileID: 0}
   isWaveStarted: 0
   deadlyMaterial: {fileID: 2100000, guid: 3d79b602f7fed5a4d846ab1446731a5b, type: 2}
   safeMaterial: {fileID: 2100000, guid: 2e51fbd5a523adc49a07bd00ef8ce014, type: 2}
+  activeAlpha: 1
+  disabledAlpha: 0
+  onLerpSpeed: 20
+  offLerpSpeed: 10
+  isLerp: 0
 --- !u!120 &2100759603288506581
 LineRenderer:
   m_ObjectHideFlags: 0

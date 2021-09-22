@@ -29,6 +29,13 @@ public class EnemyHealth : MonoBehaviour, IHealth {
 		enemySpawned += 1;
 	}
 
+	private void Update() {
+		if (LevelLoader.s.isLevelFinished) {
+			if(isAlive)
+				Die();
+		}
+	}
+
 
 	void Die() {
 		enemyKilled += 1;

@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.Serialization;
 
 public class MenuToggle : MonoBehaviour {
 
@@ -13,15 +14,15 @@ public class MenuToggle : MonoBehaviour {
     static GenericCallback  hideAllToggleMenus;
 
 
-    public bool singleMode = false;
+    [FormerlySerializedAs("singleMode")] public bool dontAutoCloseWithOtherPanels = false;
 
     private void OnEnable() {
-        if(!singleMode)
+        if(!dontAutoCloseWithOtherPanels)
             hideAllToggleMenus += HideMenu;
     }
 
     private void OnDisable() {
-        if(!singleMode)
+        if(!dontAutoCloseWithOtherPanels)
             hideAllToggleMenus -= HideMenu;
     }
 
@@ -63,7 +64,7 @@ public class MenuToggle : MonoBehaviour {
     }
 
     public void ShowMenu() {
-        if(!singleMode)
+        if(!dontAutoCloseWithOtherPanels)
             hideAllToggleMenus?.Invoke();
         isMenuActive = true;
         menu.SetActive(true);

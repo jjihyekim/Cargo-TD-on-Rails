@@ -13,6 +13,7 @@ public class GunUpgradeModule : MonoBehaviour {
     }
 
     private void OnDisable() {
-        GetComponentInParent<Cart>().attackSpeedModifier -= attackSpeedBoost;
+        if(GetComponentInParent<Cart>())
+            GetComponentInParent<Cart>().attackSpeedModifier -= attackSpeedBoost;
     }
 }

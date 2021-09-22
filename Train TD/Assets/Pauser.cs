@@ -62,7 +62,7 @@ public class Pauser : MonoBehaviour {
                 { "Level", LevelLoader.s.currentLevel.levelName },
                 { "distance", Mathf.RoundToInt(SpeedController.s.currentDistance / 10) *10},
                 { "time", Mathf.RoundToInt(SpeedController.s.currentTime/10) * 10},
-                { "cargoRatio", CargoController.s.aliveCargo/CargoController.s.totalCargo},
+                { "cargoRatio", CargoController.s.GetCargoRatio()},
                 
                 {"finishedBefore", myMission.isWon},
 

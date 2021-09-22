@@ -1,10 +1,16 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Sirenix.OdinInspector;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
 public class CameraScroll : MonoBehaviour {
+    public static CameraScroll s;
+
+    private void Awake() {
+        s = this;
+    }
 
     public Camera mainCamera {
         get {
@@ -21,26 +27,34 @@ public class CameraScroll : MonoBehaviour {
 
     public bool isRight = true;
 
-    public float scrollSpeed = 2f;
-    public float wasdSpeed = 2f;
+    public float edgeScrollMoveSpeed = 8f;
+    public float wasdSpeed = 8f;
     public float zoomSpeed = 0.1f;
+    public float middleMoveSpeed = 2f;
 
     public float posLerpSpeed = 1f;
     public float rotationAngle = 50;
+    public float rotationAngleTarget = 50;
+    public float minAngle = 0;
+    public float maxAngle = 120;
+    public float snapToDefaultAngleDistance = 5;
     public float rotLerpSpeed = 20f;
 
     public InputActionProperty moveAction;
     public InputActionProperty rotateAction;
     public InputActionProperty zoomAction;
+    public InputActionProperty rotateCameraAction;
 
 
     public float currentZoom = 0;
+    public float realZoom = 0f;
     public Vector2 zoomLimit = new Vector2(-2, 2);
     protected void OnEnable()
     {
         moveAction.action.Enable();
         rotateAction.action.Enable();
         zoomAction.action.Enable();
+        rotateCameraAction.action.Enable();
         rotateAction.action.performed += FlipCamera;
     }
 
@@ -50,12 +64,16 @@ public class CameraScroll : MonoBehaviour {
         moveAction.action.Disable();
         rotateAction.action.Disable();
         zoomAction.action.Disable();
+        rotateCameraAction.action.Disable();
         rotateAction.action.performed -= FlipCamera;
     }
 
     private GameObject cameraLerpDummy;
     private void Start() {
-        cameraCenter.transform.rotation = Quaternion.Euler(0, isRight ? -rotationAngle : rotationAngle, 0);
+#if UNITY_EDITOR
+        edgeScrollMoveSpeed = 0; // we dont want edge scroll in the editor
+#endif
+        cameraCenter.transform.rotation = Quaternion.Euler(0, isRight ? -rotationAngleTarget : rotationAngleTarget, 0);
         cameraLerpDummy = new GameObject();
         cameraLerpDummy.name = "Camera Lerp Dummy";
         cameraLerpDummy.transform.SetParent(cameraOffset);
@@ -65,19 +83,51 @@ public class CameraScroll : MonoBehaviour {
     }
 
     private void LateUpdate() {
-        ProcessScreenCorners(Mouse.current.position.ReadValue());
+        var mousePos = Mouse.current.position.ReadValue();
+        ProcessScreenCorners(mousePos);
         ProcessMovementInput(moveAction.action.ReadValue<Vector2>(), wasdSpeed);
         ProcessZoom(zoomAction.action.ReadValue<float>());
+        ProcessMiddleMouseRotation(rotateCameraAction.action.ReadValue<float>(), mousePos);
+        LerpCameraTarget();
+        SetMainCamPos();
+    }
 
-        var centerRotTarget = Quaternion.Euler(0, isRight ? -rotationAngle : rotationAngle, 0);
-        
+    private Vector2 mousePosLastFrame;
+    private void ProcessMiddleMouseRotation(float click, Vector2 mousePos) {
+        if (click > 0.5f) {
+            var delta = mousePos.x-mousePosLastFrame.x;
+            if (!isRight)
+                delta = -delta;
+            rotationAngleTarget += delta * middleMoveSpeed * Time.deltaTime;
+            
+
+            rotationAngleTarget = Mathf.Clamp(rotationAngleTarget, minAngle, maxAngle);
+        } else {
+            if (Mathf.Abs(rotationAngleTarget - rotationAngle) < snapToDefaultAngleDistance) {
+                rotationAngleTarget = Mathf.MoveTowards(rotationAngleTarget, rotationAngle, 10 * Time.deltaTime);
+            }
+        }
+
+
+
+
+        mousePosLastFrame = mousePos;
+    }
+
+    private void LerpCameraTarget() {
+        var centerRotTarget = Quaternion.Euler(0, isRight ? -rotationAngleTarget : rotationAngleTarget, 0);
+
         cameraCenter.transform.rotation = Quaternion.Lerp(cameraCenter.transform.rotation, centerRotTarget, rotLerpSpeed * Time.deltaTime);
 
         var targetPos = cameraOffset.position + cameraOffset.forward * currentZoom;
         var targetRot = cameraOffset.rotation;
         cameraLerpDummy.transform.position = Vector3.Lerp(cameraLerpDummy.transform.position, targetPos, posLerpSpeed * Time.deltaTime);
         cameraLerpDummy.transform.rotation = Quaternion.Lerp(cameraLerpDummy.transform.rotation, targetRot, rotLerpSpeed * Time.deltaTime);
-        SetMainCamPos();
+
+        // lerp affected real zoom
+        realZoom = Vector3.Distance(cameraLerpDummy.transform.position, cameraOffset.position);
+        if (currentZoom < 0)
+            realZoom = -realZoom;
     }
 
     void SetMainCamPos() {
@@ -111,7 +161,7 @@ public class CameraScroll : MonoBehaviour {
             output.y = 1f;
         }
         
-        ProcessMovementInput(output, scrollSpeed);
+        ProcessMovementInput(output, edgeScrollMoveSpeed);
     }
 
     public void ProcessMovementInput(Vector2 value, float multiplier) {

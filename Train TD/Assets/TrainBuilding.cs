@@ -27,11 +27,34 @@ public class TrainBuilding : MonoBehaviour {
 
     public Rots myRotation;
 
+    public GenericCallback rotationChangedEvent;
+
     public bool occupiesEntireSlot = false;
 
 
     public GameObject sideGfx;
     public GameObject topGfx;
+
+
+    public List<TransformWithRotation> myUITargetTransforms = new List<TransformWithRotation>();
+
+    [Serializable]
+    public class TransformWithRotation {
+        public List<Rots> possibleRotations = new List<Rots>() { Rots.left, Rots.right, Rots.forward, Rots.backwards };
+        public Transform transform;
+    }
+
+    public Transform uiTargetTransform {
+        get {
+            for (int i = 0; i < myUITargetTransforms.Count; i++) {
+                if (myUITargetTransforms[i].possibleRotations.Contains(myRotation)) {
+                    return myUITargetTransforms[i].transform;
+                }
+            }
+
+            return transform;
+        }
+    }
 
     private Dictionary<Rots, Rots> fourWayRotation = new Dictionary<Rots, Rots>() {
         {Rots.left, Rots.forward},
@@ -72,6 +95,7 @@ public class TrainBuilding : MonoBehaviour {
         }
         SetGfxBasedOnRotation();
         SetBuildingMode(!isBuilt);
+        SetUpOutlines();
     }
 
 
@@ -139,6 +163,7 @@ public class TrainBuilding : MonoBehaviour {
 
     public void SetUpBasedOnRotation() {
         SetGfxBasedOnRotation();
+        rotationChangedEvent?.Invoke();
     }
     
     public void SetGfxBasedOnRotation() {
@@ -176,4 +201,37 @@ public class TrainBuilding : MonoBehaviour {
             }
         }
     }
+
+
+    public List<Outline> _outlines = new List<Outline>();
+
+    void SetUpOutlines() {
+        if (_outlines.Count == 0) {
+            var renderers = GetComponentsInChildren<MeshRenderer>(true);
+
+            foreach (var rend in renderers) {
+                if (rend.GetComponent<Outline>() == null) {
+                    var outline = rend.gameObject.AddComponent<Outline>();
+                    outline.OutlineMode = Outline.Mode.OutlineAndSilhouette;
+                    outline.OutlineWidth = 5;
+                    outline.OutlineColor = new Color(0.0f, 0.833f, 1.0f, 1.0f);
+                    outline.enabled = false;
+                    _outlines.Add(outline);
+                }
+            }
+        }
+    }
+
+    public void SetHighlightState(bool isHighlighted) {
+        if (_outlines.Count == 0) {
+            SetUpOutlines();
+        }
+        
+        foreach (var outline in _outlines) {
+            if (outline != null) {
+                outline.enabled = isHighlighted;
+            }
+        }
+    }
+    
 }

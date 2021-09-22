@@ -124,22 +124,7 @@ public class StarterUIController : MonoBehaviour {
 		startButton.interactable = canStart;
 	}
 
-	public InputActionReference quickStart;
-
-	private void OnEnable() {
-		quickStart.action.Enable();
-		quickStart.action.performed += QuickStart;
-	}
-
-
-	private void OnDisable() {
-		quickStart.action.Disable();
-		quickStart.action.performed -= QuickStart;
-	}
-
-	private void QuickStart(InputAction.CallbackContext obj) {
-		QuickStart();
-	}
+	
 
 	public void QuickStart() {
 		if(LevelLoader.s.currentLevel == null)
