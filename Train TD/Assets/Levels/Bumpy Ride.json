@@ -1,0 +1,48 @@
+{
+    "levelName": "Bumpy Ride",
+    "levelMenuOrder": 1,
+    "trainLength": 5,
+    "starterModules": [
+        {
+            "uniqueName": "Engine",
+            "count": 1
+        },
+        {
+            "uniqueName": "Cargo",
+            "count": 4
+        }
+    ],
+    "enemyWaves": [
+        {
+            "enemyUniqueName": "Buggy",
+            "enemyData": 2.0,
+            "isLeft": true,
+            "enemyPathType": "backFarToClose",
+            "startDistance": 10,
+            "headsUpTime": 15.0
+        },
+        {
+            "enemyUniqueName": "Buggy",
+            "enemyData": 9.0,
+            "isLeft": false,
+            "enemyPathType": "backFarToClose",
+            "startDistance": 60,
+            "headsUpTime": 30.0
+        },
+        {
+            "enemyUniqueName": "Buggy",
+            "enemyData": 6.0,
+            "isLeft": true,
+            "enemyPathType": "backFarToClose",
+            "startDistance": 120,
+            "headsUpTime": 30.0
+        }
+    ],
+    "startingMoney": 65,
+    "moneyGainSpeed": 1.0,
+    "missionDistance": 650,
+    "bestEngineSpeed": 160,
+    "mediumEngineSpeed": 130,
+    "worstEngineSpeed": 100,
+    "$type": "LevelDataJson"
+}

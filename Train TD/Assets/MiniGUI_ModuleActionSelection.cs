@@ -17,10 +17,12 @@ public class MiniGUI_ModuleActionSelection : MonoBehaviour {
 		myModule = module;
 
 		var myActions = myModule.GetComponents<ModuleAction>();
-		
+
 		for (int i = 0; i < myActions.Length; i++) {
-			var button = Instantiate(singleActionPrefab, singleActionParent).GetComponent<MiniGUI_ModuleSingleAction>().SetUp(myActions[i]);
-			buttons.Add(button.GetComponent<RectTransform>());
+			if (myActions[i].isUnlocked) {
+				var button = Instantiate(singleActionPrefab, singleActionParent).GetComponent<MiniGUI_ModuleSingleAction>().SetUp(myActions[i]);
+				buttons.Add(button.GetComponent<RectTransform>());
+			}
 		}
 
 

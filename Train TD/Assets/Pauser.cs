@@ -30,7 +30,7 @@ public class Pauser : MonoBehaviour {
     }
 
     void TogglePause() {
-        if (LevelLoader.s.isLevelInProgress) {
+        if (SceneLoader.s.isLevelInProgress) {
             if (isPaused) {
                 pauseMenu.SetActive(false);
                 TimeController.s.UnPause();
@@ -59,7 +59,7 @@ public class Pauser : MonoBehaviour {
         AnalyticsResult analyticsResult = Analytics.CustomEvent(
             "LevelAbandoned",
             new Dictionary<string, object> {
-                { "Level", LevelLoader.s.currentLevel.levelName },
+                { "Level", SceneLoader.s.currentLevel.levelName },
                 { "distance", Mathf.RoundToInt(SpeedController.s.currentDistance / 10) *10},
                 { "time", Mathf.RoundToInt(SpeedController.s.currentTime/10) * 10},
                 { "cargoRatio", CargoController.s.GetCargoRatio()},
@@ -76,6 +76,6 @@ public class Pauser : MonoBehaviour {
         );
         
         TimeController.s.UnPause();
-        LevelLoader.s.BackToMenu();
+        SceneLoader.s.BackToMenu();
     }
 }

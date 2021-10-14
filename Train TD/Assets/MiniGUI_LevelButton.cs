@@ -6,7 +6,8 @@ using UnityEngine;
 using UnityEngine.UI;
 
 public class MiniGUI_LevelButton : MonoBehaviour {
-    public LevelData myData;
+    [ReadOnly]
+    public LevelDataJson myData;
     public TMP_Text levelName;
 
     public Image selectedBg;
@@ -25,7 +26,7 @@ public class MiniGUI_LevelButton : MonoBehaviour {
     public Color starActiveColor = Color.white;
     public Color starLostColor = Color.grey;
 
-    public MiniGUI_LevelButton SetUp(LevelData data) {
+    public MiniGUI_LevelButton SetUp(LevelDataJson data) {
         myData = data;
         levelName.text = myData.levelName;
 

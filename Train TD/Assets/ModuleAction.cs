@@ -5,7 +5,7 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 
 
-public abstract class ModuleAction : MonoBehaviour {
+public abstract class ModuleAction : UnlockableEffect {
 	public string actionName = "unknown Action";
 	[Tooltip("put negative for earn money")]
 	public int cost = 25;

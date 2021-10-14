@@ -14,7 +14,13 @@ public class PossibleTarget : MonoBehaviour {
     public Transform targetTransform;
     private void OnEnable() {
         if (targetTransform == null) {
-            targetTransform = transform;
+            var building = GetComponent<TrainBuilding>();
+
+            if (building != null) {
+                targetTransform = building.uiTargetTransform;
+            } else {
+                targetTransform = transform;
+            }
         }
         LevelReferences.allTargets.Add(this);
     }

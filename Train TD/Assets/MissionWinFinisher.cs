@@ -38,7 +38,7 @@ public class MissionWinFinisher : MonoBehaviour {
 	}
 
 	public void MissionWon() {
-		LevelLoader.s.isLevelFinished = true;
+		SceneLoader.s.isLevelFinished = true;
 		
 		for (int i = 0; i < scriptsToDisable.Length; i++) {
 			scriptsToDisable[i].enabled = false;
@@ -65,7 +65,7 @@ public class MissionWinFinisher : MonoBehaviour {
 		AnalyticsResult analyticsResult = Analytics.CustomEvent(
 			"LevelWon",
 			new Dictionary<string, object> {
-				{ "Level", LevelLoader.s.currentLevel.levelName },
+				{ "Level", SceneLoader.s.currentLevel.levelName },
 				{ "cargoStars", StarController.s.cargoStars },
 				{ "speedStars", StarController.s.speedStars },
 				
@@ -124,7 +124,7 @@ public class MissionWinFinisher : MonoBehaviour {
 
 
 	public void ContinueToStarterMenu() {
-		LevelLoader.s.BackToMenu();
+		SceneLoader.s.BackToMenu();
 	}
 	
 	void SetStarAmount(Image[] stars, int amount) {

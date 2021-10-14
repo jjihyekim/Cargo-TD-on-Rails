@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Sirenix.OdinInspector;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Events;
@@ -11,10 +12,16 @@ public class StarterUIController : MonoBehaviour {
 	public static StarterUIController s;
 	private void Awake() { s = this; }
 
-	public LevelData[] allLevels;
+	public List<LevelDataJson> allLevels {
+		get {
+			return LevelDataLoader.s.allLevels;
+		}
+	}
 
 	public Transform levelButtonParent;
 	public GameObject levelButtonPrefab;
+	
+	[ReadOnly]
 	public MiniGUI_LevelButton[] allLevelButtons;
 
 	public Transform starterBuildingsButtonParent;
@@ -37,27 +44,26 @@ public class StarterUIController : MonoBehaviour {
 	public GameObject enemyInfoPrefab;
 	
 	private void Start() {
-		allLevelButtons = new MiniGUI_LevelButton[allLevels.Length];
-		for (int i = 0; i < allLevels.Length; i++) {
+		allLevelButtons = new MiniGUI_LevelButton[allLevels.Count];
+		for (int i = 0; i < allLevels.Count; i++) {
 			allLevelButtons[i] = Instantiate(levelButtonPrefab, levelButtonParent).GetComponent<MiniGUI_LevelButton>().SetUp(allLevels[i]);
 		}
-		if(LevelLoader.s.currentLevel != null)
-			SelectLevel(LevelLoader.s.currentLevel);
+		if(SceneLoader.s.currentLevel != null)
+			SelectLevel(SceneLoader.s.currentLevel);
 	}
 
-	void SetCurrentSelectedLevel() {
-		for (int i = 0; i < allLevels.Length; i++) {
-			if (allLevels[i] == LevelLoader.s.currentLevel) {
+	void RefreshCurrentSelectedLevel() {
+		for (int i = 0; i < allLevels.Count; i++) {
+			if (allLevels[i] == SceneLoader.s.currentLevel) {
 				allLevelButtons[i].SetSelected(true);
 			} else {
 				allLevelButtons[i].SetSelected(false);
 			}
 		}
-
 	}
 
 	public void BackToProfileSelection() {
-		LevelLoader.s.OpenProfileScreen();
+		SceneLoader.s.OpenProfileScreen();
 	}
 
 	public void StartLevel() {
@@ -65,7 +71,7 @@ public class StarterUIController : MonoBehaviour {
 		
 		starterUI.SetActive(false);
 		gameUI.SetActive(true);
-		LevelLoader.s.isLevelStarted = true;
+		SceneLoader.s.isLevelStarted = true;
 		OnLevelStarted?.Invoke();
 	}
 
@@ -77,8 +83,8 @@ public class StarterUIController : MonoBehaviour {
 		PlayerBuildingController.s.currentLevelStats = new Dictionary<string, PlayerBuildingController.BuildingData>();
 	}
 
-	public void SelectLevel(LevelData data) {
-		LevelLoader.s.currentLevel = data;
+	public void SelectLevel(LevelDataJson data) {
+		SceneLoader.s.currentLevel = data;
 
 		var childCount = starterBuildingsButtonParent.childCount;
 		for (int i = childCount-1; i >= 0 ; i--) {
@@ -94,7 +100,7 @@ public class StarterUIController : MonoBehaviour {
 		missionDistance.text = "Mission Length: " + data.missionDistance;
 		UpdateCanStartStatus();
 		OnLevelChanged?.Invoke();
-		SetCurrentSelectedLevel();
+		RefreshCurrentSelectedLevel();
 		UpdateEnemies();
 	}
 
@@ -105,7 +111,7 @@ public class StarterUIController : MonoBehaviour {
 		}
 
 
-		var waves = LevelLoader.s.currentLevel.enemyWaves;
+		var waves = SceneLoader.s.currentLevel.enemyWaves;
 		for (int i = 0; i < waves.Length; i++) {
 			Instantiate(enemyInfoPrefab, enemyInfoParent).GetComponent<MiniGUI_EnemyInfoPanel>().SetUp(waves[i]);
 		}
@@ -127,7 +133,7 @@ public class StarterUIController : MonoBehaviour {
 	
 
 	public void QuickStart() {
-		if(LevelLoader.s.currentLevel == null)
+		if(SceneLoader.s.currentLevel == null)
 			SelectLevel(allLevels[0]);
 		MoneyController.s.money = 1000;
 		StartLevel();

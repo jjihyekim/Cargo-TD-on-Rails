@@ -83,19 +83,26 @@ public class DataSaver {
 
 	void Save(int saveId) {
 		var path = GetSaveFilePathAndFileName(saveId);
-		StreamWriter writer = new StreamWriter(path);
 
 		allSaves[saveId].isRealSaveFile = true;
 		SaveFile data = allSaves[saveId];
 
+		WriteFile(path, data);
+	}
+
+	public static void WriteFile(string path, object file) {
+		Directory.CreateDirectory(Path.GetDirectoryName(path));
+		
+		StreamWriter writer = new StreamWriter(path);
+		
 		fsData serialized;
-		_serializer.TrySerialize(data, out serialized);
-		var json = fsJsonPrinter.CompressedJson(serialized);
+		_serializer.TrySerialize(file, out serialized);
+		var json = fsJsonPrinter.PrettyJson(serialized);
 
 		writer.Write(json);
 		writer.Close();
 
-		Debug.Log("Data Saved to " + path);
+		Debug.Log($"IO OP: file \"{file.GetType()}\" saved to \"{path}\"");
 	}
 
 	public void Load () {
@@ -107,17 +114,7 @@ public class DataSaver {
 			var path = GetSaveFilePathAndFileName(i);
 			try {
 				if (File.Exists(path)) {
-					
-					StreamReader reader = new StreamReader(path);
-					var json = reader.ReadToEnd();
-					reader.Close();
-
-					fsData serialized = fsJsonParser.Parse(json);
-
-					SaveFile file = new SaveFile();
-					_serializer.TryDeserialize(serialized, ref file).AssertSuccessWithoutWarnings();
-
-					allSaves[i] = file;
+					allSaves[i] = ReadFile<SaveFile>(path);
 				} else {
 					Debug.Log($"No Data Found on slot: {i}");
 					allSaves[i] = MakeNewSaveFile(i);
@@ -145,7 +142,21 @@ public class DataSaver {
 		loadEvent?.Invoke();
 		loadingComplete = true;
 	}
-	
+
+	public static T ReadFile<T>(string path) where T : class, new() {
+		StreamReader reader = new StreamReader(path);
+		var json = reader.ReadToEnd();
+		reader.Close();
+
+		fsData serialized = fsJsonParser.Parse(json);
+
+		T file = new T();
+		_serializer.TryDeserialize(serialized, ref file).AssertSuccessWithoutWarnings();
+
+		Debug.Log($"IO OP: file \"{file.GetType()}\" read from \"{path}\"");
+		return file;
+	}
+
 
 	[System.Serializable]
 	public class SaveFile {
@@ -172,12 +183,12 @@ public class DataSaver {
 
 		public MissionStats GetCurrentMission() {
 			var mySave = s.GetCurrentSave();
-			var existingMissionIndex =  mySave.missionStatsList.FindIndex(x => x.levelName == LevelLoader.s.currentLevel.levelName);
+			var existingMissionIndex =  mySave.missionStatsList.FindIndex(x => x.levelName == SceneLoader.s.currentLevel.levelName);
 			MissionStats myMission;
 			if (existingMissionIndex != -1) {
 				myMission = mySave.missionStatsList[existingMissionIndex];
 			} else {
-				myMission = new MissionStats(){levelName =  LevelLoader.s.currentLevel.levelName};
+				myMission = new MissionStats(){levelName =  SceneLoader.s.currentLevel.levelName};
 				mySave.missionStatsList.Add(myMission);
 			}
 

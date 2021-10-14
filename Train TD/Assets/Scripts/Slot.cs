@@ -41,7 +41,11 @@ public class Slot : MonoBehaviour/*, IPointerEnterHandler, IPointerExitHandler*/
 
 			return isAllEmpty;
 		} else {
-			return myBuildings[slot] == null;
+			if (slot >= 0 && slot <= myBuildings.Length) {
+				return myBuildings[slot] == null;
+			} else {
+				return false;
+			}
 		}
 	}
 

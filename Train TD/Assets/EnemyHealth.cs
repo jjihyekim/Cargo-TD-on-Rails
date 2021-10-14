@@ -30,7 +30,7 @@ public class EnemyHealth : MonoBehaviour, IHealth {
 	}
 
 	private void Update() {
-		if (LevelLoader.s.isLevelFinished) {
+		if (SceneLoader.s.isLevelFinished) {
 			if(isAlive)
 				Die();
 		}

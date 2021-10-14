@@ -26,7 +26,7 @@ public class ProfileSelectionMenu : MonoBehaviour {
 
 
     private void Start() {
-        if (LevelLoader.s.isProfileMenu) {
+        if (SceneLoader.s.isProfileMenu) {
             for (int i = 0; i < monoToDisableInProfileMenu.Length; i++) {
                 monoToDisableInProfileMenu[i].enabled = false;
             }

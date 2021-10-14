@@ -43,7 +43,7 @@ public class SpeedController : MonoBehaviour {
     public TrainStation endTrainStation;
 
     public void UpdateBasedOnLevelData() {
-        var myLevel = LevelLoader.s.currentLevel;
+        var myLevel = SceneLoader.s.currentLevel;
         bestEngine = myLevel.bestEngineSpeed;
         medEngine = myLevel.mediumEngineSpeed;
         worstEngine = myLevel.worstEngineSpeed;
@@ -59,7 +59,7 @@ public class SpeedController : MonoBehaviour {
     public int engineCount = 0;
     public float enginePowerChangeDelta = 100f;
     private void Update() {
-        if (LevelLoader.s.isLevelInProgress) {
+        if (SceneLoader.s.isLevelInProgress) {
             enginePower = Mathf.MoveTowards(enginePower, enginePowerTarget, enginePowerChangeDelta * engineCount * Time.deltaTime);
             LevelReferences.s.speed = EnginePowerToDistance(enginePower, 1f);
             enginePowerText.text = enginePower.ToString("F0");
@@ -94,7 +94,7 @@ public class SpeedController : MonoBehaviour {
                 MissionWinFinisher.s.MissionWon();
                 CalculateStopAcceleration();
             }
-        } else if (LevelLoader.s.isLevelFinished) {
+        } else if (SceneLoader.s.isLevelFinished) {
             LevelReferences.s.speed  = Mathf.MoveTowards(LevelReferences.s.speed , 0, stopAcceleration * Time.deltaTime);;
             currentDistance += LevelReferences.s.speed * Time.deltaTime;
         }else {
@@ -112,7 +112,7 @@ public class SpeedController : MonoBehaviour {
     private float stopAcceleration = 0;
     void CalculateStopAcceleration() {
         var speed =  EnginePowerToDistance(enginePower, 1f);
-        var realStopDistance = stopDistance - (Mathf.Floor(LevelLoader.s.currentLevel.trainLength / 2f) * DataHolder.s.cartLength);
+        var realStopDistance = stopDistance - (Mathf.Floor(SceneLoader.s.currentLevel.trainLength / 2f) * DataHolder.s.cartLength);
         stopAcceleration = (speed * speed) / (2 * stopDistance);
     }
 

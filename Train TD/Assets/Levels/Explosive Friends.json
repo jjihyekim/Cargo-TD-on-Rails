@@ -1,0 +1,88 @@
+{
+    "levelName": "Explosive Friends",
+    "levelMenuOrder": 2,
+    "trainLength": 4,
+    "starterModules": [
+        {
+            "uniqueName": "Engine",
+            "count": 1
+        },
+        {
+            "uniqueName": "Cargo",
+            "count": 3
+        }
+    ],
+    "enemyWaves": [
+        {
+            "enemyUniqueName": "Supply",
+            "enemyData": 1.0,
+            "isLeft": true,
+            "enemyPathType": "backClose",
+            "startDistance": 10,
+            "headsUpTime": 15.0
+        },
+        {
+            "enemyUniqueName": "Supply",
+            "enemyData": 1.0,
+            "isLeft": false,
+            "enemyPathType": "backClose",
+            "startDistance": 50,
+            "headsUpTime": 30.0
+        },
+        {
+            "enemyUniqueName": "Buggy",
+            "enemyData": 2.0,
+            "isLeft": false,
+            "enemyPathType": "frontToBack",
+            "startDistance": 110,
+            "headsUpTime": 30.0
+        },
+        {
+            "enemyUniqueName": "Army",
+            "enemyData": 1.0,
+            "isLeft": false,
+            "enemyPathType": "frontToBack",
+            "startDistance": 220,
+            "headsUpTime": 30.0
+        },
+        {
+            "enemyUniqueName": "Supply",
+            "enemyData": 5.0,
+            "isLeft": false,
+            "enemyPathType": "frontToBack",
+            "startDistance": 360,
+            "headsUpTime": 30.0
+        },
+        {
+            "enemyUniqueName": "Army",
+            "enemyData": 2.0,
+            "isLeft": false,
+            "enemyPathType": "frontToBack",
+            "startDistance": 420,
+            "headsUpTime": 30.0
+        },
+        {
+            "enemyUniqueName": "Buggy",
+            "enemyData": 2.0,
+            "isLeft": true,
+            "enemyPathType": "backFarToClose",
+            "startDistance": 640,
+            "headsUpTime": 30.0
+        },
+        {
+            "enemyUniqueName": "Buggy",
+            "enemyData": 2.0,
+            "isLeft": false,
+            "enemyPathType": "backFarToClose",
+            "startDistance": 640,
+            "headsUpTime": 30.0
+        }
+    ],
+    "startingMoney": 65,
+    "moneyGainSpeed": 0.5,
+    "missionDistance": 1200,
+    "bestEngineSpeed": 160,
+    "mediumEngineSpeed": 130,
+    "worstEngineSpeed": 100,
+    "$type": "LevelDataJson"
+}

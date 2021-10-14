@@ -1,21 +1,35 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Sirenix.OdinInspector;
 using UnityEngine;
 
 public class TrainBuilding : MonoBehaviour {
 
+    public string displayName = "Unnamed But Nice in game name";
     public string uniqueName = "unnamed";
 
     public Sprite Icon;
 
+    [ReadOnly]
     public Slot mySlot;
+    [ReadOnly]
     public int mySlotIndex = 0;
 
     public bool canPointSide;
     public bool canPointUp;
     public bool canBeRotatedSides = true;
     public bool canBeRotatedUp = true;
+
+    public int rotationCount {
+        get {
+            int count = 0;
+            count += canBeRotatedSides ? 2 : 0;
+            count += canPointUp ? 1 : 0;
+            count += canBeRotatedUp ? 1 : 0;
+            return count;
+        }
+    }
 
     public MonoBehaviour[] disabledWhenBuilding;
 
@@ -90,8 +104,12 @@ public class TrainBuilding : MonoBehaviour {
     private void Start() {
         if (isBuilt) {
             mySlot = GetComponentInParent<Slot>();
-            if(mySlot)
+            if (mySlot) {
                 mySlot.AddBuilding(this, mySlotIndex);
+
+                transform.localPosition = Vector3.zero;
+                transform.localRotation = Quaternion.identity;
+            }
         }
         SetGfxBasedOnRotation();
         SetBuildingMode(!isBuilt);
@@ -104,18 +122,19 @@ public class TrainBuilding : MonoBehaviour {
             disabledWhenBuilding[i].enabled = !isBuildingHologram;
         }
 
-        var moduleGfxs = GetComponentsInChildren<ModuleGraphics>();
+        var moduleGfxs = GetComponentsInChildren<ModuleGraphics>(true);
 
         foreach (var moduleGfx in moduleGfxs) {
             moduleGfx.SetBuildingMode(isBuildingHologram, isBuildable);
         }
     }
 
-    public void CompleteBuilding() {
+    public void CompleteBuilding(bool playSound = true) {
         isBuilt = true;
         SetGfxBasedOnRotation();
         SetBuildingMode(!isBuilt);
-        GetComponentInChildren<ConstructionSounds>().PlayConstructionSound();
+        if(playSound)
+            GetComponentInChildren<ConstructionSounds>().PlayConstructionSound();
     }
     
     public int SetRotationBasedOnIndex(int index) {
@@ -139,20 +158,24 @@ public class TrainBuilding : MonoBehaviour {
         return rotationToIndex[myRotation];
     }
 
-    public int CycleRotation() {
-            /*if (canPointSide && canPointUp) {
+    public int CycleRotation(bool isTotalRotation = false) {
+        if (isTotalRotation) {
+            if (canPointSide && canPointUp) {
                 myRotation = fourWayRotation[myRotation];
             } else if (canPointSide) {
                 myRotation = sideRotation[myRotation];
             } else if (canPointUp) {
                 myRotation = topRotation[myRotation];
-            }*/
+            }
+        } else {
 
-        if ((myRotation == Rots.left || myRotation == Rots.right) && canBeRotatedSides) {
-            myRotation = sideRotation[myRotation];
-        }
-        if ((myRotation == Rots.forward || myRotation == Rots.backwards) && canBeRotatedUp) {
-            myRotation = topRotation[myRotation];
+            if ((myRotation == Rots.left || myRotation == Rots.right) && canBeRotatedSides) {
+                myRotation = sideRotation[myRotation];
+            }
+
+            if ((myRotation == Rots.forward || myRotation == Rots.backwards) && canBeRotatedUp) {
+                myRotation = topRotation[myRotation];
+            }
         }
 
         SetUpBasedOnRotation();
@@ -170,16 +193,16 @@ public class TrainBuilding : MonoBehaviour {
         if (canBeRotatedSides || canBeRotatedUp) {
             switch (myRotation) {
                 case Rots.left:
-                    transform.rotation = Quaternion.Euler(0, 90, 0);
+                    transform.localRotation = Quaternion.Euler(0, 90, 0);
                     break;
                 case Rots.right:
-                    transform.rotation = Quaternion.Euler(0, -90, 0);
+                    transform.localRotation = Quaternion.Euler(0, -90, 0);
                     break;
                 case Rots.forward:
-                    transform.rotation = Quaternion.Euler(0, 0, 0);
+                    transform.localRotation = Quaternion.Euler(0, 0, 0);
                     break;
                 case Rots.backwards:
-                    transform.rotation = Quaternion.Euler(0, 180, 0);
+                    transform.localRotation = Quaternion.Euler(0, 180, 0);
                     break;
             }
 
@@ -203,6 +226,7 @@ public class TrainBuilding : MonoBehaviour {
     }
 
 
+    [ReadOnly]
     public List<Outline> _outlines = new List<Outline>();
 
     void SetUpOutlines() {

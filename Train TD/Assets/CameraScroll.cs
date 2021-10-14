@@ -30,6 +30,7 @@ public class CameraScroll : MonoBehaviour {
     public float edgeScrollMoveSpeed = 8f;
     public float wasdSpeed = 8f;
     public float zoomSpeed = 0.1f;
+    public bool canZoom = true;
     public float middleMoveSpeed = 2f;
 
     public float posLerpSpeed = 1f;
@@ -136,8 +137,10 @@ public class CameraScroll : MonoBehaviour {
     }
 
     void ProcessZoom(float value) {
-        currentZoom += value * zoomSpeed;
-        currentZoom = Mathf.Clamp(currentZoom, zoomLimit.x, zoomLimit.y);
+        if (canZoom) {
+            currentZoom += value * zoomSpeed;
+            currentZoom = Mathf.Clamp(currentZoom, zoomLimit.x, zoomLimit.y);
+        }
     }
 
     public float cameraScrollEdgePercent = 0.01f;

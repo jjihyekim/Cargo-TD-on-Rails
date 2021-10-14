@@ -1,0 +1,28 @@
+{
+    "levelName": "Test Level",
+    "levelMenuOrder": 0,
+    "trainLength": 5,
+    "starterModules": [
+        {
+            "uniqueName": "Engine",
+            "count": 1
+        }
+    ],
+    "enemyWaves": [
+        {
+            "enemyUniqueName": "Supply",
+            "enemyData": -1.0,
+            "isLeft": true,
+            "enemyPathType": "backFarToClose",
+            "startDistance": 10,
+            "headsUpTime": 600.0
+        }
+    ],
+    "startingMoney": 1000,
+    "moneyGainSpeed": 5.0,
+    "missionDistance": 8000,
+    "bestEngineSpeed": 160,
+    "mediumEngineSpeed": 130,
+    "worstEngineSpeed": 100,
+    "$type": "LevelDataJson"
+}

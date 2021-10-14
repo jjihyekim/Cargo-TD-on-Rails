@@ -1,0 +1,40 @@
+{
+    "levelName": "Smol starts",
+    "levelMenuOrder": 3,
+    "trainLength": 3,
+    "starterModules": [
+        {
+            "uniqueName": "Engine",
+            "count": 1
+        },
+        {
+            "uniqueName": "Cargo",
+            "count": 2
+        }
+    ],
+    "enemyWaves": [
+        {
+            "enemyUniqueName": "Buggy",
+            "enemyData": 1.0,
+            "isLeft": true,
+            "enemyPathType": "backFarToClose",
+            "startDistance": 10,
+            "headsUpTime": 15.0
+        },
+        {
+            "enemyUniqueName": "Buggy",
+            "enemyData": 1.0,
+            "isLeft": false,
+            "enemyPathType": "backFarToClose",
+            "startDistance": 60,
+            "headsUpTime": 15.0
+        }
+    ],
+    "startingMoney": 40,
+    "moneyGainSpeed": 1.0,
+    "missionDistance": 300,
+    "bestEngineSpeed": 150,
+    "mediumEngineSpeed": 120,
+    "worstEngineSpeed": 80,
+    "$type": "LevelDataJson"
+}

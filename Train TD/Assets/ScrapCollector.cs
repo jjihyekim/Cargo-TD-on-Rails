@@ -29,7 +29,7 @@ public class ScrapCollector : MonoBehaviour {
     private float ringVisibleTimer = 0;
     public float ringStayVisibleTime = 1f;
     void Update() {
-        if (LevelLoader.s.isLevelInProgress) {
+        if (SceneLoader.s.isLevelInProgress) {
             ring.transform.position = GetMousePositionOnPlane();
 
             var removedAny = false;

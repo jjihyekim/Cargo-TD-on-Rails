@@ -47,7 +47,7 @@ public class EngineFireController : MonoBehaviour {
 		    lastSpeed = LevelReferences.s.speed;
 	    }
 
-	    if (LevelLoader.s.isLevelInProgress) {
+	    if (SceneLoader.s.isLevelInProgress) {
 		    var speed = 0;
 		    if (LevelReferences.s.speed > slowSoundMaxSpeed)
 			    speed += 1;
@@ -85,7 +85,7 @@ public class EngineFireController : MonoBehaviour {
     public bool isLevelFinishTriggered = false;
     void UpdateEngineParticleSystemValues() {
 	    var emissionModule = _particleSystem.emission;
-	    if (!LevelLoader.s.isLevelStarted) {
+	    if (!SceneLoader.s.isLevelStarted) {
 		    emissionModule.enabled = false;
 	    } else if(lastSpeed > 0.2f) {
 		    emissionModule.enabled = true;
@@ -97,7 +97,7 @@ public class EngineFireController : MonoBehaviour {
 		    forceOverLifeTime.y = new ParticleSystem.MinMaxCurve(LevelReferences.s.speed * 25f);
 	    } else {
 		    emissionModule.enabled = false;
-		    if (LevelLoader.s.isLevelFinished && !isLevelFinishTriggered) {
+		    if (SceneLoader.s.isLevelFinished && !isLevelFinishTriggered) {
 			    isLevelFinishTriggered = true;
 			    _audio.clip = speedSounds[0];
 			    _particleSystem.Stop();

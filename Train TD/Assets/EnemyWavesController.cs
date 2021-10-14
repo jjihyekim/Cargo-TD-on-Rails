@@ -17,7 +17,7 @@ public class EnemyWavesController : MonoBehaviour {
 		    Destroy(waves[i].gameObject);
 	    }
 	    
-	    var waveData = LevelLoader.s.currentLevel.enemyWaves;
+	    var waveData = SceneLoader.s.currentLevel.enemyWaves;
 
 	    waves = new EnemyWave[waveData.Length];
 
@@ -42,7 +42,7 @@ public class EnemyWavesController : MonoBehaviour {
     
     void Update()
     {
-	    if (LevelLoader.s.isLevelInProgress) {
+	    if (SceneLoader.s.isLevelInProgress) {
 		    for (int i = 0; i < waves.Length; i++) {
 			    waves[i].UpdateBasedOnDistance(SpeedController.s.currentDistance);
 		    }

@@ -42,10 +42,10 @@ public class PlayerBuildingController : MonoBehaviour {
     {
         build.action.Enable();
         scroll.action.Enable();
-        build.action.performed += TryToPutDownBuilding;
         cancelBuild.action.Enable();
-        cancelBuild.action.performed += CancelBuilding;
         multiBuild.action.Enable();
+        build.action.performed += TryToPutDownBuilding;
+        cancelBuild.action.performed += CancelBuilding;
     }
 
     
@@ -54,10 +54,10 @@ public class PlayerBuildingController : MonoBehaviour {
     {
         build.action.Disable();
         scroll.action.Disable();
-        build.action.performed -= TryToPutDownBuilding;
         cancelBuild.action.Disable();
-        cancelBuild.action.performed -= CancelBuilding;
         multiBuild.action.Disable();
+        build.action.performed -= TryToPutDownBuilding;
+        cancelBuild.action.performed -= CancelBuilding;
     }
 
     private void Update() {
@@ -92,6 +92,14 @@ public class PlayerBuildingController : MonoBehaviour {
                     lastRaycastIndex = index;
                 }
 
+                if (activeIndex < 0) {
+                    activeIndex = lastRaycastIndex;
+                }
+
+                if (activeIndex < 0) {
+                    activeIndex = 0;
+                }
+
                 activeIndex = tempBuilding.SetRotationBasedOnIndex(activeIndex);
                 
                 PlayerModuleSelector.s.playerBuildingDisableOverride = false;
@@ -107,6 +115,7 @@ public class PlayerBuildingController : MonoBehaviour {
             }
         } else {
             activeSlot = null;
+            activeIndex = -2;
         }
 
         UpdateCanBuildable();
@@ -183,7 +192,7 @@ public class PlayerBuildingController : MonoBehaviour {
                 activeSlot.AddBuilding(newBuilding, activeIndex);
                 newBuilding.transform.position = activeSlot.transform.position;
                 newBuilding.CompleteBuilding();
-                if (LevelLoader.s.isLevelStarted)
+                if (SceneLoader.s.isLevelStarted)
                     MoneyController.s.SubtractMoney(newBuilding.cost);
 
                 LogData(currentlyMultiBuilding, newBuilding);
@@ -191,6 +200,7 @@ public class PlayerBuildingController : MonoBehaviour {
                 if (!currentlyMultiBuilding) {
                     tempBuilding = null;
                     activeSlot = null;
+                    activeIndex = -2;
                     isBuilding = false;
                 
                     StopBuilding();
@@ -235,7 +245,7 @@ public class PlayerBuildingController : MonoBehaviour {
 
             Dictionary<string, object> resultingDictionary = new Dictionary<string, object>();
 
-            resultingDictionary["currentLevel"] = LevelLoader.s.currentLevel.levelName;
+            resultingDictionary["currentLevel"] = SceneLoader.s.currentLevel.levelName;
             resultingDictionary["isWon"] = isWon;
 
             resultingDictionary["buildCount"] = constStats.Count;
@@ -347,6 +357,7 @@ public class PlayerBuildingController : MonoBehaviour {
         if (tempBuilding) {
             Destroy(tempBuilding.gameObject);
             activeSlot = null;
+            activeIndex = -2;
         }
         isBuilding = false;
     }

@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Sirenix.OdinInspector;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -10,6 +11,7 @@ public class ModuleHealth : MonoBehaviour, IHealth {
     public float currentHealth = 50;
 
 
+    [ReadOnly]
     public MiniGUI_HealthBar healthBar;
     
     public GameObject explodePrefab;

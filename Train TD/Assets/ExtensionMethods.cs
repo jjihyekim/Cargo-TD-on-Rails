@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 
@@ -26,5 +27,14 @@ public static class ExtensionMethods {
         for (int i = childs - 1; i >= 0; i--) {
             GameObject.Destroy(transform.GetChild(i).gameObject);
         }
+    }
+
+
+    public static void InsertWithNullFill<T>(this List<T> ls, int index, T item) where T: class {
+        while (!(index < ls.Count)) {
+            ls.Add(null);
+        }
+        
+        ls.Insert(index, item);
     }
 }

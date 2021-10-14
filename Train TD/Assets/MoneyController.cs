@@ -20,13 +20,13 @@ public class MoneyController : MonoBehaviour {
     public float perSecondMoneyCounter = 0;
 
     public void UpdateBasedOnLevelData() {
-        money = LevelLoader.s.currentLevel.startingMoney;
-        moneyPerSecond = LevelLoader.s.currentLevel.moneyGainSpeed;
+        money = SceneLoader.s.currentLevel.startingMoney;
+        moneyPerSecond = SceneLoader.s.currentLevel.moneyGainSpeed;
     }
 
 
     private void Update() {
-        if (LevelLoader.s.isLevelInProgress) {
+        if (SceneLoader.s.isLevelInProgress) {
             perSecondMoneyCounter += moneyPerSecond * Time.deltaTime;
 
             if (perSecondMoneyCounter > 0) {

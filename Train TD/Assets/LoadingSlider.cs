@@ -12,6 +12,6 @@ public class LoadingSlider : MonoBehaviour {
     }
 
     void Update() {
-        _slider.value = LevelLoader.loadingProgress;
+        _slider.value = SceneLoader.loadingProgress;
     }
 }

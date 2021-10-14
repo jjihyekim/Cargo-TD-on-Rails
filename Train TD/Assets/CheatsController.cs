@@ -19,7 +19,7 @@ public class CheatsController : MonoBehaviour
     }
 
     private void EngageCheat(InputAction.CallbackContext obj) {
-        if (!LevelLoader.s.isLevelStarted) {
+        if (!SceneLoader.s.isLevelStarted) {
             StarterUIController.s.QuickStart();
         } else {
             MoneyController.s.AddMoney(1000);

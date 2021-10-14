@@ -25,7 +25,7 @@ public class CargoController : MonoBehaviour {
 
     public void UpdateBasedOnLevelData() {
         totalCargo = 0;
-        var modules = LevelLoader.s.currentLevel.starterModules;
+        var modules = SceneLoader.s.currentLevel.starterModules;
         for (int i = 0; i < modules.Length; i++) {
             var cargo = DataHolder.s.GetBuilding(modules[i].uniqueName).GetComponent<CargoModule>();
 
@@ -46,7 +46,7 @@ public class CargoController : MonoBehaviour {
     public void DeadCargo(int size) {
         aliveCargo -= size;
 
-        if (LevelLoader.s.isLevelInProgress && totalCargo > 0 && aliveCargo == 0) {
+        if (SceneLoader.s.isLevelInProgress && totalCargo > 0 && aliveCargo == 0) {
             MissionLoseFinisher.s.MissionLost(true);
         }
         

@@ -73,6 +73,8 @@ public class Projectile : MonoBehaviour {
 
     private bool isDead = false;
 
+    public GameObject instantDestroy;
+
     void SmartDestroySelf() {
         if (!isDead) {
             isDead = true;
@@ -80,11 +82,14 @@ public class Projectile : MonoBehaviour {
             var particles = GetComponentsInChildren<ParticleSystem>();
 
             foreach (var particle in particles) {
-                particle.transform.SetParent(null);
-                particle.Stop();
-                Destroy(particle.gameObject, 5f);
+                if (particle.gameObject != instantDestroy) {
+                    particle.transform.SetParent(null);
+                    particle.Stop();
+                    Destroy(particle.gameObject, 5f);
+                }
             }
-
+            
+            Destroy(instantDestroy);
             Destroy(gameObject);
         }
     }

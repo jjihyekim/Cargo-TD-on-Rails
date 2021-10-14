@@ -13,6 +13,7 @@ public class PlayerModuleSelector : MonoBehaviour {
     }
 
     public InputActionReference click;
+    public InputActionReference scroll;
 
     public MiniGUI_ModuleActionSelection activeActionSelection;
 
@@ -24,6 +25,7 @@ public class PlayerModuleSelector : MonoBehaviour {
 
     protected void OnEnable() {
         click.action.Enable();
+        scroll.action.Enable();
         click.action.performed += ActivateActionDisplayOnActiveObject;
     }
 
@@ -31,11 +33,11 @@ public class PlayerModuleSelector : MonoBehaviour {
 
     protected void OnDisable() {
         click.action.Disable();
+        scroll.action.Disable();
         click.action.performed -= ActivateActionDisplayOnActiveObject;
         if(activeActionSelection != null)
             HideModuleActionSelector();
         DeselectObject();
-
     }
 
     
@@ -63,17 +65,26 @@ public class PlayerModuleSelector : MonoBehaviour {
 
     private void Update() {
         CastRayToSelectBuilding();
+
+        if (isMouseOverSelectedObject) {
+            CameraScroll.s.canZoom = false;
+            ProcessScroll(scroll.action.ReadValue<float>());
+        } else {
+            CameraScroll.s.canZoom = true;
+        }
     }
     
 
 
     private Slot activeSlot;
     private int activeIndex;
+    private int lastRaycastIndex;
     private TrainBuilding activeBuilding;
 
     public bool playerBuildingDisableOverride = false;
     public bool playerBuildingSkipOneTimeOverride = false;
 
+    public bool isMouseOverSelectedObject = false;
     void CastRayToSelectBuilding() {
         if (playerBuildingDisableOverride) {
             DeselectObject();
@@ -106,15 +117,51 @@ public class PlayerModuleSelector : MonoBehaviour {
 
                 } else {
                     // if it is still the same slot but a different side, then pick the new slot
-                    if (index != -1 && index != activeIndex) {
+                    if (index != -1 && index != lastRaycastIndex) {
                         SelectObject(slot, index);
                     } /*else {
                         HideModuleActionView();
                     }*/
                 }
+
+                lastRaycastIndex = index;
             }
         } else {
             DeselectObject();
+        }
+    }
+    
+    public float scrollTime = 0.2f;
+    private float curScrollTime = 0;
+    void ProcessScroll(float value) {
+        if (curScrollTime <= 0f) {
+            if (value > 0) {
+                //print((activeIndex+1) % 3);
+                var nextIndex = activeIndex;
+                for (int i = 0; i < 2; i++) {
+                    nextIndex = (nextIndex + 1) % 3;
+                    if (activeSlot.myBuildings[nextIndex] != null) {
+                        SelectObject(activeSlot, nextIndex);
+                        activeActionSelection.SetUp(activeBuilding);
+                    }
+                }
+
+                curScrollTime = scrollTime;
+            }
+
+            if (value < 0) {
+                var nextIndex = activeIndex;
+                for (int i = 0; i < 2; i++) {
+                    nextIndex = (nextIndex + 2) % 3; // +2 actually makes us go -1 because modulo 3
+                    if (activeSlot.myBuildings[nextIndex] != null) {
+                        SelectObject(activeSlot, nextIndex);
+                        activeActionSelection.SetUp(activeBuilding);
+                    }
+                }
+                curScrollTime = scrollTime;
+            }
+        } else {
+            curScrollTime -= Time.deltaTime;
         }
     }
 
@@ -126,6 +173,7 @@ public class PlayerModuleSelector : MonoBehaviour {
 
             activeSlot = null;
             activeIndex = -2;
+            lastRaycastIndex = -2;
             activeBuilding = null;
         }
     }
@@ -135,7 +183,6 @@ public class PlayerModuleSelector : MonoBehaviour {
             activeSlot = slot;
             activeIndex = index;
 
-
             if (activeBuilding != null)
                 SelectBuilding(activeBuilding, false);
 
@@ -144,29 +191,32 @@ public class PlayerModuleSelector : MonoBehaviour {
                 // if there is nothing in this slot then try other slots until we find one
                 if (slot.myBuildings[1] != null) {
                     activeBuilding = slot.myBuildings[1];
-                    activeIndex = 1;
+                    index = 1;
                 } else if (slot.myBuildings[0] != null) {
                     activeBuilding = slot.myBuildings[0];
-                    activeIndex = 0;
+                    index = 0;
 
                 } else if (slot.myBuildings[2] != null) {
                     activeBuilding = slot.myBuildings[2];
-                    activeIndex = 2;
+                    index = 2;
                 }
             }
 
             if (activeBuilding != null) {
+                
+                
                 if (playerBuildingSkipOneTimeOverride) {
                     playerBuildingSkipOneTimeOverride = false;
                 } else {
                     SelectBuilding(activeBuilding, true);
                 }
-            }
+            } 
         }
     }
 
 
     public void SelectBuilding(TrainBuilding building, bool isSelected) {
+        isMouseOverSelectedObject = isSelected;
         if (building != null) {
             building.SetHighlightState(isSelected);
             

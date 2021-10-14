@@ -10,12 +10,12 @@ public class CargoModule : MonoBehaviour {
     public int moneyReward = 100;
 
     private void OnEnable() {
-        if(LevelLoader.s.isLevelInProgress)
+        if(SceneLoader.s.isLevelInProgress)
 	        CargoController.s.AliveCargo(cargoSize);
     }
 
     private void OnDisable() {
-        if(LevelLoader.s.isLevelInProgress && CargoController.s != null) 
+        if(SceneLoader.s.isLevelInProgress && CargoController.s != null) 
             CargoController.s.DeadCargo(cargoSize);
     }
 }

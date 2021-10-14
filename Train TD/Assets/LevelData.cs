@@ -4,24 +4,21 @@ using System.Collections.Generic;
 using Sirenix.OdinInspector;
 using UnityEngine;
 
-
-[CreateAssetMenu]
-public class LevelData : ScriptableObject {
-	public string levelName {
-		get { return name; }
-	}
+[Serializable]
+public class LevelDataJson {
+	public string levelName = "unset";
+	public int levelMenuOrder = -1;
 	//public GameObject train;
 	public int trainLength = 3;
 	public TrainBuildingData[] starterModules;
 	public EnemyWaveData[] enemyWaves;
 
-    [Header("Money")]
+	[Header("Money")]
 
 	public int startingMoney = 40;
 	public float moneyGainSpeed = 1f;
 
-
-    [Header("Mission Length")]
+	[Header("Mission Length")]
 	public int missionDistance = 300;
 	
 	[Header("Mission Speed requirements")]

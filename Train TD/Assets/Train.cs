@@ -52,8 +52,8 @@ public class Train : MonoBehaviour {
         if(trainBack != null)
             Destroy(trainBack.gameObject);
 
-        if (LevelLoader.s.currentLevel != null) {
-            cartCount = LevelLoader.s.currentLevel.trainLength;
+        if (SceneLoader.s.currentLevel != null) {
+            cartCount = SceneLoader.s.currentLevel.trainLength;
             LevelReferences.s.carts = new Cart[cartCount];
 
             var startPlace = transform.position + Vector3.back * DataHolder.s.cartLength * cartCount / 2f;
