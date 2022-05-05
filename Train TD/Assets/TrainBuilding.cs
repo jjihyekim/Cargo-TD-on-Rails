@@ -16,9 +16,13 @@ public class TrainBuilding : MonoBehaviour {
     [ReadOnly]
     public int mySlotIndex = 0;
 
+    [HideIf("occupiesEntireSlot")]
     public bool canPointSide;
+    [HideIf("occupiesEntireSlot")]
     public bool canPointUp;
+    [HideIf("occupiesEntireSlot")]
     public bool canBeRotatedSides = true;
+    [HideIf("occupiesEntireSlot")]
     public bool canBeRotatedUp = true;
 
     public int rotationCount {
@@ -39,15 +43,25 @@ public class TrainBuilding : MonoBehaviour {
         left, right, forward, backwards
     }
 
+    
+    [HideIf("occupiesEntireSlot")]
     public Rots myRotation;
+
+    public bool canBeTargetingAreaRotatable = false;
 
     public GenericCallback rotationChangedEvent;
 
     public bool occupiesEntireSlot = false;
-
-
+    
+    [HideIf("occupiesEntireSlot")]
     public GameObject sideGfx;
+    [HideIf("occupiesEntireSlot")]
     public GameObject topGfx;
+    
+    [ShowIf("occupiesEntireSlot")]
+    public GameObject frontGfx;
+    [ShowIf("occupiesEntireSlot")]
+    public GameObject backGfx;
 
 
     public List<TransformWithRotation> myUITargetTransforms = new List<TransformWithRotation>();
@@ -159,29 +173,45 @@ public class TrainBuilding : MonoBehaviour {
     }
 
     public int CycleRotation(bool isTotalRotation = false) {
-        if (isTotalRotation) {
-            if (canPointSide && canPointUp) {
-                myRotation = fourWayRotation[myRotation];
-            } else if (canPointSide) {
-                myRotation = sideRotation[myRotation];
-            } else if (canPointUp) {
-                myRotation = topRotation[myRotation];
-            }
-        } else {
+        if (!occupiesEntireSlot) {
+            if (isTotalRotation) {
+                if (canPointSide && canPointUp) {
+                    myRotation = fourWayRotation[myRotation];
+                } else if (canPointSide) {
+                    myRotation = sideRotation[myRotation];
+                } else if (canPointUp) {
+                    myRotation = topRotation[myRotation];
+                }
+            } else {
 
-            if ((myRotation == Rots.left || myRotation == Rots.right) && canBeRotatedSides) {
-                myRotation = sideRotation[myRotation];
-            }
+                if ((myRotation == Rots.left || myRotation == Rots.right) && canBeRotatedSides) {
+                    myRotation = sideRotation[myRotation];
+                }
 
-            if ((myRotation == Rots.forward || myRotation == Rots.backwards) && canBeRotatedUp) {
-                myRotation = topRotation[myRotation];
+                if ((myRotation == Rots.forward || myRotation == Rots.backwards) && canBeRotatedUp) {
+                    myRotation = topRotation[myRotation];
+                }
             }
         }
 
         SetUpBasedOnRotation();
+
+
+        if (canBeTargetingAreaRotatable) {
+            TargetingAreaRotate(true);
+        }
         
 
         return rotationToIndex[myRotation];
+    }
+
+    public void TargetingAreaRotate(bool isClockwise) {
+        if (isClockwise) {
+            GetComponent<IComponentWithTarget>().GetRangeOrigin().Rotate(0,90,0);
+        } else {
+            GetComponent<IComponentWithTarget>().GetRangeOrigin().Rotate(0,-90,0);
+        }
+        rotationChangedEvent?.Invoke();
     }
 
     public void SetUpBasedOnRotation() {
@@ -190,37 +220,51 @@ public class TrainBuilding : MonoBehaviour {
     }
     
     public void SetGfxBasedOnRotation() {
-        if (canBeRotatedSides || canBeRotatedUp) {
-            switch (myRotation) {
-                case Rots.left:
-                    transform.localRotation = Quaternion.Euler(0, 90, 0);
-                    break;
-                case Rots.right:
-                    transform.localRotation = Quaternion.Euler(0, -90, 0);
-                    break;
-                case Rots.forward:
-                    transform.localRotation = Quaternion.Euler(0, 0, 0);
-                    break;
-                case Rots.backwards:
-                    transform.localRotation = Quaternion.Euler(0, 180, 0);
-                    break;
-            }
+        if (!occupiesEntireSlot) {
+            if (canBeRotatedSides || canBeRotatedUp) {
+                switch (myRotation) {
+                    case Rots.left:
+                        transform.localRotation = Quaternion.Euler(0, 90, 0);
+                        break;
+                    case Rots.right:
+                        transform.localRotation = Quaternion.Euler(0, -90, 0);
+                        break;
+                    case Rots.forward:
+                        transform.localRotation = Quaternion.Euler(0, 0, 0);
+                        break;
+                    case Rots.backwards:
+                        transform.localRotation = Quaternion.Euler(0, 180, 0);
+                        break;
+                }
 
-            switch (myRotation) {
-                case Rots.left:
-                case Rots.right:
-                    if (sideGfx != null)
-                        sideGfx.SetActive(true);
-                    if (topGfx != null)
-                        topGfx.SetActive(false);
-                    break;
-                case Rots.forward:
-                case Rots.backwards:
-                    if (sideGfx != null)
-                        sideGfx.SetActive(false);
-                    if (topGfx != null)
-                        topGfx.SetActive(true);
-                    break;
+                switch (myRotation) {
+                    case Rots.left:
+                    case Rots.right:
+                        if (sideGfx != null)
+                            sideGfx.SetActive(true);
+                        if (topGfx != null)
+                            topGfx.SetActive(false);
+                        break;
+                    case Rots.forward:
+                    case Rots.backwards:
+                        if (sideGfx != null)
+                            sideGfx.SetActive(false);
+                        if (topGfx != null)
+                            topGfx.SetActive(true);
+                        break;
+                }
+            }
+        } else {
+            if (mySlot != null) {
+                if (frontGfx != null && backGfx != null) {
+                    if (mySlot.isFrontSlot) {
+                        frontGfx.SetActive(true);
+                        backGfx.SetActive(false);
+                    } else {
+                        frontGfx.SetActive(false);
+                        backGfx.SetActive(true);
+                    }
+                }
             }
         }
     }

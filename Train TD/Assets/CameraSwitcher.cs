@@ -13,9 +13,7 @@ public class CameraSwitcher : MonoBehaviour {
 
 	public Transform curTarget;
 	public bool isEngaged = false;
-	private void Start() {
-		_targets = GetComponentsInChildren<CameraTarget>();
-	}
+
 
 	private void Update() {
 		if (isEngaged) {
@@ -25,6 +23,7 @@ public class CameraSwitcher : MonoBehaviour {
 	}
 
 	public void Engage() {
+		_targets = GetComponentsInChildren<CameraTarget>();
 		PickTargetAndSwitch();
 		isEngaged = true;
 	}

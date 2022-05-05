@@ -23,6 +23,8 @@ public class LevelReferences : MonoBehaviour {
     public GameObject metalBulletHitEffectPrefab;
     public GameObject dirtBulletHitEffectPrefab;
     public GameObject rocketExplosionEffectPrefab;
+    public GameObject mortarExplosionEffectPrefab;
+    public GameObject mortarMiniHitPrefab;
     public GameObject waveDisplayPrefab;
     public GameObject partHealthPrefab;
     public Transform uiDisplayParent;

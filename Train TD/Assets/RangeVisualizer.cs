@@ -88,9 +88,9 @@ public class RangeVisualizer : MonoBehaviour {
 
     void Update()
     {
-        if (!trainBuilding.isBuilt) {
+        //if (!trainBuilding.isBuilt) {
             DrawRangeEdge();
-        }
+        //}
         
         DrawTargeter();
     }

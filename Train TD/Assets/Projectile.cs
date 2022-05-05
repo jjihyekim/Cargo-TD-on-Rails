@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Sirenix.OdinInspector;
 using UnityEngine;
 
 public class Projectile : MonoBehaviour {
@@ -10,6 +11,7 @@ public class Projectile : MonoBehaviour {
     public float seekAcceleration = 200f;
     public float speed = 5f;
     public float damage = 20f;
+    public float mortarRange = 2f;
 
     public float lifetime = 20f;
     
@@ -29,16 +31,40 @@ public class Projectile : MonoBehaviour {
 
     
     public enum HitType {
-        Bullet, Rocket
+        Bullet, Rocket, Mortar
     }
 
     public HitType myHitType = HitType.Bullet;
+
+    public Vector3 mortarGravity = new Vector3(0, -9.81f, 0f);
+    private Vector3 mortarVelocity;
     private void Start() {
         Invoke("DestroySelf", lifetime);
-        if (myHitType != HitType.Rocket) {
-            curSpeed = speed;
-            curSeekStrength = seekStrength;
+
+        switch (myHitType) {
+            case HitType.Bullet:
+                curSpeed = speed;
+                curSeekStrength = seekStrength;
+                break;
+            
+            case HitType.Rocket:
+                curSpeed = 0;
+                curSeekStrength = 0;
+                break;
+            
+            case HitType.Mortar:
+                curSpeed = speed;
+                curSeekStrength = seekStrength;
+                
+                float angle = 90- Vector3.Angle(Vector3.up, transform.forward);
+                float gx = mortarGravity.y * Vector3.Distance(transform.position, target.position);
+                float sinVal = 0.5f* Mathf.Sin(angle);
+                float velocity = Mathf.Sqrt(Mathf.Abs(gx / sinVal));
+
+                mortarVelocity = transform.forward * velocity;
+                break;
         }
+        
     }
 
     void DestroySelf() {
@@ -47,6 +73,7 @@ public class Projectile : MonoBehaviour {
 
     void Update() {
         if (!isDead) {
+            
             if (isTargetSeeking) {
                 if (target != null) {
                     var targetLook = Quaternion.LookRotation(target.position - transform.position);
@@ -67,7 +94,17 @@ public class Projectile : MonoBehaviour {
                 }
             }
 
-            GetComponent<Rigidbody>().MovePosition(transform.position + transform.forward * curSpeed * Time.deltaTime);
+            switch (myHitType) {
+                case HitType.Bullet:
+                case HitType.Rocket:
+                    
+                    GetComponent<Rigidbody>().MovePosition(transform.position + transform.forward * curSpeed * Time.deltaTime);
+                    break;
+                case HitType.Mortar:
+                    GetComponent<Rigidbody>().MovePosition(transform.position + (transform.forward * curSpeed + mortarVelocity) * Time.deltaTime);
+                    mortarVelocity += mortarGravity * Time.deltaTime;
+                    break;
+            }
         }
     }
 
@@ -105,15 +142,25 @@ public class Projectile : MonoBehaviour {
                 case HitType.Rocket:
                     hitPrefab = LevelReferences.s.rocketExplosionEffectPrefab;
                     break;
+                case HitType.Mortar:
+                    hitPrefab = null;
+                    break;
             }
 
-            var health = target.GetComponentInParent<IHealth>();
+            if (myHitType != HitType.Mortar) {
+                var health = target.GetComponentInParent<IHealth>();
 
-            if (health != null) {
-                health.DealDamage(damage);
+                if (health != null) {
+                    health.DealDamage(damage);
+                }
+            } else {
+                MortarDamage();
             }
 
-            Instantiate(hitPrefab, transform.position, transform.rotation);
+            if (hitPrefab != null) {
+                Instantiate(hitPrefab, transform.position, transform.rotation);
+            }
+
             SmartDestroySelf();
         }
     }
@@ -140,7 +187,7 @@ public class Projectile : MonoBehaviour {
                 var enemy = other.transform.root.GetComponent<EnemyTypeData>();
                 
                 if (enemy != null && !isPlayerBullet) {
-                    // make enemy projectiles not hit the player
+                    // make enemy projectiles not hit the player projectiles
                     return;
                 }
                 
@@ -151,11 +198,43 @@ public class Projectile : MonoBehaviour {
                     case HitType.Rocket:
                         ExplosiveDamage(other);
                         break;
+                    case HitType.Mortar:
+                        MortarDamage();
+                        break;
                 }
 
                 SmartDestroySelf();
             }
         }
+    }
+    
+    private void MortarDamage() {
+        GameObject hitPrefab = LevelReferences.s.mortarExplosionEffectPrefab;
+        GameObject miniHitPrefab = LevelReferences.s.mortarMiniHitPrefab;
+
+        var targets = Physics.OverlapSphere(transform.position, mortarRange);
+
+        var healthsInRange = new List<IHealth>();
+        var healthsInRangeGms = new List<GameObject>();
+        for (int i = 0; i < targets.Length; i++) {
+            var target = targets[i];
+            
+            var health = target.gameObject.GetComponentInParent<IHealth>();
+            if (health != null && !health.IsPlayer()) {
+                if (!healthsInRange.Contains(health)) {
+                    healthsInRange.Add(health);
+                }
+            }
+
+
+            
+        }
+
+        foreach (var health in healthsInRange) {
+            health.DealDamage(damage);
+            Instantiate(miniHitPrefab, health.GetGameObject().transform.position, Quaternion.identity);
+        }
+        Instantiate(hitPrefab, transform.position, Quaternion.identity);
     }
 
     private void ExplosiveDamage(Collision other) {

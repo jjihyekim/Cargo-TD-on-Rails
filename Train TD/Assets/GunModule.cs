@@ -16,6 +16,7 @@ public class GunModule : MonoBehaviour, IComponentWithTarget {
     public Transform target;
 
 
+    public bool mortarRotation = false;
     public float fireDelay = 2f;
     public int fireBarrageCount = 5;
     public float fireBarrageDelay = 0.1f;
@@ -26,18 +27,32 @@ public class GunModule : MonoBehaviour, IComponentWithTarget {
     public bool CanShoot = false;
 
     public bool isPlayer = false;
+
+    public Transform rangeOrigin;
     private void Update() {
         if (target != null) {
-            for (int i = 0; i < rotateTransforms.Length; i++) {
-                var rotateTransform = rotateTransforms[i].transform;
-                var lookRotation = Quaternion.LookRotation(target.position - rotateTransform.position, Vector3.up);
-                rotateTransform.rotation = Quaternion.Lerp(rotateTransform.rotation, lookRotation, rotateSpeed * Time.deltaTime);
-                if (Quaternion.Angle(rotateTransform.rotation, lookRotation) < 5) {
-                    CanShoot = true;
-                }
-            }
+            // Look at target
+            LookAtLocation(target.position);
 
             if (rotateTransforms.Length == 0) {
+                CanShoot = true;
+            }
+        } else {
+            
+            // look at center of targeting area
+            LookAtLocation(GetRangeOrigin().position + GetRangeOrigin().forward*5);
+        }
+    }
+
+    private void LookAtLocation(Vector3 location) {
+        for (int i = 0; i < rotateTransforms.Length; i++) {
+            var rotateTransform = rotateTransforms[i].transform;
+            var lookAxis = location - rotateTransform.position;
+            if (mortarRotation)
+                lookAxis.y = 0;
+            var lookRotation = Quaternion.LookRotation(lookAxis, Vector3.up);
+            rotateTransform.rotation = Quaternion.Lerp(rotateTransform.rotation, lookRotation, rotateSpeed * Time.deltaTime);
+            if (Quaternion.Angle(rotateTransform.rotation, lookRotation) < 5) {
                 CanShoot = true;
             }
         }
@@ -144,7 +159,11 @@ public class GunModule : MonoBehaviour, IComponentWithTarget {
     }
 
     public Transform GetRangeOrigin() {
-        return transform; 
+        if (rangeOrigin != null) {
+            return rangeOrigin;
+        } else {
+            return transform;
+        }
     }
 
     public Transform GetActiveTarget() {

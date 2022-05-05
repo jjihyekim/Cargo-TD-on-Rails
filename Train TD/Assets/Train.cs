@@ -33,7 +33,7 @@ public class Train : MonoBehaviour {
 
 
     private void Start() {
-        UpdateBasedOnLevelData();
+        //UpdateBasedOnLevelData();
     }
 
     public void UpdateBasedOnLevelData() {

@@ -20,6 +20,19 @@ public class Slot : MonoBehaviour/*, IPointerEnterHandler, IPointerExitHandler*/
 		return isAllSlotsEmpty;
 	}
 
+	public bool isSlotNeedToBeCut() {
+		for (int i = 0; i < myBuildings.Length; i++) {
+			if (myBuildings[i] != null) {
+				if (myBuildings[i].occupiesEntireSlot) {
+					return true;
+				}
+			}
+		}
+
+		return false;
+	}
+
+
 	int DistanceFromFront() {
 		return (GetComponentInParent<Cart>().index * 2) + (isFrontSlot ? 0 : 1);
 	}
@@ -54,7 +67,7 @@ public class Slot : MonoBehaviour/*, IPointerEnterHandler, IPointerExitHandler*/
 			for (int i = 0; i < myBuildings.Length; i++) {
 				myBuildings[i] = building;
 			}
-			building.mySlotIndex = 1;
+			building.mySlotIndex = 0;
 		} else {
 			myBuildings[slot] = building;
 			myBuildings[slot].mySlotIndex = slot;
@@ -62,6 +75,10 @@ public class Slot : MonoBehaviour/*, IPointerEnterHandler, IPointerExitHandler*/
 
 		myBuildings[slot].transform.SetParent(transform);
 		myBuildings[slot].transform.localPosition = Vector3.zero;
+
+		building.mySlot = this;
+		
+		GetComponentInParent<Cart>().SlotsAreUpdated();
 	}
 
 	public void RemoveBuilding(TrainBuilding building) {
@@ -70,5 +87,9 @@ public class Slot : MonoBehaviour/*, IPointerEnterHandler, IPointerExitHandler*/
 				myBuildings[i] = null;
 			}
 		}
+		
+		building.mySlot = null;
+		
+		GetComponentInParent<Cart>().SlotsAreUpdated();
 	}
 }

@@ -11,11 +11,43 @@
     "enemyWaves": [
         {
             "enemyUniqueName": "Supply",
-            "enemyData": -1.0,
+            "enemyData": 1.0,
             "isLeft": true,
             "enemyPathType": "backFarToClose",
-            "startDistance": 10,
-            "headsUpTime": 600.0
+            "startDistance": 0,
+            "headsUpTime": 0.0
+        },
+        {
+            "enemyUniqueName": "Supply",
+            "enemyData": 1.0,
+            "isLeft": true,
+            "enemyPathType": "backFarToClose",
+            "startDistance": 30,
+            "headsUpTime": 0.0
+        },
+        {
+            "enemyUniqueName": "Supply",
+            "enemyData": 1.0,
+            "isLeft": true,
+            "enemyPathType": "backFarToClose",
+            "startDistance": 60,
+            "headsUpTime": 0.0
+        },
+        {
+            "enemyUniqueName": "Supply",
+            "enemyData": 1.0,
+            "isLeft": true,
+            "enemyPathType": "backFarToClose",
+            "startDistance": 90,
+            "headsUpTime": 0.0
+        },
+        {
+            "enemyUniqueName": "Supply",
+            "enemyData": 5.0,
+            "isLeft": false,
+            "enemyPathType": "backFarToClose",
+            "startDistance": 150,
+            "headsUpTime": 0.0
         }
     ],
     "startingMoney": 1000,

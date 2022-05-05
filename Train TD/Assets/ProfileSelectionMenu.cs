@@ -6,9 +6,6 @@ using UnityEngine;
 public class ProfileSelectionMenu : MonoBehaviour {
     public static ProfileSelectionMenu s;
 
-    private void Awake() {
-        s = this;
-    }
 
     public GameObject[] goToDisableInProfileMenu;
     public MonoBehaviour[] monoToDisableInProfileMenu;
@@ -25,26 +22,35 @@ public class ProfileSelectionMenu : MonoBehaviour {
     public GameObject[] goToDisableAfterProfileMenu;
 
 
+    private void Awake() {
+        s = this;
+    }
+
     private void Start() {
         if (SceneLoader.s.isProfileMenu) {
-            for (int i = 0; i < monoToDisableInProfileMenu.Length; i++) {
-                monoToDisableInProfileMenu[i].enabled = false;
-            }
-
-            for (int i = 0; i < goToDisableInProfileMenu.Length; i++) {
-                goToDisableInProfileMenu[i].SetActive(false);
-            }
-
-            for (int i = 0; i < goToEnableInProfileMenu.Length; i++) {
-                goToEnableInProfileMenu[i].SetActive(true);
-            }
-
-            profileCameraSwithcer.Engage();
-            
-            ProfileUI.SetActive(true);
+            OpenProfileMenu();
         } else {
+            OpenProfileMenu(); // Because we need this to disable some stuff for us
             StartGame();
         }
+    }
+
+    private void OpenProfileMenu() {
+        for (int i = 0; i < monoToDisableInProfileMenu.Length; i++) {
+            monoToDisableInProfileMenu[i].enabled = false;
+        }
+
+        for (int i = 0; i < goToDisableInProfileMenu.Length; i++) {
+            goToDisableInProfileMenu[i].SetActive(false);
+        }
+
+        for (int i = 0; i < goToEnableInProfileMenu.Length; i++) {
+            goToEnableInProfileMenu[i].SetActive(true);
+        }
+
+        profileCameraSwithcer.Engage();
+
+        ProfileUI.SetActive(true);
     }
 
     public void StartGame() {

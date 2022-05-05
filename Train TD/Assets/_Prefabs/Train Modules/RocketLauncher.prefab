@@ -731,6 +731,8 @@ MonoBehaviour:
   occupiesEntireSlot: 0
   sideGfx: {fileID: 0}
   topGfx: {fileID: 6599868590226706039}
+  frontGfx: {fileID: 0}
+  backGfx: {fileID: 0}
   myUITargetTransforms:
   - possibleRotations: 00000000010000000200000003000000
     transform: {fileID: 4048679246776914360}
@@ -760,10 +762,10 @@ MonoBehaviour:
   bulletPrefab: {fileID: 7110668419382630654, guid: 38d2797b60af6b3449dea991dc05d6f3, type: 3}
   muzzleFlashPrefab: {fileID: 9155879028066676231, guid: 20718e1ecbf4a0a48851a1815d4ceeaa, type: 3}
   target: {fileID: 0}
-  fireDelay: 3
-  fireBarrageCount: 1
-  fireBarrageDelay: 0.1
-  projectileDamage: 20
+  fireDelay: 2
+  fireBarrageCount: 2
+  fireBarrageDelay: 0.5
+  projectileDamage: 15
   rotateSpeed: 10
   CanShoot: 0
   isPlayer: 1
@@ -812,8 +814,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b09e23bb0990b1b4e9262ab25f3b6442, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxHealth: 100
-  currentHealth: 100
+  maxHealth: 300
+  currentHealth: 300
   healthBar: {fileID: 0}
   explodePrefab: {fileID: 1046195756885079355, guid: 14455273e5a26a947a26caf9a4dfdd38, type: 3}
   isDead: 0

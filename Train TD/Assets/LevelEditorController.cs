@@ -100,4 +100,10 @@ public class LevelEditorController : MonoBehaviour {
 	public void OnEndDrag(PointerEventData eventData, MiniGUI_LevelEditorLane pathType) {
 		throw new System.NotImplementedException();
 	}
+
+
+	[Button]
+	public void SaveSelectedLevel() {
+		LevelDataLoader.s.SaveLevel(selectedLevel);
+	}
 }

@@ -59,4 +59,8 @@ public class ModuleHealth : MonoBehaviour, IHealth {
     public bool IsPlayer() {
         return true;
     }
+
+    public GameObject GetGameObject() {
+        return gameObject;
+    }
 }

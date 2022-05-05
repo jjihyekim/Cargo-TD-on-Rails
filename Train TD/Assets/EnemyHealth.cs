@@ -55,7 +55,11 @@ public class EnemyHealth : MonoBehaviour, IHealth {
 	public bool IsPlayer() {
 		return false;
 	}
-	
+
+	public GameObject GetGameObject() {
+		return gameObject;
+	}
+
 #if UNITY_EDITOR
 	[MethodButton("Die")]
 	[SerializeField] private bool editorFoldout;
@@ -66,4 +70,5 @@ public class EnemyHealth : MonoBehaviour, IHealth {
 public interface IHealth {
 	public void DealDamage(float damage);
 	public bool IsPlayer();
+	public GameObject GetGameObject();
 }
