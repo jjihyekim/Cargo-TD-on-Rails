@@ -57,7 +57,7 @@ public class FeedbackSender : MonoBehaviour {
 
     public void ShowMenu() {
         if (SceneLoader.s.isLevelInProgress) {
-            TimeController.s.Pause();
+            Pauser.s.Pause();
         }
         
         isMenuActive = true;

@@ -48,6 +48,12 @@ public class StarterUIController : MonoBehaviour {
 		for (int i = 0; i < allLevels.Count; i++) {
 			allLevelButtons[i] = Instantiate(levelButtonPrefab, levelButtonParent).GetComponent<MiniGUI_LevelButton>().SetUp(allLevels[i]);
 		}
+		
+		Invoke(nameof(LateStart), 0.05f);
+	}
+
+	void LateStart() {
+		
 		if(SceneLoader.s.currentLevel != null && SceneLoader.s.currentLevel.isRealLevel())
 			SelectLevel(SceneLoader.s.currentLevel);
 	}

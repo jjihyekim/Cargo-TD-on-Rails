@@ -33,6 +33,8 @@ public class SceneLoader : MonoBehaviour {
     }
 
     [SerializeField] private GameState _gameState;
+
+    public bool autoOpenProfiles;
     
     public GameState myGameState {
         get {

@@ -323,6 +323,7 @@ GameObject:
   - component: {fileID: 7008067944604940962}
   - component: {fileID: 6301332213449025043}
   - component: {fileID: 1686153152247695351}
+  - component: {fileID: 8359827302131242970}
   m_Layer: 5
   m_Name: Module Health Bar
   m_TagString: Untagged
@@ -411,6 +412,18 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_HorizontalFit: 0
   m_VerticalFit: 1
+--- !u!225 &8359827302131242970
+CanvasGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3462678910104818603}
+  m_Enabled: 1
+  m_Alpha: 1
+  m_Interactable: 0
+  m_BlocksRaycasts: 0
+  m_IgnoreParentGroups: 0
 --- !u!1 &5057149720180279488
 GameObject:
   m_ObjectHideFlags: 0

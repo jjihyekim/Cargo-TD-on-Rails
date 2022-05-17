@@ -26,7 +26,7 @@ public class MiniGUI_ProfileDisplay : MonoBehaviour {
         moneyText.text = mySave.money.ToString();
         starText.text = mySave.reputation.ToString();
         profileName.text = mySave.saveName;
-        playTime.text = SpeedController.GetNiceTime(mySave.playtime + DataSaver.s.GetTimeSpentSinceLastSaving());
+        playTime.text = SpeedController.GetNiceTime(mySave.playtime);
     }
 
     public void SetStats(DataSaver.SaveFile save) {

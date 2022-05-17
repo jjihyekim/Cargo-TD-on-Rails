@@ -31,7 +31,7 @@ public class LevelDataScriptable : ScriptableObject {
 
 
 	[Header("Unlock Requirements")] 
-	public int reputation;
+	public int reputationRequirement;
 
 	public bool isRealLevel() {
 		return levelName != "unset";

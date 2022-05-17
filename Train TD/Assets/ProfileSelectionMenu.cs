@@ -22,6 +22,7 @@ public class ProfileSelectionMenu : MonoBehaviour {
     public GameObject[] goToDisableAfterProfileMenu;
 
     public MiniGUI_ProfileDisplay currentProfile;
+    public MenuToggle profileChangeMenu;
 
 
     public GameObject deleteSaveUI;
@@ -58,6 +59,11 @@ public class ProfileSelectionMenu : MonoBehaviour {
         profileCameraSwithcer.Engage();
 
         ProfileUI.SetActive(true);
+
+        if (SceneLoader.s.autoOpenProfiles) {
+            profileChangeMenu.ShowMenu();
+            SceneLoader.s.autoOpenProfiles = false;
+        }
     }
 
     public void StartGame() {
@@ -82,7 +88,9 @@ public class ProfileSelectionMenu : MonoBehaviour {
     }
 
     public void SaveChanged() {
-        currentProfile.SetStats(DataSaver.s.GetCurrentSave());
+        SceneLoader.s.autoOpenProfiles = true;
+        SceneLoader.s.OpenProfileScreen();
+        //currentProfile.SetStats(DataSaver.s.GetCurrentSave());
     }
 
     public void DeleteSaveDialog(DataSaver.SaveFile saveFile) {
@@ -93,16 +101,15 @@ public class ProfileSelectionMenu : MonoBehaviour {
     public void DeleteConfirm() {
         deleteSaveUI.SetActive(false);
         DataSaver.s.ClearCurrentSave();
-        SaveChanged();
+        /*SaveChanged();
         ProfileUI.SetActive(false);
-        ProfileUI.SetActive(true);
-        SceneLoader.s.OpenProfileScreen();
+        ProfileUI.SetActive(true);*/
+        SaveChanged();
     }
 
     public void DeleteCancel() {
         deleteSaveUI.SetActive(false);
     }
-
 
 
     public void QuitGame() {

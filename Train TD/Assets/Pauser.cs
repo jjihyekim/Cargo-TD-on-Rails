@@ -6,6 +6,13 @@ using UnityEngine.Analytics;
 using UnityEngine.InputSystem;
 
 public class Pauser : MonoBehaviour {
+
+    public static Pauser s;
+
+    private void Awake() {
+        s = this;
+    }
+
     public InputActionReference pauseButton;
 
     public bool isPaused = false;
@@ -31,14 +38,12 @@ public class Pauser : MonoBehaviour {
 
     void TogglePause() {
         if (SceneLoader.s.isLevelInProgress) {
+            isPaused = !isPaused;
+            
             if (isPaused) {
-                pauseMenu.SetActive(false);
-                TimeController.s.UnPause();
-                isPaused = false;
+                Pause();
             } else {
-                pauseMenu.SetActive(true);
-                TimeController.s.Pause();
-                isPaused = true;
+                Unpause();
             }
         }
     }
@@ -49,9 +54,17 @@ public class Pauser : MonoBehaviour {
     }
 
 
+    public void Pause() {
+        
+            pauseMenu.SetActive(true);
+            TimeController.s.Pause();
+            isPaused = true;
+    }
+
     public void Unpause() {
-        isPaused = true;
-        TogglePause();
+        pauseMenu.SetActive(false);
+        TimeController.s.UnPause();
+        isPaused = false;
     }
 
     public void AbandonMission() {

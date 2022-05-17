@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 246597763}
   - component: {fileID: 246597765}
   - component: {fileID: 246597764}
-  m_Layer: 5
+  m_Layer: 6
   m_Name: Image
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -90,7 +90,7 @@ GameObject:
   - component: {fileID: 293097940}
   - component: {fileID: 293097939}
   - component: {fileID: 293097938}
-  m_Layer: 5
+  m_Layer: 6
   m_Name: Version
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -146,8 +146,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: 0.0.0.0.a
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
-  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 4debc8fd45be08c46a063f95d627c571, type: 2}
+  m_sharedMaterial: {fileID: 3778325746667235197, guid: 4debc8fd45be08c46a063f95d627c571, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -239,7 +239,7 @@ GameObject:
   - component: {fileID: 638423089}
   - component: {fileID: 638423088}
   - component: {fileID: 638423087}
-  m_Layer: 5
+  m_Layer: 6
   m_Name: VersionOverlay
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -339,7 +339,7 @@ GameObject:
   - component: {fileID: 1104735775}
   - component: {fileID: 1104735774}
   - component: {fileID: 1104735773}
-  m_Layer: 5
+  m_Layer: 6
   m_Name: Loading
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -427,7 +427,7 @@ GameObject:
   - component: {fileID: 1435427847}
   - component: {fileID: 1435427849}
   - component: {fileID: 1435427848}
-  m_Layer: 5
+  m_Layer: 6
   m_Name: Text (TMP)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -483,7 +483,7 @@ MonoBehaviour:
       m_Calls: []
   m_text: Now Loading
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 4debc8fd45be08c46a063f95d627c571, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
@@ -547,7 +547,7 @@ MonoBehaviour:
   m_margin: {x: 0, y: 0, z: 0, w: 0}
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
-  m_hasFontAssetChanged: 0
+  m_hasFontAssetChanged: 1
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
 --- !u!1 &1623367207
@@ -637,7 +637,7 @@ GameObject:
   - component: {fileID: 1740159618}
   - component: {fileID: 1740159617}
   - component: {fileID: 3380069376071540210}
-  m_Layer: 5
+  m_Layer: 6
   m_Name: LoadingScreen
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -792,24 +792,30 @@ MonoBehaviour:
     - saveName: unnamed
       isActiveSave: 0
       isRealSaveFile: 0
+      playtime: 0
       money: 0
       debugExtraReputation: 0
       missionStatsList: []
       upgradeDatas: []
+      lastLoadedLevelName: unset
     - saveName: unnamed
       isActiveSave: 0
       isRealSaveFile: 0
+      playtime: 0
       money: 0
       debugExtraReputation: 0
       missionStatsList: []
       upgradeDatas: []
+      lastLoadedLevelName: unset
     - saveName: unnamed
       isActiveSave: 0
       isRealSaveFile: 0
+      playtime: 0
       money: 0
       debugExtraReputation: 0
       missionStatsList: []
       upgradeDatas: []
+      lastLoadedLevelName: unset
     loadingComplete: 0
     dontSave: 0
 --- !u!114 &1066860337956249595
@@ -830,9 +836,7 @@ MonoBehaviour:
   initialScene:
     sceneAsset: {fileID: 102900000, guid: 2b3d3c1d30140c74aa87fe8adbf95267, type: 3}
     scenePath: Assets/Scenes/InitialScene.unity
-  isLevelStarted: 0
-  isLevelFinished: 0
-  currentLevel:
+  _currentLevel:
     levelName: unset
     levelMenuOrder: -1
     trainLength: 3
@@ -844,7 +848,9 @@ MonoBehaviour:
     bestEngineSpeed: 200
     mediumEngineSpeed: 150
     worstEngineSpeed: 100
-  isProfileMenu: 1
+    reputationRequirement: 0
+  _gameState: 0
+  autoOpenProfiles: 0
   loadingScreen: {fileID: 1740159616}
   canvasGroup: {fileID: 3380069376071540210}
   isLoading: 0
@@ -898,7 +904,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   levelDataScriptables:
-  - {fileID: 11400000, guid: 490a7b36f8d0c3d478696cdb10bf7e69, type: 2}
   - {fileID: 11400000, guid: c393bb40291095e48b464e33e27d5f70, type: 2}
   - {fileID: 11400000, guid: ccb0b51705e62014cacd8ff53e919759, type: 2}
   - {fileID: 11400000, guid: bc50ba83cf50eb14fa09fa94868f6b34, type: 2}
@@ -906,6 +911,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 9e5770406f9c9b84399a493bb35e0002, type: 2}
   - {fileID: 11400000, guid: 95b11dd1479751c4491c6821277cd4ba, type: 2}
   - {fileID: 11400000, guid: ed82e7fb7f2ca9f48aa6799e82551440, type: 2}
+  - {fileID: 11400000, guid: 490a7b36f8d0c3d478696cdb10bf7e69, type: 2}
   allLevels: []
 --- !u!1 &3704651199334984236
 GameObject:
@@ -916,7 +922,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6266586241280865971}
-  m_Layer: 5
+  m_Layer: 6
   m_Name: Fill Area
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -954,7 +960,7 @@ GameObject:
   - component: {fileID: 5785219740573968709}
   - component: {fileID: 1287662677575056548}
   - component: {fileID: 2190581590065194961}
-  m_Layer: 5
+  m_Layer: 6
   m_Name: Slider
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1055,10 +1061,8 @@ GameObject:
   m_Component:
   - component: {fileID: 5293120200943940537}
   - component: {fileID: 5247176016537061089}
-  - component: {fileID: 2681952517380366975}
   - component: {fileID: 2002237706439093763}
-  - component: {fileID: 1459590117734244759}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: UI Camera
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1110,7 +1114,7 @@ Camera:
   m_Depth: 0
   m_CullingMask:
     serializedVersion: 2
-    m_Bits: 32
+    m_Bits: 64
   m_RenderingPath: -1
   m_TargetTexture: {fileID: 0}
   m_TargetDisplay: 0
@@ -1122,19 +1126,6 @@ Camera:
   m_OcclusionCulling: 1
   m_StereoConvergence: 10
   m_StereoSeparation: 0.022
---- !u!114 &2681952517380366975
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4374342517513860973}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d394f089cc731084b8317f2087b15449, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  cam: {fileID: 5247176016537061089}
 --- !u!114 &2002237706439093763
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1167,14 +1158,6 @@ MonoBehaviour:
   m_RequiresDepthTexture: 0
   m_RequiresColorTexture: 0
   m_Version: 2
---- !u!81 &1459590117734244759
-AudioListener:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4374342517513860973}
-  m_Enabled: 1
 --- !u!1 &4724832847467580618
 GameObject:
   m_ObjectHideFlags: 0
@@ -1190,7 +1173,7 @@ GameObject:
   - component: {fileID: 7514282332275532355}
   m_Layer: 0
   m_Name: Main Camera
-  m_TagString: Untagged
+  m_TagString: MainCamera
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -1241,7 +1224,7 @@ Camera:
   m_Depth: 0
   m_CullingMask:
     serializedVersion: 2
-    m_Bits: 16151
+    m_Bits: 16183
   m_RenderingPath: -1
   m_TargetTexture: {fileID: 0}
   m_TargetDisplay: 0
@@ -1318,7 +1301,7 @@ GameObject:
   - component: {fileID: 8308122798738817438}
   - component: {fileID: 1660591511657261107}
   - component: {fileID: 1264746801837658397}
-  m_Layer: 5
+  m_Layer: 6
   m_Name: Fill
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1393,7 +1376,7 @@ GameObject:
   - component: {fileID: 4842352021938322458}
   - component: {fileID: 7554808487897938371}
   - component: {fileID: 3694242813614726106}
-  m_Layer: 5
+  m_Layer: 6
   m_Name: Background
   m_TagString: Untagged
   m_Icon: {fileID: 0}

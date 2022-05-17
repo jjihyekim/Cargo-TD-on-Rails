@@ -60,6 +60,9 @@ public class DataSaver {
 		ActiveSave = id;
 		allSaves[activeSave].isActiveSave = true;
 		SaveActiveGame();
+		
+		earlyLoadEvent?.Invoke();
+		loadEvent?.Invoke();
 	}
 
 	public float GetTimeSpentSinceLastSaving() {

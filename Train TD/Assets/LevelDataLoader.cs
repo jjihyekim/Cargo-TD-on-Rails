@@ -156,6 +156,8 @@ public class LevelDataLoader : MonoBehaviour {
         output.mediumEngineSpeed = input.mediumEngineSpeed;
         output.worstEngineSpeed = input.worstEngineSpeed;
 
+        output.reputationRequirement = input.reputationRequirement;
+
         return output;
     }
 }
