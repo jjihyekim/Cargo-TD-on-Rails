@@ -100,7 +100,7 @@ public class PlayerBuildingController : MonoBehaviour {
                     activeIndex = 0;
                 }
 
-                activeIndex = tempBuilding.SetRotationBasedOnIndex(activeIndex);
+                activeIndex = tempBuilding.SetRotationBasedOnIndex(activeIndex, slot.isFrontSlot);
                 
                 PlayerModuleSelector.s.playerBuildingDisableOverride = false;
             } else { //if it is still the same slot but a different side, then rotate our building
@@ -109,7 +109,7 @@ public class PlayerBuildingController : MonoBehaviour {
                 if (index != -1 && index != lastRaycastIndex) {
                     lastRaycastIndex = index;
                     activeIndex = index;
-                    activeIndex = tempBuilding.SetRotationBasedOnIndex(index);
+                    activeIndex = tempBuilding.SetRotationBasedOnIndex(index, true);
                     PlayerModuleSelector.s.playerBuildingDisableOverride = false;
                 }
             }
@@ -192,7 +192,7 @@ public class PlayerBuildingController : MonoBehaviour {
                 activeSlot.AddBuilding(newBuilding, activeIndex);
                 newBuilding.transform.position = activeSlot.transform.position;
                 newBuilding.CompleteBuilding();
-                if (SceneLoader.s.isLevelStarted)
+                if (SceneLoader.s.isLevelStarted())
                     MoneyController.s.SubtractMoney(newBuilding.cost);
 
                 LogData(currentlyMultiBuilding, newBuilding);

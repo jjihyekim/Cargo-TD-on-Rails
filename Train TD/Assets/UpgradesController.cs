@@ -30,7 +30,6 @@ public class UpgradesController : MonoBehaviour {
 		myUpgradeCompounds = UpgradesParent.GetComponentsInChildren<MiniGUI_UpgradeCompound>(true);
 		myUpgradeButtons = UpgradesParent.GetComponentsInChildren<MiniGUI_UpgradeButton>(true);
 		foreach (var upgradeCompound in myUpgradeCompounds) {
-			upgradeCompound.Initialize();
 			allUpgrades.Add(upgradeCompound.unlockUpgrade);
 			allUpgrades.Add(upgradeCompound.skillUpgrade1);
 			allUpgrades.Add(upgradeCompound.skillUpgrade2);
@@ -39,7 +38,11 @@ public class UpgradesController : MonoBehaviour {
 		foreach (var upgrade in allUpgrades) {
 			upgrade.Initialize();
 		}
-		
+
+		foreach (var upgradeCompound in myUpgradeCompounds) {
+			upgradeCompound.Initialize();
+		}
+
 		ChangeSelectedUpgrade(selectedUpgrade);
 	}
 
@@ -74,6 +77,8 @@ public class UpgradesController : MonoBehaviour {
 			previewBuilding.transform.localPosition = Vector3.zero;
 			previewBuilding.transform.localRotation = Quaternion.identity;
 			previewBuilding.CompleteBuilding(false);
+			
+			previewSlots[curSlot].AddBuilding(previewBuilding, previewBuilding.mySlotIndex);
 			
 			var rangeShower = previewBuilding.GetComponentInChildren<RangeVisualizer>(true);
 			//rangeShower.ChangeVisualizerStatus(true);
@@ -115,7 +120,7 @@ public class UpgradesController : MonoBehaviour {
 
 	public void BuyUpgrade(Upgrade toBuy) {
 		var mySave = DataSaver.s.GetCurrentSave();
-		if (!toBuy.isUnlocked && mySave.money > toBuy.cost) {
+		if (!toBuy.isUnlocked && mySave.money >= toBuy.cost) {
 			var index = mySave.upgradeDatas.FindIndex(x => x.upgradeName == toBuy.upgradeUniqueName);
 			if (index != -1) {
 				mySave.upgradeDatas[index].isUnlocked = true;
@@ -159,9 +164,12 @@ public class UpgradesController : MonoBehaviour {
 					curCycleCount += 1;
 				} else {
 					curCycleCount = 0;
+					previewSlots[curSlot].RemoveBuilding(previewBuilding);
 					curSlot += 1;
 					curSlot %= 2;
 					previewBuilding.transform.position = previewSlots[curSlot].transform.position;
+					previewSlots[curSlot].AddBuilding(previewBuilding, previewBuilding.mySlotIndex);
+					previewBuilding.SetUpBasedOnRotation();
 				}
 			} else {
 				curTime -= Time.deltaTime;

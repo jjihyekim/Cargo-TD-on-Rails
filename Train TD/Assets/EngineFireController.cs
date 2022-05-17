@@ -21,6 +21,8 @@ public class EngineFireController : MonoBehaviour {
 
     public static EngineFireController soundSource;
 
+    private EngineModule _engine;
+
     private void OnEnable() {
 	    if (soundSource == null)
 		    soundSource = this;
@@ -34,17 +36,26 @@ public class EngineFireController : MonoBehaviour {
     void Start() {
 	    _particleSystem = GetComponentInChildren<ParticleSystem>();
 	    _audio = GetComponentInChildren<AudioSource>();
+	    _engine = GetComponentInParent<EngineModule>();
 	    UpdateEngineParticleSystemValues();
     }
 
     private float lastSpeed = 0;
+    private int lastEnginePower = 100;
     public float lastSpeedSound = 0;
     //public float pitchRange = 0.2f;
     void Update()
     {
 	    if (Mathf.Abs(LevelReferences.s.speed - lastSpeed) > 0.1f) {
-		    UpdateEngineParticleSystemValues();
 		    lastSpeed = LevelReferences.s.speed;
+		    UpdateEngineParticleSystemValues();
+	    }
+
+	    if (_engine != null) {
+		    if (Mathf.Abs(lastEnginePower - _engine.enginePower) > 5) {
+			    lastEnginePower = _engine.enginePower;
+			    UpdateEngineParticleSystemValues();
+		    }
 	    }
 
 	    if (SceneLoader.s.isLevelInProgress) {
@@ -85,9 +96,10 @@ public class EngineFireController : MonoBehaviour {
     public bool isLevelFinishTriggered = false;
     void UpdateEngineParticleSystemValues() {
 	    var emissionModule = _particleSystem.emission;
-	    if (!SceneLoader.s.isLevelStarted) {
+	    var mainModule = _particleSystem.main;
+	    if (!SceneLoader.s.isLevelStarted()) {
 		    emissionModule.enabled = false;
-	    } else if(lastSpeed > 0.2f) {
+	    } else if(lastSpeed > 0.2f && lastEnginePower > 5) {
 		    emissionModule.enabled = true;
 		    var burst = emissionModule.GetBurst(0);
 		    currentDelay = Mathf.Max(baseDelay/(((LevelReferences.s.speed-1)*speedDelayEffect)+1), minDelay);
@@ -95,9 +107,18 @@ public class EngineFireController : MonoBehaviour {
 		    emissionModule.SetBurst(0, burst);
 		    var forceOverLifeTime = _particleSystem.forceOverLifetime;
 		    forceOverLifeTime.y = new ParticleSystem.MinMaxCurve(LevelReferences.s.speed * 25f);
+
+		    // Engine Boost
+		    if (lastEnginePower > 300) {
+			    mainModule.startSpeed = new ParticleSystem.MinMaxCurve(50, 80);
+		    }else if(lastEnginePower > 150){
+			    mainModule.startSpeed = new ParticleSystem.MinMaxCurve(20, 40);
+			} else {
+			    mainModule.startSpeed = new ParticleSystem.MinMaxCurve(5, 14);
+		    }
 	    } else {
 		    emissionModule.enabled = false;
-		    if (SceneLoader.s.isLevelFinished && !isLevelFinishTriggered) {
+		    if (SceneLoader.s.isLevelFinished() && !isLevelFinishTriggered) {
 			    isLevelFinishTriggered = true;
 			    _audio.clip = speedSounds[0];
 			    _particleSystem.Stop();

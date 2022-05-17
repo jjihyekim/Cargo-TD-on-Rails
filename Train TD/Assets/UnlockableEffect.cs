@@ -10,7 +10,7 @@ public abstract class UnlockableEffect : MonoBehaviour {
     public Upgrade unlockingUpgrade;
     
     
-    void Start()
+    void  Start()
     {
         if (!isUnlocked) {
             if (UpgradesController.s.unlockedUpgrades.Contains(unlockingUpgrade.upgradeUniqueName)) {

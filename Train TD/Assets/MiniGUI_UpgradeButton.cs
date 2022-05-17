@@ -54,7 +54,9 @@ public class MiniGUI_UpgradeButton : MonoBehaviour {
             bg.color = boughtColor;
 
         } else {
-            if (mySave.money >= myUpgrade.cost) {
+            var isParentUnlocked = myUpgrade.parentUpgrade == null || myUpgrade.parentUpgrade == myUpgrade || myUpgrade.parentUpgrade.isUnlocked;
+            
+            if (mySave.money >= myUpgrade.cost && isParentUnlocked) {
                 upgradeButton.interactable = true;
             } else {
                 upgradeButton.interactable = false;

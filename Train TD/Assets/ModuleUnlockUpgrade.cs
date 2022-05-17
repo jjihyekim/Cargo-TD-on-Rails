@@ -9,6 +9,6 @@ public class ModuleUnlockUpgrade : Upgrade {
     
     
     public override void _ApplyUniqueName() {
-        upgradeUniqueName = module.uniqueName;
+        //upgradeUniqueName = module.uniqueName;
     }
 }

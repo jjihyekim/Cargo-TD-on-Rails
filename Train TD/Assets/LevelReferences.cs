@@ -36,7 +36,7 @@ public class LevelReferences : MonoBehaviour {
     public GameObject scrapPile;
 
     public static List<ScrapPile> allScraps = new List<ScrapPile>();
-    public Cart[] carts = new Cart[0];
+    public Train train;
 
     
     public Material hologramBuildable;

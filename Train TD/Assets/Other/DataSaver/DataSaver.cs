@@ -50,18 +50,26 @@ public class DataSaver {
 		return allSaves[ActiveSave];
 	}
 
+	private float saveStartTime = 0f;
 	public void SetActiveSave(int id) {
+		allSaves[activeSave].playtime += Time.realtimeSinceStartup - saveStartTime;
 		allSaves[activeSave].isActiveSave = false;
 		SaveActiveGame();
-		
+
+		saveStartTime = Time.realtimeSinceStartup;
 		ActiveSave = id;
 		allSaves[activeSave].isActiveSave = true;
 		SaveActiveGame();
 	}
 
+	public float GetTimeSpentSinceLastSaving() {
+		return Time.realtimeSinceStartup - saveStartTime;
+	}
+
 	public void ClearCurrentSave() {
 		Debug.Log("Clearing Save");
 		allSaves[ActiveSave] = MakeNewSaveFile(ActiveSave);
+		saveStartTime = Time.realtimeSinceStartup;
 	}
 	
 	public SaveFile MakeNewSaveFile(int id) {
@@ -77,6 +85,8 @@ public class DataSaver {
 		if (!dontSave) {
 			earlySaveEvent?.Invoke();
 			saveEvent?.Invoke();
+			GetCurrentSave().playtime += Time.realtimeSinceStartup - saveStartTime;
+			saveStartTime = Time.realtimeSinceStartup;
 			Save(ActiveSave);
 		}
 	}
@@ -138,6 +148,8 @@ public class DataSaver {
 			allSaves[ActiveSave].isActiveSave = true;
 		}
 
+		
+		saveStartTime = Time.realtimeSinceStartup;
 		earlyLoadEvent?.Invoke();
 		loadEvent?.Invoke();
 		loadingComplete = true;
@@ -164,22 +176,29 @@ public class DataSaver {
 		public bool isActiveSave = false;
 		public bool isRealSaveFile = false;
 
+		public float playtime;
+
 		public int money = 0;
 
 		public int reputation {
 			get {
 				var rep = 0;
 				foreach (var mission in missionStatsList) {
-					rep += mission.isWon ? 1 : 0 + mission.cargoStars + mission.speedStars;
+					rep += (mission.isWon ? 1 : 0) + mission.cargoStars + mission.speedStars;
 				}
 
+				rep += debugExtraReputation;
+				
 				return rep;
 			}
 		}
 
+		public int debugExtraReputation = 0;
+
 		public List<MissionStats> missionStatsList = new List<MissionStats>();
 		public List<UpgradeData> upgradeDatas = new List<UpgradeData>();
 
+		public string lastLoadedLevelName = "unset";
 
 		public MissionStats GetCurrentMission() {
 			var mySave = s.GetCurrentSave();

@@ -28,6 +28,7 @@ public class SpeedController : MonoBehaviour {
 
     public float enginePower = 0;
     public float enginePowerTarget = 0;
+    public float engineSpeedBoost = 1f;
 
     public TMP_Text enginePowerText;
 
@@ -49,6 +50,7 @@ public class SpeedController : MonoBehaviour {
         worstEngine = myLevel.worstEngineSpeed;
         missionDistance = myLevel.missionDistance;
         endTrainStation.startPos = Vector3.forward * missionDistance;
+        engineSpeedBoost = 1;
     }
 
     public void UpdateEnginePower(int change) {
@@ -60,12 +62,12 @@ public class SpeedController : MonoBehaviour {
     public float enginePowerChangeDelta = 100f;
     private void Update() {
         if (SceneLoader.s.isLevelInProgress) {
-            enginePower = Mathf.MoveTowards(enginePower, enginePowerTarget, enginePowerChangeDelta * engineCount * Time.deltaTime);
+            enginePower = Mathf.MoveTowards(enginePower, enginePowerTarget*engineSpeedBoost, enginePowerChangeDelta * engineCount * Time.deltaTime);
             LevelReferences.s.speed = EnginePowerToDistance(enginePower, 1f);
             enginePowerText.text = enginePower.ToString("F0");
             
             currentTime += Time.deltaTime;
-            timeText.text = GetTime(currentTime);
+            timeText.text = GetNiceTime(currentTime);
         
             currentDistance += EnginePowerToDistance(enginePower, Time.deltaTime);
         
@@ -94,7 +96,7 @@ public class SpeedController : MonoBehaviour {
                 MissionWinFinisher.s.MissionWon();
                 CalculateStopAcceleration();
             }
-        } else if (SceneLoader.s.isLevelFinished) {
+        } else if (SceneLoader.s.isLevelFinished()) {
             LevelReferences.s.speed  = Mathf.MoveTowards(LevelReferences.s.speed , 0, stopAcceleration * Time.deltaTime);;
             currentDistance += LevelReferences.s.speed * Time.deltaTime;
         }else {
@@ -113,7 +115,7 @@ public class SpeedController : MonoBehaviour {
     void CalculateStopAcceleration() {
         var speed =  EnginePowerToDistance(enginePower, 1f);
         var realStopDistance = stopDistance - (Mathf.Floor(SceneLoader.s.currentLevel.trainLength / 2f) * DataHolder.s.cartLength);
-        stopAcceleration = (speed * speed) / (2 * stopDistance);
+        stopAcceleration = (speed * speed) / (2 * realStopDistance);
     }
 
     public static float EnginePowerToDistance(float power, float deltaTime) {
@@ -124,13 +126,13 @@ public class SpeedController : MonoBehaviour {
         return remainingDistance / EnginePowerToDistance(power, 1);
     }
     
-    string GetTime(float time) {
+    public static string GetNiceTime(float time) {
         var minutes = (int) (time / 60);
         var remainingSeconds = (int) (time - minutes * 60);
         return (minutes.ToString("00") + ':' + remainingSeconds.ToString("00"));
     }
 
-    public string GetTime() {
-        return GetTime(currentTime);
+    public string GetNiceTime() {
+        return GetNiceTime(currentTime);
     }
 }

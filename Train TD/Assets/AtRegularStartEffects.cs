@@ -9,7 +9,7 @@ public class AtRegularStartEffects : MonoBehaviour
 
     private void Start() {
         // only engage if this is after the level has begun
-        if (!SceneLoader.s.isLevelStarted) {
+        if (!SceneLoader.s.isLevelStarted()) {
             Destroy(gameObject);
         } else {
             target.SetActive(true);

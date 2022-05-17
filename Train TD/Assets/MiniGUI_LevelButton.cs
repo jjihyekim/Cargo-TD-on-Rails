@@ -7,7 +7,7 @@ using UnityEngine.UI;
 
 public class MiniGUI_LevelButton : MonoBehaviour {
     [ReadOnly]
-    public LevelDataJson myData;
+    public LevelData myData;
     public TMP_Text levelName;
 
     public Image selectedBg;
@@ -20,13 +20,16 @@ public class MiniGUI_LevelButton : MonoBehaviour {
     public Image winStar;
     public Image[] speedStars;
     public Image[] cargoStars;
-    
-    
-    
+
+    public GameObject notUnlockedOverlay;
+    public TMP_Text starRequirement;
+
+
+
     public Color starActiveColor = Color.white;
     public Color starLostColor = Color.grey;
 
-    public MiniGUI_LevelButton SetUp(LevelDataJson data) {
+    public MiniGUI_LevelButton SetUp(LevelData data) {
         myData = data;
         levelName.text = myData.levelName;
 
@@ -43,8 +46,19 @@ public class MiniGUI_LevelButton : MonoBehaviour {
             SetStarAmount(speedStars, 0);
             SetStarAmount(cargoStars, 0);
         }
+        
+        SetLevelLockedStatus();
 
         return this;
+    }
+
+    public void SetLevelLockedStatus() {
+        if (myData.reputationRequirement > DataSaver.s.GetCurrentSave().reputation) {
+            notUnlockedOverlay.SetActive(true);
+            starRequirement.text = myData.reputationRequirement.ToString();
+        } else {
+            notUnlockedOverlay.SetActive(false);
+        }
     }
 
 

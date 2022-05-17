@@ -14,19 +14,23 @@ public abstract class ModuleAction : UnlockableEffect {
 
 	public float curCooldown = 0f;
 
+	[NonSerialized]
+	public bool canEngage = true; // Use this to lock engagement of actions, eg stop engine boosts while engine stop is in progress
 
 	public void EngageAction() {
-		if (curCooldown <= 0) {
-			if (cost > 0) {
-				if (MoneyController.s.money > cost) {
-					MoneyController.s.SubtractMoney(cost);
+		if (canEngage) {
+			if (curCooldown <= 0) {
+				if (cost > 0) {
+					if (MoneyController.s.money > cost) {
+						MoneyController.s.SubtractMoney(cost);
+						curCooldown = cooldown;
+						_EngageAction();
+					}
+				} else {
+					MoneyController.s.AddMoney(-cost);
 					curCooldown = cooldown;
 					_EngageAction();
 				}
-			} else {
-				MoneyController.s.AddMoney(-cost);
-				curCooldown = cooldown;
-				_EngageAction();
 			}
 		}
 	}

@@ -9,23 +9,50 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4b64c1bf62b866d4d896e8c4a0e7121a, type: 3}
+  m_Script: {fileID: 11500000, guid: db512ea5c3f84be49c44fcd62d024370, type: 3}
   m_Name: Test Level
   m_EditorClassIdentifier: 
+  levelName: Test Level
+  levelMenuOrder: 0
   trainLength: 5
   starterModules:
   - uniqueName: Engine
     count: 1
   enemyWaves:
   - enemyUniqueName: Supply
-    enemyData: -1
+    enemyData: 1
     isLeft: 1
     enemyPathType: 0
-    startDistance: 10
-    headsUpTime: 600
+    startDistance: 0
+    headsUpTime: 0
+  - enemyUniqueName: Supply
+    enemyData: 1
+    isLeft: 1
+    enemyPathType: 0
+    startDistance: 30
+    headsUpTime: 0
+  - enemyUniqueName: Supply
+    enemyData: 1
+    isLeft: 1
+    enemyPathType: 0
+    startDistance: 60
+    headsUpTime: 0
+  - enemyUniqueName: Supply
+    enemyData: 1
+    isLeft: 1
+    enemyPathType: 0
+    startDistance: 90
+    headsUpTime: 0
+  - enemyUniqueName: Supply
+    enemyData: 5
+    isLeft: 0
+    enemyPathType: 0
+    startDistance: 150
+    headsUpTime: 0
   startingMoney: 1000
   moneyGainSpeed: 5
   missionDistance: 8000
   bestEngineSpeed: 160
   mediumEngineSpeed: 130
   worstEngineSpeed: 100
+  reputation: 0

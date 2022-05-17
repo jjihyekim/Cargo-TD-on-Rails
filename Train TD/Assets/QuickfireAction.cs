@@ -6,12 +6,24 @@ public class QuickfireAction : ModuleAction {
 
 	[Space]
 	public float actionTime = 10f;
+	public float initialDelay = 2f;
+	
 	public float fireSpeedBoost = 10f;
 	protected override void _EngageAction() {
+		var gun = GetComponent<GunModule>();
 
-		GetComponent<GunModule>().fireDelay /= fireSpeedBoost;
+		gun.fireDelay /= fireSpeedBoost;
+		gun.StopShooting();
 		
-		Invoke("StopAction", actionTime);
+		
+		Invoke(nameof(StartShooting), initialDelay);
+		
+		Invoke(nameof(StopAction), initialDelay+actionTime);
+	}
+
+	void StartShooting() {
+		var gun = GetComponent<GunModule>();
+		gun.StartShooting();
 	}
 
 	void StopAction() {

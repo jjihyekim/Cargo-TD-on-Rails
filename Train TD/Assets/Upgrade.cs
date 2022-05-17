@@ -20,7 +20,8 @@ public class Upgrade : ScriptableObject {
     
     public Sprite icon;
     public string upgradeName;
-    [TextArea]
+    
+    [TextArea(2,20)]
     public string upgradeDescription;
 
     public ModuleUnlockUpgrade parentUpgrade;
@@ -28,15 +29,30 @@ public class Upgrade : ScriptableObject {
     public virtual void Initialize() {
         var mySave = DataSaver.s.GetCurrentSave();
 
-        isUnlocked = isUnlockedAtNewProfileStart;
-
         var index = mySave.upgradeDatas.FindIndex(x => x.upgradeName == upgradeUniqueName);
 
         if (index != -1) {
             isUnlocked = mySave.upgradeDatas[index].isUnlocked;
         }
 
+        // if this upgrade isnt unlocked yet, but need to be unlocked at start
+        if (!isUnlocked && isUnlockedAtNewProfileStart) {
+            UnlockUpgrade();
+        }
+        
+        isUnlocked = isUnlocked || isUnlockedAtNewProfileStart;
+
         ApplyUpgradeEffects();
+    }
+
+    void UnlockUpgrade() {
+        var mySave = DataSaver.s.GetCurrentSave();
+        var index = mySave.upgradeDatas.FindIndex(x => x.upgradeName == this.upgradeUniqueName);
+        if (index != -1) {
+            mySave.upgradeDatas[index].isUnlocked = true;
+        } else {
+            mySave.upgradeDatas.Add(new DataSaver.UpgradeData() { isUnlocked = true, upgradeName = this.upgradeUniqueName });
+        }
     }
 
     public void ApplyUpgradeEffects() {
@@ -45,6 +61,10 @@ public class Upgrade : ScriptableObject {
         if (isUnlocked) {
             if (!UpgradesController.s.unlockedUpgrades.Contains(upgradeUniqueName)) {
                 UpgradesController.s.unlockedUpgrades.Add(upgradeUniqueName);
+                if (this is ModuleUnlockUpgrade) {
+                    var module = (ModuleUnlockUpgrade)this;
+                    UpgradesController.s.unlockedUpgrades.Add(module.module.uniqueName);
+                }
             }
         }
     }

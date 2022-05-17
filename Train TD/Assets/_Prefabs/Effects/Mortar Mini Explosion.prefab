@@ -17,7 +17,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &5402357511743725928
 Transform:
   m_ObjectHideFlags: 0
@@ -39,7 +39,7 @@ AudioSource:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5854518818577166823}
-  m_Enabled: 0
+  m_Enabled: 1
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
   m_audioClip: {fileID: 8300000, guid: 379b47e8aff9ca043ad83d36906cf3ce, type: 3}
@@ -188,7 +188,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   slowBuildupSpeedPercentPerSecond: 0.2
-  currentSpeedPercent: 0
+  currentSpeedPercent: 0.5
 --- !u!114 &1599031291993196772
 MonoBehaviour:
   m_ObjectHideFlags: 0

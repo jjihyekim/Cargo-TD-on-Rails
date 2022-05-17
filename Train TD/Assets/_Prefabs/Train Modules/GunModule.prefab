@@ -275,6 +275,7 @@ GameObject:
   - component: {fileID: 4987274482128882662}
   - component: {fileID: 5187701212064737548}
   - component: {fileID: -5567612607224715663}
+  - component: {fileID: 4689215919536455629}
   m_Layer: 0
   m_Name: GunModule
   m_TagString: Untagged
@@ -328,15 +329,19 @@ MonoBehaviour:
   - {fileID: 2199384508793199889}
   cost: 50
   myRotation: 3
+  canBeTargetingAreaRotatable: 0
   occupiesEntireSlot: 0
   sideGfx: {fileID: 8793443569306674401}
   topGfx: {fileID: 6329249715763517730}
+  frontGfx: {fileID: 0}
+  backGfx: {fileID: 0}
   myUITargetTransforms:
   - possibleRotations: 0000000001000000
     transform: {fileID: 7161388625536572706}
   - possibleRotations: 0200000003000000
     transform: {fileID: 7245608951228961668}
   isBuilt: 0
+  autoSetUp: 0
   _outlines: []
 --- !u!114 &2934280374143819819
 MonoBehaviour:
@@ -360,6 +365,7 @@ MonoBehaviour:
   bulletPrefab: {fileID: 4908573584345181807, guid: 98bc522f3c4ff4b44a93406dcf01c13c, type: 3}
   muzzleFlashPrefab: {fileID: 980176138545819842, guid: 3a4d3fe2abd806c46964330e5993cfa2, type: 3}
   target: {fileID: 0}
+  mortarRotation: 0
   fireDelay: 1
   fireBarrageCount: 1
   fireBarrageDelay: 0.1
@@ -367,6 +373,10 @@ MonoBehaviour:
   rotateSpeed: 10
   CanShoot: 0
   isPlayer: 1
+  rangeOrigin: {fileID: 0}
+  barrageShot:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!114 &7371494607064308679
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -472,6 +482,25 @@ MonoBehaviour:
   curCooldown: 0
   actionTime: 10
   fireSpeedBoost: 10
+--- !u!114 &4689215919536455629
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3146471024428373951}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ffd4c45972e0fc54a84560b4d5de93b9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  curAmmo: 0
+  maxAmmo: 100
+  ammoPerShot: 5
+  damageMultiplier: 1
+  fireSpeedBoost: 1
+  isUnlocked: 0
+  unlockingUpgrade: {fileID: 11400000, guid: 70b5cd6404493994d8b364c6ddb95b10, type: 2}
 --- !u!1 &3469176668768950665
 GameObject:
   m_ObjectHideFlags: 0
@@ -875,7 +904,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &5891583664425259778
 Transform:
   m_ObjectHideFlags: 0

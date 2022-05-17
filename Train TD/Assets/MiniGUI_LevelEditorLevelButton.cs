@@ -9,7 +9,7 @@ using UnityEngine.UI;
 public class MiniGUI_LevelEditorLevelButton : MonoBehaviour
 {
     [ReadOnly]
-    public LevelDataJson myData;
+    public LevelData myData;
     public TMP_Text levelName;
 
     public Image selectedBg;
@@ -20,7 +20,7 @@ public class MiniGUI_LevelEditorLevelButton : MonoBehaviour
     public TMP_Text selectButtonText;
     
 
-    public MiniGUI_LevelEditorLevelButton SetUp(LevelDataJson data) {
+    public MiniGUI_LevelEditorLevelButton SetUp(LevelData data) {
         myData = data;
         levelName.text = myData.levelName;
         return this;
@@ -64,8 +64,9 @@ public class MiniGUI_LevelEditorLevelButton : MonoBehaviour
             LevelDataLoader.s.allLevels[pastIndex] = temp;
             myData.levelMenuOrder = newIndex;
 
-            LevelDataLoader.s.SaveLevel(myData);
-            LevelDataLoader.s.SaveLevel(temp);
+            Debug.LogError("You cannot save scriptable objects at playtime!");
+            // LevelDataLoader.s.SaveLevel(myData);
+            // LevelDataLoader.s.SaveLevel(temp);
         }
         
         transform.SetSiblingIndex(newIndex);

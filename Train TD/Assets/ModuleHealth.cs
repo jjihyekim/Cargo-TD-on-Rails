@@ -37,7 +37,7 @@ public class ModuleHealth : MonoBehaviour, IHealth {
 
     private void Start() {
         healthBar = Instantiate(LevelReferences.s.partHealthPrefab, LevelReferences.s.uiDisplayParent).GetComponent<MiniGUI_HealthBar>();
-        healthBar.SetUp(this);
+        healthBar.SetUp(this, GetComponent<ModuleAmmo>());
         buildingsBuild += 1;
     }
 
@@ -62,5 +62,9 @@ public class ModuleHealth : MonoBehaviour, IHealth {
 
     public GameObject GetGameObject() {
         return gameObject;
+    }
+    
+    public Collider GetMainCollider() {
+        return GetComponentInChildren<BoxCollider>();
     }
 }

@@ -13,7 +13,7 @@ public class AtLevelStartEffects : MonoBehaviour {
 
 
     private void Start() {
-        if (!SceneLoader.s.isLevelStarted)
+        if (!SceneLoader.s.isLevelStarted())
             isActiveBeforeStart = true;
     }
 
@@ -22,7 +22,7 @@ public class AtLevelStartEffects : MonoBehaviour {
         if (!isActiveBeforeStart) {
             Destroy(gameObject);
         } else {
-            if (SceneLoader.s.isLevelStarted) {
+            if (SceneLoader.s.isLevelStarted()) {
                 if (!isStarted) {
                     isStarted = true;
                     target.SetActive(true);

@@ -9,9 +9,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4b64c1bf62b866d4d896e8c4a0e7121a, type: 3}
+  m_Script: {fileID: 11500000, guid: db512ea5c3f84be49c44fcd62d024370, type: 3}
   m_Name: Bumpy Ride
   m_EditorClassIdentifier: 
+  levelName: Bumpy Ride
+  levelMenuOrder: 2
   trainLength: 5
   starterModules:
   - uniqueName: Engine
@@ -43,3 +45,4 @@ MonoBehaviour:
   bestEngineSpeed: 160
   mediumEngineSpeed: 130
   worstEngineSpeed: 100
+  reputation: 1

@@ -21,13 +21,20 @@ public class ProfileSelectionMenu : MonoBehaviour {
     public GameObject[] goToEnableAfterProfileMenu;
     public GameObject[] goToDisableAfterProfileMenu;
 
+    public MiniGUI_ProfileDisplay currentProfile;
 
+
+    public GameObject deleteSaveUI;
+
+    private DataSaver.SaveFile saveToBeDeleted;
+    public MiniGUI_ProfileDisplay deleteProfileDisplay;
     private void Awake() {
         s = this;
     }
 
     private void Start() {
-        if (SceneLoader.s.isProfileMenu) {
+        deleteSaveUI.SetActive(false);
+        if (SceneLoader.s.isProfileMenu()) {
             OpenProfileMenu();
         } else {
             OpenProfileMenu(); // Because we need this to disable some stuff for us
@@ -74,9 +81,26 @@ public class ProfileSelectionMenu : MonoBehaviour {
         }
     }
 
-    public MiniGUI_ProfileDisplay currentProfile;
     public void SaveChanged() {
         currentProfile.SetStats(DataSaver.s.GetCurrentSave());
+    }
+
+    public void DeleteSaveDialog(DataSaver.SaveFile saveFile) {
+        deleteSaveUI.SetActive(true);
+        deleteProfileDisplay.SetStats(saveFile);
+    }
+
+    public void DeleteConfirm() {
+        deleteSaveUI.SetActive(false);
+        DataSaver.s.ClearCurrentSave();
+        SaveChanged();
+        ProfileUI.SetActive(false);
+        ProfileUI.SetActive(true);
+        SceneLoader.s.OpenProfileScreen();
+    }
+
+    public void DeleteCancel() {
+        deleteSaveUI.SetActive(false);
     }
 
 

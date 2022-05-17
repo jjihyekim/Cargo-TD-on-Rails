@@ -37,13 +37,13 @@ public class ScrapPile : MonoBehaviour {
 
     private void PickTarget() {
         var distance = 500f;
-        for (int i = 0; i < LevelReferences.s.carts.Length; i++) {
-            var cart = LevelReferences.s.carts[i];
+        for (int i = 0; i < LevelReferences.s.train.carts.Count; i++) {
+            var cart = LevelReferences.s.train.carts[i];
             if (cart != null) {
                 var curDist = Vector3.Distance(transform.position, cart.transform.position);
                 if (curDist < distance) {
                     distance = curDist;
-                    target = cart.center;
+                    target = cart.GetComponent<Cart>().center;
                 }
             }
         }

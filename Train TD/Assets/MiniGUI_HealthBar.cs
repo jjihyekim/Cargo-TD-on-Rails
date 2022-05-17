@@ -14,15 +14,28 @@ public class MiniGUI_HealthBar : MonoBehaviour{
     private Camera mainCam;
 
     public ModuleHealth myModuleHealth;
+    public ModuleAmmo myModuleAmmo;
+    private bool isAmmoBar = false;
 
     public Slider slider;
     public Image filler;
     public Color healthyColor = Color.green;
     public Color deadColor = Color.red;
+    
+    
+    
+    public Slider ammoSlider;
 
     
-    public void SetUp(ModuleHealth moduleHealth) {
+    public void SetUp(ModuleHealth moduleHealth, ModuleAmmo moduleAmmo) {
         myModuleHealth = moduleHealth;
+        
+        myModuleAmmo = moduleAmmo;
+        if (myModuleAmmo != null) {
+            isAmmoBar = true;
+        }
+        ammoSlider.gameObject.SetActive(isAmmoBar);
+        
         sourceTransform = myModuleHealth.GetComponent<TrainBuilding>().uiTargetTransform;
         CanvasRect = transform.root.GetComponent<RectTransform>();
         UIRect = GetComponent<RectTransform>();
@@ -34,6 +47,7 @@ public class MiniGUI_HealthBar : MonoBehaviour{
     private void Update() {
         SetPosition();
         SetBarValue();
+        SetAmmoBarValue();
     }
     
     private void LateUpdate() {
@@ -112,5 +126,23 @@ public class MiniGUI_HealthBar : MonoBehaviour{
         }
 
         filler.color = Color.Lerp(deadColor, healthyColor, percent);
+    }
+    
+    void SetAmmoBarValue() {
+        if (isAmmoBar) {
+            if (myModuleAmmo.ShowAmmoBar()) {
+                var percent = (float)myModuleAmmo.curAmmo / myModuleAmmo.maxAmmo;
+                percent = Mathf.Clamp(percent, 0, 1f);
+
+                
+                ammoSlider.value = percent;
+
+                if(!ammoSlider.gameObject.activeSelf)
+                    ammoSlider.gameObject.SetActive(true);
+            } else {
+                if(ammoSlider.gameObject.activeSelf)
+                    ammoSlider.gameObject.SetActive(false);
+            }
+        }
     }
 }

@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using Sirenix.OdinInspector;
@@ -9,9 +10,11 @@ public class MiniGUI_ProfileDisplay : MonoBehaviour {
     public TMP_Text starText;
     public TMP_Text moneyText;
     public TMP_Text profileName;
+    public TMP_Text playTime;
 
     public bool autoSetOnStart = true;
 
+    private DataSaver.SaveFile mySave;
     void Start() {
         if (autoSetOnStart) {
             SetStats(DataSaver.s.GetCurrentSave());
@@ -19,9 +22,15 @@ public class MiniGUI_ProfileDisplay : MonoBehaviour {
     }
 
 
+    private void Update() {
+        moneyText.text = mySave.money.ToString();
+        starText.text = mySave.reputation.ToString();
+        profileName.text = mySave.saveName;
+        playTime.text = SpeedController.GetNiceTime(mySave.playtime + DataSaver.s.GetTimeSpentSinceLastSaving());
+    }
+
     public void SetStats(DataSaver.SaveFile save) {
-        moneyText.text = save.money.ToString();
-        starText.text = save.reputation.ToString();
-        profileName.text = save.saveName;
+        mySave = save;
+        
     }
 }

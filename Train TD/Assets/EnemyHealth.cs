@@ -30,7 +30,7 @@ public class EnemyHealth : MonoBehaviour, IHealth {
 	}
 
 	private void Update() {
-		if (SceneLoader.s.isLevelFinished) {
+		if (SceneLoader.s.isLevelFinished()) {
 			if(isAlive)
 				Die();
 		}
@@ -60,6 +60,10 @@ public class EnemyHealth : MonoBehaviour, IHealth {
 		return gameObject;
 	}
 
+	public Collider GetMainCollider() {
+		return GetComponentInChildren<BoxCollider>();
+	}
+
 #if UNITY_EDITOR
 	[MethodButton("Die")]
 	[SerializeField] private bool editorFoldout;
@@ -71,4 +75,5 @@ public interface IHealth {
 	public void DealDamage(float damage);
 	public bool IsPlayer();
 	public GameObject GetGameObject();
+	public Collider GetMainCollider();
 }

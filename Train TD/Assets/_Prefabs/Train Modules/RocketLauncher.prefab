@@ -675,6 +675,8 @@ GameObject:
   - component: {fileID: 1352410400854280772}
   - component: {fileID: 5293745108955602099}
   - component: {fileID: -5048292488576981045}
+  - component: {fileID: 7605554476854228898}
+  - component: {fileID: -5925618615010043299}
   m_Layer: 0
   m_Name: RocketLauncher
   m_TagString: Untagged
@@ -728,6 +730,7 @@ MonoBehaviour:
   - {fileID: 1352410400854280772}
   cost: 100
   myRotation: 2
+  canBeTargetingAreaRotatable: 0
   occupiesEntireSlot: 0
   sideGfx: {fileID: 0}
   topGfx: {fileID: 6599868590226706039}
@@ -737,6 +740,7 @@ MonoBehaviour:
   - possibleRotations: 00000000010000000200000003000000
     transform: {fileID: 4048679246776914360}
   isBuilt: 0
+  autoSetUp: 0
   _outlines: []
 --- !u!114 &2664401322561058686
 MonoBehaviour:
@@ -762,13 +766,18 @@ MonoBehaviour:
   bulletPrefab: {fileID: 7110668419382630654, guid: 38d2797b60af6b3449dea991dc05d6f3, type: 3}
   muzzleFlashPrefab: {fileID: 9155879028066676231, guid: 20718e1ecbf4a0a48851a1815d4ceeaa, type: 3}
   target: {fileID: 0}
-  fireDelay: 2
-  fireBarrageCount: 2
+  mortarRotation: 0
+  fireDelay: 3
+  fireBarrageCount: 1
   fireBarrageDelay: 0.5
-  projectileDamage: 15
+  projectileDamage: 20
   rotateSpeed: 10
   CanShoot: 0
   isPlayer: 1
+  rangeOrigin: {fileID: 0}
+  barrageShot:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!114 &7641972898590985362
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -854,6 +863,48 @@ MonoBehaviour:
   cooldown: -1
   curCooldown: 0
   sellPrefab: {fileID: 172524484023753321, guid: 5c944d37062c8b04d8a0fa76e4e24049, type: 3}
+--- !u!114 &7605554476854228898
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2876656872020492522}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ffd4c45972e0fc54a84560b4d5de93b9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  curAmmo: 0
+  maxAmmo: 100
+  ammoPerShot: 5
+  damageMultiplier: 1.5
+  fireSpeedBoost: 1
+  isUnlocked: 0
+  unlockingUpgrade: {fileID: 11400000, guid: ff0b64170da4a224883a5aa5c9ff6f66, type: 2}
+--- !u!114 &-5925618615010043299
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2876656872020492522}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 059294cf041670b4f997054af1dc34a8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  isUnlocked: 0
+  unlockingUpgrade: {fileID: 11400000, guid: 3139769320654044683ab5c56c1efbb1, type: 2}
+  actionName: Salvo
+  cost: 50
+  cooldown: 60
+  curCooldown: 0
+  actionTime: 5
+  initialDelay: 2
+  rangeBoost: 2
+  fireSpeedBoost: 20
+  angleBoost: 30
 --- !u!1 &2983896549083203264
 GameObject:
   m_ObjectHideFlags: 0

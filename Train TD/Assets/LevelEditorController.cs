@@ -17,7 +17,7 @@ public class LevelEditorController : MonoBehaviour {
 		DrawLevelButtons();
 	}
 	
-	public List<LevelDataJson> allLevels {
+	public List<LevelData> allLevels {
 		get {
 			return LevelDataLoader.s.allLevels;
 		}
@@ -49,11 +49,11 @@ public class LevelEditorController : MonoBehaviour {
 	}
 
 
-	public LevelDataJson selectedLevel;
+	public LevelData selectedLevel;
 	public MiniGUI_LevelEditorLane[] lanes;
 	public GameObject enemyLaneDisplayPrefab;
 
-	public void SelectLevel(LevelDataJson data) {
+	public void SelectLevel(LevelData data) {
 		PlayerPrefs.SetInt("lastEditedLevel", data.levelMenuOrder);
 		selectedLevel = data;
 
@@ -104,6 +104,7 @@ public class LevelEditorController : MonoBehaviour {
 
 	[Button]
 	public void SaveSelectedLevel() {
-		LevelDataLoader.s.SaveLevel(selectedLevel);
+		Debug.LogError("You cannot save scriptable objects at playtime!");
+		//LevelDataLoader.s.SaveLevel(selectedLevel);
 	}
 }

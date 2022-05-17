@@ -10,14 +10,14 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: d15560a480a4d7f4ca384a06cf63758a, type: 3}
-  m_Name: Gun 2 Connection Boost
+  m_Name: Gun 2 Ammo Boost
   m_EditorClassIdentifier: 
   upgradeUniqueName: gunUpgrade2
   isUnlockedAtNewProfileStart: 0
   cost: 500
-  starRequirement: 5
-  icon: {fileID: 21300000, guid: b7a9331e742878447bad32f26d2cf8d2, type: 3}
-  upgradeName: Connection Boost
-  upgradeDescription: Each Machinegun will increase other machineguns' damage in
-    the same cart slot by 25%, up to 50% if all slots are Machineguns
+  starRequirement: 10
+  icon: {fileID: 21300000, guid: 332e935882e9cbd40baeeeefa0bca040, type: 3}
+  upgradeName: Ammo Boost
+  upgradeDescription: Ammo provider will bring more bullets, increasing each affected
+    machinegun's firerate by 50%
   parentUpgrade: {fileID: 11400000, guid: 494fbaab215e62f4e8459a02ff7fb485, type: 2}

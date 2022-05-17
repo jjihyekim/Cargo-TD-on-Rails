@@ -135,30 +135,33 @@ public class PlayerModuleSelector : MonoBehaviour {
     private float curScrollTime = 0;
     void ProcessScroll(float value) {
         if (curScrollTime <= 0f) {
-            if (value > 0) {
-                //print((activeIndex+1) % 3);
-                var nextIndex = activeIndex;
-                for (int i = 0; i < 2; i++) {
-                    nextIndex = (nextIndex + 1) % 3;
-                    if (activeSlot.myBuildings[nextIndex] != null) {
-                        SelectObject(activeSlot, nextIndex);
-                        activeActionSelection.SetUp(activeBuilding);
+            if (activeSlot != null) {
+                if (value > 0) {
+                    //print((activeIndex+1) % 3);
+                    var nextIndex = activeIndex;
+                    for (int i = 0; i < 2; i++) {
+                        nextIndex = (nextIndex + 1) % 3;
+                        if (activeSlot.myBuildings[nextIndex] != null) {
+                            SelectObject(activeSlot, nextIndex);
+                            activeActionSelection.SetUp(activeBuilding);
+                        }
                     }
+
+                    curScrollTime = scrollTime;
                 }
 
-                curScrollTime = scrollTime;
-            }
-
-            if (value < 0) {
-                var nextIndex = activeIndex;
-                for (int i = 0; i < 2; i++) {
-                    nextIndex = (nextIndex + 2) % 3; // +2 actually makes us go -1 because modulo 3
-                    if (activeSlot.myBuildings[nextIndex] != null) {
-                        SelectObject(activeSlot, nextIndex);
-                        activeActionSelection.SetUp(activeBuilding);
+                if (value < 0) {
+                    var nextIndex = activeIndex;
+                    for (int i = 0; i < 2; i++) {
+                        nextIndex = (nextIndex + 2) % 3; // +2 actually makes us go -1 because modulo 3
+                        if (activeSlot.myBuildings[nextIndex] != null) {
+                            SelectObject(activeSlot, nextIndex);
+                            activeActionSelection.SetUp(activeBuilding);
+                        }
                     }
+
+                    curScrollTime = scrollTime;
                 }
-                curScrollTime = scrollTime;
             }
         } else {
             curScrollTime -= Time.deltaTime;

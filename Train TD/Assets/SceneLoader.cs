@@ -13,17 +13,51 @@ public class SceneLoader : MonoBehaviour {
     [SerializeField]
     private SceneReference initialScene;
 
-    public bool isLevelStarted = false;
-    public bool isLevelFinished = false;
-
     public bool isLevelInProgress {
         get {
-            return isLevelStarted && !isLevelFinished;
+            return myGameState == GameState.levelInProgress;
         }
     }
-    public LevelDataJson currentLevel;
+    
+    [SerializeField]
+    private LevelData _currentLevel;
 
-    public bool isProfileMenu = true;
+    public LevelData currentLevel {
+        get {
+            return _currentLevel;
+        }
+    }
+
+    public enum GameState {
+        profileMenu, mainMenu, levelInProgress, levelFinished
+    }
+
+    [SerializeField] private GameState _gameState;
+    
+    public GameState myGameState {
+        get {
+            return _gameState;
+        }
+    }
+
+    public bool isLevelStarted() {
+        return myGameState == GameState.levelInProgress || myGameState == GameState.levelFinished;
+    }
+    public bool isLevelFinished() {
+        return myGameState == GameState.levelFinished;
+    }
+    
+    public bool isProfileMenu() {
+        return myGameState == GameState.profileMenu;
+    }
+
+    public void StartLevel() {
+        _gameState = GameState.levelInProgress;
+    }
+
+    public void FinishLevel() {
+        _gameState = GameState.levelFinished;
+    }
     
     private void Awake() {
         if (s == null) {
@@ -41,23 +75,42 @@ public class SceneLoader : MonoBehaviour {
         }
     }
 
+    private void Start() {
+        DataSaver.loadEvent += GetCurrentLevelFromSave;
+        GetCurrentLevelFromSave();
+    }
+
+    void GetCurrentLevelFromSave() {
+        var lastLoadedLevelName = DataSaver.s.GetCurrentSave().lastLoadedLevelName;
+
+        for (int i = 0; i < LevelDataLoader.s.allLevels.Count; i++) {
+            var thisLevel = LevelDataLoader.s.allLevels[i];
+            if (thisLevel.levelName == lastLoadedLevelName) {
+                _currentLevel = thisLevel;
+                return;
+            }
+        }
+
+        _currentLevel = LevelDataLoader.s.allLevels[0];
+    }
+
+    public void SetCurrentLevel(LevelData levelData) {
+        _currentLevel = levelData;
+        DataSaver.s.GetCurrentSave().lastLoadedLevelName = _currentLevel.levelName;
+    }
+
 
     public GameObject loadingScreen;
     public CanvasGroup canvasGroup;
 
 
     public void OpenProfileScreen() {
-        isLevelFinished = false;
-        isLevelStarted = false;
-        isProfileMenu = true;
-        currentLevel = null;
+        _gameState = GameState.profileMenu;
         LoadScene(mainScene);
     }
     
     public void BackToMenu() {
-        isLevelFinished = false;
-        isLevelStarted = false;
-        isProfileMenu = false;
+        _gameState = GameState.mainMenu;
         LoadScene(mainScene);
     }
 

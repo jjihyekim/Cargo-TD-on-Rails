@@ -12,7 +12,7 @@ public class StarterUIController : MonoBehaviour {
 	public static StarterUIController s;
 	private void Awake() { s = this; }
 
-	public List<LevelDataJson> allLevels {
+	public List<LevelData> allLevels {
 		get {
 			return LevelDataLoader.s.allLevels;
 		}
@@ -48,7 +48,7 @@ public class StarterUIController : MonoBehaviour {
 		for (int i = 0; i < allLevels.Count; i++) {
 			allLevelButtons[i] = Instantiate(levelButtonPrefab, levelButtonParent).GetComponent<MiniGUI_LevelButton>().SetUp(allLevels[i]);
 		}
-		if(SceneLoader.s.currentLevel != null)
+		if(SceneLoader.s.currentLevel != null && SceneLoader.s.currentLevel.isRealLevel())
 			SelectLevel(SceneLoader.s.currentLevel);
 	}
 
@@ -71,7 +71,7 @@ public class StarterUIController : MonoBehaviour {
 		
 		starterUI.SetActive(false);
 		gameUI.SetActive(true);
-		SceneLoader.s.isLevelStarted = true;
+		SceneLoader.s.StartLevel();
 		OnLevelStarted?.Invoke();
 	}
 
@@ -83,8 +83,8 @@ public class StarterUIController : MonoBehaviour {
 		PlayerBuildingController.s.currentLevelStats = new Dictionary<string, PlayerBuildingController.BuildingData>();
 	}
 
-	public void SelectLevel(LevelDataJson data) {
-		SceneLoader.s.currentLevel = data;
+	public void SelectLevel(LevelData data) {
+		SceneLoader.s.SetCurrentLevel(data);
 
 		var childCount = starterBuildingsButtonParent.childCount;
 		for (int i = childCount-1; i >= 0 ; i--) {

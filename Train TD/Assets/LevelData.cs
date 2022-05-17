@@ -5,7 +5,7 @@ using Sirenix.OdinInspector;
 using UnityEngine;
 
 [Serializable]
-public class LevelDataJson {
+public class LevelData {
 	public string levelName = "unset";
 	public int levelMenuOrder = -1;
 	//public GameObject train;
@@ -27,6 +27,13 @@ public class LevelDataJson {
 	public int worstEngineSpeed = 100;
 
 	//[Header("Mission rewarsds")]
+
+	[Header("Reputation Requirement")] 
+	public int reputationRequirement;
+
+	public bool isRealLevel() {
+		return levelName != "unset";
+	}
 }
 
 [Serializable]

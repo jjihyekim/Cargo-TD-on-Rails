@@ -23,8 +23,8 @@ public class MiniGUI_BuildingButton : MonoBehaviour {
 
 	private void Start() {
 		if (!UpgradesController.s.unlockedUpgrades.Contains(myBuilding.uniqueName)) {
-			Debug.Log("enable me so that not unlocked guns dont appear");
-			//Destroy(gameObject);
+			//Debug.Log("enable me so that not unlocked guns dont appear");
+			Destroy(gameObject);
 		}
 		
 		costText.text = myBuilding.cost.ToString();

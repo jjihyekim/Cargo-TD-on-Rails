@@ -8,7 +8,7 @@ public class TrackTrainBackCart : MonoBehaviour {
 	public Transform locationTarget;
 
 	void Update() {
-		if (SceneLoader.s.isLevelFinished) {
+		if (SceneLoader.s.isLevelFinished()) {
 			transform.position = locationTarget.position;
 			transform.LookAt(Train.s.trainBack);
 		}

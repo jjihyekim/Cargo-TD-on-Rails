@@ -115,8 +115,10 @@ public class TrainBuilding : MonoBehaviour {
     };
 
     public bool isBuilt = false;
+    public bool autoSetUp = false;
     private void Start() {
-        if (isBuilt) {
+        if (autoSetUp) {
+            isBuilt = true;
             mySlot = GetComponentInParent<Slot>();
             if (mySlot) {
                 mySlot.AddBuilding(this, mySlotIndex);
@@ -151,7 +153,7 @@ public class TrainBuilding : MonoBehaviour {
             GetComponentInChildren<ConstructionSounds>().PlayConstructionSound();
     }
     
-    public int SetRotationBasedOnIndex(int index) {
+    public int SetRotationBasedOnIndex(int index, bool isFrontSlot) {
         var rotTarget = indexToRotation[index];
         switch (rotTarget) {
             case Rots.left:
@@ -167,7 +169,8 @@ public class TrainBuilding : MonoBehaviour {
                 }
                 break;
         }
-        SetUpBasedOnRotation();
+        
+        SetUpBasedOnRotation(isFrontSlot);
 
         return rotationToIndex[myRotation];
     }
@@ -214,12 +217,15 @@ public class TrainBuilding : MonoBehaviour {
         rotationChangedEvent?.Invoke();
     }
 
-    public void SetUpBasedOnRotation() {
-        SetGfxBasedOnRotation();
+    public void SetUpBasedOnRotation(bool slotTypeOverrideIsFront, bool isOverriding = false) {
+        SetGfxBasedOnRotation(slotTypeOverrideIsFront, isOverriding);
         rotationChangedEvent?.Invoke();
     }
+    public void SetUpBasedOnRotation() {
+        SetUpBasedOnRotation(false, true);
+    }
     
-    public void SetGfxBasedOnRotation() {
+    public void SetGfxBasedOnRotation(bool slotTypeOverrideIsFront = false, bool isSlotTypeOverride = false) {
         if (!occupiesEntireSlot) {
             if (canBeRotatedSides || canBeRotatedUp) {
                 switch (myRotation) {
@@ -255,11 +261,24 @@ public class TrainBuilding : MonoBehaviour {
                 }
             }
         } else {
-            if (mySlot != null) {
-                if (frontGfx != null && backGfx != null) {
-                    if (mySlot.isFrontSlot) {
+            if (frontGfx != null && backGfx != null) {
+                if (isSlotTypeOverride) {
+                    if (slotTypeOverrideIsFront) {
                         frontGfx.SetActive(true);
                         backGfx.SetActive(false);
+                    } else {
+                        frontGfx.SetActive(false);
+                        backGfx.SetActive(true);
+                    }
+                } else {
+                    if (mySlot != null) {
+                        if (mySlot.isFrontSlot) {
+                            frontGfx.SetActive(true);
+                            backGfx.SetActive(false);
+                        } else {
+                            frontGfx.SetActive(false);
+                            backGfx.SetActive(true);
+                        }
                     } else {
                         frontGfx.SetActive(false);
                         backGfx.SetActive(true);

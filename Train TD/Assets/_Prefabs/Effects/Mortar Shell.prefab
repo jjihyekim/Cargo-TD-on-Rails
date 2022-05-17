@@ -14968,17 +14968,20 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   acceleration: 0
   seekAcceleration: 0
-  speed: 2
+  speed: 0
   damage: 10
   mortarRange: 0.75
-  lifetime: 20
+  hitForceMultiplier: 100
+  lifetime: 2
   myOriginObject: {fileID: 0}
-  isTargetSeeking: 1
-  seekStrength: 180
+  isTargetSeeking: 0
+  seekStrength: 30
   isPlayerBullet: 0
   source: {fileID: 0}
   myHitType: 2
-  mortarGravity: {x: 0, y: -9.81, z: 0}
+  mortarGravity: {x: 0, y: -4.905, z: 0}
+  mortarAimPredictTime: 1
+  mortarVelocityMultiplier: 0.5
   instantDestroy: {fileID: 6301806535357327870}
 --- !u!54 &1887827696573373486
 Rigidbody:

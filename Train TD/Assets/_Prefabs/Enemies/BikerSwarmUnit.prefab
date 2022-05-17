@@ -105,12 +105,18 @@ MonoBehaviour:
   bulletPrefab: {fileID: 4908573584345181807, guid: 98bc522f3c4ff4b44a93406dcf01c13c, type: 3}
   muzzleFlashPrefab: {fileID: 980176138545819842, guid: 3a4d3fe2abd806c46964330e5993cfa2, type: 3}
   target: {fileID: 0}
+  mortarRotation: 0
   fireDelay: 3
-  fireBarrageCount: 2
+  fireBarrageCount: 1
   fireBarrageDelay: 0.2
   projectileDamage: 5
   rotateSpeed: 10
   CanShoot: 0
+  isPlayer: 0
+  rangeOrigin: {fileID: 0}
+  barrageShot:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!114 &2144092535843778903
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -138,7 +144,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   rotationSpan: 360
-  range: 7
+  range: 5
   myOverride:
     isOverride: 0
     rotations: 
@@ -223,9 +229,6 @@ MonoBehaviour:
   lookRotationDelta: 10
   centerOfMass: {x: 0, y: -0.2, z: 0}
   forwardForce: 10
-  groundLayer:
-    serializedVersion: 2
-    m_Bits: 8192
   stickToGround: 1
 --- !u!1 &2144911604964904148
 GameObject:

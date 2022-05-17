@@ -8,7 +8,7 @@ using UnityStandardAssets.Utility;
 public class EnemyCircuitFollowAI : MonoBehaviour {
     
     public WaypointCircuit myPath;
-    public bool isLeft = false;
+    public bool isLeft = false; //left is the default position, and right is mirrored
 
     public float speed = 1f;
 
@@ -27,10 +27,7 @@ public class EnemyCircuitFollowAI : MonoBehaviour {
     void Update() {
         if ((curDistance < myPath.Length || myPath.loop) && ! goingBack) {
 
-            targetPos = myPath.GetRoutePosition(curDistance);
-            if (!isLeft) {
-                targetPos.x = -targetPos.x;
-            }
+            targetPos = myPath.GetRoutePosition(curDistance, !isLeft);
 
             curDistance += speed * Time.deltaTime;
         } else if (myPath.pingPong) {
@@ -47,10 +44,7 @@ public class EnemyCircuitFollowAI : MonoBehaviour {
                 // wait
             } else if (curDistance > 0) { // go back
 
-                targetPos = myPath.GetRoutePosition(curDistance);
-                if (!isLeft) {
-                    targetPos.x = -targetPos.x;
-                }
+                targetPos = myPath.GetRoutePosition(curDistance, !isLeft);
 
                 curDistance -= speed * Time.deltaTime;
             } else {
@@ -67,11 +61,15 @@ public class EnemyCircuitFollowAI : MonoBehaviour {
 
     [Button()]
     public void SnapToCurDistance() {
-        targetPos = myPath.GetRoutePosition(curDistance);
-        if (!isLeft) {
-            targetPos.x = -targetPos.x;
-        }
+        targetPos = myPath.GetRoutePosition(curDistance, !isLeft);
         
         transform.position = targetPos;
+    }
+
+    public Vector3 GetFurtherPositionInCircuit(float time) {
+        var multiplier = 1f;
+        if (goingBack)
+            multiplier = -1f;
+        return myPath.GetRoutePosition(curDistance + speed*time*multiplier, !isLeft);
     }
 }

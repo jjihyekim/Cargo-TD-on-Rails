@@ -1,14 +1,18 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class VersionDisplay : MonoBehaviour
-{
+public class VersionDisplay : MonoBehaviour {
+	public static VersionDisplay s;
 
+	private void Awake() {
+		s = this;
+	}
 
-    // Start is called before the first frame update
+	// Start is called before the first frame update
     void Start()
     {
 		UpdateVersionText();
@@ -25,7 +29,7 @@ public class VersionDisplay : MonoBehaviour
 		}
 	}
 
-	string GetVersionNumber () {
+	public string GetVersionNumber () {
 		try {
 			string content = versionText.text;
 

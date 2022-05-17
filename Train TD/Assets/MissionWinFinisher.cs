@@ -38,7 +38,7 @@ public class MissionWinFinisher : MonoBehaviour {
 	}
 
 	public void MissionWon() {
-		SceneLoader.s.isLevelFinished = true;
+		SceneLoader.s.FinishLevel();
 		
 		for (int i = 0; i < scriptsToDisable.Length; i++) {
 			scriptsToDisable[i].enabled = false;
@@ -117,7 +117,7 @@ public class MissionWinFinisher : MonoBehaviour {
 		myMission.bestTime = Mathf.Min(myMission.bestTime,SpeedController.s.currentTime);
 		
 		cargoText.text = $"Cargo: {CargoController.s.aliveCargo}/{CargoController.s.totalCargo}";
-		timeText.text = $"Time: {SpeedController.s.GetTime()}";
+		timeText.text = $"Time: {SpeedController.s.GetNiceTime()}";
 		
 		DataSaver.s.SaveActiveGame();
 	}

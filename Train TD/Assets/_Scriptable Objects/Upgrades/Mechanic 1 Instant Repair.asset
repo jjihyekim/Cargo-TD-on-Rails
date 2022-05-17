@@ -10,14 +10,13 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: d15560a480a4d7f4ca384a06cf63758a, type: 3}
-  m_Name: Engine 2 Connection Boost
+  m_Name: Mechanic 1 Instant Repair
   m_EditorClassIdentifier: 
-  upgradeUniqueName: engineUpgrade2
+  upgradeUniqueName: mechanicUpgrade1
   isUnlockedAtNewProfileStart: 0
-  cost: 1500
-  starRequirement: 10
-  icon: {fileID: 21300000, guid: b7a9331e742878447bad32f26d2cf8d2, type: 3}
-  upgradeName: Connection Boost
-  upgradeDescription: Each engine will boost the other engine in the same cart by
-    25%.
-  parentUpgrade: {fileID: 11400000, guid: 9689f95a25c2a604da4233da4da6e7d3, type: 2}
+  cost: 500
+  starRequirement: 5
+  icon: {fileID: 21300000, guid: 6b5457fbf272283449121292f4ec9682, type: 3}
+  upgradeName: Quick Fix
+  upgradeDescription: Pay 100 credits to repair the entire train over 10 seconds.
+  parentUpgrade: {fileID: 11400000, guid: 92b0aa4a6275b214eb1c701f5e0fb9f3, type: 2}

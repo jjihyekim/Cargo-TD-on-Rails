@@ -9,17 +9,17 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4b64c1bf62b866d4d896e8c4a0e7121a, type: 3}
+  m_Script: {fileID: 11500000, guid: db512ea5c3f84be49c44fcd62d024370, type: 3}
   m_Name: Unexpected Visitors
   m_EditorClassIdentifier: 
+  levelName: Unexpected Visitors
+  levelMenuOrder: 1
   trainLength: 5
   starterModules:
   - uniqueName: Engine
     count: 1
-  - uniqueName: Civilian Supplies
-    count: 4
   - uniqueName: Army Supplies
-    count: 2
+    count: 4
   enemyWaves:
   - enemyUniqueName: Biker
     enemyData: 1
@@ -75,3 +75,4 @@ MonoBehaviour:
   bestEngineSpeed: 160
   mediumEngineSpeed: 130
   worstEngineSpeed: 100
+  reputation: 10

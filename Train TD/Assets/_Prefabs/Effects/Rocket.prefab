@@ -14582,17 +14582,22 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ed22b7720cff2244a8c914a8c7f08ab8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  acceleration: 5
+  acceleration: 2.5
   seekAcceleration: 200
-  speed: 10
+  speed: 5
   damage: 5
-  lifetime: 20
+  mortarRange: 2
+  hitForceMultiplier: 400
+  lifetime: 4
   myOriginObject: {fileID: 0}
   isTargetSeeking: 0
   seekStrength: 180
   isPlayerBullet: 0
   source: {fileID: 0}
   myHitType: 1
+  mortarGravity: {x: 0, y: -9.81, z: 0}
+  mortarAimPredictTime: 1
+  mortarVelocityMultiplier: 0.5
   instantDestroy: {fileID: 6301806535357327870}
 --- !u!54 &1887827696573373486
 Rigidbody:

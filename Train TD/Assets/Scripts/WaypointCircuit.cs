@@ -51,9 +51,9 @@ namespace UnityStandardAssets.Utility
             }
             numPoints = Waypoints.Length;
         }
-
-
-        public RoutePoint GetRoutePoint(float dist)
+        
+        
+        private RoutePoint GetRoutePoint(float dist)
         {
             // position and direction
             Vector3 p1 = GetRoutePosition(dist);
@@ -62,8 +62,15 @@ namespace UnityStandardAssets.Utility
             return new RoutePoint(p1, delta.normalized);
         }
 
+        public Vector3 GetRoutePosition(float dist, bool isMirrored) {
+            var point = GetRoutePosition(dist);
+            if (isMirrored) {
+                point.x = -point.x;
+            }
+            return point;
+        }
 
-        public Vector3 GetRoutePosition(float dist)
+        private Vector3 GetRoutePosition(float dist)
         {
             
             int point = 0;

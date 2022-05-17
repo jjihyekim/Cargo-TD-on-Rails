@@ -9,12 +9,12 @@ public class PreStartEffects : MonoBehaviour {
     
     private void Start() {
         // instant destroy if we begin with the level playing
-        if (SceneLoader.s.isLevelStarted)
+        if (SceneLoader.s.isLevelStarted())
             DestroyNow();
     }
     
     void Update() {
-        if (SceneLoader.s.isLevelStarted && ! isDestroyStarted) {
+        if (SceneLoader.s.isLevelStarted() && ! isDestroyStarted) {
             isDestroyStarted = true;
             
             foreach (var particle in GetComponentsInChildren<ParticleSystem>()) {

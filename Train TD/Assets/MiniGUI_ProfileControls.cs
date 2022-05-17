@@ -35,7 +35,7 @@ public class MiniGUI_ProfileControls : MonoBehaviour {
 		updateActiveStatus -= SetActiveStatus;
 	}
 
-	private void Start() {
+	private void OnEnable() {
 		_display = GetComponentInChildren<MiniGUI_ProfileDisplay>();
 		_display.SetStats(mySave);
 
@@ -70,8 +70,18 @@ public class MiniGUI_ProfileControls : MonoBehaviour {
 	}
 
 	public void SetSaveName() {
+		DataSaver.s.SetActiveSave(mySaveId);
 		mySave.saveName = nameField.text;
 		_display.SetStats(mySave);
 		DataSaver.s.SaveActiveGame();
+		updateActiveStatus?.Invoke();
+		ProfileSelectionMenu.s.SaveChanged();
+	}
+
+	public void DeleteSave() {
+		DataSaver.s.SetActiveSave(mySaveId);
+		updateActiveStatus?.Invoke();
+		ProfileSelectionMenu.s.SaveChanged();
+		ProfileSelectionMenu.s.DeleteSaveDialog(mySave);
 	}
 }

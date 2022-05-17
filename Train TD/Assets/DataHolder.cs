@@ -15,14 +15,14 @@ public class DataHolder : MonoBehaviour {
     }
 
 
-    public TrainBuildingHolder[] buildings;
+    public TrainBuilding[] buildings;
     public EnemyHolder[] enemies;
 
 
     public TrainBuilding GetBuilding(string buildingName) {
         for (int i = 0; i < buildings.Length; i++) {
             if (PreProcess(buildings[i].uniqueName) == PreProcess(buildingName)) {
-                return buildings[i].data;
+                return buildings[i];
             }
         }
 

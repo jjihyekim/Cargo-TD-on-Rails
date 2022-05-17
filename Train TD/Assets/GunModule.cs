@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 
 public class GunModule : MonoBehaviour, IComponentWithTarget {
     public TransformWithActivation[] rotateTransforms;
@@ -29,6 +30,8 @@ public class GunModule : MonoBehaviour, IComponentWithTarget {
     public bool isPlayer = false;
 
     public Transform rangeOrigin;
+
+    public UnityEvent barrageShot;
     private void Update() {
         if (target != null) {
             // Look at target
@@ -71,6 +74,14 @@ public class GunModule : MonoBehaviour, IComponentWithTarget {
             return 1f;
         }
     }
+    
+    float GetDamageMultiplier() {
+        if (myCart != null) {
+            return 1f * myCart.damageModifier;
+        } else {
+            return 1f;
+        }
+    }
 
 
     private IEnumerator ActiveShootCycle;
@@ -95,18 +106,20 @@ public class GunModule : MonoBehaviour, IComponentWithTarget {
             var muzzleFlash = Instantiate(muzzleFlashPrefab, position, rotation);
             var projectile = bullet.GetComponent<Projectile>();
             projectile.myOriginObject = this.gameObject;
-            projectile.damage = projectileDamage;
+            projectile.damage = projectileDamage*GetDamageMultiplier();
             projectile.isTargetSeeking = true;
 
             projectile.isPlayerBullet = isPlayer;
             projectile.source = this;
 
             if(myCart != null)
-                LogShotData(projectileDamage);
+                LogShotData(projectileDamage*GetDamageMultiplier());
             
 
             yield return new WaitForSeconds(fireBarrageDelay);
         }
+        
+        barrageShot?.Invoke();
     }
 
     void LogShotData(float damage) {
@@ -143,7 +156,22 @@ public class GunModule : MonoBehaviour, IComponentWithTarget {
 
     public void SetTarget(Transform target) {
         this.target = target;
+        StartShooting();
+    }
+
+    public void StopShooting() {
+        if (isShooting) {
+            StopCoroutine(ActiveShootCycle);
+            ActiveShootCycle = null;
+            isShooting = false;
+        }
+    }
+
+    public void StartShooting() {
         if (!isShooting) {
+            if (ActiveShootCycle != null)
+                StopCoroutine(ActiveShootCycle);
+            
             ActiveShootCycle = ShootCycle();
             StartCoroutine(ActiveShootCycle);
             isShooting = true;
@@ -152,10 +180,7 @@ public class GunModule : MonoBehaviour, IComponentWithTarget {
 
     public void UnsetTarget() {
         this.target = null;
-        if (isShooting) {
-            StopCoroutine(ActiveShootCycle);
-            isShooting = false;
-        }
+        StopShooting();
     }
 
     public Transform GetRangeOrigin() {

@@ -247,6 +247,8 @@ GameObject:
   - component: {fileID: 4554729032313949702}
   - component: {fileID: 7157976472073915209}
   - component: {fileID: 8273780609944894811}
+  - component: {fileID: 3549725107867153456}
+  - component: {fileID: 9062001436597085138}
   m_Layer: 0
   m_Name: Mortar Module
   m_TagString: Untagged
@@ -310,6 +312,7 @@ MonoBehaviour:
   backGfx: {fileID: 8793443569306674401}
   myUITargetTransforms: []
   isBuilt: 0
+  autoSetUp: 0
   _outlines: []
 --- !u!114 &2934280374143819819
 MonoBehaviour:
@@ -342,6 +345,9 @@ MonoBehaviour:
   CanShoot: 0
   isPlayer: 1
   rangeOrigin: {fileID: 8463444726689223868}
+  barrageShot:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!114 &7371494607064308679
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -387,8 +393,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b09e23bb0990b1b4e9262ab25f3b6442, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxHealth: 100
-  currentHealth: 100
+  maxHealth: 200
+  currentHealth: 200
   healthBar: {fileID: 0}
   explodePrefab: {fileID: 1046195756885079355, guid: 14455273e5a26a947a26caf9a4dfdd38, type: 3}
   isDead: 0
@@ -426,6 +432,7 @@ MonoBehaviour:
   cost: 0
   cooldown: 0.1
   curCooldown: 0
+  canEngage: 1
   isClockwise: 1
 --- !u!114 &7157976472073915209
 MonoBehaviour:
@@ -445,6 +452,7 @@ MonoBehaviour:
   cost: 0
   cooldown: 0.1
   curCooldown: 0
+  canEngage: 1
   isClockwise: 0
 --- !u!114 &8273780609944894811
 MonoBehaviour:
@@ -464,7 +472,48 @@ MonoBehaviour:
   cost: -50
   cooldown: -1
   curCooldown: 0
+  canEngage: 1
   sellPrefab: {fileID: 172524484023753321, guid: 5c944d37062c8b04d8a0fa76e4e24049, type: 3}
+--- !u!114 &3549725107867153456
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3146471024428373951}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ffd4c45972e0fc54a84560b4d5de93b9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  curAmmo: 0
+  maxAmmo: 150
+  ammoPerShot: 10
+  damageMultiplier: 2
+  fireRateMultiplier: 1
+  isUnlocked: 0
+  unlockingUpgrade: {fileID: 11400000, guid: 4132c9d02cb17b543a8114faadc55d4c, type: 2}
+--- !u!114 &9062001436597085138
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3146471024428373951}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 96826d59bfd99a6448449f1d9a4e381e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  isUnlocked: 0
+  unlockingUpgrade: {fileID: 11400000, guid: 84b73157c9612a147ac86d8aca1aab64, type: 2}
+  actionName: Range
+  cost: 50
+  cooldown: 60
+  curCooldown: 0
+  canEngage: 1
+  actionTime: 30
+  fireSpeedBoost: 10
 --- !u!1 &3234102027660134111
 GameObject:
   m_ObjectHideFlags: 0
@@ -1057,14 +1106,14 @@ Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 4de75881b4ad3e340b4843c36fdb5ef8, type: 3}
   m_PrefabInstance: {fileID: 4857436206814477911}
   m_PrefabAsset: {fileID: 0}
---- !u!4 &6789419906713478082 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 2112690772394597781, guid: 4de75881b4ad3e340b4843c36fdb5ef8, type: 3}
-  m_PrefabInstance: {fileID: 4857436206814477911}
-  m_PrefabAsset: {fileID: 0}
 --- !u!4 &8303247546971396421 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 3481876077730670354, guid: 4de75881b4ad3e340b4843c36fdb5ef8, type: 3}
+  m_PrefabInstance: {fileID: 4857436206814477911}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &6789419906713478082 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 2112690772394597781, guid: 4de75881b4ad3e340b4843c36fdb5ef8, type: 3}
   m_PrefabInstance: {fileID: 4857436206814477911}
   m_PrefabAsset: {fileID: 0}
 --- !u!1001 &5393934386927677827

@@ -2,7 +2,9 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using Sirenix.OdinInspector;
+using Unity.Mathematics;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 public class Projectile : MonoBehaviour {
     private float curSpeed = 0;
@@ -12,6 +14,8 @@ public class Projectile : MonoBehaviour {
     public float speed = 5f;
     public float damage = 20f;
     public float mortarRange = 2f;
+
+    public float hitForceMultiplier = 20f;
 
     public float lifetime = 20f;
     
@@ -38,6 +42,8 @@ public class Projectile : MonoBehaviour {
 
     public Vector3 mortarGravity = new Vector3(0, -9.81f, 0f);
     private Vector3 mortarVelocity;
+    public float mortarAimPredictTime = 1f;
+    public float mortarVelocityMultiplier = 0.5f;
     private void Start() {
         Invoke("DestroySelf", lifetime);
 
@@ -55,13 +61,36 @@ public class Projectile : MonoBehaviour {
             case HitType.Mortar:
                 curSpeed = speed;
                 curSeekStrength = seekStrength;
+                var targetPos = target.position;
+                
+                var circiut = target.GetComponentInParent<EnemyCircuitFollowAI>();
+
+                
+                if (circiut != null) {
+                    targetPos = circiut.GetFurtherPositionInCircuit(mortarAimPredictTime);
+                }
+
+                var randomOffset = Random.insideUnitSphere * mortarRange;
+                randomOffset.y = 0;
+                targetPos += randomOffset;
                 
                 float angle = 90- Vector3.Angle(Vector3.up, transform.forward);
-                float gx = mortarGravity.y * Vector3.Distance(transform.position, target.position);
+
+                //print(transform.forward);
+                var predictedDirection = targetPos - transform.position;
+                predictedDirection = new Vector3(predictedDirection.x, 0, predictedDirection.z);
+                var rotAxis = Vector3.Cross(predictedDirection, Vector3.up);
+                predictedDirection = Quaternion.AngleAxis(angle, rotAxis) * predictedDirection;
+                transform.rotation = Quaternion.LookRotation(predictedDirection);
+                //print(transform.forward);
+                
+                float gx = mortarGravity.y * Vector3.Distance(transform.position, targetPos);
                 float sinVal = 0.5f* Mathf.Sin(angle);
                 float velocity = Mathf.Sqrt(Mathf.Abs(gx / sinVal));
 
-                mortarVelocity = transform.forward * velocity;
+
+                mortarVelocity = transform.forward.normalized * velocity;
+                mortarVelocity *= mortarVelocityMultiplier;
                 break;
         }
         
@@ -71,25 +100,24 @@ public class Projectile : MonoBehaviour {
         Destroy(gameObject);
     }
 
-    void Update() {
+    void FixedUpdate() {
         if (!isDead) {
-            
             if (isTargetSeeking) {
                 if (target != null) {
                     var targetLook = Quaternion.LookRotation(target.position - transform.position);
-                    transform.rotation = Quaternion.RotateTowards(transform.rotation, targetLook, curSeekStrength * Time.deltaTime);
+                    transform.rotation = Quaternion.RotateTowards(transform.rotation, targetLook, curSeekStrength * Time.fixedDeltaTime);
                 } else {
                     isTargetSeeking = false;
                 }
             }
 
             if (myHitType == HitType.Rocket) {
-                curSpeed = Mathf.MoveTowards(curSpeed, speed, acceleration * Time.deltaTime);
-                curSeekStrength = Mathf.MoveTowards(curSeekStrength, seekStrength, seekAcceleration * Time.deltaTime);
+                curSpeed = Mathf.MoveTowards(curSpeed, speed, acceleration * Time.fixedDeltaTime);
+                curSeekStrength = Mathf.MoveTowards(curSeekStrength, seekStrength, seekAcceleration * Time.fixedDeltaTime);
             }
 
             if (target != null) {
-                if (Vector3.Distance(transform.position, target.position) < (curSpeed+0.1f) * Time.deltaTime) {
+                if (Vector3.Distance(transform.position, target.position) < (curSpeed+0.1f) * Time.fixedDeltaTime) {
                     DestroyFlying();
                 }
             }
@@ -98,11 +126,13 @@ public class Projectile : MonoBehaviour {
                 case HitType.Bullet:
                 case HitType.Rocket:
                     
-                    GetComponent<Rigidbody>().MovePosition(transform.position + transform.forward * curSpeed * Time.deltaTime);
+                    GetComponent<Rigidbody>().MovePosition(transform.position + transform.forward * curSpeed * Time.fixedDeltaTime);
                     break;
                 case HitType.Mortar:
-                    GetComponent<Rigidbody>().MovePosition(transform.position + (transform.forward * curSpeed + mortarVelocity) * Time.deltaTime);
-                    mortarVelocity += mortarGravity * Time.deltaTime;
+                    GetComponent<Rigidbody>().MovePosition(transform.position + mortarVelocity * Time.fixedDeltaTime);
+                    mortarVelocity += mortarGravity * Time.fixedDeltaTime;
+
+                    transform.rotation = Quaternion.LookRotation(mortarVelocity);
                     break;
             }
         }
@@ -232,8 +262,11 @@ public class Projectile : MonoBehaviour {
 
         foreach (var health in healthsInRange) {
             health.DealDamage(damage);
-            Instantiate(miniHitPrefab, health.GetGameObject().transform.position, Quaternion.identity);
+            ApplyHitForceToObject(health);
+            var closestPoint = health.GetMainCollider().ClosestPoint(transform.position);
+            Instantiate(miniHitPrefab, closestPoint, Quaternion.identity);
         }
+
         Instantiate(hitPrefab, transform.position, Quaternion.identity);
     }
 
@@ -250,6 +283,7 @@ public class Projectile : MonoBehaviour {
         //print(health);
         if (health != null) {
             health.DealDamage(damage);
+            ApplyHitForceToObject(health);
         }
 
         Instantiate(hitPrefab, pos, rotation);
@@ -273,8 +307,24 @@ public class Projectile : MonoBehaviour {
         //print(health);
         if (health != null) {
             health.DealDamage(damage);
+            ApplyHitForceToObject(health);
         }
 
         Instantiate(hitPrefab, pos, rotation);
+    }
+
+
+    void ApplyHitForceToObject(IHealth health) {
+        var collider = health.GetMainCollider();
+        var closestPoint = collider.ClosestPoint(transform.position);
+        var rigidbody = collider.GetComponent<Rigidbody>();
+        if (rigidbody == null) {
+            rigidbody = collider.GetComponentInParent<Rigidbody>();
+        }
+
+        var force = collider.transform.position - transform.position;
+        force = force.normalized * damage * hitForceMultiplier;
+        
+        rigidbody.AddForceAtPosition(force, closestPoint);
     }
 }

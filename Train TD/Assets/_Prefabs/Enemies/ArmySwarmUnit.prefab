@@ -105,12 +105,15 @@ MonoBehaviour:
   bulletPrefab: {fileID: 7110668419382630654, guid: 38d2797b60af6b3449dea991dc05d6f3, type: 3}
   muzzleFlashPrefab: {fileID: 9155879028066676231, guid: 20718e1ecbf4a0a48851a1815d4ceeaa, type: 3}
   target: {fileID: 0}
+  mortarRotation: 0
   fireDelay: 3
   fireBarrageCount: 1
   fireBarrageDelay: 0.2
-  projectileDamage: 20
+  projectileDamage: 30
   rotateSpeed: 1
   CanShoot: 0
+  isPlayer: 0
+  rangeOrigin: {fileID: 0}
 --- !u!114 &3038431739623073049
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -225,9 +228,6 @@ MonoBehaviour:
   lookRotationDelta: 10
   centerOfMass: {x: 0, y: -0.1, z: 0}
   forwardForce: 10
-  groundLayer:
-    serializedVersion: 2
-    m_Bits: 8192
   stickToGround: 0
 --- !u!1 &6961619328692888752
 GameObject:

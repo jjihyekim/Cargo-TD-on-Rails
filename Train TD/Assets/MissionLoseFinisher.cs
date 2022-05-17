@@ -28,7 +28,7 @@ public class MissionLoseFinisher : MonoBehaviour {
     public string[] cargoLoseTips;
 
     public void MissionLost(bool isLostBecauseOfCargo) {
-        SceneLoader.s.isLevelFinished = true;
+        SceneLoader.s.FinishLevel();
         
         for (int i = 0; i < scriptsToDisable.Length; i++) {
             scriptsToDisable[i].enabled = false;

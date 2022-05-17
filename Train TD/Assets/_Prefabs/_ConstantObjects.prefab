@@ -326,7 +326,7 @@ MonoBehaviour:
   m_BlockingObjects: 0
   m_BlockingMask:
     serializedVersion: 2
-    m_Bits: 4294967295
+    m_Bits: 16183
 --- !u!1 &1104735771
 GameObject:
   m_ObjectHideFlags: 0
@@ -793,18 +793,21 @@ MonoBehaviour:
       isActiveSave: 0
       isRealSaveFile: 0
       money: 0
+      debugExtraReputation: 0
       missionStatsList: []
       upgradeDatas: []
     - saveName: unnamed
       isActiveSave: 0
       isRealSaveFile: 0
       money: 0
+      debugExtraReputation: 0
       missionStatsList: []
       upgradeDatas: []
     - saveName: unnamed
       isActiveSave: 0
       isRealSaveFile: 0
       money: 0
+      debugExtraReputation: 0
       missionStatsList: []
       upgradeDatas: []
     loadingComplete: 0
@@ -831,6 +834,7 @@ MonoBehaviour:
   isLevelFinished: 0
   currentLevel:
     levelName: unset
+    levelMenuOrder: -1
     trainLength: 3
     starterModules: []
     enemyWaves: []
@@ -859,14 +863,17 @@ MonoBehaviour:
   cartPrefab: {fileID: 3399934084524781478, guid: 86c82cfee32788c49a35e2e0e34bf7b7, type: 3}
   cartLength: 1.148
   buildings:
-  - uniqueName: Engine
-    data: {fileID: 2221048273178476507, guid: 6599a63150f0b7c41b839415953a7eac, type: 3}
-  - uniqueName: Cargo
-    data: {fileID: 1944673793999917900, guid: fe303064230d8754b8cf128cb5e90af2, type: 3}
-  - uniqueName: Civilian Supplies
-    data: {fileID: 8817938401368358393, guid: bce4227270cdc2b43ae296fbca46243d, type: 3}
-  - uniqueName: Army Supplies
-    data: {fileID: 2268375937375898836, guid: 9e4dd68ad28e1e84abdbaddcfcb31e0f, type: 3}
+  - {fileID: 2268375937375898836, guid: 9e4dd68ad28e1e84abdbaddcfcb31e0f, type: 3}
+  - {fileID: 3064274167022659530, guid: 4bc891603e7923d4f925ce4ed653e14a, type: 3}
+  - {fileID: 1944673793999917900, guid: fe303064230d8754b8cf128cb5e90af2, type: 3}
+  - {fileID: 8817938401368358393, guid: bce4227270cdc2b43ae296fbca46243d, type: 3}
+  - {fileID: 1944673793999917900, guid: 26de1ff1103cc944b87936d4f1ef47b4, type: 3}
+  - {fileID: 2221048273178476507, guid: 6599a63150f0b7c41b839415953a7eac, type: 3}
+  - {fileID: 8182526161237629157, guid: 711ec8b6df0437f47887fd0afe1462ff, type: 3}
+  - {fileID: 1944673793999917900, guid: cff0a9005e5d2d549a05c9f2c4642474, type: 3}
+  - {fileID: 1944673793999917900, guid: b7f790acb48b0334a9052fa27f9fa237, type: 3}
+  - {fileID: 1944673793999917900, guid: c335dea14655a554ba2833a9056de068, type: 3}
+  - {fileID: 1638655049536848921, guid: f40636b96185aa64fbaa8e7c17e9942e, type: 3}
   enemies:
   - uniqueName: Buggy
     data: {fileID: 5297413553918262561, guid: 845f1cf4e800d8e45b607240c9e6190c, type: 3}
@@ -890,6 +897,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cdaa9293cf383664abb380399271b1a7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  levelDataScriptables:
+  - {fileID: 11400000, guid: 490a7b36f8d0c3d478696cdb10bf7e69, type: 2}
+  - {fileID: 11400000, guid: c393bb40291095e48b464e33e27d5f70, type: 2}
+  - {fileID: 11400000, guid: ccb0b51705e62014cacd8ff53e919759, type: 2}
+  - {fileID: 11400000, guid: bc50ba83cf50eb14fa09fa94868f6b34, type: 2}
+  - {fileID: 11400000, guid: 4becfdab05f4651429ab84915722c65d, type: 2}
+  - {fileID: 11400000, guid: 9e5770406f9c9b84399a493bb35e0002, type: 2}
+  - {fileID: 11400000, guid: 95b11dd1479751c4491c6821277cd4ba, type: 2}
+  - {fileID: 11400000, guid: ed82e7fb7f2ca9f48aa6799e82551440, type: 2}
   allLevels: []
 --- !u!1 &3704651199334984236
 GameObject:
@@ -1029,6 +1045,136 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ad46bcc1f8fd76b43ae89f66e75677e8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!1 &4374342517513860973
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 5293120200943940537}
+  - component: {fileID: 5247176016537061089}
+  - component: {fileID: 2681952517380366975}
+  - component: {fileID: 2002237706439093763}
+  - component: {fileID: 1459590117734244759}
+  m_Layer: 0
+  m_Name: UI Camera
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &5293120200943940537
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4374342517513860973}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 8932406454104516284}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!20 &5247176016537061089
+Camera:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4374342517513860973}
+  m_Enabled: 1
+  serializedVersion: 2
+  m_ClearFlags: 1
+  m_BackGroundColor: {r: 0.19215687, g: 0.3019608, b: 0.4745098, a: 0}
+  m_projectionMatrixMode: 1
+  m_GateFitMode: 2
+  m_FOVAxisMode: 0
+  m_SensorSize: {x: 36, y: 24}
+  m_LensShift: {x: 0, y: 0}
+  m_FocalLength: 50
+  m_NormalizedViewPortRect:
+    serializedVersion: 2
+    x: 0
+    y: 0
+    width: 1
+    height: 1
+  near clip plane: 0.3
+  far clip plane: 1000
+  field of view: 60
+  orthographic: 0
+  orthographic size: 5
+  m_Depth: 0
+  m_CullingMask:
+    serializedVersion: 2
+    m_Bits: 32
+  m_RenderingPath: -1
+  m_TargetTexture: {fileID: 0}
+  m_TargetDisplay: 0
+  m_TargetEye: 3
+  m_HDR: 0
+  m_AllowMSAA: 0
+  m_AllowDynamicResolution: 0
+  m_ForceIntoRT: 0
+  m_OcclusionCulling: 1
+  m_StereoConvergence: 10
+  m_StereoSeparation: 0.022
+--- !u!114 &2681952517380366975
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4374342517513860973}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d394f089cc731084b8317f2087b15449, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  cam: {fileID: 5247176016537061089}
+--- !u!114 &2002237706439093763
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4374342517513860973}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a79441f348de89743a2939f4d699eac1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_RenderShadows: 1
+  m_RequiresDepthTextureOption: 2
+  m_RequiresOpaqueTextureOption: 2
+  m_CameraType: 1
+  m_Cameras: []
+  m_RendererIndex: -1
+  m_VolumeLayerMask:
+    serializedVersion: 2
+    m_Bits: 1
+  m_VolumeTrigger: {fileID: 0}
+  m_RenderPostProcessing: 0
+  m_Antialiasing: 2
+  m_AntialiasingQuality: 2
+  m_StopNaN: 0
+  m_Dithering: 0
+  m_ClearDepth: 1
+  m_AllowXRRendering: 1
+  m_RequiresDepthTexture: 0
+  m_RequiresColorTexture: 0
+  m_Version: 2
+--- !u!81 &1459590117734244759
+AudioListener:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4374342517513860973}
+  m_Enabled: 1
 --- !u!1 &4724832847467580618
 GameObject:
   m_ObjectHideFlags: 0
@@ -1059,7 +1205,8 @@ Transform:
   m_LocalRotation: {x: 0.27064258, y: -0.44344246, z: 0.14243294, w: 0.8425107}
   m_LocalPosition: {x: 13.886057, y: 9.067591, z: -8.358666}
   m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
+  m_Children:
+  - {fileID: 5293120200943940537}
   m_Father: {fileID: 1066860337956249593}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -1094,7 +1241,7 @@ Camera:
   m_Depth: 0
   m_CullingMask:
     serializedVersion: 2
-    m_Bits: 4294967295
+    m_Bits: 16151
   m_RenderingPath: -1
   m_TargetTexture: {fileID: 0}
   m_TargetDisplay: 0
@@ -1135,7 +1282,8 @@ MonoBehaviour:
   m_RequiresDepthTextureOption: 2
   m_RequiresOpaqueTextureOption: 2
   m_CameraType: 0
-  m_Cameras: []
+  m_Cameras:
+  - {fileID: 5247176016537061089}
   m_RendererIndex: -1
   m_VolumeLayerMask:
     serializedVersion: 2

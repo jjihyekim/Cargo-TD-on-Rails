@@ -33,8 +33,6 @@ public class CarLikeMovementOffsetsController : MonoBehaviour{
         GetComponent<Rigidbody>().centerOfMass = centerOfMass;
     }
 
-    public LayerMask groundLayer;
-
     public bool stickToGround = false;
 
     private void Update() {
@@ -42,6 +40,7 @@ public class CarLikeMovementOffsetsController : MonoBehaviour{
         if (stickToGround) {
             if (Physics.Raycast(transform.position + Vector3.up * 20, Vector3.down, out RaycastHit hit, 100, LevelReferences.s.groundLayer)) {
                 target.y = hit.point.y + 0.1f;
+                print(hit.point.y);
             }
         }
 
