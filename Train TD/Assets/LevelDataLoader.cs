@@ -148,6 +148,7 @@ public class LevelDataLoader : MonoBehaviour {
         
         output.trainLength = input.trainLength;
         output.starterModules = (TrainBuildingData[])input.starterModules.Clone();
+        //output.levelTrain = (TrainCartData[])input.levelTrain.Clone();
         output.enemyWaves = (EnemyWaveData[])input.enemyWaves.Clone();
         
         output.startingMoney = input.startingMoney;

@@ -15,6 +15,7 @@ public class LevelDataScriptable : ScriptableObject {
 	
 	public int trainLength = 3;
 	public TrainBuildingData[] starterModules;
+	//public TrainCartData[] levelTrain;
 	public EnemyWaveData[] enemyWaves;
 
 	[Header("Money")]

@@ -54,11 +54,13 @@ public class Train : MonoBehaviour {
             Destroy(trainBack.gameObject);
 
         if (SceneLoader.s.currentLevel != null) {
+            //cartCount = SceneLoader.s.currentLevel.levelTrain.Length;
             cartCount = SceneLoader.s.currentLevel.trainLength;
 
             for (int i = 0; i < cartCount; i++) {
                 var cart = Instantiate(DataHolder.s.cartPrefab, transform);
                 carts.Add(cart.transform);
+                //AddCartBuildings(cart.GetComponent<Cart>(), SceneLoader.s.currentLevel.levelTrain[SceneLoader.s.currentLevel.levelTrain.Length - i - 1]);
                 cartDefPositions.Add(cart.transform.position);
             }
 
@@ -75,6 +77,36 @@ public class Train : MonoBehaviour {
         cartDefPositions.Reverse();
         
         UpdateCartPositions();
+    }
+
+    /*void AddCartBuildings(Cart cart, TrainCartData data) {
+        if (data.frontSlot.leftSlot != "empty") {
+            AddBuildingToSlot(cart.frontSlot, 0, data.frontSlot.leftSlot);
+        }
+        if (data.frontSlot.topSlot != "empty") {
+            AddBuildingToSlot(cart.frontSlot, 1, data.frontSlot.topSlot);
+        }
+        if (data.frontSlot.rightSlot != "empty") {
+            AddBuildingToSlot(cart.frontSlot, 2, data.frontSlot.rightSlot);
+        }
+        
+        
+        if (data.backSlot.leftSlot != "empty") {
+            AddBuildingToSlot(cart.backSlot, 0, data.backSlot.leftSlot);
+        }
+        if (data.backSlot.topSlot != "empty") {
+            AddBuildingToSlot(cart.backSlot, 1, data.backSlot.topSlot);
+        }
+        if (data.backSlot.rightSlot != "empty") {
+            AddBuildingToSlot(cart.backSlot, 2, data.backSlot.rightSlot);
+        }
+    }*/
+
+    private static void AddBuildingToSlot(Slot slot, int slotIndex, string building) {
+        var newBuilding = Instantiate(DataHolder.s.GetBuilding(building).gameObject).GetComponent<TrainBuilding>();
+        slot.AddBuilding(newBuilding, slotIndex);
+        newBuilding.transform.position = slot.transform.position;
+        newBuilding.CompleteBuilding();
     }
 
     public Transform AddTrainCartAtIndex(int index) {

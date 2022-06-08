@@ -14,6 +14,7 @@ public class LevelData {
 	public int missionRewardMoney = 200;
 	
 	public TrainBuildingData[] starterModules;
+	//public TrainCartData[] levelTrain;
 	public EnemyWaveData[] enemyWaves;
 
 	[Header("Money")]
@@ -62,13 +63,42 @@ public class TrainBuildingData {
 	public int count = 1;
 }
 
+/*[Serializable]
+public class TrainCartData {
+	public TrainSlotData frontSlot;
+	public TrainSlotData backSlot;
+}
+
+[Serializable]
+public class TrainSlotData {
+	[ValueDropdown("GetAllTrainModuleNames")]
+	[HorizontalGroup("Group 1", LabelWidth = 40)]
+	public string leftSlot = "empty";
+	[ValueDropdown("GetAllTrainModuleNames")]
+	[HorizontalGroup("Group 1")]
+	public string topSlot = "empty";
+	[ValueDropdown("GetAllTrainModuleNames")]
+	[HorizontalGroup("Group 1")]
+	public string rightSlot = "empty";
+
+
+
+	private static IEnumerable GetAllTrainModuleNames() {
+		var buildings = GameObject.FindObjectOfType<DataHolder>().buildings;
+		var buildingNames = new List<string>();
+		for (int i = 0; i < buildings.Length; i++) {
+			buildingNames.Add(buildings[i].uniqueName);
+		}
+		buildingNames.Add("empty");
+		return buildingNames;
+	}
+}*/
+
 [Serializable]
 public class EnemyWaveData {
 	[Title("$enemyUniqueName", "@(startDistance + headsUpTime*2).ToString()")]
-	public string enemyUniqueName = "unset";
-
 	[ValueDropdown("GetAllEnemyNames")]
-	public string unique2 = "unset";
+	public string enemyUniqueName = "unset";
 	public float enemyData = -1;
 
 	public enum EnemyPathType {
