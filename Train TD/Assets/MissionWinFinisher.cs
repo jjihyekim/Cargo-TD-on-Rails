@@ -33,6 +33,10 @@ public class MissionWinFinisher : MonoBehaviour {
 
 	public CameraSwitcher cameraSwitcher;
 
+	public TMP_Text worstTime;
+	public TMP_Text medTime;
+	public TMP_Text bestTime;
+
 	private void Start() {
 		winUI.SetActive(false);
 	}
@@ -52,16 +56,24 @@ public class MissionWinFinisher : MonoBehaviour {
 
 		var myMission = DataSaver.s.GetCurrentSave().GetCurrentMission();
 		
-		// Analytics calculations
+
+		
+		// Analytics calculations (need to be done done mission rewards are given)
 		bool isWonBefore = myMission.isWon;
 		var prevStarCount = (myMission.isWon ? 1 : 0) + myMission.speedStars + myMission.cargoStars;
 		var curStarCount = StarController.s.speedStars + StarController.s.cargoStars + 1;
 		bool scoreImprovementSuccess = curStarCount > prevStarCount;
-			
+		
+		
+		
+		// mission rewards
 		ShowAndGiveMissionRewards(myMission);
 		cameraSwitcher.Engage();
 		winUI.SetActive(true);
-
+		
+		
+		
+		//send analytics
 		AnalyticsResult analyticsResult = Analytics.CustomEvent(
 			"LevelWon",
 			new Dictionary<string, object> {
@@ -97,7 +109,7 @@ public class MissionWinFinisher : MonoBehaviour {
 	}
 
 	void ShowAndGiveMissionRewards(DataSaver.MissionStats myMission) {
-		var totalRewards = 0;
+		var totalRewards = SceneLoader.s.currentLevel.missionRewardMoney;
 		foreach (var cargo in Train.s.GetComponentsInChildren<CargoModule>()) {
 			var cargoObj = Instantiate(cargoDeliveredPrefab, cargoDeliveredParent);
 			totalRewards += cargoObj.GetComponent<MiniGUI_DeliveredCargo>().SetUp(cargo);
@@ -117,7 +129,12 @@ public class MissionWinFinisher : MonoBehaviour {
 		myMission.bestTime = Mathf.Min(myMission.bestTime,SpeedController.s.currentTime);
 		
 		cargoText.text = $"Cargo: {CargoController.s.aliveCargo}/{CargoController.s.totalCargo}";
-		timeText.text = $"Time: {SpeedController.s.GetNiceTime()}";
+		timeText.text = $"Time: {SpeedController.s.GetCurrentTime()}";
+
+		worstTime.text = SpeedController.s.GetWorstTime();
+		medTime.text = SpeedController.s.GetMedTime();
+		bestTime.text = SpeedController.s.GetBestTime();
+		
 		
 		DataSaver.s.SaveActiveGame();
 	}

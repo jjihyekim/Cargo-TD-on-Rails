@@ -10,69 +10,58 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: db512ea5c3f84be49c44fcd62d024370, type: 3}
-  m_Name: Explosive Friends
+  m_Name: 01 Smol starts
   m_EditorClassIdentifier: 
-  levelName: Explosive Friends
-  levelMenuOrder: 3
-  trainLength: 5
+  levelName: Smol starts
+  levelMenuOrder: 4
+  missionRewardMoney: 200
+  trainLength: 3
   starterModules:
   - uniqueName: Engine
     count: 1
   - uniqueName: Cargo
-    count: 3
+    count: 2
   enemyWaves:
-  - enemyUniqueName: Supply
+  - enemyUniqueName: Buggy
     enemyData: 1
     isLeft: 1
-    enemyPathType: 1
+    enemyPathType: 0
     startDistance: 10
     headsUpTime: 15
-  - enemyUniqueName: Supply
-    enemyData: 1
-    isLeft: 0
-    enemyPathType: 1
-    startDistance: 50
-    headsUpTime: 30
   - enemyUniqueName: Buggy
-    enemyData: 2
-    isLeft: 0
-    enemyPathType: 4
-    startDistance: 110
-    headsUpTime: 30
-  - enemyUniqueName: Army
     enemyData: 1
     isLeft: 0
-    enemyPathType: 4
-    startDistance: 220
-    headsUpTime: 30
-  - enemyUniqueName: Supply
-    enemyData: 5
-    isLeft: 0
-    enemyPathType: 4
-    startDistance: 360
-    headsUpTime: 30
-  - enemyUniqueName: Army
-    enemyData: 2
-    isLeft: 0
-    enemyPathType: 4
-    startDistance: 420
+    enemyPathType: 0
+    startDistance: 60
     headsUpTime: 30
   - enemyUniqueName: Buggy
     enemyData: 2
     isLeft: 1
     enemyPathType: 0
-    startDistance: 640
+    startDistance: 150
     headsUpTime: 30
   - enemyUniqueName: Buggy
     enemyData: 2
     isLeft: 0
     enemyPathType: 0
-    startDistance: 640
+    startDistance: 150
     headsUpTime: 30
-  startingMoney: 65
-  moneyGainSpeed: 0.5
-  missionDistance: 1200
-  bestEngineSpeed: 160
-  mediumEngineSpeed: 130
-  worstEngineSpeed: 100
-  reputationRequirement: 15
+  - enemyUniqueName: Buggy
+    enemyData: 3
+    isLeft: 1
+    enemyPathType: 0
+    startDistance: 350
+    headsUpTime: 30
+  - enemyUniqueName: Buggy
+    enemyData: 3
+    isLeft: 0
+    enemyPathType: 0
+    startDistance: 350
+    headsUpTime: 30
+  startingMoney: 40
+  moneyGainSpeed: 1
+  missionDistance: 600
+  bestEngineSpeed: 130
+  mediumEngineSpeed: 115
+  worstEngineSpeed: 70
+  reputationRequirement: 0

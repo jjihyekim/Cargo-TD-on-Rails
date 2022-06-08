@@ -22,11 +22,14 @@ public class LevelReferences : MonoBehaviour {
 
     public GameObject metalBulletHitEffectPrefab;
     public GameObject dirtBulletHitEffectPrefab;
+    public GameObject enemyRegularHitEffectPrefab;
+    public GameObject enemyCantPenetrateHitEffectPrefab;
     public GameObject rocketExplosionEffectPrefab;
     public GameObject mortarExplosionEffectPrefab;
     public GameObject mortarMiniHitPrefab;
     public GameObject waveDisplayPrefab;
     public GameObject partHealthPrefab;
+    public GameObject damageNumbersPrefab;
     public Transform uiDisplayParent;
 
     public float speed = 1f;
@@ -44,6 +47,8 @@ public class LevelReferences : MonoBehaviour {
     
     
     public LayerMask groundLayer;
+    public LayerMask enemyLayer;
+    public LayerMask buildingLayer;
     
     private void Awake() {
         s = this;
@@ -64,6 +69,8 @@ public class LevelReferences : MonoBehaviour {
             pileComp.SetUp(targetAmount);
             allScraps.Add(pileComp);
             amount -= 25;
+            
+            pileComp.CollectPile();
         }
     }
 }

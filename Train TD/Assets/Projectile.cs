@@ -26,6 +26,8 @@ public class Projectile : MonoBehaviour {
 
     public bool isPlayerBullet = false;
 
+    public bool canPenetrateArmor = false;
+
     public Transform target {
         get {
             return source.target;
@@ -181,7 +183,7 @@ public class Projectile : MonoBehaviour {
                 var health = target.GetComponentInParent<IHealth>();
 
                 if (health != null) {
-                    health.DealDamage(damage);
+                    DealDamage(health);
                 }
             } else {
                 MortarDamage();
@@ -261,7 +263,7 @@ public class Projectile : MonoBehaviour {
         }
 
         foreach (var health in healthsInRange) {
-            health.DealDamage(damage);
+            DealDamage(health);
             ApplyHitForceToObject(health);
             var closestPoint = health.GetMainCollider().ClosestPoint(transform.position);
             Instantiate(miniHitPrefab, closestPoint, Quaternion.identity);
@@ -278,11 +280,9 @@ public class Projectile : MonoBehaviour {
         GameObject hitPrefab = LevelReferences.s.rocketExplosionEffectPrefab;
 
         var health = other.gameObject.GetComponentInParent<IHealth>();
-        //print(other.gameObject);
-        //print(other.transform.root.gameObject);
-        //print(health);
+        
         if (health != null) {
-            health.DealDamage(damage);
+            DealDamage(health);
             ApplyHitForceToObject(health);
         }
 
@@ -290,25 +290,36 @@ public class Projectile : MonoBehaviour {
     }
 
     private void ContactDamage(Collision other) {
+        var health = other.gameObject.GetComponentInParent<IHealth>();
+        
+        DealDamage(health);
+        
+        GameObject hitPrefab;
+        
         var contact = other.GetContact(0);
         var pos = contact.point;
         var rotation = Quaternion.LookRotation(contact.normal);
 
-        GameObject hitPrefab;
-        if (other.gameObject.GetComponentInParent<Cart>()) {
-            hitPrefab = LevelReferences.s.metalBulletHitEffectPrefab;
-        } else {
+
+        if (health == null) { // we didnt hit the player or the enemies
             hitPrefab = LevelReferences.s.dirtBulletHitEffectPrefab;
+            
+        }else{
+            if (health is ModuleHealth) {
+                hitPrefab = LevelReferences.s.metalBulletHitEffectPrefab;
+
+            } else {
+                ApplyHitForceToObject(health);
+
+
+                if (health.HasArmor() && !canPenetrateArmor) {
+                    // if enemy has armor and we cannot penetrate it, show it through an effect
+                    hitPrefab = LevelReferences.s.enemyCantPenetrateHitEffectPrefab;
+                } else { 
+                    hitPrefab = LevelReferences.s.enemyRegularHitEffectPrefab;}
+            }
         }
 
-        var health = other.gameObject.GetComponentInParent<IHealth>();
-        //print(other.gameObject);
-        //print(other.transform.root.gameObject);
-        //print(health);
-        if (health != null) {
-            health.DealDamage(damage);
-            ApplyHitForceToObject(health);
-        }
 
         Instantiate(hitPrefab, pos, rotation);
     }
@@ -326,5 +337,18 @@ public class Projectile : MonoBehaviour {
         force = force.normalized * damage * hitForceMultiplier;
         
         rigidbody.AddForceAtPosition(force, closestPoint);
+    }
+
+
+    void DealDamage(IHealth target) {
+        if (target != null) {
+            var dmg = damage;
+            if (target.HasArmor() && !canPenetrateArmor) {
+                dmg = damage/ 2;
+            }
+
+            target.DealDamage(dmg);
+            Instantiate(LevelReferences.s.damageNumbersPrefab, LevelReferences.s.uiDisplayParent).GetComponent<MiniGUI_DamageNumber>().SetUp(target.GetGameObject().transform, (int)dmg);
+        }
     }
 }

@@ -30,8 +30,6 @@ public class PlayerBuildingController : MonoBehaviour {
     public string buildingActionMap;
     public string nonbuildingActionMap;
 
-    public LayerMask buildingLayerMask;
-
     TrueFalseCallback finishBuildingCallback;
 
     private void Start() {
@@ -80,7 +78,7 @@ public class PlayerBuildingController : MonoBehaviour {
         RaycastHit hit;
         Ray ray = LevelReferences.s.mainCam.ScreenPointToRay(Mouse.current.position.ReadValue());
 
-        if (Physics.Raycast(ray, out hit, 100f, buildingLayerMask)) {
+        if (Physics.Raycast(ray, out hit, 100f, LevelReferences.s.buildingLayer)) {
             var slot = hit.collider.gameObject.GetComponentInParent<Slot>();
 
             if (slot != activeSlot) {
@@ -197,6 +195,7 @@ public class PlayerBuildingController : MonoBehaviour {
 
                 LogData(currentlyMultiBuilding, newBuilding);
 
+                PlayerModuleSelector.s.SelectBuilding(newBuilding, false);
                 if (!currentlyMultiBuilding) {
                     tempBuilding = null;
                     activeSlot = null;
@@ -205,7 +204,6 @@ public class PlayerBuildingController : MonoBehaviour {
                 
                     StopBuilding();
                 } else {
-                    PlayerModuleSelector.s.SelectBuilding(newBuilding, false);
                     UpdateCanBuildable();
                 }
                 
@@ -343,11 +341,14 @@ public class PlayerBuildingController : MonoBehaviour {
         }
         tempBuilding = Instantiate(building.gameObject, Vector3.zero, Quaternion.identity).GetComponent<TrainBuilding>();
         tempBuilding.SetBuildingMode(true);
+        tempBuilding.CycleRotation();
         tempBuilding.SetGfxBasedOnRotation();
         isBuilding = true;
         
         MenuToggle.HideAllToggleMenus();
         finishBuildingCallback = callback;
+        
+        Debug.Log($"Starting building: {building.displayName}");
     }
 
     public void StopBuilding() {

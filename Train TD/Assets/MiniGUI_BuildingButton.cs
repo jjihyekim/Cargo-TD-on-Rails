@@ -12,20 +12,27 @@ public class MiniGUI_BuildingButton : MonoBehaviour {
 	public TMP_Text costText;
 	public Image icon;
 	private Button myButton;
+	
+	public bool canBuild = true;
 
+	public GameObject button;
 	public void StartBuilding() {
-		PlayerBuildingController.s.StartBuilding(myBuilding);
+		if(canBuild)
+			PlayerBuildingController.s.StartBuilding(myBuilding);
 	}
 
 	private void Update() {
-		myButton.interactable = MoneyController.s.money >= myBuilding.cost;
+		canBuild = MoneyController.s.money >= myBuilding.cost;
+		myButton.interactable = canBuild;
 	}
 
 	private void Start() {
-		if (!UpgradesController.s.unlockedUpgrades.Contains(myBuilding.uniqueName)) {
-			//Debug.Log("enable me so that not unlocked guns dont appear");
-			Destroy(gameObject);
-		}
+		UpgradesController.s.callWhenUpgradesChanged.AddListener(UpdateButtonStatus);
+		UpdateButtonStatus();
+	}
+
+	void UpdateButtonStatus() {
+		gameObject.SetActive(UpgradesController.s.unlockedUpgrades.Contains(myBuilding.uniqueName));
 		
 		costText.text = myBuilding.cost.ToString();
 		myButton = GetComponent<Button>();

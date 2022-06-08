@@ -47,6 +47,8 @@ public class MiniGUI_ModuleSingleAction : MonoBehaviour {
             
             myButton.interactable = myAction.curCooldown <= 0;
         }
+
+        cost.text = myAction.cost.ToString();
     }
 
 

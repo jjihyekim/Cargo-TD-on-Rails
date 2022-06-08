@@ -11,12 +11,16 @@ public class ScrapCollector : MonoBehaviour {
 
 
     public void DisableRingBeforeLevelStart() {
-        ring.gameObject.SetActive(false);
+        if (this.enabled) {
+            ring.gameObject.SetActive(false);
+        }
     }
 
     public void ActivateRingOnLevelStart() {
-        ring.gameObject.SetActive(true);
-        ChangeRingVisibility(false);
+        if (this.enabled) {
+            ring.gameObject.SetActive(true);
+            ChangeRingVisibility(false);
+        }
     }
 
     public Material ringMaterial;

@@ -38,15 +38,21 @@ public class CargoController : MonoBehaviour {
     }
 
     public void AliveCargo(int size) {
+        if(!SceneLoader.s.isLevelInProgress)
+            return;
+        
         aliveCargo += size;
         UpdateStars();
         UpdateCargoAliveGraphics();
     }
 
     public void DeadCargo(int size) {
+        if(!SceneLoader.s.isLevelInProgress)
+            return;
+        
         aliveCargo -= size;
 
-        if (SceneLoader.s.isLevelInProgress && totalCargo > 0 && aliveCargo == 0) {
+        if (totalCargo > 0 && aliveCargo == 0) {
             MissionLoseFinisher.s.MissionLost(true);
         }
         

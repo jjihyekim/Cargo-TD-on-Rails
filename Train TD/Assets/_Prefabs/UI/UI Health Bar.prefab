@@ -324,8 +324,9 @@ GameObject:
   - component: {fileID: 6301332213449025043}
   - component: {fileID: 1686153152247695351}
   - component: {fileID: 8359827302131242970}
+  - component: {fileID: 5975833051758972769}
   m_Layer: 5
-  m_Name: Module Health Bar
+  m_Name: UI Health Bar
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -364,14 +365,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: da61f942db494445899fa8188233efdf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  sourceTransform: {fileID: 0}
-  myModuleHealth: {fileID: 0}
   myModuleAmmo: {fileID: 0}
   slider: {fileID: 2583321670165530668}
   filler: {fileID: 6808151894280721294}
-  healthyColor: {r: 0, g: 1, b: 0, a: 1}
-  deadColor: {r: 1, g: 0, b: 0, a: 1}
+  playerColor: {r: 0, g: 1, b: 0, a: 1}
+  armoredEnemyColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
+  enemyColor: {r: 1, g: 0, b: 0, a: 1}
   ammoSlider: {fileID: 8663573651741825278}
+  isPlayer: 0
 --- !u!114 &6301332213449025043
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -424,6 +425,19 @@ CanvasGroup:
   m_Interactable: 0
   m_BlocksRaycasts: 0
   m_IgnoreParentGroups: 0
+--- !u!114 &5975833051758972769
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3462678910104818603}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d369bfb4965e4e14693015694c123637, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  sourceTransform: {fileID: 0}
 --- !u!1 &5057149720180279488
 GameObject:
   m_ObjectHideFlags: 0

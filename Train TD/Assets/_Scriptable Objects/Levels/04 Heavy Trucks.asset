@@ -10,10 +10,11 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: db512ea5c3f84be49c44fcd62d024370, type: 3}
-  m_Name: Heavy Trucks
+  m_Name: 04 Heavy Trucks
   m_EditorClassIdentifier: 
   levelName: Heavy Trucks
   levelMenuOrder: 5
+  missionRewardMoney: 400
   trainLength: 4
   starterModules:
   - uniqueName: Engine
@@ -30,21 +31,51 @@ MonoBehaviour:
     startDistance: 10
     headsUpTime: 15
   - enemyUniqueName: Buggy
-    enemyData: 9
+    enemyData: 4
     isLeft: 1
     enemyPathType: 0
     startDistance: 80
     headsUpTime: 30
   - enemyUniqueName: Truck
-    enemyData: 6
+    enemyData: 3
     isLeft: 0
     enemyPathType: 0
     startDistance: 150
     headsUpTime: 30
-  startingMoney: 100
+  - enemyUniqueName: Supply
+    enemyData: 3
+    isLeft: 0
+    enemyPathType: 4
+    startDistance: 150
+    headsUpTime: 30
+  - enemyUniqueName: Buggy
+    enemyData: 9
+    isLeft: 1
+    enemyPathType: 0
+    startDistance: 250
+    headsUpTime: 30
+  - enemyUniqueName: Supply
+    enemyData: 3
+    isLeft: 1
+    enemyPathType: 0
+    startDistance: 350
+    headsUpTime: 30
+  - enemyUniqueName: Truck
+    enemyData: 3
+    isLeft: 0
+    enemyPathType: 0
+    startDistance: 450
+    headsUpTime: 30
+  - enemyUniqueName: Truck
+    enemyData: 3
+    isLeft: 0
+    enemyPathType: 4
+    startDistance: 400
+    headsUpTime: 30
+  startingMoney: 150
   moneyGainSpeed: 1
-  missionDistance: 600
-  bestEngineSpeed: 160
-  mediumEngineSpeed: 130
+  missionDistance: 700
+  bestEngineSpeed: 250
+  mediumEngineSpeed: 160
   worstEngineSpeed: 100
   reputationRequirement: 12

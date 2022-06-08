@@ -18,8 +18,9 @@ public class ModuleAmmo : MonoBehaviour, IResupplyAble {
     private GunModule myGunModule;
 
     private bool isUsingSpecialAmmo = false;
-    
-    
+
+    public bool ammoGivesArmorPenetration = true;
+
     public bool isUnlocked = false;
     public Upgrade unlockingUpgrade;
     
@@ -35,11 +36,15 @@ public class ModuleAmmo : MonoBehaviour, IResupplyAble {
             this.enabled = false;
             return;
         }
-        
+
         myGunModule = GetComponent<GunModule>();
         defDamage = myGunModule.projectileDamage;
         defFireDelay = myGunModule.fireDelay;
         myGunModule.barrageShot.AddListener(UseAmmo);
+
+        if (myGunModule.canPenetrateArmor) {
+            ammoGivesArmorPenetration = false;
+        }
     }
 
     public bool ShowAmmoBar() {
@@ -71,9 +76,18 @@ public class ModuleAmmo : MonoBehaviour, IResupplyAble {
             if (isUsingSpecialAmmo) {
                 myGunModule.projectileDamage *= damageMultiplier;
                 myGunModule.fireDelay /= fireSpeedBoost;
+
+                if (ammoGivesArmorPenetration) {
+                    myGunModule.canPenetrateArmor = true;
+                }
+                
             } else {
                 myGunModule.projectileDamage /= damageMultiplier;
                 myGunModule.fireDelay *= fireSpeedBoost;
+                
+                if (ammoGivesArmorPenetration) {
+                    myGunModule.canPenetrateArmor = false;
+                }
             }
         }
 

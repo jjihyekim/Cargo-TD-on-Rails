@@ -28,4 +28,12 @@ public class PossibleTarget : MonoBehaviour {
     private void OnDisable() {
 	    LevelReferences.allTargets.Remove(this);
     }
+
+    public float GetHealth() {
+        if (myType == Type.player) {
+            return GetComponent<ModuleHealth>().currentHealth;
+        } else {
+            return GetComponent<EnemyHealth>().currentHealth;
+        }
+    }
 }

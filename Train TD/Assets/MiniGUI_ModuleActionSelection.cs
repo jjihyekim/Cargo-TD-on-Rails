@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -6,13 +7,15 @@ using UnityEngine.InputSystem;
 public class MiniGUI_ModuleActionSelection : MonoBehaviour {
 
 	public GameObject singleActionPrefab;
+	public GameObject singleInfoPrefab;
 	public Transform singleActionParent;
 
 	private TrainBuilding myModule;
+	private EnemyHealth myEnemy;
 	
 	public void SetUp(TrainBuilding module) {
 		singleActionParent.DeleteAllChildren();
-		buttons.Clear();
+		extraRects.Clear();
 
 		myModule = module;
 
@@ -21,12 +24,39 @@ public class MiniGUI_ModuleActionSelection : MonoBehaviour {
 		for (int i = 0; i < myActions.Length; i++) {
 			if (myActions[i].isUnlocked) {
 				var button = Instantiate(singleActionPrefab, singleActionParent).GetComponent<MiniGUI_ModuleSingleAction>().SetUp(myActions[i]);
-				buttons.Add(button.GetComponent<RectTransform>());
+				extraRects.Add(button.GetComponent<RectTransform>());
 			}
+		}
+		
+		
+		var myInfo = myModule.GetComponents<ClickableEntityInfo>();
+		for (int i = 0; i < myInfo.Length; i++) {
+			var info = Instantiate(singleInfoPrefab, singleActionParent).GetComponent<MiniGUI_SingleInfo>().SetUp(myInfo[i]);
+			extraRects.Add(info.GetComponent<RectTransform>());
 		}
 
 
 		sourceTransform = myModule.uiTargetTransform;
+		
+		CanvasRect = transform.root.GetComponent<RectTransform>();
+		UIRect = GetComponent<RectTransform>();
+		mainCam = LevelReferences.s.mainCam;
+		Update();
+	}
+
+	public void SetUp(EnemyHealth enemyHealth) {
+		singleActionParent.DeleteAllChildren();
+		extraRects.Clear();
+		
+		myEnemy = enemyHealth;
+		var myInfo = myEnemy.GetComponents<ClickableEntityInfo>();
+		for (int i = 0; i < myInfo.Length; i++) {
+			var info = Instantiate(singleInfoPrefab, singleActionParent).GetComponent<MiniGUI_SingleInfo>().SetUp(myInfo[i]);
+			extraRects.Add(info.GetComponent<RectTransform>());
+		}
+
+
+		sourceTransform = myEnemy.uiTransform;
 		
 		CanvasRect = transform.root.GetComponent<RectTransform>();
 		UIRect = GetComponent<RectTransform>();
@@ -46,8 +76,7 @@ public class MiniGUI_ModuleActionSelection : MonoBehaviour {
 
 
 	private void Update() {
-
-		if (sourceTransform == null || myModule == null || !myModule.isBuilt) {
+		if (sourceTransform == null || ((myModule == null || !myModule.isBuilt) && (myEnemy == null))) {
 			PlayerModuleSelector.s.HideModuleActionSelector();
 		}
 
@@ -84,7 +113,7 @@ public class MiniGUI_ModuleActionSelection : MonoBehaviour {
 
 
     public RectTransform reticle;
-    public List<RectTransform> buttons = new List<RectTransform>();
+    public List<RectTransform> extraRects = new List<RectTransform>();
 
     public bool IsMouseOverMenu() {
 	    if (!gameObject.activeSelf)
@@ -94,9 +123,9 @@ public class MiniGUI_ModuleActionSelection : MonoBehaviour {
 	    var rect = reticle;
 	    var isOverRect = RectTransformUtility.RectangleContainsScreenPoint(rect, mousePos);
 
-	    for (int i = 0; i < buttons.Count; i++) {
-		    if (buttons[i] != null) {
-			    var isOverButton = RectTransformUtility.RectangleContainsScreenPoint(buttons[i], mousePos);
+	    for (int i = 0; i < extraRects.Count; i++) {
+		    if (extraRects[i] != null) {
+			    var isOverButton = RectTransformUtility.RectangleContainsScreenPoint(extraRects[i], mousePos);
 			    isOverRect = isOverRect || isOverButton;
 		    }
 	    }

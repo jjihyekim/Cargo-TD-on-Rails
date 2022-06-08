@@ -36,7 +36,7 @@ public abstract class ModuleAction : UnlockableEffect {
 	}
 
 	protected abstract void _EngageAction();
-
+	protected virtual void _Update(){}
 
 	private void Update() {
 		if (curCooldown > 0) {
@@ -44,5 +44,6 @@ public abstract class ModuleAction : UnlockableEffect {
 			if (curCooldown < 0)
 				curCooldown = 0;
 		}
+		_Update();
 	}
 }

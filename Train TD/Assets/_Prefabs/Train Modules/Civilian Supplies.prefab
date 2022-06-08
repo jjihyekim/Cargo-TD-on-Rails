@@ -1603,6 +1603,7 @@ GameObject:
   - component: {fileID: 3260352214045705965}
   - component: {fileID: 9090104958068192164}
   - component: {fileID: 2708098742696797523}
+  - component: {fileID: 3597698845088625360}
   m_Layer: 0
   m_Name: Civilian Supplies
   m_TagString: Untagged
@@ -1655,13 +1656,17 @@ MonoBehaviour:
   - {fileID: 9090104958068192164}
   cost: 50
   myRotation: 0
+  canBeTargetingAreaRotatable: 0
   occupiesEntireSlot: 0
   sideGfx: {fileID: 1921863401265547860}
   topGfx: {fileID: 438995914622950724}
+  frontGfx: {fileID: 0}
+  backGfx: {fileID: 0}
   myUITargetTransforms:
   - possibleRotations: 0000000001000000
     transform: {fileID: 5627520970223539819}
   isBuilt: 0
+  autoSetUp: 0
   _outlines: []
 --- !u!114 &1398447384451307312
 MonoBehaviour:
@@ -1676,7 +1681,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   cargoSize: 1
-  moneyReward: 50
+  moneyReward: 200
 --- !u!114 &3260352214045705965
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1724,6 +1729,20 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
+--- !u!114 &3597698845088625360
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5407064463434758410}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e03d89f262df7ef43ad10e8140eccbf4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  tooltip: {fileID: 0}
+  info: 
 --- !u!1 &5802816712457697084
 GameObject:
   m_ObjectHideFlags: 0

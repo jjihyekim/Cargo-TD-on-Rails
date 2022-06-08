@@ -9,7 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2144092535227666135}
-  m_Layer: 0
+  m_Layer: 14
   m_Name: BarrelEnd
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -43,7 +43,9 @@ GameObject:
   - component: {fileID: 2144092535843778896}
   - component: {fileID: 2144092535843778903}
   - component: {fileID: 2144092535843778902}
-  m_Layer: 0
+  - component: {fileID: -7516049447118759473}
+  - component: {fileID: -3516316361053104066}
+  m_Layer: 14
   m_Name: BikerSwarmUnit
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -58,10 +60,11 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2144092535843778906}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -1.42, y: 0.37099996, z: -7.83}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 2144092536254166970}
+  - {fileID: 1998028121992200877}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -83,6 +86,10 @@ MonoBehaviour:
   deathPrefab: {fileID: 7789772247874358278, guid: d379c6693c04463469cb996bd3ec7d18, type: 3}
   aliveObject: {fileID: 2144092536254166970}
   isAlive: 1
+  uiTransform: {fileID: 1998028121992200877}
+  healthBar: {fileID: 0}
+  isArmored: 0
+  _outlines: []
   editorFoldout: 1
 --- !u!114 &2144092535843778896
 MonoBehaviour:
@@ -117,6 +124,7 @@ MonoBehaviour:
   barrageShot:
     m_PersistentCalls:
       m_Calls: []
+  canPenetrateArmor: 0
 --- !u!114 &2144092535843778903
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -150,6 +158,34 @@ MonoBehaviour:
     rotations: 
     rotationSpanOverride: 0
   myPossibleTargets: 01000000
+--- !u!114 &-7516049447118759473
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2144092535843778906}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e03d89f262df7ef43ad10e8140eccbf4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  tooltip: {fileID: 0}
+  info: 
+--- !u!114 &-3516316361053104066
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2144092535843778906}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c000a03ade147ef4e8a60dfb7de82121, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  tooltip: {fileID: 0}
+  info: 
 --- !u!1 &2144092536254166969
 GameObject:
   m_ObjectHideFlags: 0
@@ -161,7 +197,7 @@ GameObject:
   - component: {fileID: 2144092536254166970}
   - component: {fileID: 2144092536254166964}
   - component: {fileID: 2144092536254166971}
-  m_Layer: 0
+  m_Layer: 14
   m_Name: car gfx
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -241,7 +277,7 @@ GameObject:
   - component: {fileID: 2147921072569520282}
   - component: {fileID: 2141157285682040226}
   - component: {fileID: 2131799325784858340}
-  m_Layer: 0
+  m_Layer: 14
   m_Name: Weapon_v1_1 (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -322,7 +358,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 255248249574659785}
-  m_Layer: 0
+  m_Layer: 14
   m_Name: ShootTarget
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -343,6 +379,36 @@ Transform:
   m_Father: {fileID: 2144092536254166970}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &6846698765286165758
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1998028121992200877}
+  m_Layer: 14
+  m_Name: UI Transform
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1998028121992200877
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6846698765286165758}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0.3, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 2144092535843778900}
+  m_RootOrder: 1
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &7985167525020265477
 GameObject:
   m_ObjectHideFlags: 0
@@ -352,7 +418,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5383814505888621836}
-  m_Layer: 0
+  m_Layer: 14
   m_Name: BarrelEnd (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -386,7 +452,7 @@ GameObject:
   - component: {fileID: 8954782973254402295}
   - component: {fileID: 2955318714630791166}
   - component: {fileID: 4939571804138420259}
-  m_Layer: 0
+  m_Layer: 14
   m_Name: MTire_v1 (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -494,7 +560,7 @@ GameObject:
   - component: {fileID: 8962482093196078361}
   - component: {fileID: 8954179380929637707}
   - component: {fileID: 6859997819659589366}
-  m_Layer: 0
+  m_Layer: 14
   m_Name: Motorcycle_v1_1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -593,7 +659,7 @@ GameObject:
   - component: {fileID: 8937216388605246201}
   - component: {fileID: 8962910660290777535}
   - component: {fileID: 8954174827593133051}
-  m_Layer: 0
+  m_Layer: 14
   m_Name: Motorcycle_v1_STWheel
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -677,7 +743,7 @@ GameObject:
   - component: {fileID: 8941967873506226783}
   - component: {fileID: 8962211930028272871}
   - component: {fileID: 8953988346224983389}
-  m_Layer: 0
+  m_Layer: 14
   m_Name: Headlight_v1_2 (2)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -758,7 +824,7 @@ GameObject:
   - component: {fileID: 8942116838403346931}
   - component: {fileID: 8962773408799786199}
   - component: {fileID: 8954103632111437327}
-  m_Layer: 0
+  m_Layer: 14
   m_Name: Weapon_v2_3_M (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -839,7 +905,7 @@ GameObject:
   - component: {fileID: 8937247123260713301}
   - component: {fileID: 8962436987663928149}
   - component: {fileID: 8954368090994398181}
-  m_Layer: 0
+  m_Layer: 14
   m_Name: Weapon_v2_3 (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -920,7 +986,7 @@ GameObject:
   - component: {fileID: 8942012591986032283}
   - component: {fileID: 8962762298370801117}
   - component: {fileID: 8953985478945165737}
-  m_Layer: 0
+  m_Layer: 14
   m_Name: Headlight_v1_2 (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1003,7 +1069,7 @@ GameObject:
   - component: {fileID: 8954278778410233829}
   - component: {fileID: 4192931814654291922}
   - component: {fileID: 1178610761598178230}
-  m_Layer: 0
+  m_Layer: 14
   m_Name: MTire_v1 (2)
   m_TagString: Untagged
   m_Icon: {fileID: 0}

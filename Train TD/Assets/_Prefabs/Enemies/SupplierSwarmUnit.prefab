@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 873666277534656702}
   - component: {fileID: 893597676683189336}
   - component: {fileID: 883767712285216480}
-  m_Layer: 0
+  m_Layer: 14
   m_Name: Roof_attachments_v2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -90,7 +90,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4039267019348523305}
-  m_Layer: 0
+  m_Layer: 14
   m_Name: ShootTarget
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -122,7 +122,8 @@ GameObject:
   - component: {fileID: 2757841068463546036}
   - component: {fileID: 2757841068463546037}
   - component: {fileID: 2757841068463546039}
-  m_Layer: 0
+  - component: {fileID: 593568044335744060}
+  m_Layer: 14
   m_Name: SupplierSwarmUnit
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -137,10 +138,11 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2757841068463546042}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -1.5063622, y: 0.34700012, z: -9.439437}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 2757841070207719514}
+  - {fileID: 8270258553029418106}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -156,12 +158,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1a7eab1db79f56c47b0647f898b7c2c9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxHealth: 45
-  currentHealth: 45
+  maxHealth: 60
+  currentHealth: 60
   moneyReward: 50
   deathPrefab: {fileID: 65092263363361576, guid: 8926fbd338070fe4eb8bf41957e8f2df, type: 3}
   aliveObject: {fileID: 2757841070207719514}
   isAlive: 1
+  uiTransform: {fileID: 8270258553029418106}
+  healthBar: {fileID: 0}
+  isArmored: 0
+  _outlines: []
   editorFoldout: 1
 --- !u!114 &2757841068463546039
 MonoBehaviour:
@@ -177,6 +183,20 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   myType: 0
   targetTransform: {fileID: 4039267019348523305}
+--- !u!114 &593568044335744060
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2757841068463546042}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e03d89f262df7ef43ad10e8140eccbf4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  tooltip: {fileID: 0}
+  info: 
 --- !u!1 &2757841070207719513
 GameObject:
   m_ObjectHideFlags: 0
@@ -188,7 +208,7 @@ GameObject:
   - component: {fileID: 2757841070207719514}
   - component: {fileID: 2757841070207719508}
   - component: {fileID: 2757841070207719515}
-  m_Layer: 0
+  m_Layer: 14
   m_Name: car gfx
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -258,9 +278,6 @@ MonoBehaviour:
   lookRotationDelta: 10
   centerOfMass: {x: 0, y: -0.1, z: 0}
   forwardForce: 10
-  groundLayer:
-    serializedVersion: 2
-    m_Bits: 8192
   stickToGround: 0
 --- !u!1 &2841306339864593342
 GameObject:
@@ -273,7 +290,7 @@ GameObject:
   - component: {fileID: 2841306339864593341}
   - component: {fileID: 2841306339864593283}
   - component: {fileID: 2841306339864593340}
-  m_Layer: 0
+  m_Layer: 14
   m_Name: Roof_attachments_v1 (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -354,7 +371,7 @@ GameObject:
   - component: {fileID: 4169223794741401019}
   - component: {fileID: 4159352885001108403}
   - component: {fileID: 4150394859331007207}
-  m_Layer: 0
+  m_Layer: 14
   m_Name: Barrel_v1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -435,7 +452,7 @@ GameObject:
   - component: {fileID: 4369474361544530320}
   - component: {fileID: 4379123986863600094}
   - component: {fileID: 4386761996125522160}
-  m_Layer: 0
+  m_Layer: 14
   m_Name: Roof_attachments_v1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -518,7 +535,7 @@ GameObject:
   - component: {fileID: 5039420377240632975}
   - component: {fileID: 5023849116412921647}
   - component: {fileID: 5023849116412921640}
-  m_Layer: 0
+  m_Layer: 14
   m_Name: Tire_v1_L
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -627,7 +644,7 @@ GameObject:
   - component: {fileID: 5037790040105528733}
   - component: {fileID: 5025417409353943949}
   - component: {fileID: 5025417409353943950}
-  m_Layer: 0
+  m_Layer: 14
   m_Name: Tire_v1_L
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -734,7 +751,7 @@ GameObject:
   - component: {fileID: 5023137789729839099}
   - component: {fileID: 5027098632377640983}
   - component: {fileID: 5037317321448786939}
-  m_Layer: 0
+  m_Layer: 14
   m_Name: Gas_balloon_v1 (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -815,7 +832,7 @@ GameObject:
   - component: {fileID: 5022990618961320107}
   - component: {fileID: 5027105042119157535}
   - component: {fileID: 5039488871788893765}
-  m_Layer: 0
+  m_Layer: 14
   m_Name: Gas_balloon_v1 (2)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -897,7 +914,7 @@ GameObject:
   - component: {fileID: 5030051589880496985}
   - component: {fileID: 5039120700384441537}
   - component: {fileID: 5025651387589791838}
-  m_Layer: 0
+  m_Layer: 14
   m_Name: Pickup_v1_1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1007,7 +1024,7 @@ GameObject:
   - component: {fileID: 5022972044603854585}
   - component: {fileID: 5029724056494758703}
   - component: {fileID: 5037422780170221501}
-  m_Layer: 0
+  m_Layer: 14
   m_Name: Bullbar_v2 (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1088,7 +1105,7 @@ GameObject:
   - component: {fileID: 5022978547235043713}
   - component: {fileID: 5029455556252147861}
   - component: {fileID: 5037803354388038501}
-  m_Layer: 0
+  m_Layer: 14
   m_Name: Exhaust_pipe_v1 (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1171,7 +1188,7 @@ GameObject:
   - component: {fileID: 5039332678892916161}
   - component: {fileID: 5025716136434469867}
   - component: {fileID: 5025716136434469860}
-  m_Layer: 0
+  m_Layer: 14
   m_Name: Tire_v1_R
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1280,7 +1297,7 @@ GameObject:
   - component: {fileID: 5037384201639376595}
   - component: {fileID: 5025745577421200865}
   - component: {fileID: 5025745577421200866}
-  m_Layer: 0
+  m_Layer: 14
   m_Name: Tire_v1_R
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1387,7 +1404,7 @@ GameObject:
   - component: {fileID: 5022714672063157033}
   - component: {fileID: 5029809499499932459}
   - component: {fileID: 5037833596586643941}
-  m_Layer: 0
+  m_Layer: 14
   m_Name: Headlight_v1_8 (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1468,7 +1485,7 @@ GameObject:
   - component: {fileID: 5459918619778940959}
   - component: {fileID: 5457727433980646613}
   - component: {fileID: 5447321909643225677}
-  m_Layer: 0
+  m_Layer: 14
   m_Name: Jerrican_v1_2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1549,7 +1566,7 @@ GameObject:
   - component: {fileID: 5818832931711147702}
   - component: {fileID: 5812106455410637358}
   - component: {fileID: 5801619767092048484}
-  m_Layer: 0
+  m_Layer: 14
   m_Name: Bag_v1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1619,6 +1636,36 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!1 &6509551939457485658
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8270258553029418106}
+  m_Layer: 14
+  m_Name: UI Transform
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8270258553029418106
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6509551939457485658}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0.3, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 2757841068463546036}
+  m_RootOrder: 1
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &6964512127389729904
 GameObject:
   m_ObjectHideFlags: 0
@@ -1630,7 +1677,7 @@ GameObject:
   - component: {fileID: 6966290656408758474}
   - component: {fileID: 6977516893639587632}
   - component: {fileID: 6985558131939161552}
-  m_Layer: 0
+  m_Layer: 14
   m_Name: Winch_v1
   m_TagString: Untagged
   m_Icon: {fileID: 0}

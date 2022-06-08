@@ -17,7 +17,7 @@ public class SizeBasedOnZoomLevel : MonoBehaviour {
 
     private float curScale = 1;
     void Update() {
-        var wantedScale = (1 + CameraScroll.s.realZoom * zoomSizeChangeMultiplier);
+        var wantedScale = (1 + CameraController.s.realZoom * zoomSizeChangeMultiplier);
         curScale = Mathf.Lerp(curScale, wantedScale, lerp * Time.deltaTime);
         transform.localScale = Vector3.one * curScale;
     }

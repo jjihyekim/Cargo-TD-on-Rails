@@ -7,7 +7,7 @@ public class RandomPitchAtStart : MonoBehaviour {
     public float pitchRange = 0.2f;
 
     void Start() {
-        GetComponent<AudioSource>().pitch = Random.Range(1f - pitchRange, 1f + pitchRange);
+        GetComponent<AudioSource>().pitch = GetComponent<AudioSource>().pitch + Random.Range(-pitchRange, pitchRange);
     }
 
 }

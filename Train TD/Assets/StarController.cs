@@ -16,6 +16,7 @@ public class StarController : MonoBehaviour {
 
 
 	public Image[] speedStarsImages;
+	public Image[] speedStarsImages2;
 	public Image[] cargoStarsImages;
 	
 	public Color starActiveColor = Color.white;
@@ -23,9 +24,10 @@ public class StarController : MonoBehaviour {
 
 	public void UpdateSpeedStars(int count) {
 		if (count != speedStars) {
-			speedStars = count;
+			speedStars = count - 1;
 
 			SetStarAmount(speedStarsImages, speedStars);
+			SetStarAmount(speedStarsImages2, speedStars);
 		}
 	}
 	
@@ -42,17 +44,25 @@ public class StarController : MonoBehaviour {
 			return;
 		
 		switch (amount) {
+			case 3:
+				stars[0].color = starActiveColor;
+				stars[1].color = starActiveColor;;
+				stars[2].color = starActiveColor;
+				break;
 			case 2:
 				stars[0].color = starActiveColor;
 				stars[1].color = starActiveColor;
+				stars[2].color = starLostColor;
 				break;
 			case 1:
 				stars[0].color = starActiveColor;
 				stars[1].color = starLostColor;
+				stars[2].color = starLostColor;
 				break;
 			case 0:
 				stars[0].color = starLostColor;
 				stars[1].color = starLostColor;
+				stars[2].color = starLostColor;
 				break;
 		}
 	}

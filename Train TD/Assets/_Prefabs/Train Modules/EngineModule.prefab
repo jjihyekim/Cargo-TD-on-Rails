@@ -31529,6 +31529,7 @@ GameObject:
   - component: {fileID: 1657592566804371533}
   - component: {fileID: 8099302677170761538}
   - component: {fileID: -5921104565242264179}
+  - component: {fileID: -7834070156642343872}
   m_Layer: 0
   m_Name: EngineModule
   m_TagString: Untagged
@@ -31669,7 +31670,6 @@ MonoBehaviour:
   cost: -50
   cooldown: -1
   curCooldown: 0
-  canEngage: 1
   sellPrefab: {fileID: 172524484023753321, guid: 5c944d37062c8b04d8a0fa76e4e24049, type: 3}
 --- !u!114 &8099302677170761538
 MonoBehaviour:
@@ -31689,7 +31689,6 @@ MonoBehaviour:
   cost: 50
   cooldown: 120
   curCooldown: 0
-  canEngage: 1
   actionTime: 60
   engineSpeedMultiplier: 2
 --- !u!114 &-5921104565242264179
@@ -31710,12 +31709,25 @@ MonoBehaviour:
   cost: 0
   cooldown: 60
   curCooldown: 0
-  canEngage: 1
   actionTime: 25
   totalScrapsDropped: 50
   scrapChunkAmount: 10
   initialDelay: 2
   dropDistance: {x: 2, y: 5}
+--- !u!114 &-7834070156642343872
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4191698785256518694}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e03d89f262df7ef43ad10e8140eccbf4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  tooltip: {fileID: 0}
+  info: 
 --- !u!1 &4193415880286589700
 GameObject:
   m_ObjectHideFlags: 0

@@ -10,6 +10,9 @@ public class LevelData {
 	public int levelMenuOrder = -1;
 	//public GameObject train;
 	public int trainLength = 3;
+
+	public int missionRewardMoney = 200;
+	
 	public TrainBuildingData[] starterModules;
 	public EnemyWaveData[] enemyWaves;
 
@@ -34,6 +37,23 @@ public class LevelData {
 	public bool isRealLevel() {
 		return levelName != "unset";
 	}
+
+	private bool hasArmoredEnemy = false;
+	private bool armoredEnemyCheckMade = false;
+	public bool HasArmoredEnemy() {
+		if (!armoredEnemyCheckMade) {
+			for (int i = 0; i < enemyWaves.Length; i++) {
+				if (enemyWaves[i].enemyUniqueName == "Army") {
+					hasArmoredEnemy = true;
+					break;
+				}
+			}
+
+			armoredEnemyCheckMade = true;
+		}
+
+		return hasArmoredEnemy;
+	}
 }
 
 [Serializable]
@@ -46,6 +66,9 @@ public class TrainBuildingData {
 public class EnemyWaveData {
 	[Title("$enemyUniqueName", "@(startDistance + headsUpTime*2).ToString()")]
 	public string enemyUniqueName = "unset";
+
+	[ValueDropdown("GetAllEnemyNames")]
+	public string unique2 = "unset";
 	public float enemyData = -1;
 
 	public enum EnemyPathType {
@@ -64,6 +87,15 @@ public class EnemyWaveData {
 
 	public float accurateDistance {
 		get { return (startDistance + headsUpTime * 2); }
+	}
+	
+	private static IEnumerable GetAllEnemyNames() {
+		var enemies = GameObject.FindObjectOfType<DataHolder>().enemies;
+		var enemyNames = new List<string>();
+		for (int i = 0; i < enemies.Length; i++) {
+			enemyNames.Add(enemies[i].uniqueName);
+		}
+		return enemyNames;
 	}
 }
 

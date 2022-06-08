@@ -8,8 +8,10 @@ public abstract class UnlockableEffect : MonoBehaviour {
     public bool isUnlocked = false;
     [HideIf("isUnlocked")]
     public Upgrade unlockingUpgrade;
-    
-    
+
+
+
+    protected virtual void _Start() { }
     void  Start()
     {
         if (!isUnlocked) {
@@ -21,5 +23,6 @@ public abstract class UnlockableEffect : MonoBehaviour {
         if (!isUnlocked) {
             this.enabled = false;
         }
+        _Start();
     }
 }

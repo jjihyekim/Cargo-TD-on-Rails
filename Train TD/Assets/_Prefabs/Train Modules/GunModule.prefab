@@ -276,6 +276,8 @@ GameObject:
   - component: {fileID: 5187701212064737548}
   - component: {fileID: -5567612607224715663}
   - component: {fileID: 4689215919536455629}
+  - component: {fileID: 4053642234809240026}
+  - component: {fileID: 1930272611369547989}
   m_Layer: 0
   m_Name: GunModule
   m_TagString: Untagged
@@ -319,9 +321,9 @@ MonoBehaviour:
   mySlot: {fileID: 0}
   mySlotIndex: 0
   canPointSide: 1
-  canPointUp: 1
+  canPointUp: 0
   canBeRotatedSides: 1
-  canBeRotatedUp: 1
+  canBeRotatedUp: 0
   disabledWhenBuilding:
   - {fileID: 2934280374143819819}
   - {fileID: 7371494607064308679}
@@ -377,6 +379,7 @@ MonoBehaviour:
   barrageShot:
     m_PersistentCalls:
       m_Calls: []
+  canPenetrateArmor: 0
 --- !u!114 &7371494607064308679
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -480,8 +483,9 @@ MonoBehaviour:
   cost: 25
   cooldown: 60
   curCooldown: 0
-  actionTime: 10
-  fireSpeedBoost: 10
+  actionTime: 8
+  initialDelay: 3
+  fireSpeedBoost: 5
 --- !u!114 &4689215919536455629
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -499,8 +503,33 @@ MonoBehaviour:
   ammoPerShot: 5
   damageMultiplier: 1
   fireSpeedBoost: 1
+  ammoGivesArmorPenetration: 1
   isUnlocked: 0
   unlockingUpgrade: {fileID: 11400000, guid: 70b5cd6404493994d8b364c6ddb95b10, type: 2}
+--- !u!114 &4053642234809240026
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3146471024428373951}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e03d89f262df7ef43ad10e8140eccbf4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &1930272611369547989
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3146471024428373951}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c000a03ade147ef4e8a60dfb7de82121, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &3469176668768950665
 GameObject:
   m_ObjectHideFlags: 0
@@ -1471,6 +1500,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 1d1d11020ea56d146843b720ba5c90bb, type: 3}
+--- !u!1 &7776442071500318264 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: 1d1d11020ea56d146843b720ba5c90bb, type: 3}
+  m_PrefabInstance: {fileID: 7433772883469458281}
+  m_PrefabAsset: {fileID: 0}
 --- !u!4 &6962750224022224002 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 1d1d11020ea56d146843b720ba5c90bb, type: 3}
@@ -1484,10 +1518,5 @@ Transform:
 --- !u!4 &7732790356907241669 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 899157318495988652, guid: 1d1d11020ea56d146843b720ba5c90bb, type: 3}
-  m_PrefabInstance: {fileID: 7433772883469458281}
-  m_PrefabAsset: {fileID: 0}
---- !u!1 &7776442071500318264 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: 1d1d11020ea56d146843b720ba5c90bb, type: 3}
   m_PrefabInstance: {fileID: 7433772883469458281}
   m_PrefabAsset: {fileID: 0}

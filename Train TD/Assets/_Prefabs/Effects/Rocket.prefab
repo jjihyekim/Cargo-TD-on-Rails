@@ -14587,12 +14587,13 @@ MonoBehaviour:
   speed: 5
   damage: 5
   mortarRange: 2
-  hitForceMultiplier: 400
+  hitForceMultiplier: 200
   lifetime: 4
   myOriginObject: {fileID: 0}
   isTargetSeeking: 0
-  seekStrength: 180
+  seekStrength: 220
   isPlayerBullet: 0
+  canPenetrateArmor: 0
   source: {fileID: 0}
   myHitType: 1
   mortarGravity: {x: 0, y: -9.81, z: 0}

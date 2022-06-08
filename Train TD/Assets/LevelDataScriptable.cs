@@ -10,6 +10,9 @@ public class LevelDataScriptable : ScriptableObject {
 	public string levelName = "unset";
 	public int levelMenuOrder = -1;
 	//public GameObject train;
+	
+	public int missionRewardMoney = 200;
+	
 	public int trainLength = 3;
 	public TrainBuildingData[] starterModules;
 	public EnemyWaveData[] enemyWaves;

@@ -176,6 +176,7 @@ GameObject:
   - component: {fileID: 5195578046431229888}
   - component: {fileID: 1946669842751308425}
   - component: {fileID: 4661338663968068734}
+  - component: {fileID: 2122027952209959676}
   m_Layer: 0
   m_Name: Army Supplies
   m_TagString: Untagged
@@ -228,13 +229,17 @@ MonoBehaviour:
   - {fileID: 1946669842751308425}
   cost: 50
   myRotation: 3
+  canBeTargetingAreaRotatable: 0
   occupiesEntireSlot: 0
   sideGfx: {fileID: 9191472114434210681}
   topGfx: {fileID: 7148021648949603433}
+  frontGfx: {fileID: 0}
+  backGfx: {fileID: 0}
   myUITargetTransforms:
   - possibleRotations: 0200000003000000
     transform: {fileID: 6744352390193746538}
   isBuilt: 0
+  autoSetUp: 0
   _outlines: []
 --- !u!114 &8524531073215424029
 MonoBehaviour:
@@ -249,7 +254,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   cargoSize: 1
-  moneyReward: 50
+  moneyReward: 100
 --- !u!114 &5195578046431229888
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -297,6 +302,20 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
+--- !u!114 &2122027952209959676
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3327245191100303399}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e03d89f262df7ef43ad10e8140eccbf4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  tooltip: {fileID: 0}
+  info: 
 --- !u!1 &3864863266987443729
 GameObject:
   m_ObjectHideFlags: 0

@@ -840,6 +840,7 @@ MonoBehaviour:
     levelName: unset
     levelMenuOrder: -1
     trainLength: 3
+    missionRewardMoney: 200
     starterModules: []
     enemyWaves: []
     startingMoney: 40
@@ -909,8 +910,9 @@ MonoBehaviour:
   - {fileID: 11400000, guid: bc50ba83cf50eb14fa09fa94868f6b34, type: 2}
   - {fileID: 11400000, guid: 4becfdab05f4651429ab84915722c65d, type: 2}
   - {fileID: 11400000, guid: 9e5770406f9c9b84399a493bb35e0002, type: 2}
-  - {fileID: 11400000, guid: 95b11dd1479751c4491c6821277cd4ba, type: 2}
   - {fileID: 11400000, guid: ed82e7fb7f2ca9f48aa6799e82551440, type: 2}
+  - {fileID: 11400000, guid: 95b11dd1479751c4491c6821277cd4ba, type: 2}
+  - {fileID: 11400000, guid: f8e54f68c0a5cfd4193b213bdbe03e01, type: 2}
   - {fileID: 11400000, guid: 490a7b36f8d0c3d478696cdb10bf7e69, type: 2}
   allLevels: []
 --- !u!1 &3704651199334984236
@@ -1216,7 +1218,7 @@ Camera:
     y: 0
     width: 1
     height: 1
-  near clip plane: 0.3
+  near clip plane: 0.1
   far clip plane: 1000
   field of view: 60
   orthographic: 0
@@ -1224,7 +1226,7 @@ Camera:
   m_Depth: 0
   m_CullingMask:
     serializedVersion: 2
-    m_Bits: 16183
+    m_Bits: 32567
   m_RenderingPath: -1
   m_TargetTexture: {fileID: 0}
   m_TargetDisplay: 0

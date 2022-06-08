@@ -14,11 +14,14 @@ public class MiniGUI_StarterBuildingButton : MonoBehaviour {
 	private Button myButton;
 
 	public int count = 1;
-	
-	
+
+	private bool canBuild = true;
+
 	public void StartBuilding() {
-		PlayerBuildingController.s.StartBuilding(myBuilding, UpdateBuildingCount);
-		UpdateCountText();
+		if (canBuild) {
+			PlayerBuildingController.s.StartBuilding(myBuilding, UpdateBuildingCount);
+			UpdateCountText();
+		}
 	}
 
 
@@ -29,11 +32,9 @@ public class MiniGUI_StarterBuildingButton : MonoBehaviour {
 			//count += 1;
 		}
 
-		if (count <= 0) {
-			myButton.interactable = false;
-		} else {
-			myButton.interactable = true;
-		}
+		canBuild = count > 0;
+		myButton.interactable = canBuild;
+		
 		
 		StarterUIController.s.UpdateCanStartStatus();
 		UpdateCountText();

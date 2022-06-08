@@ -67,4 +67,15 @@ public class ModuleHealth : MonoBehaviour, IHealth {
     public Collider GetMainCollider() {
         return GetComponentInChildren<BoxCollider>();
     }
+
+    public bool HasArmor() {
+        return false;
+    }
+
+    public float GetHealthPercent() {
+        return currentHealth / maxHealth;
+    }
+    public string GetHealthRatioString() {
+        return $"{currentHealth}/{maxHealth}";
+    }
 }

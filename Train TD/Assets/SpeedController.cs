@@ -40,7 +40,6 @@ public class SpeedController : MonoBehaviour {
     public TMP_Text timeText;
     public TMP_Text distanceText;
 
-
     public TrainStation endTrainStation;
 
     public void UpdateBasedOnLevelData() {
@@ -81,9 +80,9 @@ public class SpeedController : MonoBehaviour {
             var medStar = missionMedSlider.UpdateValue(medDistance,  medEngine);
         
             worstDistance += EnginePowerToDistance(worstEngine, Time.deltaTime);
-            missionWorstSlider.UpdateValue(worstDistance,  worstEngine);
+            var worstStar = missionWorstSlider.UpdateValue(worstDistance,  worstEngine);
 
-            StarController.s.UpdateSpeedStars(bestStar + medStar);
+            StarController.s.UpdateSpeedStars(bestStar + medStar + worstStar);
 
             
             if (worstDistance > missionDistance) {
@@ -132,7 +131,19 @@ public class SpeedController : MonoBehaviour {
         return (minutes.ToString("00") + ':' + remainingSeconds.ToString("00"));
     }
 
-    public string GetNiceTime() {
+    public string GetWorstTime() {
+        return GetNiceTime(missionDistance / EnginePowerToDistance(worstEngine, 1));
+    }
+    
+    public string GetMedTime() {
+        return GetNiceTime(missionDistance / EnginePowerToDistance(medEngine, 1));
+    }
+    
+    public string GetBestTime() {
+        return GetNiceTime(missionDistance / EnginePowerToDistance(bestEngine, 1));
+    }
+
+    public string GetCurrentTime() {
         return GetNiceTime(currentTime);
     }
 }

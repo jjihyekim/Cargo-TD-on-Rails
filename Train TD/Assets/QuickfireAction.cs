@@ -7,13 +7,12 @@ public class QuickfireAction : ModuleAction {
 	[Space]
 	public float actionTime = 10f;
 	public float initialDelay = 2f;
+	public float endDelay = 2f;
 	
 	public float fireSpeedBoost = 10f;
 	protected override void _EngageAction() {
-		var gun = GetComponent<GunModule>();
-
-		gun.fireDelay /= fireSpeedBoost;
-		gun.StopShooting();
+		GetComponent<GunModule>().fireDelay /= fireSpeedBoost;
+		GetComponent<GunModule>().DeactivateGun();
 		
 		
 		Invoke(nameof(StartShooting), initialDelay);
@@ -23,11 +22,16 @@ public class QuickfireAction : ModuleAction {
 
 	void StartShooting() {
 		var gun = GetComponent<GunModule>();
-		gun.StartShooting();
+		GetComponent<GunModule>().ActivateGun();
 	}
 
 	void StopAction() {
-		
 		GetComponent<GunModule>().fireDelay *= fireSpeedBoost;
+		GetComponent<GunModule>().DeactivateGun();
+		Invoke(nameof(ResumeShooting), endDelay);
+	}
+
+	void ResumeShooting() {
+		GetComponent<GunModule>().ActivateGun();
 	}
 }

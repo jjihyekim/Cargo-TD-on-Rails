@@ -143,6 +143,9 @@ public class LevelDataLoader : MonoBehaviour {
         var output = new LevelData();
         output.levelName = input.levelName;
         output.levelMenuOrder = input.levelMenuOrder;
+
+        output.missionRewardMoney = input.missionRewardMoney;
+        
         output.trainLength = input.trainLength;
         output.starterModules = (TrainBuildingData[])input.starterModules.Clone();
         output.enemyWaves = (EnemyWaveData[])input.enemyWaves.Clone();

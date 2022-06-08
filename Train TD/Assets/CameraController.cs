@@ -5,8 +5,8 @@ using Sirenix.OdinInspector;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-public class CameraScroll : MonoBehaviour {
-    public static CameraScroll s;
+public class CameraController : MonoBehaviour {
+    public static CameraController s;
 
     private void Awake() {
         s = this;
@@ -50,6 +50,8 @@ public class CameraScroll : MonoBehaviour {
     public float currentZoom = 0;
     public float realZoom = 0f;
     public Vector2 zoomLimit = new Vector2(-2, 2);
+
+    public bool canScroll = true;
     protected void OnEnable()
     {
         moveAction.action.Enable();
@@ -87,7 +89,8 @@ public class CameraScroll : MonoBehaviour {
         var mousePos = Mouse.current.position.ReadValue();
         ProcessScreenCorners(mousePos);
         ProcessMovementInput(moveAction.action.ReadValue<Vector2>(), wasdSpeed);
-        ProcessZoom(zoomAction.action.ReadValue<float>());
+        if(canScroll)
+            ProcessZoom(zoomAction.action.ReadValue<float>());
         ProcessMiddleMouseRotation(rotateCameraAction.action.ReadValue<float>(), mousePos);
         LerpCameraTarget();
         SetMainCamPos();
@@ -190,5 +193,10 @@ public class CameraScroll : MonoBehaviour {
 
     public void FlipCamera(InputAction.CallbackContext info) {
         isRight = !isRight;
+    }
+
+    
+    public void ToggleCameraEdgeScroll() {
+        canScroll = !canScroll;
     }
 }

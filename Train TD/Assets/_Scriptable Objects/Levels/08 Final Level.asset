@@ -10,33 +10,34 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: db512ea5c3f84be49c44fcd62d024370, type: 3}
-  m_Name: Need more carts
+  m_Name: 08 Final Level
   m_EditorClassIdentifier: 
-  levelName: Need More Carts
+  levelName: Final Level
   levelMenuOrder: 10
-  trainLength: 3
+  missionRewardMoney: 2000
+  trainLength: 4
   starterModules:
   - uniqueName: Engine
     count: 1
   - uniqueName: Cargo
-    count: 4
+    count: 6
   - uniqueName: Crane-static
     count: 1
   enemyWaves:
   - enemyUniqueName: Buggy
-    enemyData: 1
+    enemyData: 3
     isLeft: 1
     enemyPathType: 1
     startDistance: 15
     headsUpTime: 15
   - enemyUniqueName: Buggy
-    enemyData: 3
+    enemyData: 6
     isLeft: 1
     enemyPathType: 1
     startDistance: 60
     headsUpTime: 30
   - enemyUniqueName: Buggy
-    enemyData: 1
+    enemyData: 6
     isLeft: 0
     enemyPathType: 1
     startDistance: 60
@@ -54,13 +55,13 @@ MonoBehaviour:
     startDistance: 180
     headsUpTime: 30
   - enemyUniqueName: Truck
-    enemyData: 1
+    enemyData: 3
     isLeft: 1
     enemyPathType: 0
     startDistance: 300
     headsUpTime: 30
   - enemyUniqueName: Truck
-    enemyData: 1
+    enemyData: 3
     isLeft: 0
     enemyPathType: 0
     startDistance: 300
@@ -91,8 +92,8 @@ MonoBehaviour:
     headsUpTime: 30
   startingMoney: 200
   moneyGainSpeed: 1
-  missionDistance: 900
+  missionDistance: 700
   bestEngineSpeed: 200
   mediumEngineSpeed: 150
-  worstEngineSpeed: 100
-  reputationRequirement: 15
+  worstEngineSpeed: 110
+  reputationRequirement: 20

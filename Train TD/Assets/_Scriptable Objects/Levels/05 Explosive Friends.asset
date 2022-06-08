@@ -10,69 +10,70 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: db512ea5c3f84be49c44fcd62d024370, type: 3}
-  m_Name: Unexpected Visitors
+  m_Name: 05 Explosive Friends
   m_EditorClassIdentifier: 
-  levelName: Unexpected Visitors
-  levelMenuOrder: 1
+  levelName: Explosive Friends
+  levelMenuOrder: 3
+  missionRewardMoney: 1000
   trainLength: 5
   starterModules:
   - uniqueName: Engine
     count: 1
-  - uniqueName: Army Supplies
-    count: 4
+  - uniqueName: Cargo
+    count: 3
   enemyWaves:
-  - enemyUniqueName: Biker
+  - enemyUniqueName: Supply
     enemyData: 1
     isLeft: 1
-    enemyPathType: 3
+    enemyPathType: 1
     startDistance: 10
     headsUpTime: 15
   - enemyUniqueName: Supply
     enemyData: 1
     isLeft: 0
-    enemyPathType: 4
-    startDistance: 0
-    headsUpTime: 5
-  - enemyUniqueName: Supply
+    enemyPathType: 1
+    startDistance: 50
+    headsUpTime: 30
+  - enemyUniqueName: Buggy
     enemyData: 2
     isLeft: 0
     enemyPathType: 4
-    startDistance: 60
-    headsUpTime: 15
-  - enemyUniqueName: Biker
-    enemyData: 4
-    isLeft: 1
-    enemyPathType: 3
-    startDistance: 90
+    startDistance: 110
     headsUpTime: 30
-  - enemyUniqueName: Truck
+  - enemyUniqueName: Army
     enemyData: 1
     isLeft: 0
-    enemyPathType: 1
-    startDistance: 150
+    enemyPathType: 4
+    startDistance: 220
     headsUpTime: 30
-  - enemyUniqueName: Biker
-    enemyData: 9
+  - enemyUniqueName: Supply
+    enemyData: 5
     isLeft: 0
-    enemyPathType: 3
-    startDistance: 250
+    enemyPathType: 4
+    startDistance: 360
     headsUpTime: 30
-  - enemyUniqueName: Biker
-    enemyData: 6
-    isLeft: 0
-    enemyPathType: 2
-    startDistance: 300
-    headsUpTime: 30
-  - enemyUniqueName: Truck
+  - enemyUniqueName: Army
     enemyData: 2
     isLeft: 0
-    enemyPathType: 1
-    startDistance: 300
+    enemyPathType: 4
+    startDistance: 420
+    headsUpTime: 30
+  - enemyUniqueName: Buggy
+    enemyData: 2
+    isLeft: 1
+    enemyPathType: 0
+    startDistance: 640
+    headsUpTime: 30
+  - enemyUniqueName: Buggy
+    enemyData: 2
+    isLeft: 0
+    enemyPathType: 0
+    startDistance: 640
     headsUpTime: 30
   startingMoney: 65
   moneyGainSpeed: 1
-  missionDistance: 800
-  bestEngineSpeed: 160
-  mediumEngineSpeed: 130
-  worstEngineSpeed: 100
-  reputationRequirement: 8
+  missionDistance: 1200
+  bestEngineSpeed: 170
+  mediumEngineSpeed: 135
+  worstEngineSpeed: 110
+  reputationRequirement: 15

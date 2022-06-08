@@ -7,6 +7,7 @@ public class ModuleSalvoAction : ModuleAction {
     [Space] 
     public float actionTime = 5f;
     public float initialDelay = 2f;
+    public float endDelay = 2f;
     
     public float rangeBoost = 2f;
     public float fireSpeedBoost = 10f;
@@ -15,11 +16,9 @@ public class ModuleSalvoAction : ModuleAction {
     protected override void _EngageAction() {
         GetComponent<TargetPicker>().range += rangeBoost;
         GetComponent<TargetPicker>().rotationSpan += angleBoost;
-        
-        var gun = GetComponent<GunModule>();
 
-        gun.fireDelay /= fireSpeedBoost;
-        gun.StopShooting();
+        GetComponent<GunModule>().fireDelay /= fireSpeedBoost;
+        GetComponent<GunModule>().DeactivateGun();
 
         Invoke(nameof(StartShooting), initialDelay);
 		
@@ -27,13 +26,19 @@ public class ModuleSalvoAction : ModuleAction {
     }
 
     void StartShooting() {
-        var gun = GetComponent<GunModule>();
-        gun.StartShooting();
+        GetComponent<GunModule>().ActivateGun();
     }
 
     void StopAction() {
+        GetComponent<GunModule>().fireDelay *= fireSpeedBoost;
+        GetComponent<GunModule>().DeactivateGun();
+        Invoke(nameof(SetRangeBackToNormal), endDelay);
+    }
+
+    void SetRangeBackToNormal() {
         GetComponent<TargetPicker>().range -= rangeBoost;
         GetComponent<TargetPicker>().rotationSpan -= angleBoost;
-        GetComponent<GunModule>().fireDelay *= fireSpeedBoost;
+        
+        GetComponent<GunModule>().ActivateGun();
     }
 }

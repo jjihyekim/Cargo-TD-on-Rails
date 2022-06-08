@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using Sirenix.OdinInspector;
 using TMPro;
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.UI;
 
 public class UpgradesController : MonoBehaviour {
@@ -26,6 +27,8 @@ public class UpgradesController : MonoBehaviour {
 
 	public HashSet<string> unlockedUpgrades = new HashSet<string>();
 
+	public UnityEvent callWhenUpgradesChanged = new UnityEvent();
+
 	private void Start() {
 		myUpgradeCompounds = UpgradesParent.GetComponentsInChildren<MiniGUI_UpgradeCompound>(true);
 		myUpgradeButtons = UpgradesParent.GetComponentsInChildren<MiniGUI_UpgradeButton>(true);
@@ -44,6 +47,9 @@ public class UpgradesController : MonoBehaviour {
 		}
 
 		ChangeSelectedUpgrade(selectedUpgrade);
+		
+		
+		callWhenUpgradesChanged?.Invoke();
 	}
 
 	
@@ -133,6 +139,8 @@ public class UpgradesController : MonoBehaviour {
 
 			mySave.money -= toBuy.cost;
 			DataSaver.s.SaveActiveGame();
+			
+			callWhenUpgradesChanged?.Invoke();
 		}
 		
 		

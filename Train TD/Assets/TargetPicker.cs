@@ -39,26 +39,40 @@ public class TargetPicker : MonoBehaviour {
     }
 
     private void Update() {
+        var closestTargetWithEnoughHealth = ClosestTarget(true);
+
+        if (closestTargetWithEnoughHealth != null) {
+            targeter.SetTarget(closestTargetWithEnoughHealth);
+        } else {
+            var closestTarget = ClosestTarget(false);
+
+            if (closestTarget != null) {
+                targeter.SetTarget(closestTarget);
+            } else {
+
+                targeter.UnsetTarget();
+            }
+        }
+    }
+
+    private Transform ClosestTarget(bool doHealthCheck) {
         var closestTargetDistance = range + 1;
-        Transform closestTarget = null;
+        Transform closestTargetWithEnoughHealth = null;
         var allTargets = LevelReferences.allTargets;
         for (int i = 0; i < allTargets.Count; i++) {
             var canTarget = (allTargets[i] != GetComponentInParent<PossibleTarget>()) && (myPossibleTargets.Contains(allTargets[i].myType));
-            if (canTarget) {
+            var targetHasEnoughHealth = (allTargets[i].GetHealth() >= targeter.GetDamage()) || !doHealthCheck;
+            if (canTarget && targetHasEnoughHealth) {
                 if (IsPointInsideCone(allTargets[i].targetTransform.position, origin.position, origin.forward, rotationSpan, range, out float distance)) {
                     if (distance < closestTargetDistance) {
-                        closestTarget = allTargets[i].targetTransform;
+                        closestTargetWithEnoughHealth = allTargets[i].targetTransform;
                         closestTargetDistance = distance;
                     }
                 }
             }
         }
 
-        if (closestTarget != null) {
-            targeter.SetTarget(closestTarget);
-        } else {
-            targeter.UnsetTarget();
-        }
+        return closestTargetWithEnoughHealth;
     }
 
 
@@ -114,4 +128,6 @@ public interface IComponentWithTarget {
 
     public Transform GetRangeOrigin();
     public Transform GetActiveTarget();
+
+    public int GetDamage();
 } 

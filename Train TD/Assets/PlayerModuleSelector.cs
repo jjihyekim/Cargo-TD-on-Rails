@@ -40,18 +40,21 @@ public class PlayerModuleSelector : MonoBehaviour {
         DeselectObject();
     }
 
-    
+
     private void ActivateActionDisplayOnActiveObject(InputAction.CallbackContext obj) {
         if (EventSystem.current.IsPointerOverGameObject()) {
             // dont act if we are hovering over ui
             return;
         }
-        
+
         if (!activeActionSelection.IsMouseOverMenu()) {
             // we dont want to hide menu in case the player clicks on it
             if (activeBuilding != null) {
                 activeActionSelection.gameObject.SetActive(true);
                 activeActionSelection.SetUp(activeBuilding);
+            } else if (activeEnemy != null) {
+                activeActionSelection.gameObject.SetActive(true);
+                activeActionSelection.SetUp(activeEnemy);
             } else {
                 HideModuleActionSelector();
             }
@@ -66,11 +69,11 @@ public class PlayerModuleSelector : MonoBehaviour {
     private void Update() {
         CastRayToSelectBuilding();
 
-        if (isMouseOverSelectedObject) {
-            CameraScroll.s.canZoom = false;
+        if (isMouseOverSelectedModule) {
+            CameraController.s.canZoom = false;
             ProcessScroll(scroll.action.ReadValue<float>());
         } else {
-            CameraScroll.s.canZoom = true;
+            CameraController.s.canZoom = true;
         }
     }
     
@@ -81,10 +84,13 @@ public class PlayerModuleSelector : MonoBehaviour {
     private int lastRaycastIndex;
     private TrainBuilding activeBuilding;
 
+    private EnemyHealth activeEnemy;
+
     public bool playerBuildingDisableOverride = false;
     public bool playerBuildingSkipOneTimeOverride = false;
 
-    public bool isMouseOverSelectedObject = false;
+    public bool isMouseOverSelectedModule = false;
+
     void CastRayToSelectBuilding() {
         if (playerBuildingDisableOverride) {
             DeselectObject();
@@ -100,12 +106,11 @@ public class PlayerModuleSelector : MonoBehaviour {
         RaycastHit hit;
         Ray ray = LevelReferences.s.mainCam.ScreenPointToRay(Mouse.current.position.ReadValue());
 
-        if (Physics.Raycast(ray, out hit, 100f, PlayerBuildingController.s.buildingLayerMask)) {
+        if (Physics.Raycast(ray, out hit, 100f, LevelReferences.s.buildingLayer | LevelReferences.s.enemyLayer)) {
             var slot = hit.collider.gameObject.GetComponentInParent<Slot>();
+            var enemy = hit.collider.gameObject.GetComponentInParent<EnemyHealth>();
 
-            if (slot == null) {
-                DeselectObject();
-            } else {
+            if (slot != null) {
                 var index = PlayerBuildingController.NormalToIndex(hit.normal);
                 if (slot != activeSlot) {
                     // we clicked on a new slot
@@ -125,12 +130,16 @@ public class PlayerModuleSelector : MonoBehaviour {
                 }
 
                 lastRaycastIndex = index;
+            } else if (enemy != null) {
+                SelectEnemy(enemy);
+            } else {
+                DeselectObject();
             }
         } else {
             DeselectObject();
         }
     }
-    
+
     public float scrollTime = 0.2f;
     private float curScrollTime = 0;
     void ProcessScroll(float value) {
@@ -179,6 +188,10 @@ public class PlayerModuleSelector : MonoBehaviour {
             lastRaycastIndex = -2;
             activeBuilding = null;
         }
+        if (activeEnemy != null) {
+            activeEnemy.SetHighlightState(false);
+            activeEnemy = null;
+        }
     }
 
     void SelectObject(Slot slot, int index) {
@@ -206,8 +219,6 @@ public class PlayerModuleSelector : MonoBehaviour {
             }
 
             if (activeBuilding != null) {
-                
-                
                 if (playerBuildingSkipOneTimeOverride) {
                     playerBuildingSkipOneTimeOverride = false;
                 } else {
@@ -216,10 +227,9 @@ public class PlayerModuleSelector : MonoBehaviour {
             } 
         }
     }
-
-
+    
     public void SelectBuilding(TrainBuilding building, bool isSelected) {
-        isMouseOverSelectedObject = isSelected;
+        isMouseOverSelectedModule = isSelected;
         if (building != null) {
             building.SetHighlightState(isSelected);
             
@@ -228,6 +238,20 @@ public class PlayerModuleSelector : MonoBehaviour {
             for (int i = 0; i < ranges.Length; i++) {
                 ranges[i].ChangeVisualizerStatus(isSelected);
             }
+        }
+    }
+    
+    void SelectEnemy(EnemyHealth enemyHealth) {
+        isMouseOverSelectedModule = false;
+        if (enemyHealth != activeEnemy) {
+            if (activeEnemy != null) {
+                enemyHealth.SetHighlightState(false);
+            }
+
+            if (enemyHealth != null) {
+                enemyHealth.SetHighlightState(true);
+                activeEnemy = enemyHealth;
+            } 
         }
     }
 }
