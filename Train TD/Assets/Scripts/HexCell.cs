@@ -7,17 +7,11 @@ public class HexCell : MonoBehaviour {
 
 	public Vector3 expectedCoordinates;
 
-	/*private void Update() {
-		/*coordinates = HexCoordinates.PositionToHex(transform.position);
+	public float randomHeightAdjustment;
 
-		if (!Input.GetMouseButton(0)) {
-			transform.position = HexCoordinates.HexToPosition(coordinates, transform.position.y);
-		}#1#
-	}*/
-	
-	
-/*#if UNITY_EDITOR
-	[MethodButton("SetPosition")]
-	[SerializeField] private bool editorFoldout;
-#endif*/
+	public enum HexType {
+		grass, mountain
+	}
+
+	public HexType myType;
 }
