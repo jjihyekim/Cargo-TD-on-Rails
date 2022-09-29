@@ -31530,6 +31530,7 @@ GameObject:
   - component: {fileID: 8099302677170761538}
   - component: {fileID: -5921104565242264179}
   - component: {fileID: -7834070156642343872}
+  - component: {fileID: -8062254177491749771}
   m_Layer: 0
   m_Name: EngineModule
   m_TagString: Untagged
@@ -31571,15 +31572,10 @@ MonoBehaviour:
   uniqueName: Engine
   Icon: {fileID: 21300000, guid: 889b1f9ff81b88041a3788953b9a4bb1, type: 3}
   mySlot: {fileID: 0}
-  mySlotIndex: 0
   canPointSide: 0
   canPointUp: 0
   canBeRotatedSides: 0
   canBeRotatedUp: 0
-  disabledWhenBuilding:
-  - {fileID: 3044803135225542413}
-  - {fileID: 8022081648539341584}
-  - {fileID: 2121114842972331233}
   cost: 100
   myRotation: 0
   canBeTargetingAreaRotatable: 0
@@ -31670,7 +31666,7 @@ MonoBehaviour:
   cost: -50
   cooldown: -1
   curCooldown: 0
-  sellPrefab: {fileID: 172524484023753321, guid: 5c944d37062c8b04d8a0fa76e4e24049, type: 3}
+  isCombatMode: 1
 --- !u!114 &8099302677170761538
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -31726,8 +31722,24 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e03d89f262df7ef43ad10e8140eccbf4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  tooltip: {fileID: 0}
-  info: 
+--- !u!114 &-8062254177491749771
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4191698785256518694}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7dd82790b735196458fe58421304356e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  isUnlocked: 1
+  unlockingUpgrade: {fileID: 0}
+  actionName: Repair
+  cost: 25
+  cooldown: -1
+  curCooldown: 0
 --- !u!1 &4193415880286589700
 GameObject:
   m_ObjectHideFlags: 0

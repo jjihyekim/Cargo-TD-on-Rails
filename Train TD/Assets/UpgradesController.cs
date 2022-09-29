@@ -6,6 +6,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.UI;
+using Random = UnityEngine.Random;
 
 public class UpgradesController : MonoBehaviour {
 	public static UpgradesController s;
@@ -14,105 +15,55 @@ public class UpgradesController : MonoBehaviour {
 	}
 
 	public Transform UpgradesParent;
-	[ReadOnly]
 	public List<Upgrade> allUpgrades = new List<Upgrade>();
 	public Upgrade selectedUpgrade;
-
+	
 	[ReadOnly]
 	public MiniGUI_UpgradeCompound[] myUpgradeCompounds;
 	[ReadOnly]
 	public MiniGUI_UpgradeButton[] myUpgradeButtons;
-
-	public bool isUpgradeScreenActive = false;
+	
 
 	public HashSet<string> unlockedUpgrades = new HashSet<string>();
 
 	public UnityEvent callWhenUpgradesChanged = new UnityEvent();
 
 	private void Start() {
-		myUpgradeCompounds = UpgradesParent.GetComponentsInChildren<MiniGUI_UpgradeCompound>(true);
-		myUpgradeButtons = UpgradesParent.GetComponentsInChildren<MiniGUI_UpgradeButton>(true);
-		foreach (var upgradeCompound in myUpgradeCompounds) {
-			allUpgrades.Add(upgradeCompound.unlockUpgrade);
-			allUpgrades.Add(upgradeCompound.skillUpgrade1);
-			allUpgrades.Add(upgradeCompound.skillUpgrade2);
-		}
-		
 		foreach (var upgrade in allUpgrades) {
 			upgrade.Initialize();
 		}
+
+		InitializeUpgradeButtons();
+		
+		callWhenUpgradesChanged?.Invoke();
+	}
+
+	void InitializeUpgradeButtons() {
+		myUpgradeCompounds = UpgradesParent.GetComponentsInChildren<MiniGUI_UpgradeCompound>(true);
+		myUpgradeButtons = UpgradesParent.GetComponentsInChildren<MiniGUI_UpgradeButton>(true);
 
 		foreach (var upgradeCompound in myUpgradeCompounds) {
 			upgradeCompound.Initialize();
 		}
 
 		ChangeSelectedUpgrade(selectedUpgrade);
-		
-		
-		callWhenUpgradesChanged?.Invoke();
 	}
-
 	
-
 	public void SetUpgradeScreenStatus(bool isOpen) {
-		isUpgradeScreenActive = isOpen;
-		previewCam.enabled = isOpen;
+		if (isOpen) {
+			InitializeUpgradeButtons();
+		} 
 	}
 
-
-
-	[Header("Upgrade Info Display")] 
-	public Image icon;
-	public TMP_Text moduleName;
-	public TMP_Text moduleCost;
-	[Space] 
-	public TMP_Text upgradeName;
-	public TMP_Text upgradeDescription;
-	public MiniGUI_UpgradeButton upgradeButton;
-	
+	public UpgradeInfoScreenController upgradeInfoScreenController;
 
 	public void ChangeSelectedUpgrade(Upgrade toSelect) {
 		selectedUpgrade = toSelect;
-		var parentUpgrade = selectedUpgrade.parentUpgrade;
-		
-		if (previewBuilding == null || previewBuilding.uniqueName != parentUpgrade.module.uniqueName) {
-			if (previewBuilding != null)
-				Destroy(previewBuilding.gameObject);
-
-			previewBuilding = Instantiate(parentUpgrade.module.gameObject, previewSlots[curSlot].transform).GetComponent<TrainBuilding>();
-			previewBuilding.transform.localPosition = Vector3.zero;
-			previewBuilding.transform.localRotation = Quaternion.identity;
-			previewBuilding.CompleteBuilding(false);
-			
-			previewSlots[curSlot].AddBuilding(previewBuilding, previewBuilding.mySlotIndex);
-			
-			var rangeShower = previewBuilding.GetComponentInChildren<RangeVisualizer>(true);
-			//rangeShower.ChangeVisualizerStatus(true);
-			if(rangeShower != null)
-				Destroy(rangeShower.gameObject);
-
-			var audioSources = previewBuilding.GetComponentsInChildren<AudioSource>(true);
-
-			foreach (var audio in audioSources) {
-				audio.enabled = false;
-			}
-		}
-
-		icon.sprite = parentUpgrade.icon;
-		moduleName.text = parentUpgrade.module.displayName;
-		moduleCost.text = parentUpgrade.module.cost.ToString();
-		
-		upgradeName.text = selectedUpgrade.upgradeName;
-		upgradeDescription.text = selectedUpgrade.upgradeDescription;
-		upgradeButton.SetUp(selectedUpgrade);
-		
-
+		upgradeInfoScreenController.ChangeSelectedUpgrade(toSelect);
 		RefreshAllButtons();
 	}
 
 	void RefreshAllButtons() {
-		upgradeButton.Refresh();
-		upgradeButton.SetSelectionStatus(false);
 		foreach (var button in myUpgradeButtons) {
 			button.Refresh();
 
@@ -123,65 +74,53 @@ public class UpgradesController : MonoBehaviour {
 			}
 		}
 	}
+	
 
 	public void BuyUpgrade(Upgrade toBuy) {
 		var mySave = DataSaver.s.GetCurrentSave();
-		if (!toBuy.isUnlocked && mySave.money >= toBuy.cost) {
-			var index = mySave.upgradeDatas.FindIndex(x => x.upgradeName == toBuy.upgradeUniqueName);
-			if (index != -1) {
-				mySave.upgradeDatas[index].isUnlocked = true;
-			} else {
-				mySave.upgradeDatas.Add(new DataSaver.UpgradeData() { isUnlocked = true, upgradeName = toBuy.upgradeUniqueName });
-			}
-
-			toBuy.isUnlocked = true;
-			toBuy.ApplyUpgradeEffects();
-
-			mySave.money -= toBuy.cost;
-			DataSaver.s.SaveActiveGame();
-			
-			callWhenUpgradesChanged?.Invoke();
+		if (!toBuy.isUnlocked && mySave.currentRun.money >= toBuy.shopCost) {
+			mySave.currentRun.money -= toBuy.shopCost;
+			GetUpgrade(toBuy);
 		}
-		
-		
-		RefreshAllButtons();
 	}
 
+	public void GetUpgrade(Upgrade toGet) {
+		var mySave = DataSaver.s.GetCurrentSave();
+		if (!toGet.isUnlocked) {
+			mySave.currentRun.upgrades.Add(toGet.upgradeUniqueName);
+			
+			toGet.isUnlocked = true;
+			toGet.ApplyUpgradeEffects();
 
-	[Header("Gun Preview Area")] 
-	public Camera previewCam;
-	public Cart previewCart;
-	public Slot[] previewSlots;
-	private int curSlot = 0;
-	public TrainBuilding previewBuilding;
+			callWhenUpgradesChanged?.Invoke();
+			DataSaver.s.SaveActiveGame();
+		}
+	}
 
-	public Vector3 cartRotate = new Vector3(0, 20, 0);
+	public Upgrade[] GetRandomLevelRewards() {
+		var eligibleRewards = new List<Upgrade>();
 
-	public float buildStateSwitchTime = 0.5f;
-	private float curTime;
-	private int curCycleCount = 0;
-	private void Update() {
-		if (isUpgradeScreenActive) {
-			previewCart.transform.Rotate(cartRotate * Time.deltaTime);
-
-			if (curTime <= 0) {
-				curTime = buildStateSwitchTime;
-
-				if (curCycleCount < previewBuilding.rotationCount) {
-					previewBuilding.CycleRotation(true);
-					curCycleCount += 1;
-				} else {
-					curCycleCount = 0;
-					previewSlots[curSlot].RemoveBuilding(previewBuilding);
-					curSlot += 1;
-					curSlot %= 2;
-					previewBuilding.transform.position = previewSlots[curSlot].transform.position;
-					previewSlots[curSlot].AddBuilding(previewBuilding, previewBuilding.mySlotIndex);
-					previewBuilding.SetUpBasedOnRotation();
-				}
-			} else {
-				curTime -= Time.deltaTime;
+		for (int i = 0; i < allUpgrades.Count; i++) {
+			if (!allUpgrades[i].isUnlocked) {
+				if (allUpgrades[i].parentUpgrade.upgradeUniqueName == allUpgrades[i].upgradeUniqueName || allUpgrades[i].parentUpgrade.isUnlocked) {
+					eligibleRewards.Add(allUpgrades[i]);
+				} 
 			}
 		}
+		
+		eligibleRewards.Shuffle();
+
+		var count = 2;
+		
+		var results = new Upgrade[count];
+		eligibleRewards.CopyTo(0, results, 0, count);
+		
+
+
+		return results;
+	}
+
+	public Upgrade[] GetRandomBossRewards() {
+		return GetRandomLevelRewards();
 	}
 }

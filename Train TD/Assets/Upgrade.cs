@@ -7,14 +7,14 @@ using UnityEngine;
 [CreateAssetMenu(menuName = "Upgrades/Upgrade")]
 public class Upgrade : ScriptableObject {
     public string upgradeUniqueName = "unset";
-
-    public bool isUnlockedAtNewProfileStart = false;
     
     [NonSerialized]
     public bool isUnlocked = false;
-    
-    public int cost = 100;
-    public int starRequirement;
+
+
+    public int shopCost = 100;
+
+    public int activationCost = -1;
     
     [Space]
     
@@ -29,30 +29,19 @@ public class Upgrade : ScriptableObject {
     public virtual void Initialize() {
         var mySave = DataSaver.s.GetCurrentSave();
 
-        var index = mySave.upgradeDatas.FindIndex(x => x.upgradeName == upgradeUniqueName);
+        var index = mySave.currentRun.upgrades.FindIndex(x => x == upgradeUniqueName);
 
         if (index != -1) {
-            isUnlocked = mySave.upgradeDatas[index].isUnlocked;
-        }
-
-        // if this upgrade isnt unlocked yet, but need to be unlocked at start
-        if (!isUnlocked && isUnlockedAtNewProfileStart) {
-            UnlockUpgrade();
+            isUnlocked = true;
         }
         
-        isUnlocked = isUnlocked || isUnlockedAtNewProfileStart;
 
         ApplyUpgradeEffects();
     }
 
     void UnlockUpgrade() {
         var mySave = DataSaver.s.GetCurrentSave();
-        var index = mySave.upgradeDatas.FindIndex(x => x.upgradeName == this.upgradeUniqueName);
-        if (index != -1) {
-            mySave.upgradeDatas[index].isUnlocked = true;
-        } else {
-            mySave.upgradeDatas.Add(new DataSaver.UpgradeData() { isUnlocked = true, upgradeName = this.upgradeUniqueName });
-        }
+        mySave.currentRun.upgrades.Add(upgradeUniqueName);
     }
 
     public void ApplyUpgradeEffects() {

@@ -14,37 +14,34 @@ public class MoneyController : MonoBehaviour {
 
     public TMP_Text moneyText;
 
-    public int money = 50;
-
-    public float moneyPerSecond = 0.5f;
-    public float perSecondMoneyCounter = 0;
+    public int scraps = 50;
 
     public void UpdateBasedOnLevelData() {
-        money = SceneLoader.s.currentLevel.startingMoney;
-        moneyPerSecond = SceneLoader.s.currentLevel.moneyGainSpeed;
+        scraps = DataSaver.s.GetCurrentSave().currentRun.scraps;
     }
 
 
     private void Update() {
         if (SceneLoader.s.isLevelInProgress) {
-            perSecondMoneyCounter += moneyPerSecond * Time.deltaTime;
+            /*perSecondMoneyCounter += moneyPerSecond * Time.deltaTime;
 
             if (perSecondMoneyCounter > 0) {
                 var addition = Mathf.FloorToInt(perSecondMoneyCounter);
-                money += addition;
+                scraps += addition;
                 perSecondMoneyCounter -= addition;
             }
+            */
 
-            moneyText.text = money.ToString();
+            moneyText.text = scraps.ToString();
         }
     }
 
 
-    public void SubtractMoney(int amount) {
-        money -= amount;
+    public void SubtractScraps(int amount) {
+        scraps -= amount;
     }
 
-    public void AddMoney(int amount) {
-        money += amount;
+    public void AddScraps(int amount) {
+        scraps += amount;
     }
 }

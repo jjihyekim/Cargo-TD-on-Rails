@@ -13,9 +13,8 @@ MonoBehaviour:
   m_Name: Mechanic 1 Instant Repair
   m_EditorClassIdentifier: 
   upgradeUniqueName: mechanicUpgrade1
-  isUnlockedAtNewProfileStart: 0
-  cost: 100
-  starRequirement: 5
+  shopCost: 100
+  activationCost: 100
   icon: {fileID: 21300000, guid: 6b5457fbf272283449121292f4ec9682, type: 3}
   upgradeName: Quick Fix
   upgradeDescription: Pay 100 credits to repair the entire train over 10 seconds.

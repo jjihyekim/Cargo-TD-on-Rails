@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class EngineStopAction : ModuleAction
+public class EngineStopAction : ModuleAction, IActiveDuringCombat
 {
     [Space]
     public float actionTime = 25f;
@@ -51,7 +51,7 @@ public class EngineStopAction : ModuleAction
         var randomDistance = Random.Range(dropDistance.x, dropDistance.y);
         randomDirection = randomDirection.normalized * randomDistance;
             
-        LevelReferences.s.SpawnMoneyAtLocation(amount, transform.position + randomDirection);
+        LevelReferences.s.SpawnScrapsAtLocation(amount, transform.position + randomDirection);
     }
 
     void StopAction() {
@@ -59,5 +59,13 @@ public class EngineStopAction : ModuleAction
         
         
         GetComponent<EngineOverloadAction>().canEngage = true;
+    }
+    
+    public void ActivateForCombat() {
+        this.enabled = true;
+    }
+
+    public void Disable() {
+        this.enabled = false;
     }
 }

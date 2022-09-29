@@ -17,6 +17,12 @@ public class DataHolder : MonoBehaviour {
 
     public TrainBuilding[] buildings;
     public EnemyHolder[] enemies;
+    public CharacterData[] characters;
+    
+    public Color moneyBackColor = Color.green;
+
+    public GameObject repairPrefab;
+    public GameObject sellPrefab;
 
 
     public TrainBuilding GetBuilding(string buildingName) {
@@ -38,6 +44,17 @@ public class DataHolder : MonoBehaviour {
         }
 
         Debug.LogError($"Can't find enemy {enemyName}");
+        return null;
+    }
+    
+    public CharacterData GetCharacter(string charName) {
+        for (int i = 0; i < characters.Length; i++) {
+            if (PreProcess(characters[i].uniqueName) == PreProcess(charName)) {
+                return characters[i];
+            }
+        }
+
+        Debug.LogError($"Can't find character {charName}");
         return null;
     }
 

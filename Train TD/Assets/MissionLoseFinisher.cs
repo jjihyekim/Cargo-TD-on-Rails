@@ -49,7 +49,7 @@ public class MissionLoseFinisher : MonoBehaviour {
             tipText.text = speedLoseTips[Random.Range(0, speedLoseTips.Length)];
         }
         
-        var myMission = DataSaver.s.GetCurrentSave().GetCurrentMission();
+        var myMission = DataSaver.s.GetCurrentSave().currentRun.character;
         AnalyticsResult analyticsResult = Analytics.CustomEvent(
             "LevelLost",
             new Dictionary<string, object> {
@@ -58,12 +58,12 @@ public class MissionLoseFinisher : MonoBehaviour {
                 { "time", Mathf.RoundToInt(SpeedController.s.currentTime/10) * 10},
                 { "isLostDueCargo", isLostBecauseOfCargo},
                 
-                {"finishedBefore", myMission.isWon},
+                {"character", myMission},
 
                 { "buildingsBuild", ModuleHealth.buildingsBuild },
                 { "buildingsDestroyed", ModuleHealth.buildingsDestroyed },
 				
-                { "remainingMoney", MoneyController.s.money },
+                { "remainingMoney", MoneyController.s.scraps },
                 { "enemiesLeftAlive", EnemyHealth.enemySpawned - EnemyHealth.enemyKilled},
                 { "emptyTrainSlots", Train.s.GetEmptySlotCount() },
             }
@@ -84,6 +84,6 @@ public class MissionLoseFinisher : MonoBehaviour {
 
 
     public void BackToMenu() {
-        SceneLoader.s.BackToMenu();
+        SceneLoader.s.BackToStarterMenuHardLoad();
     }
 }

@@ -1181,7 +1181,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   maxHealth: 100
   currentHealth: 100
-  moneyReward: 50
+  moneyReward: 10
   deathPrefab: {fileID: 1420579702169288803, guid: 0706a8a8e0baad24f9bf6f7c9dededcc, type: 3}
   aliveObject: {fileID: 9165746279452390608}
   isAlive: 1
@@ -1220,6 +1220,7 @@ MonoBehaviour:
   fireBarrageDelay: 0.2
   projectileDamage: 5
   rotateSpeed: 10
+  gunActive: 1
   CanShoot: 0
   isPlayer: 0
   rangeOrigin: {fileID: 0}

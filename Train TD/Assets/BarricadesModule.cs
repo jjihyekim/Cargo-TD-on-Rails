@@ -2,17 +2,14 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class BarricadesModule : MonoBehaviour
+public class BarricadesModule : MonoBehaviour, IActiveDuringCombat
 {
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
+	public void ActivateForCombat() {
+		Debug.LogError("module not implemented");
+		this.enabled = true;
+	}
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
+	public void Disable() {
+		this.enabled = false;
+	}
 }

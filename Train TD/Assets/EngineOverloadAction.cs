@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class EngineOverloadAction : ModuleAction
+public class EngineOverloadAction : ModuleAction, IActiveDuringCombat
 {
 	
 	[Space]
@@ -25,5 +25,13 @@ public class EngineOverloadAction : ModuleAction
 		GetComponent<EngineModule>().enginePower = originalPower;
 		
 		GetComponent<EngineStopAction>().canEngage = true;
+	}
+	
+	public void ActivateForCombat() {
+		this.enabled = true;
+	}
+
+	public void Disable() {
+		this.enabled = false;
 	}
 }

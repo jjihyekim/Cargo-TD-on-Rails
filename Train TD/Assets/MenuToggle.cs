@@ -42,7 +42,7 @@ public class MenuToggle : MonoBehaviour {
             Vector2 mousePos = Mouse.current.position.ReadValue();
             if (isMenuActive) {
                 var rect1 = menuRectArea.GetComponent<RectTransform>();
-                var rect1Val = RectTransformUtility.RectangleContainsScreenPoint(rect1, mousePos);
+                var rect1Val = RectTransformUtility.RectangleContainsScreenPoint(rect1, mousePos, MainCameraReference.s.uiCam);
                 if (!rect1Val) {
                     HideMenu();
                 }

@@ -15,7 +15,7 @@ public class MiniGUI_ModuleSingleAction : MonoBehaviour {
     public TMP_Text cooldown;
     public Slider curCooldown;
     public Button myButton;
-    
+
     public MiniGUI_ModuleSingleAction SetUp(ModuleAction myAction) {
         this.myAction = myAction;
 
@@ -24,8 +24,8 @@ public class MiniGUI_ModuleSingleAction : MonoBehaviour {
         if (myAction.cost > 0) {
             cost.text = myAction.cost.ToString();
         } else {
-            cost.text = (-myAction.cost).ToString();
-            cost.color = Color.green;
+            cost.text = $"+{-myAction.cost}";
+            cost.color = DataHolder.s.moneyBackColor;
         }
 
 
@@ -48,7 +48,11 @@ public class MiniGUI_ModuleSingleAction : MonoBehaviour {
             myButton.interactable = myAction.curCooldown <= 0;
         }
 
-        cost.text = myAction.cost.ToString();
+        if (myAction.cost > 0) {
+            cost.text = myAction.cost.ToString();
+        } else {
+            cost.text = $"+{-myAction.cost}";
+        }
     }
 
 

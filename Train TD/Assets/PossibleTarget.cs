@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PossibleTarget : MonoBehaviour {
+public class PossibleTarget : MonoBehaviour, IActiveDuringCombat {
     
     public enum Type {
         enemy, player
@@ -35,5 +35,13 @@ public class PossibleTarget : MonoBehaviour {
         } else {
             return GetComponent<EnemyHealth>().currentHealth;
         }
+    }
+    
+    public void ActivateForCombat() {
+        this.enabled = true;
+    }
+
+    public void Disable() {
+        this.enabled = false;
     }
 }

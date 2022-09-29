@@ -6,20 +6,12 @@ using Unity.Mathematics;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class SpeedController : MonoBehaviour {
+public class SpeedController : MonoBehaviour, IShowOnDistanceRadar {
     public static SpeedController s;
 
     private void Awake() {
         s = this;
     }
-
-
-    public float bestEngine = 200;
-    public float bestDistance = 0;
-    public float medEngine = 150;
-    public float medDistance = 0;
-    public float worstEngine = 100;
-    public float worstDistance = 0;
 
     public float currentTime = 0;
     public float currentDistance = 0;
@@ -31,25 +23,23 @@ public class SpeedController : MonoBehaviour {
     public float engineSpeedBoost = 1f;
 
     public TMP_Text enginePowerText;
-
-    public MiniGUI_DistanceShower missionCurrentSlider;
-    public MiniGUI_DistanceShower missionBestSlider;
-    public MiniGUI_DistanceShower missionMedSlider;
-    public MiniGUI_DistanceShower missionWorstSlider;
-
+    
     public TMP_Text timeText;
     public TMP_Text distanceText;
 
     public TrainStation endTrainStation;
 
+    public float fuel;
+
     public void UpdateBasedOnLevelData() {
         var myLevel = SceneLoader.s.currentLevel;
-        bestEngine = myLevel.bestEngineSpeed;
-        medEngine = myLevel.mediumEngineSpeed;
-        worstEngine = myLevel.worstEngineSpeed;
         missionDistance = myLevel.missionDistance;
         endTrainStation.startPos = Vector3.forward * missionDistance;
         engineSpeedBoost = 1;
+    }
+
+    private void Start() {
+        DistanceAndEnemyRadarController.s.RegisterUnit(this);
     }
 
     public void UpdateEnginePower(int change) {
@@ -71,24 +61,6 @@ public class SpeedController : MonoBehaviour {
             currentDistance += EnginePowerToDistance(enginePower, Time.deltaTime);
         
             distanceText.text = ((int)currentDistance).ToString();
-            missionCurrentSlider.UpdateValue(currentDistance,  enginePower);
-        
-            bestDistance += EnginePowerToDistance(bestEngine, Time.deltaTime);
-            var bestStar = missionBestSlider.UpdateValue(bestDistance,  bestEngine);
-        
-            medDistance += EnginePowerToDistance(medEngine, Time.deltaTime);
-            var medStar = missionMedSlider.UpdateValue(medDistance,  medEngine);
-        
-            worstDistance += EnginePowerToDistance(worstEngine, Time.deltaTime);
-            var worstStar = missionWorstSlider.UpdateValue(worstDistance,  worstEngine);
-
-            StarController.s.UpdateSpeedStars(bestStar + medStar + worstStar);
-
-            
-            if (worstDistance > missionDistance) {
-                MissionLoseFinisher.s.MissionLost(false);
-                //CalculateStopAcceleration();
-            }
             
 
             if (currentDistance > missionDistance) {
@@ -113,7 +85,7 @@ public class SpeedController : MonoBehaviour {
     private float stopAcceleration = 0;
     void CalculateStopAcceleration() {
         var speed =  EnginePowerToDistance(enginePower, 1f);
-        var realStopDistance = stopDistance - (Mathf.Floor(SceneLoader.s.currentLevel.trainLength / 2f) * DataHolder.s.cartLength);
+        var realStopDistance = stopDistance - (Mathf.Floor(Train.s.carts.Count / 2f) * DataHolder.s.cartLength);
         stopAcceleration = (speed * speed) / (2 * realStopDistance);
     }
 
@@ -131,19 +103,21 @@ public class SpeedController : MonoBehaviour {
         return (minutes.ToString("00") + ':' + remainingSeconds.ToString("00"));
     }
 
-    public string GetWorstTime() {
-        return GetNiceTime(missionDistance / EnginePowerToDistance(worstEngine, 1));
-    }
-    
-    public string GetMedTime() {
-        return GetNiceTime(missionDistance / EnginePowerToDistance(medEngine, 1));
-    }
-    
-    public string GetBestTime() {
-        return GetNiceTime(missionDistance / EnginePowerToDistance(bestEngine, 1));
-    }
-
     public string GetCurrentTime() {
         return GetNiceTime(currentTime);
+    }
+    
+    public void AddFuel(int amount) {
+        fuel += amount;
+    }
+
+    public float GetDistance() {
+        return currentDistance;
+    }
+
+    public Sprite trainRadarImg;
+    
+    public Sprite GetIcon() {
+        return trainRadarImg;
     }
 }

@@ -12,56 +12,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: db512ea5c3f84be49c44fcd62d024370, type: 3}
   m_Name: 01 Smol starts
   m_EditorClassIdentifier: 
-  levelName: Smol starts
-  levelMenuOrder: 4
-  missionRewardMoney: 200
-  trainLength: 3
-  starterModules:
-  - uniqueName: Engine
-    count: 1
-  - uniqueName: Cargo
-    count: 2
-  enemyWaves:
-  - enemyUniqueName: Buggy
-    enemyData: 1
-    isLeft: 1
-    enemyPathType: 0
-    startDistance: 10
-    headsUpTime: 15
-  - enemyUniqueName: Buggy
-    enemyData: 1
-    isLeft: 0
-    enemyPathType: 0
-    startDistance: 60
-    headsUpTime: 30
-  - enemyUniqueName: Buggy
-    enemyData: 2
-    isLeft: 1
-    enemyPathType: 0
-    startDistance: 150
-    headsUpTime: 30
-  - enemyUniqueName: Buggy
-    enemyData: 2
-    isLeft: 0
-    enemyPathType: 0
-    startDistance: 150
-    headsUpTime: 30
-  - enemyUniqueName: Buggy
-    enemyData: 3
-    isLeft: 1
-    enemyPathType: 0
-    startDistance: 350
-    headsUpTime: 30
-  - enemyUniqueName: Buggy
-    enemyData: 3
-    isLeft: 0
-    enemyPathType: 0
-    startDistance: 350
-    headsUpTime: 30
-  startingMoney: 40
-  moneyGainSpeed: 1
-  missionDistance: 600
-  bestEngineSpeed: 130
-  mediumEngineSpeed: 115
-  worstEngineSpeed: 70
-  reputationRequirement: 0
+  myData:
+    levelName: Smol Starts
+    missionRewardMoney: 200
+    enemyWaves:
+    - enemyUniqueName: Buggy
+      enemyData: 1
+      isLeft: 1
+      enemyPathType: 0
+      startDistance: 10
+      headsUpTime: 15
+    - enemyUniqueName: Buggy
+      enemyData: 1
+      isLeft: 0
+      enemyPathType: 0
+      startDistance: 60
+      headsUpTime: 30
+    missionDistance: 300

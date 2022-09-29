@@ -251,6 +251,7 @@ GameObject:
   - component: {fileID: 9062001436597085138}
   - component: {fileID: -8877798182738292556}
   - component: {fileID: -2153006421164274385}
+  - component: {fileID: 2620412197063237069}
   m_Layer: 0
   m_Name: Mortar Module
   m_TagString: Untagged
@@ -294,16 +295,10 @@ MonoBehaviour:
   uniqueName: Mortar
   Icon: {fileID: 21300000, guid: 0e96d40afed62ce44874e5dcd139cf2d, type: 3}
   mySlot: {fileID: 0}
-  mySlotIndex: 0
   canPointSide: 0
   canPointUp: 0
   canBeRotatedSides: 0
   canBeRotatedUp: 0
-  disabledWhenBuilding:
-  - {fileID: 2934280374143819819}
-  - {fileID: 7371494607064308679}
-  - {fileID: 5592445795315755096}
-  - {fileID: 2199384508793199889}
   cost: 100
   myRotation: 3
   canBeTargetingAreaRotatable: 1
@@ -344,6 +339,7 @@ MonoBehaviour:
   fireBarrageDelay: 0.1
   projectileDamage: 30
   rotateSpeed: 1
+  gunActive: 1
   CanShoot: 0
   isPlayer: 1
   rangeOrigin: {fileID: 8463444726689223868}
@@ -473,7 +469,7 @@ MonoBehaviour:
   cost: -50
   cooldown: -1
   curCooldown: 0
-  sellPrefab: {fileID: 172524484023753321, guid: 5c944d37062c8b04d8a0fa76e4e24049, type: 3}
+  isCombatMode: 1
 --- !u!114 &3549725107867153456
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -528,8 +524,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e03d89f262df7ef43ad10e8140eccbf4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  tooltip: {fileID: 0}
-  info: 
 --- !u!114 &-2153006421164274385
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -542,8 +536,24 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c000a03ade147ef4e8a60dfb7de82121, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  tooltip: {fileID: 0}
-  info: 
+--- !u!114 &2620412197063237069
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3146471024428373951}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7dd82790b735196458fe58421304356e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  isUnlocked: 1
+  unlockingUpgrade: {fileID: 0}
+  actionName: Repair
+  cost: 25
+  cooldown: -1
+  curCooldown: 0
 --- !u!1 &3234102027660134111
 GameObject:
   m_ObjectHideFlags: 0

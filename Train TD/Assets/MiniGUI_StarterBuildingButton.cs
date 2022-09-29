@@ -36,7 +36,6 @@ public class MiniGUI_StarterBuildingButton : MonoBehaviour {
 		myButton.interactable = canBuild;
 		
 		
-		StarterUIController.s.UpdateCanStartStatus();
 		UpdateCountText();
 
 		return count > 0;

@@ -18,7 +18,7 @@ public class DataSaver {
 	public const string saveName3 = "save3.data";
 
 	public bool loadingComplete = false;
-	
+
 	private static readonly fsSerializer _serializer = new fsSerializer();
 
 	public int ActiveSave {
@@ -26,20 +26,21 @@ public class DataSaver {
 		private set => activeSave = value;
 	}
 
-	public string GetSaveFilePathAndFileName (int index) {
+	public string GetSaveFilePathAndFileName(int index) {
 		var saveName = saveName1;
 		if (index == 1) {
-			saveName =saveName2;
+			saveName = saveName2;
 		}
 
 		if (index == 2) {
 			saveName = saveName3;
 		}
-		
+
 		return Application.persistentDataPath + "/" + saveName;
 	}
 
-	public delegate void SaveYourself ();
+	public delegate void SaveYourself();
+
 	public static event SaveYourself earlyLoadEvent;
 	public static event SaveYourself loadEvent;
 	public static event SaveYourself earlySaveEvent;
@@ -51,8 +52,10 @@ public class DataSaver {
 	}
 
 	private float saveStartTime = 0f;
+
 	public void SetActiveSave(int id) {
-		allSaves[activeSave].playtime += Time.realtimeSinceStartup - saveStartTime;
+		if(allSaves[activeSave].isInARun)
+			allSaves[activeSave].currentRun.playtime += Time.realtimeSinceStartup - saveStartTime;
 		allSaves[activeSave].isActiveSave = false;
 		SaveActiveGame();
 
@@ -60,7 +63,7 @@ public class DataSaver {
 		ActiveSave = id;
 		allSaves[activeSave].isActiveSave = true;
 		SaveActiveGame();
-		
+
 		earlyLoadEvent?.Invoke();
 		loadEvent?.Invoke();
 	}
@@ -74,21 +77,23 @@ public class DataSaver {
 		allSaves[ActiveSave] = MakeNewSaveFile(ActiveSave);
 		saveStartTime = Time.realtimeSinceStartup;
 	}
-	
+
 	public SaveFile MakeNewSaveFile(int id) {
 		var file = new SaveFile();
 		file.isRealSaveFile = true;
-		file.saveName = $"Slot {id+1}";
+		file.saveName = $"Slot {id + 1}";
 		return file;
 	}
 
 
 	public bool dontSave = false;
-	public void SaveActiveGame () {
+
+	public void SaveActiveGame() {
 		if (!dontSave) {
 			earlySaveEvent?.Invoke();
 			saveEvent?.Invoke();
-			GetCurrentSave().playtime += Time.realtimeSinceStartup - saveStartTime;
+			if(GetCurrentSave().isInARun)
+				GetCurrentSave().currentRun.playtime += Time.realtimeSinceStartup - saveStartTime;
 			saveStartTime = Time.realtimeSinceStartup;
 			Save(ActiveSave);
 		}
@@ -105,9 +110,9 @@ public class DataSaver {
 
 	public static void WriteFile(string path, object file) {
 		Directory.CreateDirectory(Path.GetDirectoryName(path));
-		
+
 		StreamWriter writer = new StreamWriter(path);
-		
+
 		fsData serialized;
 		_serializer.TrySerialize(file, out serialized);
 		var json = fsJsonPrinter.PrettyJson(serialized);
@@ -118,7 +123,7 @@ public class DataSaver {
 		Debug.Log($"IO OP: file \"{file.GetType()}\" saved to \"{path}\"");
 	}
 
-	public void Load () {
+	public void Load() {
 		if (loadingComplete) {
 			return;
 		}
@@ -151,7 +156,7 @@ public class DataSaver {
 			allSaves[ActiveSave].isActiveSave = true;
 		}
 
-		
+
 		saveStartTime = Time.realtimeSinceStartup;
 		earlyLoadEvent?.Invoke();
 		loadEvent?.Invoke();
@@ -173,67 +178,83 @@ public class DataSaver {
 	}
 
 
-	[System.Serializable]
+	[Serializable]
 	public class SaveFile {
 		public string saveName = "unnamed";
 		public bool isActiveSave = false;
 		public bool isRealSaveFile = false;
 
+		public bool isInARun = false;
+		public RunState currentRun = new RunState(); // assumed to be never null
+	}
+
+	[Serializable]
+	public class RunState {
+		public string character = "unnamed";
+
+		public TrainState myTrain = new TrainState();
+		
+		public StarMapState map = new StarMapState();
+		public List<string> upgrades = new List<string>();
+
 		public float playtime;
-
 		public int money = 0;
+		public int scraps = 200;
+		public int fuel = 25;
+		public int maxFuel = 50;
 
-		public int reputation {
-			get {
-				var rep = 0;
-				foreach (var mission in missionStatsList) {
-					rep += (mission.isWon ? 1 : 0) + mission.cargoStars + mission.speedStars;
+		public void SetCharacter(CharacterData characterData) {
+			character = characterData.uniqueName;
+			myTrain = characterData.starterTrain.Copy();
+
+			for (int i = 0; i < characterData.starterUpgrades.Length; i++) {
+				upgrades.Add(characterData.starterUpgrades[i].upgradeUniqueName);
+			}
+
+			money = characterData.starterMoney;
+			scraps = characterData.starterScraps;
+		}
+	}
+
+
+	[Serializable]
+	public class TrainState {
+		public List<CartState> myCarts = new List<CartState>();
+
+		[Serializable]
+		public class CartState {
+			//public string cartType = "cart";
+			public List<string> buildings = new List<string>();
+			public List<int> healths = new List<int>();
+
+			public CartState() {
+				for (int i = 0; i < 6; i++) {
+					buildings.Add("");
+				}
+				for (int i = 0; i < 6; i++) {
+					healths.Add(0);
+				}
+			}
+
+			public CartState Copy() {
+				var copyState = new CartState();
+				//copyState.cartType = cartType;
+				for (int i = 0; i < buildings.Count; i++) {
+					copyState.buildings[i] = buildings[i];
 				}
 
-				rep += debugExtraReputation;
-				
-				return rep;
+				return copyState;
 			}
 		}
 
-		public int debugExtraReputation = 0;
+		public TrainState Copy() {
+			var copyState = new TrainState();
 
-		public List<MissionStats> missionStatsList = new List<MissionStats>();
-		public List<UpgradeData> upgradeDatas = new List<UpgradeData>();
-
-		public string lastLoadedLevelName = "unset";
-
-		public MissionStats GetCurrentMission() {
-			var mySave = s.GetCurrentSave();
-			var existingMissionIndex =  mySave.missionStatsList.FindIndex(x => x.levelName == SceneLoader.s.currentLevel.levelName);
-			MissionStats myMission;
-			if (existingMissionIndex != -1) {
-				myMission = mySave.missionStatsList[existingMissionIndex];
-			} else {
-				myMission = new MissionStats(){levelName =  SceneLoader.s.currentLevel.levelName};
-				mySave.missionStatsList.Add(myMission);
+			for (int i = 0; i < myCarts.Count; i++) {
+				copyState.myCarts.Add(myCarts[i].Copy());
 			}
 
-			return myMission;
+			return copyState;
 		}
 	}
-
-	
-	[Serializable]
-	public class UpgradeData {
-		public string upgradeName;
-		public bool isUnlocked;
-	}
-
-	[Serializable]
-	public class MissionStats {
-		public string levelName;
-		public bool isWon = false;
-		public int speedStars = 0;
-		public int cargoStars = 0;
-		public float bestTime = 60000; // aka infinity
-		public int bestCargoCount = 0;
-	}
-
-
 }

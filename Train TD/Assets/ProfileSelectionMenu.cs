@@ -29,6 +29,13 @@ public class ProfileSelectionMenu : MonoBehaviour {
 
     private DataSaver.SaveFile saveToBeDeleted;
     public MiniGUI_ProfileDisplay deleteProfileDisplay;
+
+
+    public DataSaver.TrainState profileScreenTrain;
+
+    public bool drawDebugTrainInstead = false;
+    public DataSaver.TrainState debugTrain;
+    
     private void Awake() {
         s = this;
     }
@@ -64,6 +71,12 @@ public class ProfileSelectionMenu : MonoBehaviour {
             profileChangeMenu.ShowMenu();
             SceneLoader.s.autoOpenProfiles = false;
         }
+        
+        if(drawDebugTrainInstead)
+            Train.s.DrawTrain(debugTrain);
+        else
+            Train.s.DrawTrain(profileScreenTrain);
+        RangeVisualizer.SetAllRangeVisualiserState(false);
     }
 
     public void StartGame() {
@@ -85,6 +98,12 @@ public class ProfileSelectionMenu : MonoBehaviour {
         for (int i = 0; i < monoToDisableAfterProfileMenu.Length; i++) {
             monoToDisableAfterProfileMenu[i].enabled = false;
         }
+        
+        
+        Train.s.DrawTrain(DataSaver.s.GetCurrentSave().currentRun.myTrain);
+        SceneLoader.s.SetToStarterMenu();
+        RangeVisualizer.SetAllRangeVisualiserState(false);
+        StarterUIController.s.OpenStarterUI();
     }
 
     public void SaveChanged() {

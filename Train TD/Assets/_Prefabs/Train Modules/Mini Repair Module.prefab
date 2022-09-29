@@ -1072,6 +1072,7 @@ GameObject:
   - component: {fileID: 2199384508793199889}
   - component: {fileID: 4987274482128882662}
   - component: {fileID: -4777252300777593913}
+  - component: {fileID: -4750669455784004260}
   m_Layer: 0
   m_Name: mini Repair Module
   m_TagString: Untagged
@@ -1108,24 +1109,26 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f5b56326a28e8a24c91959aa3382ef6a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  displayName: Unnamed But Nice in game name
   uniqueName: Repair
   Icon: {fileID: 21300000, guid: 42da7a0800ad67345b6581b8cf9500b7, type: 3}
   mySlot: {fileID: 0}
-  mySlotIndex: 0
   canPointSide: 1
   canPointUp: 1
   canBeRotatedSides: 1
   canBeRotatedUp: 0
-  disabledWhenBuilding:
-  - {fileID: 1125237897737758139}
-  - {fileID: 5592445795315755096}
-  - {fileID: 2199384508793199889}
   cost: 50
   myRotation: 3
+  canBeTargetingAreaRotatable: 0
   occupiesEntireSlot: 0
   sideGfx: {fileID: 8793443569306674401}
   topGfx: {fileID: 6329249715763517730}
+  frontGfx: {fileID: 0}
+  backGfx: {fileID: 0}
+  myUITargetTransforms: []
   isBuilt: 0
+  autoSetUp: 0
+  _outlines: []
 --- !u!114 &1125237897737758139
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1138,7 +1141,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b49180ea77ea07d40898da773b037d45, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  repairPerSecond: 1
+  repairDelay: 2
+  repairAmount: 25
 --- !u!114 &5592445795315755096
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1198,11 +1202,31 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 57753de41d57ab242a96112d02204fec, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  isUnlocked: 1
+  unlockingUpgrade: {fileID: 0}
   actionName: Sell
   cost: -25
   cooldown: -1
   curCooldown: 0
-  sellPrefab: {fileID: 172524484023753321, guid: 5c944d37062c8b04d8a0fa76e4e24049, type: 3}
+  isCombatMode: 1
+--- !u!114 &-4750669455784004260
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3146471024428373951}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7dd82790b735196458fe58421304356e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  isUnlocked: 1
+  unlockingUpgrade: {fileID: 0}
+  actionName: Repair
+  cost: 25
+  cooldown: -1
+  curCooldown: 0
 --- !u!1 &3234102027660134111
 GameObject:
   m_ObjectHideFlags: 0

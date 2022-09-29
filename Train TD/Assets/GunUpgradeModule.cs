@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class GunUpgradeModule : MonoBehaviour {
+public class GunUpgradeModule : MonoBehaviour, IActiveDuringCombat {
     private float curResupplyDelay = 0.5f;
     public float resupplyDelay = 2;
     public int resupplyAmount = 25;
@@ -81,6 +81,14 @@ public class GunUpgradeModule : MonoBehaviour {
         }
 
         return false;
+    }
+    
+    public void ActivateForCombat() {
+        this.enabled = true;
+    }
+
+    public void Disable() {
+        this.enabled = false;
     }
 }
 

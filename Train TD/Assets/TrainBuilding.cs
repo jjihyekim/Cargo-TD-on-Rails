@@ -11,10 +11,10 @@ public class TrainBuilding : MonoBehaviour {
 
     public Sprite Icon;
 
-    [ReadOnly]
+    [ReadOnly] 
     public Slot mySlot;
     [ReadOnly]
-    public int mySlotIndex = 0;
+    public int mySlotIndex { get; private set; }
 
     [HideIf("occupiesEntireSlot")]
     public bool canPointSide;
@@ -35,7 +35,7 @@ public class TrainBuilding : MonoBehaviour {
         }
     }
 
-    public MonoBehaviour[] disabledWhenBuilding;
+    //public MonoBehaviour[] disabledWhenBuilding;
 
     public int cost = 50;
     
@@ -134,15 +134,44 @@ public class TrainBuilding : MonoBehaviour {
 
 
     public void SetBuildingMode(bool isBuildingHologram, bool isBuildable = true) {
-        for (int i = 0; i < disabledWhenBuilding.Length; i++) {
-            disabledWhenBuilding[i].enabled = !isBuildingHologram;
+        var duringCombat = GetComponents<IActiveDuringCombat>();
+        var duringShopping = GetComponents<IActiveDuringShopping>();
+        
+        for (int i = 0; i < duringCombat.Length; i++) { duringCombat[i].Disable(); }
+        for (int i = 0; i < duringShopping.Length; i++) { duringShopping[i].Disable(); }
+        
+        if (SceneLoader.s.isLevelStarted()) {
+            for (int i = 0; i < duringCombat.Length; i++) {
+                duringCombat[i].ActivateForCombat();
+            }
+        }else if (SceneLoader.s.isStarterMenu()) {
+            for (int i = 0; i < duringShopping.Length; i++) {
+                duringShopping[i].ActivateForShopping();
+            }
         }
+        
 
         var moduleGfxs = GetComponentsInChildren<ModuleGraphics>(true);
 
         foreach (var moduleGfx in moduleGfxs) {
             moduleGfx.SetBuildingMode(isBuildingHologram, isBuildable);
         }
+    }
+
+    void OnLevelStateChanged() {
+        SetBuildingMode(!isBuilt);
+    }
+
+    private void OnEnable() {
+        if (Train.s != null) {
+            Train.s.onLevelStateChanged.AddListener(OnLevelStateChanged);
+        } else {
+            Invoke(nameof(OnEnable), 0.05f);
+        }
+    }
+
+    private void OnDisable() {
+        Train.s.onLevelStateChanged.RemoveListener(OnLevelStateChanged);
     }
 
     public void CompleteBuilding(bool playSound = true) {
@@ -170,7 +199,7 @@ public class TrainBuilding : MonoBehaviour {
                 break;
         }
         
-        SetUpBasedOnRotation(isFrontSlot);
+        SetUpBasedOnRotationWithoutSlot(isFrontSlot);
 
         return rotationToIndex[myRotation];
     }
@@ -197,7 +226,7 @@ public class TrainBuilding : MonoBehaviour {
             }
         }
 
-        SetUpBasedOnRotation();
+        SetUpBasedOnRotationWithoutSlot();
 
 
         if (canBeTargetingAreaRotatable) {
@@ -217,12 +246,19 @@ public class TrainBuilding : MonoBehaviour {
         rotationChangedEvent?.Invoke();
     }
 
-    public void SetUpBasedOnRotation(bool slotTypeOverrideIsFront, bool isOverriding = false) {
-        SetGfxBasedOnRotation(slotTypeOverrideIsFront, isOverriding);
+
+    public void SetUpBasedOnRotation() {
+        SetGfxBasedOnRotation();
         rotationChangedEvent?.Invoke();
     }
-    public void SetUpBasedOnRotation() {
-        SetUpBasedOnRotation(false, true);
+    public void SetUpBasedOnRotationWithoutSlot() {
+        SetGfxBasedOnRotation(true, true);
+        rotationChangedEvent?.Invoke();
+    }
+    
+    public void SetUpBasedOnRotationWithoutSlot(bool slotTypeOverrideIsFront) {
+        SetGfxBasedOnRotation(slotTypeOverrideIsFront, true);
+        rotationChangedEvent?.Invoke();
     }
     
     public void SetGfxBasedOnRotation(bool slotTypeOverrideIsFront = false, bool isSlotTypeOverride = false) {
@@ -320,5 +356,24 @@ public class TrainBuilding : MonoBehaviour {
             }
         }
     }
+
+    public int GetCurrentHealth() {
+        return (int)GetComponent<ModuleHealth>().currentHealth;
+    }
+
+    public void SetCurrentHealth(int health) {
+        GetComponent<ModuleHealth>().currentHealth = health;
+    }
+    
+}
+
+
+public interface IActiveDuringCombat {
+    public void ActivateForCombat();
+    public void Disable();
+}
+public interface IActiveDuringShopping {
+    public void ActivateForShopping();
+    public void Disable();
     
 }

@@ -5,7 +5,7 @@ using Sirenix.OdinInspector;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class ModuleHealth : MonoBehaviour, IHealth {
+public class ModuleHealth : MonoBehaviour, IHealth, IActiveDuringCombat, IActiveDuringShopping {
 
     public float maxHealth = 50;
     public float currentHealth = 50;
@@ -77,5 +77,17 @@ public class ModuleHealth : MonoBehaviour, IHealth {
     }
     public string GetHealthRatioString() {
         return $"{currentHealth}/{maxHealth}";
+    }
+    
+    public void ActivateForCombat() {
+        this.enabled = true;
+    }
+
+    public void ActivateForShopping() {
+        this.enabled = true;
+    }
+
+    public void Disable() {
+        this.enabled = false;
     }
 }

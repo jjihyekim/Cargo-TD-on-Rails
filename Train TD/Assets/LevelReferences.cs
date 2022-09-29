@@ -37,6 +37,7 @@ public class LevelReferences : MonoBehaviour {
     public static List<PossibleTarget> allTargets = new List<PossibleTarget>();
 
     public GameObject scrapPile;
+    public GameObject fuelPile;
 
     public static List<ScrapPile> allScraps = new List<ScrapPile>();
     public Train train;
@@ -56,8 +57,8 @@ public class LevelReferences : MonoBehaviour {
 
 
     const int maxMoneyPileCount = 25;
-    public void SpawnMoneyAtLocation(int amount, Vector3 location) {
-        int count = Mathf.CeilToInt(amount / 25);
+    public void SpawnScrapsAtLocation(int amount, Vector3 location) {
+        int count = Mathf.CeilToInt(amount / 5f);
 
         while(amount > 0) {
             var random = Random.insideUnitCircle * (count / 4f);
@@ -66,9 +67,27 @@ public class LevelReferences : MonoBehaviour {
             var targetAmount = amount % maxMoneyPileCount;
             if (targetAmount == 0)
                 targetAmount += maxMoneyPileCount;
-            pileComp.SetUp(targetAmount);
+            pileComp.SetUp(targetAmount, true);
             allScraps.Add(pileComp);
-            amount -= 25;
+            amount -= 5;
+            
+            pileComp.CollectPile();
+        }
+    }
+    
+    public void SpawnFuelAtLocation(int amount, Vector3 location) {
+        int count = Mathf.CeilToInt(amount / 5f);
+
+        while(amount > 0) {
+            var random = Random.insideUnitCircle * (count / 4f);
+            var pile = Instantiate(scrapPile, location + new Vector3(random.x, 0, random.y), Quaternion.identity);
+            var pileComp = pile.GetComponent<ScrapPile>();
+            var targetAmount = amount % maxMoneyPileCount;
+            if (targetAmount == 0)
+                targetAmount += maxMoneyPileCount;
+            pileComp.SetUp(targetAmount, false);
+            allScraps.Add(pileComp);
+            amount -= 5;
             
             pileComp.CollectPile();
         }

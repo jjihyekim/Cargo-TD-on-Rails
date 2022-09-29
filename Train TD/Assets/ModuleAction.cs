@@ -21,13 +21,13 @@ public abstract class ModuleAction : UnlockableEffect {
 		if (canEngage) {
 			if (curCooldown <= 0) {
 				if (cost > 0) {
-					if (MoneyController.s.money > cost) {
-						MoneyController.s.SubtractMoney(cost);
+					if (MoneyController.s.scraps > cost) {
+						MoneyController.s.SubtractScraps(cost);
 						curCooldown = cooldown;
 						_EngageAction();
 					}
 				} else {
-					MoneyController.s.AddMoney(-cost);
+					MoneyController.s.AddScraps(-cost);
 					curCooldown = cooldown;
 					_EngageAction();
 				}

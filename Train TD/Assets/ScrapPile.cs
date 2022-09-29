@@ -2,19 +2,22 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 public class ScrapPile : MonoBehaviour {
 
     public float height = 0.5f;
 
-    public int moneyAmount = 0;
+    public int scrapAmount = 0;
     public bool isCollected = false;
+
+    public bool isScrap = false;
     
-    
-    public void SetUp(int money) {
-        moneyAmount = money;
+    public void SetUp(int scrap, bool _isScrap) {
+        isScrap = _isScrap;
+        scrapAmount = scrap;
         StickToGround();
-        GetComponentInChildren<ScrapPileMaker>().MakePile(moneyAmount/5);
+        GetComponentInChildren<ScrapPileMaker>().MakePile(scrapAmount);
         transform.SetParent(LevelReferences.s.playerTransform);
         PickTarget();
     }
@@ -60,7 +63,11 @@ public class ScrapPile : MonoBehaviour {
             speed += Time.deltaTime * acc;
             
             if (distance < 0.01f) {
-                MoneyController.s.AddMoney(moneyAmount);
+                if(isScrap)
+                    MoneyController.s.AddScraps(scrapAmount);
+                else 
+                    SpeedController.s.AddFuel(scrapAmount);
+                
                 Destroy(gameObject);
             }
         } else {

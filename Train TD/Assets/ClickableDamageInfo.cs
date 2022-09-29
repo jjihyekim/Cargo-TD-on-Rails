@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ClickableDamageInfo : ClickableEntityInfo {
+public class ClickableDamageInfo : MonoBehaviour, IClickableInfo {
     [Header("Info Text will be auto populated")]
     private GunModule _gunModule;
     
@@ -16,13 +16,11 @@ public class ClickableDamageInfo : ClickableEntityInfo {
         }
     }
 
-    // Update is called once per frame
-    void Update() {
-        var armorPenet = "";
-        if (isPlayer && SceneLoader.s.currentLevel.HasArmoredEnemy()) {
-            armorPenet = _gunModule.canPenetrateArmor ? "\narmor penetrating" : "\nweak against armor";
-        }
+    public string GetInfo() {
+        return $"{_gunModule.GetDamage()}dmg/{_gunModule.fireDelay} secs";
+    }
 
-        info = $"{_gunModule.projectileDamage} dmg{armorPenet}";
+    public Tooltip GetTooltip() {
+        return null;
     }
 }

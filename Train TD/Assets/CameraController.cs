@@ -51,7 +51,7 @@ public class CameraController : MonoBehaviour {
     public float realZoom = 0f;
     public Vector2 zoomLimit = new Vector2(-2, 2);
 
-    public bool canScroll = true;
+    public bool canEdgeMove = false;
     protected void OnEnable()
     {
         moveAction.action.Enable();
@@ -87,9 +87,10 @@ public class CameraController : MonoBehaviour {
 
     private void LateUpdate() {
         var mousePos = Mouse.current.position.ReadValue();
-        ProcessScreenCorners(mousePos);
+        if(canEdgeMove)
+            ProcessScreenCorners(mousePos);
         ProcessMovementInput(moveAction.action.ReadValue<Vector2>(), wasdSpeed);
-        if(canScroll)
+        if(canZoom)
             ProcessZoom(zoomAction.action.ReadValue<float>());
         ProcessMiddleMouseRotation(rotateCameraAction.action.ReadValue<float>(), mousePos);
         LerpCameraTarget();
@@ -140,9 +141,17 @@ public class CameraController : MonoBehaviour {
     }
 
     void ProcessZoom(float value) {
-        if (canZoom) {
-            currentZoom += value * zoomSpeed;
-            currentZoom = Mathf.Clamp(currentZoom, zoomLimit.x, zoomLimit.y);
+        currentZoom += value * zoomSpeed;
+        currentZoom = Mathf.Clamp(currentZoom, zoomLimit.x, zoomLimit.y);
+        if (Mathf.Abs(value) > 0.1) {
+            CancelInvoke(nameof(SnapZoom));
+            Invoke(nameof(SnapZoom),0.7f);
+        }
+    }
+
+    void SnapZoom() {
+        if (Mathf.Abs(currentZoom) < 1.25) {
+            currentZoom = 0;
         }
     }
 
@@ -196,7 +205,7 @@ public class CameraController : MonoBehaviour {
     }
 
     
-    public void ToggleCameraEdgeScroll() {
-        canScroll = !canScroll;
+    public void ToggleCameraEdgeMove() {
+        canEdgeMove = !canEdgeMove;
     }
 }

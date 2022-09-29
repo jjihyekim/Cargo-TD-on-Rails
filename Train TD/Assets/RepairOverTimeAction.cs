@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class RepairOverTimeAction : ModuleAction {
+public class RepairOverTimeAction : ModuleAction, IActiveDuringCombat {
 	public float repairPerSecond = 20;
 	public float repairDuration = 10;
 	
@@ -26,5 +26,13 @@ public class RepairOverTimeAction : ModuleAction {
 			timer -= Time.deltaTime;
 			yield return null;
 		}
+	}
+	
+	public void ActivateForCombat() {
+		this.enabled = true;
+	}
+
+	public void Disable() {
+		this.enabled = false;
 	}
 }

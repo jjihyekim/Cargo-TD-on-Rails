@@ -13,13 +13,13 @@ public class DisableCameraZoomWhenInsideRect : MonoBehaviour {
     // Update is called once per frame
     void Update() {
         Vector2 mousePos = Mouse.current.position.ReadValue();
-        var insideRect = RectTransformUtility.RectangleContainsScreenPoint(rect, mousePos);
+        var insideRect = RectTransformUtility.RectangleContainsScreenPoint(rect, mousePos, MainCameraReference.s.uiCam);
 
-        CameraController.s.canScroll = !insideRect;
+        CameraController.s.canZoom = !insideRect;
     }
 
 
     private void OnDisable() {
-        CameraController.s.canScroll = true;
+        CameraController.s.canZoom = true;
     }
 }

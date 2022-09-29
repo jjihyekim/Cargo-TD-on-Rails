@@ -10,8 +10,8 @@ public class MiniGUI_UpgradeButton : MonoBehaviour {
 
     [ReadOnly]
     public Upgrade myUpgrade;
-    public Button upgradeButton;
-    public TMP_Text upgradeCost;
+
+    public GameObject ownedBox;
     public Image icon;
     public Image bg;
 
@@ -20,11 +20,8 @@ public class MiniGUI_UpgradeButton : MonoBehaviour {
     public Color notBoughtColor = Color.grey;
     public Color boughtColor = Color.white;
 
-    public GameObject starRequiredOverlay;
-    public TMP_Text starRequirementAmount;
 
-
-   public void Initialize() {
+    public void Initialize() {
         selectedOverlay.enabled = false;
         if (myUpgrade != null) {
             SetUp(myUpgrade);
@@ -37,32 +34,12 @@ public class MiniGUI_UpgradeButton : MonoBehaviour {
     }
     
     public void Refresh() {
-        var mySave = DataSaver.s.GetCurrentSave();
-
-        if (mySave.reputation < myUpgrade.starRequirement) {
-            starRequiredOverlay.SetActive(true);
-            starRequirementAmount.text = myUpgrade.starRequirement.ToString();
-        } else {
-            starRequiredOverlay.SetActive(false);
-        }
-        
-        
         if (myUpgrade.isUnlocked) {
-            upgradeButton.interactable = false;
-            upgradeCost.text = "bought";
-
+            ownedBox.SetActive(true);
             bg.color = boughtColor;
 
         } else {
-            var isParentUnlocked = myUpgrade.parentUpgrade == null || myUpgrade.parentUpgrade == myUpgrade || myUpgrade.parentUpgrade.isUnlocked;
-            
-            if (mySave.money >= myUpgrade.cost && isParentUnlocked) {
-                upgradeButton.interactable = true;
-            } else {
-                upgradeButton.interactable = false;
-            }
-            
-            upgradeCost.text = myUpgrade.cost.ToString();
+            ownedBox.SetActive(false);
             bg.color = notBoughtColor;
         }
 
@@ -75,10 +52,5 @@ public class MiniGUI_UpgradeButton : MonoBehaviour {
     
     public void SetSelectionStatus(bool isSelected) {
         selectedOverlay.enabled = isSelected;
-    }
-
-
-    public void Buy() {
-        UpgradesController.s.BuyUpgrade(myUpgrade);
     }
 }

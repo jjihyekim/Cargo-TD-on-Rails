@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ModuleSalvoAction : ModuleAction {
+public class ModuleSalvoAction : ModuleAction, IActiveDuringCombat {
     
     [Space] 
     public float actionTime = 5f;
@@ -40,5 +40,13 @@ public class ModuleSalvoAction : ModuleAction {
         GetComponent<TargetPicker>().rotationSpan -= angleBoost;
         
         GetComponent<GunModule>().ActivateGun();
+    }
+    
+    public void ActivateForCombat() {
+        this.enabled = true;
+    }
+
+    public void Disable() {
+        this.enabled = false;
     }
 }

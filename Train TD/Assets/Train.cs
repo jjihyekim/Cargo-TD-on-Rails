@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Sirenix.OdinInspector;
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.SceneManagement;
 using Random = UnityEngine.Random;
 
@@ -39,11 +40,8 @@ public class Train : MonoBehaviour {
         LevelReferences.s.train = this;
     }
 
-    public void UpdateBasedOnLevelData() {
-        var childCount = transform.childCount;
-        for (int i = childCount - 1; i >= 0; i--) {
-            Destroy(transform.GetChild(i).gameObject);
-        }
+    public void DrawTrain(DataSaver.TrainState trainState) {
+        transform.DeleteAllChildren();
 
         carts = new List<Transform>();
         cartDefPositions = new List<Vector3>();
@@ -53,9 +51,8 @@ public class Train : MonoBehaviour {
         if(trainBack != null)
             Destroy(trainBack.gameObject);
 
-        if (SceneLoader.s.currentLevel != null) {
-            //cartCount = SceneLoader.s.currentLevel.levelTrain.Length;
-            cartCount = SceneLoader.s.currentLevel.trainLength;
+        if (trainState != null) {
+            cartCount = trainState.myCarts.Count;
 
             for (int i = 0; i < cartCount; i++) {
                 var cart = Instantiate(DataHolder.s.cartPrefab, transform);
@@ -76,36 +73,74 @@ public class Train : MonoBehaviour {
         carts.Reverse();
         cartDefPositions.Reverse();
         
+        
         UpdateCartPositions();
+
+        AddBuildingsToTrain(trainState);
     }
 
-    /*void AddCartBuildings(Cart cart, TrainCartData data) {
-        if (data.frontSlot.leftSlot != "empty") {
-            AddBuildingToSlot(cart.frontSlot, 0, data.frontSlot.leftSlot);
-        }
-        if (data.frontSlot.topSlot != "empty") {
-            AddBuildingToSlot(cart.frontSlot, 1, data.frontSlot.topSlot);
-        }
-        if (data.frontSlot.rightSlot != "empty") {
-            AddBuildingToSlot(cart.frontSlot, 2, data.frontSlot.rightSlot);
-        }
-        
-        
-        if (data.backSlot.leftSlot != "empty") {
-            AddBuildingToSlot(cart.backSlot, 0, data.backSlot.leftSlot);
-        }
-        if (data.backSlot.topSlot != "empty") {
-            AddBuildingToSlot(cart.backSlot, 1, data.backSlot.topSlot);
-        }
-        if (data.backSlot.rightSlot != "empty") {
-            AddBuildingToSlot(cart.backSlot, 2, data.backSlot.rightSlot);
-        }
-    }*/
+    public DataSaver.TrainState GetTrainState() {
+        var trainState = new DataSaver.TrainState();
 
-    private static void AddBuildingToSlot(Slot slot, int slotIndex, string building) {
+        for (int i = 0; i < carts.Count; i++) {
+            var cartScript = carts[i].GetComponent<Cart>();
+            var cartState = new DataSaver.TrainState.CartState();
+
+            for (int j = 0; j < cartScript.frontSlot.myBuildings.Length; j++) {
+                if (cartScript.frontSlot.myBuildings[j] != null) {
+                    cartState.buildings[j] = cartScript.frontSlot.myBuildings[j].uniqueName;
+                    cartState.healths[j] = cartScript.frontSlot.myBuildings[j].GetCurrentHealth();
+                } else {
+                    cartState.buildings[j] = "";
+                    cartState.healths[j] = 0;
+                }
+            }
+            
+            for (int j = 0; j < cartScript.backSlot.myBuildings.Length; j++) {
+                if (cartScript.backSlot.myBuildings[j] != null) {
+                    cartState.buildings[j+3] = cartScript.backSlot.myBuildings[j].uniqueName;
+                    cartState.healths[j+3] = cartScript.backSlot.myBuildings[j].GetCurrentHealth();
+                } else {
+                    cartState.buildings[j+3] = "";
+                    cartState.healths[j+3] = 0;
+                }
+            }
+
+            trainState.myCarts.Add(cartState);
+        }
+
+        return trainState;
+    }
+
+    void AddBuildingsToTrain(DataSaver.TrainState trainState) {
+        for (int i = 0; i < trainState.myCarts.Count; i++) {
+            var cartState = trainState.myCarts[i];
+
+            var cart = carts[i].GetComponent<Cart>();
+
+            var skipCount = 0;
+            for (int j = 0; j < cartState.buildings.Count; j++) {
+                if (skipCount > 0) { // we skip the next two duplicates if the prev building was an entire slot building
+                    skipCount -= 1;
+                    continue;
+                }
+                if (cartState.buildings[j].Length > 0) {
+                    var slot = j < 3 ? cart.frontSlot : cart.backSlot;
+                    AddBuildingToSlot(slot, j % 3, cartState.buildings[j], cartState.healths[j]);
+                    if (DataHolder.s.GetBuilding(cartState.buildings[j]).occupiesEntireSlot)
+                        skipCount = 2;
+                }
+            }
+        }
+    }
+
+    private static void AddBuildingToSlot(Slot slot, int slotIndex, string building, int health) {
         var newBuilding = Instantiate(DataHolder.s.GetBuilding(building).gameObject).GetComponent<TrainBuilding>();
         slot.AddBuilding(newBuilding, slotIndex);
-        newBuilding.transform.position = slot.transform.position;
+        if (health > 0) {
+            newBuilding.SetCurrentHealth(health);
+        }
+        
         newBuilding.CompleteBuilding();
     }
 
@@ -145,6 +180,12 @@ public class Train : MonoBehaviour {
         
         carts.Reverse();
         cartDefPositions.Reverse();
+    }
+
+    public UnityEvent onLevelStateChanged = new UnityEvent();
+    
+    public void LevelStateChanged() {
+        onLevelStateChanged?.Invoke();
     }
 
 

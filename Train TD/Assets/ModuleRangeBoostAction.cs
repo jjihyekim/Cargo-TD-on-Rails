@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ModuleRangeBoostAction : ModuleAction {
+public class ModuleRangeBoostAction : ModuleAction, IActiveDuringCombat {
 	
 	
 	[Space] public float actionTime = 10f;
@@ -22,5 +22,13 @@ public class ModuleRangeBoostAction : ModuleAction {
 		GetComponent<TargetPicker>().range -= rangeBoost;
 		GetComponent<TargetPicker>().rotationSpan -= angleBoost;
 		GetComponent<GunModule>().fireDelay /= rotateSpeedBoost;
+	}
+	
+	public void ActivateForCombat() {
+		this.enabled = true;
+	}
+
+	public void Disable() {
+		this.enabled = false;
 	}
 }

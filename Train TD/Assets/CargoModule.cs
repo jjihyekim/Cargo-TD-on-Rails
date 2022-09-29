@@ -3,19 +3,27 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class CargoModule : MonoBehaviour {
+public class CargoModule : MonoBehaviour, IActiveDuringCombat {
 
     public int cargoSize = 1;
 
     public int moneyReward = 100;
 
     private void OnEnable() {
-        if(SceneLoader.s.isLevelInProgress)
-	        CargoController.s.AliveCargo(cargoSize);
+        /*if(SceneLoader.s.isLevelInProgress)
+	        CargoController.s.AliveCargo(cargoSize);*/
     }
 
     private void OnDisable() {
-        if(SceneLoader.s.isLevelInProgress && CargoController.s != null) 
-            CargoController.s.DeadCargo(cargoSize);
+        /*if(SceneLoader.s.isLevelInProgress && CargoController.s != null) 
+            CargoController.s.DeadCargo(cargoSize);*/
+    }
+    
+    public void ActivateForCombat() {
+        this.enabled = true;
+    }
+
+    public void Disable() {
+        this.enabled = false;
     }
 }

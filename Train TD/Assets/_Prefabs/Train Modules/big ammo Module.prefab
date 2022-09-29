@@ -143,6 +143,7 @@ GameObject:
   - component: {fileID: -6402335505466740516}
   - component: {fileID: 2357652046708188519}
   - component: {fileID: -5759979065812923935}
+  - component: {fileID: 4602081216700818326}
   m_Layer: 0
   m_Name: big ammo Module
   m_TagString: Untagged
@@ -184,15 +185,10 @@ MonoBehaviour:
   uniqueName: Ammo
   Icon: {fileID: 21300000, guid: 332e935882e9cbd40baeeeefa0bca040, type: 3}
   mySlot: {fileID: 0}
-  mySlotIndex: 0
   canPointSide: 1
   canPointUp: 1
   canBeRotatedSides: 1
   canBeRotatedUp: 0
-  disabledWhenBuilding:
-  - {fileID: 2089538246577257876}
-  - {fileID: 2805365855966503921}
-  - {fileID: 8500326855915935416}
   cost: 100
   myRotation: 3
   canBeTargetingAreaRotatable: 0
@@ -285,7 +281,7 @@ MonoBehaviour:
   cost: -50
   cooldown: -1
   curCooldown: 0
-  sellPrefab: {fileID: 172524484023753321, guid: 5c944d37062c8b04d8a0fa76e4e24049, type: 3}
+  isCombatMode: 1
 --- !u!114 &-6402335505466740516
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -338,8 +334,24 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e03d89f262df7ef43ad10e8140eccbf4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  tooltip: {fileID: 0}
-  info: 
+--- !u!114 &4602081216700818326
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4672607802346462230}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7dd82790b735196458fe58421304356e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  isUnlocked: 1
+  unlockingUpgrade: {fileID: 0}
+  actionName: Repair
+  cost: 25
+  cooldown: -1
+  curCooldown: 0
 --- !u!1 &4952225444675648242
 GameObject:
   m_ObjectHideFlags: 0

@@ -1645,15 +1645,10 @@ MonoBehaviour:
   uniqueName: Civilian Supplies
   Icon: {fileID: 21300000, guid: 6b5457fbf272283449121292f4ec9682, type: 3}
   mySlot: {fileID: 0}
-  mySlotIndex: 0
   canPointSide: 1
   canPointUp: 0
   canBeRotatedSides: 1
   canBeRotatedUp: 0
-  disabledWhenBuilding:
-  - {fileID: 1398447384451307312}
-  - {fileID: 3260352214045705965}
-  - {fileID: 9090104958068192164}
   cost: 50
   myRotation: 0
   canBeTargetingAreaRotatable: 0
@@ -1741,8 +1736,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e03d89f262df7ef43ad10e8140eccbf4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  tooltip: {fileID: 0}
-  info: 
 --- !u!1 &5802816712457697084
 GameObject:
   m_ObjectHideFlags: 0

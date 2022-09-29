@@ -2,6 +2,7 @@
 using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using Random = UnityEngine.Random;
 
 //It is common to create a class to contain all of your
 //extension methods. This class must be static.
@@ -36,5 +37,15 @@ public static class ExtensionMethods {
         }
         
         ls.Insert(index, item);
+    }
+
+
+    public static void Shuffle<T>(this IList<T> list) {
+        int n = list.Count;
+        while (n > 1) {
+            n--;
+            int k = Random.Range(0, n - 1);
+            (list[k], list[n]) = (list[n], list[k]);
+        }
     }
 }

@@ -22,7 +22,7 @@ public class MiniGUI_BuildingButton : MonoBehaviour {
 	}
 
 	private void Update() {
-		canBuild = MoneyController.s.money >= myBuilding.cost;
+		canBuild = MoneyController.s.scraps >= myBuilding.cost;
 		myButton.interactable = canBuild;
 	}
 

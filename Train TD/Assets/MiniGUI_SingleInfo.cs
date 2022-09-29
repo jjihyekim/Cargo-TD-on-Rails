@@ -5,21 +5,21 @@ using TMPro;
 using UnityEngine;
 
 public class MiniGUI_SingleInfo : MonoBehaviour {
-    public ClickableEntityInfo myInfo;
+    public IClickableInfo myInfo;
 
     public TMP_Text myInfoText;
     
-    public MiniGUI_SingleInfo SetUp(ClickableEntityInfo info) {
+    public MiniGUI_SingleInfo SetUp(IClickableInfo info) {
         myInfo = info;
 
-        myInfoText.text = info.info;
+        myInfoText.text = info.GetInfo();
 
-        GetComponent<UITooltipDisplayer>().myTooltip = myInfo.tooltip;
+        GetComponent<UITooltipDisplayer>().myTooltip = myInfo.GetTooltip();
 
         return this;
     }
 
     private void Update() {
-        myInfoText.text = myInfo.info;
+        myInfoText.text = myInfo.GetInfo();
     }
 }

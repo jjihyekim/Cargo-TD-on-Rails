@@ -29,7 +29,7 @@ public class SceneLoader : MonoBehaviour {
     }
 
     public enum GameState {
-        profileMenu, mainMenu, levelInProgress, levelFinished
+        profileMenu, starterMenu, levelInProgress, levelFinished
     }
 
     [SerializeField] private GameState _gameState;
@@ -47,6 +47,10 @@ public class SceneLoader : MonoBehaviour {
     }
     public bool isLevelFinished() {
         return myGameState == GameState.levelFinished;
+    }
+    
+    public bool isStarterMenu() {
+        return myGameState == GameState.starterMenu;
     }
     
     public bool isProfileMenu() {
@@ -76,31 +80,10 @@ public class SceneLoader : MonoBehaviour {
             Destroy(gameObject);
         }
     }
-
-    private void Start() {
-        DataSaver.loadEvent += GetCurrentLevelFromSave;
-        GetCurrentLevelFromSave();
-    }
-
-    void GetCurrentLevelFromSave() {
-        var lastLoadedLevelName = DataSaver.s.GetCurrentSave().lastLoadedLevelName;
-
-        for (int i = 0; i < LevelDataLoader.s.allLevels.Count; i++) {
-            var thisLevel = LevelDataLoader.s.allLevels[i];
-            if (thisLevel.levelName == lastLoadedLevelName) {
-                _currentLevel = thisLevel;
-                return;
-            }
-        }
-
-        _currentLevel = LevelDataLoader.s.allLevels[0];
-    }
-
+    
     public void SetCurrentLevel(LevelData levelData) {
         _currentLevel = levelData;
-        DataSaver.s.GetCurrentSave().lastLoadedLevelName = _currentLevel.levelName;
     }
-
 
     public GameObject loadingScreen;
     public CanvasGroup canvasGroup;
@@ -110,9 +93,13 @@ public class SceneLoader : MonoBehaviour {
         _gameState = GameState.profileMenu;
         LoadScene(mainScene);
     }
+
+    public void SetToStarterMenu() {
+        _gameState = GameState.starterMenu;
+    }
     
-    public void BackToMenu() {
-        _gameState = GameState.mainMenu;
+    public void BackToStarterMenuHardLoad() {
+        _gameState = GameState.starterMenu;
         LoadScene(mainScene);
     }
 

@@ -12,7 +12,7 @@ public class MiniGUI_EnemyInfoPanel : MonoBehaviour {
 
     public void SetUp (EnemyWaveData data) {
         enemyType.text = data.enemyUniqueName + ((int)data.enemyData);
-        enemyDistance.text = data.accurateDistance.ToString();
+        enemyDistance.text = data.startDistance.ToString();
         enemySide.text = data.isLeft ? "Left" : "Right";
     }
 }

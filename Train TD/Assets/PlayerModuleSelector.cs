@@ -236,7 +236,7 @@ public class PlayerModuleSelector : MonoBehaviour {
             var ranges = building.GetComponentsInChildren<RangeVisualizer>();
 
             for (int i = 0; i < ranges.Length; i++) {
-                ranges[i].ChangeVisualizerStatus(isSelected);
+                ranges[i].ChangeVisualizerEdgeShowState(isSelected);
             }
         }
     }

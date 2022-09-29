@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class RepairModule : MonoBehaviour {
+public class RepairModule : MonoBehaviour, IActiveDuringCombat {
     private float curRepairDelay = 0.5f;
     public float repairDelay = 2;
     public float repairAmount = 25;
@@ -11,11 +11,9 @@ public class RepairModule : MonoBehaviour {
     private Cart myCart;
     private Train myTrain;
 
-    public GameObject repairPrefab;
     private void Start() {
         myCart = GetComponentInParent<Cart>();
         myTrain = GetComponentInParent<Train>();
-        
         
         if (myCart == null || myTrain == null)
             this.enabled = false;
@@ -75,12 +73,20 @@ public class RepairModule : MonoBehaviour {
 
                 if (canRepair) {
                     healths[i].DealDamage(-repairAmount);
-                    Instantiate(repairPrefab, healths[i].transform.position, Quaternion.identity);
+                    Instantiate(DataHolder.s.repairPrefab, healths[i].transform.position, Quaternion.identity);
                     return true;
                 }
             }
         }
 
         return false;
+    }
+
+    public void ActivateForCombat() {
+        this.enabled = true;
+    }
+
+    public void Disable() {
+        this.enabled = false;
     }
 }

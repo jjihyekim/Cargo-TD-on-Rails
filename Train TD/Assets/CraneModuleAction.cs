@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class CraneModuleAction : ModuleAction {
+public class CraneModuleAction : ModuleAction, IActiveDuringCombat {
 	//public float constructionTime = 2f;
 
 	public GameObject cartBuildPrefab;
@@ -23,5 +23,13 @@ public class CraneModuleAction : ModuleAction {
 		var resultCart = GetComponentInParent<Train>().AddTrainCartAtIndex(index);
 
 		Instantiate(cartBuildPrefab, resultCart.transform.position, Quaternion.identity);
+	}
+	
+	public void ActivateForCombat() {
+		this.enabled = true;
+	}
+
+	public void Disable() {
+		this.enabled = false;
 	}
 }

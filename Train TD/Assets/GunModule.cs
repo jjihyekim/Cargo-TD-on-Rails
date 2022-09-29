@@ -4,7 +4,12 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 
-public class GunModule : MonoBehaviour, IComponentWithTarget {
+public class GunModule : MonoBehaviour, IComponentWithTarget, IActiveDuringCombat {
+    [System.Serializable]
+    public class TransformWithActivation {
+        public Transform transform;
+    }
+    
     public TransformWithActivation[] rotateTransforms;
     public TransformWithActivation[] barrelEndTransforms;
     public float projectileSpawnOffset = 0.2f;
@@ -159,6 +164,7 @@ public class GunModule : MonoBehaviour, IComponentWithTarget {
         lastIndex = lastIndex % activeTransforms.Count;
         return activeTransforms[lastIndex];
     }
+    
 
     public void SetTarget(Transform target) {
         this.target = target;
@@ -216,10 +222,12 @@ public class GunModule : MonoBehaviour, IComponentWithTarget {
     public int GetDamage() {
         return (int)projectileDamage;
     }
-}
+    
+    public void ActivateForCombat() {
+        this.enabled = true;
+    }
 
-
-[System.Serializable]
-public class TransformWithActivation {
-    public Transform transform;
+    public void Disable() {
+        this.enabled = false;
+    }
 }

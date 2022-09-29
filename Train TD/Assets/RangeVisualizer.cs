@@ -1,6 +1,8 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 
 public class RangeVisualizer : MonoBehaviour {
     public TargetPicker targetPicker;
@@ -10,12 +12,39 @@ public class RangeVisualizer : MonoBehaviour {
     public LineRenderer targetingRenderer;
 
     private TrainBuilding trainBuilding;
+
+
+    public static void SetAllRangeVisualiserState(bool state) {
+        allVisualiserState = state;
+        AllStateSetCall.Invoke(state);
+    }
+    
+
+    private static UnityEvent<bool> AllStateSetCall = new UnityEvent<bool>();
+    private static bool allVisualiserState;
+
+    private void OnEnable() {
+        AllStateSetCall.AddListener(SetVisualiserAllShowState);
+        SetVisualiserAllShowState(allVisualiserState);
+    }
+
+    private void OnDisable() {
+        AllStateSetCall.RemoveListener(SetVisualiserAllShowState);
+    }
+
+    void SetVisualiserAllShowState(bool state) {
+        rangeEdgeRenderer.enabled = false; //we want to always disable this and only show when later selected
+        targetingRenderer.enabled = state;
+    }
+
     void Start() {
         targeter = targetPicker.GetComponent<IComponentWithTarget>();
         trainBuilding = GetComponentInParent<TrainBuilding>();
         targetingRenderer.positionCount = 2;
         //ChangeVisualizerStatus(false);
         DrawRangeEdge();
+
+        SetVisualiserAllShowState(allVisualiserState);
 
         trainBuilding.rotationChangedEvent += DrawRangeEdge;
     }
@@ -113,7 +142,7 @@ public class RangeVisualizer : MonoBehaviour {
         });
     }
 
-    public void ChangeVisualizerStatus(bool isActive) {
+    public void ChangeVisualizerEdgeShowState(bool isActive) {
         rangeEdgeRenderer.enabled = isActive;
     }
 }

@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class TargetPicker : MonoBehaviour {
+public class TargetPicker : MonoBehaviour, IActiveDuringCombat {
     private IComponentWithTarget targeter;
 
     public float rotationSpan = 60f;
@@ -119,6 +119,14 @@ public class TargetPicker : MonoBehaviour {
                 return true;
         }
         return false;
+    }
+    
+    public void ActivateForCombat() {
+        this.enabled = true;
+    }
+
+    public void Disable() {
+        this.enabled = false;
     }
 }
 

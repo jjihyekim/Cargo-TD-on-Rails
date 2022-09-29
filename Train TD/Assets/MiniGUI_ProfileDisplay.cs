@@ -7,7 +7,8 @@ using UnityEngine;
 
 public class MiniGUI_ProfileDisplay : MonoBehaviour {
 
-    public TMP_Text starText;
+    public TMP_Text fuelText;
+    public TMP_Text scrapsText;
     public TMP_Text moneyText;
     public TMP_Text profileName;
     public TMP_Text playTime;
@@ -23,14 +24,14 @@ public class MiniGUI_ProfileDisplay : MonoBehaviour {
 
 
     private void Update() {
-        moneyText.text = mySave.money.ToString();
-        starText.text = mySave.reputation.ToString();
-        profileName.text = mySave.saveName;
-        playTime.text = SpeedController.GetNiceTime(mySave.playtime);
+        fuelText.text = $"{mySave.currentRun.fuel}/{mySave.currentRun.maxFuel}";
+        moneyText.text = mySave.currentRun.money.ToString();
+        scrapsText.text = mySave.currentRun.scraps.ToString();
+        profileName.text = mySave.currentRun.character;
+        playTime.text = SpeedController.GetNiceTime(mySave.currentRun.playtime);
     }
 
     public void SetStats(DataSaver.SaveFile save) {
         mySave = save;
-        
     }
 }

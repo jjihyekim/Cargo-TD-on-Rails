@@ -68,27 +68,25 @@ public class Pauser : MonoBehaviour {
     }
 
     public void AbandonMission() {
-        var myMission = DataSaver.s.GetCurrentSave().GetCurrentMission();
         AnalyticsResult analyticsResult = Analytics.CustomEvent(
             "LevelAbandoned",
             new Dictionary<string, object> {
                 { "Level", SceneLoader.s.currentLevel.levelName },
                 { "distance", Mathf.RoundToInt(SpeedController.s.currentDistance / 10) *10},
                 { "time", Mathf.RoundToInt(SpeedController.s.currentTime/10) * 10},
-                { "cargoRatio", CargoController.s.GetCargoRatio()},
                 
-                {"finishedBefore", myMission.isWon},
+                {"character", DataSaver.s.GetCurrentSave().currentRun.character},
 
                 { "buildingsBuild", ModuleHealth.buildingsBuild },
                 { "buildingsDestroyed", ModuleHealth.buildingsDestroyed },
 				
-                { "remainingMoney", MoneyController.s.money },
+                { "remainingMoney", MoneyController.s.scraps },
                 { "enemiesLeftAlive", EnemyHealth.enemySpawned - EnemyHealth.enemyKilled},
                 { "emptyTrainSlots", Train.s.GetEmptySlotCount() },
             }
         );
         
         TimeController.s.UnPause();
-        SceneLoader.s.BackToMenu();
+        SceneLoader.s.BackToStarterMenuHardLoad();
     }
 }

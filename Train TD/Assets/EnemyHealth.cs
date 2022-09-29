@@ -3,12 +3,14 @@ using System.Collections;
 using System.Collections.Generic;
 using Sirenix.OdinInspector;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 public class EnemyHealth : MonoBehaviour, IHealth {
 	public float maxHealth = 20f;
 	public float currentHealth = 20f;
 
-	public int moneyReward = 25;
+	[FormerlySerializedAs("moneyReward")] public int scrapReward = 25;
+	public int fuelReward = 2;
 
 
 	public GameObject deathPrefab;
@@ -52,7 +54,8 @@ public class EnemyHealth : MonoBehaviour, IHealth {
 	void Die() {
 		enemyKilled += 1;
 		isAlive = false;
-		LevelReferences.s.SpawnMoneyAtLocation(moneyReward, aliveObject.transform.position);
+		LevelReferences.s.SpawnScrapsAtLocation(scrapReward, aliveObject.transform.position);
+		LevelReferences.s.SpawnScrapsAtLocation(scrapReward, aliveObject.transform.position);
 
 		var pos = aliveObject.position;
 		var rot = aliveObject.rotation;

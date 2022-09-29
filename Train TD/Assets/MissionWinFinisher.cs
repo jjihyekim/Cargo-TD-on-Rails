@@ -5,6 +5,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.Analytics;
 using UnityEngine.UI;
+using Random = UnityEngine.Random;
 
 public class MissionWinFinisher : MonoBehaviour {
 	public static MissionWinFinisher s;
@@ -15,28 +16,24 @@ public class MissionWinFinisher : MonoBehaviour {
 
 	public MonoBehaviour[] scriptsToDisable;
 	public GameObject[] gameObjectsToDisable;
-	
-	
+
 	public GameObject winUI;
 	public Transform cargoDeliveredParent;
 	public GameObject cargoDeliveredPrefab;
-	
-	
-	public Image[] speedStarsImages;
-	public Image[] cargoStarsImages;
-	
+
 	public Color starActiveColor = Color.white;
 	public Color starLostColor = Color.grey;
 
 	public TMP_Text cargoText;
-	public TMP_Text timeText;
 
 	public CameraSwitcher cameraSwitcher;
 
-	public TMP_Text worstTime;
-	public TMP_Text medTime;
-	public TMP_Text bestTime;
-
+	public Transform rewardsParent;
+	public GameObject moneyRewardPrefab;
+	public GameObject scrapRewardPrefab;
+	public GameObject cartRewardPrefab;
+	public GameObject upgradeRewardPrefab;
+	
 	private void Start() {
 		winUI.SetActive(false);
 	}
@@ -54,23 +51,10 @@ public class MissionWinFinisher : MonoBehaviour {
 
 		DeactiveRangeShows();
 
-		var myMission = DataSaver.s.GetCurrentSave().GetCurrentMission();
-		
-
-		
-		// Analytics calculations (need to be done done mission rewards are given)
-		bool isWonBefore = myMission.isWon;
-		var prevStarCount = (myMission.isWon ? 1 : 0) + myMission.speedStars + myMission.cargoStars;
-		var curStarCount = StarController.s.speedStars + StarController.s.cargoStars + 1;
-		bool scoreImprovementSuccess = curStarCount > prevStarCount;
-		
-		
-		
 		// mission rewards
-		ShowAndGiveMissionRewards(myMission);
+		ShowAndGiveMissionRewards();
 		cameraSwitcher.Engage();
 		winUI.SetActive(true);
-		
 		
 		
 		//send analytics
@@ -78,11 +62,8 @@ public class MissionWinFinisher : MonoBehaviour {
 			"LevelWon",
 			new Dictionary<string, object> {
 				{ "Level", SceneLoader.s.currentLevel.levelName },
-				{ "cargoStars", StarController.s.cargoStars },
-				{ "speedStars", StarController.s.speedStars },
 				
-				{"finishedBefore", isWonBefore},
-				{"scoreImprovementSucces", scoreImprovementSuccess},
+				{"character", DataSaver.s.GetCurrentSave().currentRun.character},
 				
 				{ "buildingsBuild", ModuleHealth.buildingsBuild },
 				{ "buildingsDestroyed", ModuleHealth.buildingsDestroyed },
@@ -103,45 +84,57 @@ public class MissionWinFinisher : MonoBehaviour {
 			var ranges = slot.GetComponentsInChildren<RangeVisualizer>();
 
 			for (int i = 0; i < ranges.Length; i++) {
-				ranges[i].ChangeVisualizerStatus(false);
+				ranges[i].ChangeVisualizerEdgeShowState(false);
 			}
 		}
 	}
 
-	void ShowAndGiveMissionRewards(DataSaver.MissionStats myMission) {
-		var totalRewards = SceneLoader.s.currentLevel.missionRewardMoney;
-		foreach (var cargo in Train.s.GetComponentsInChildren<CargoModule>()) {
+	void ShowAndGiveMissionRewards() {
+		//var rewardMoney = SceneLoader.s.currentLevel.missionRewardMoney;
+		var rewardMoney = 0;
+		var allCargo = Train.s.GetComponentsInChildren<CargoModule>();
+		foreach (var cargo in allCargo) {
 			var cargoObj = Instantiate(cargoDeliveredPrefab, cargoDeliveredParent);
-			totalRewards += cargoObj.GetComponent<MiniGUI_DeliveredCargo>().SetUp(cargo);
+			rewardMoney += cargoObj.GetComponent<MiniGUI_DeliveredCargo>().SetUp(cargo);
 		}
 
+		cargoText.text = $"Cargo Delivered {allCargo.Length}";
+
 		var mySave = DataSaver.s.GetCurrentSave();
-		mySave.money += totalRewards;
+		
+		//mySave.currentRun.money += totalRewards;
 
-		var starCount = StarController.s.speedStars + StarController.s.cargoStars + 1;
-		SetStarAmount(speedStarsImages, StarController.s.speedStars);
-		SetStarAmount(cargoStarsImages, StarController.s.cargoStars);
-		
-		myMission.isWon = true;
-		myMission.speedStars = Mathf.Max(myMission.speedStars,StarController.s.speedStars);
-		myMission.cargoStars = Mathf.Max(myMission.cargoStars,StarController.s.cargoStars);
-		myMission.bestCargoCount = Mathf.Max(myMission.bestCargoCount,CargoController.s.aliveCargo);
-		myMission.bestTime = Mathf.Min(myMission.bestTime,SpeedController.s.currentTime);
-		
-		cargoText.text = $"Cargo: {CargoController.s.aliveCargo}/{CargoController.s.totalCargo}";
-		timeText.text = $"Time: {SpeedController.s.GetCurrentTime()}";
-
-		worstTime.text = SpeedController.s.GetWorstTime();
-		medTime.text = SpeedController.s.GetMedTime();
-		bestTime.text = SpeedController.s.GetBestTime();
-		
-		
+		mySave.currentRun.scraps = MoneyController.s.scraps;
+		mySave.currentRun.myTrain = Train.s.GetTrainState();
 		DataSaver.s.SaveActiveGame();
+		
+		
+		// mission rewards, must do after the stuff above
+		Instantiate(scrapRewardPrefab, rewardsParent).GetComponent<MiniGUI_ScrapsReward>().SetUpReward(Random.Range(10,20));
+		Instantiate(moneyRewardPrefab, rewardsParent).GetComponent<MiniGUI_MoneyReward>().SetUpReward(rewardMoney);
+
+		var upgradeRewards = UpgradesController.s.GetRandomLevelRewards();
+		
+		Instantiate(upgradeRewardPrefab, rewardsParent).GetComponent<MiniGUI_UpgradeReward>().SetUpReward(upgradeRewards);
+		
+		//if(mySave.currentRun.map.GetPlayerStar().isBoss)
+		if(mySave.currentRun.map.GetPlayerStar().rewardCart > 0)
+			Instantiate(cartRewardPrefab, rewardsParent).GetComponent<MiniGUI_CartReward>().SetUpReward(mySave.currentRun.map.GetPlayerStar().rewardCart);
+	}
+
+	void ClearOldRewards() {
+		rewardsParent.DeleteAllChildren();
+	}
+
+	public void DebugRedoRewards() {
+		ClearOldRewards();
+		ShowAndGiveMissionRewards();
 	}
 
 
 	public void ContinueToStarterMenu() {
-		SceneLoader.s.BackToMenu();
+		ClearOldRewards();
+		SceneLoader.s.BackToStarterMenuHardLoad();
 	}
 	
 	void SetStarAmount(Image[] stars, int amount) {

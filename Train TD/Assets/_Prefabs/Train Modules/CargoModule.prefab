@@ -460,15 +460,10 @@ MonoBehaviour:
   uniqueName: Cargo
   Icon: {fileID: 21300000, guid: a9aba5b990a2e704c95e832a4a39c735, type: 3}
   mySlot: {fileID: 0}
-  mySlotIndex: 0
   canPointSide: 0
   canPointUp: 0
   canBeRotatedSides: 0
   canBeRotatedUp: 0
-  disabledWhenBuilding:
-  - {fileID: 8343774546683050373}
-  - {fileID: 5592445795315755096}
-  - {fileID: 2199384508793199889}
   cost: 50
   myRotation: 0
   canBeTargetingAreaRotatable: 0
@@ -554,8 +549,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e03d89f262df7ef43ad10e8140eccbf4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  tooltip: {fileID: 0}
-  info: 
 --- !u!1 &3469176668768950665
 GameObject:
   m_ObjectHideFlags: 0

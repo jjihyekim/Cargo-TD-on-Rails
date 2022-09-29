@@ -176,7 +176,7 @@ public class PlayerBuildingController : MonoBehaviour {
                     // This means we are doing building in menu
                     canBuildMore = finishBuildingCallback.Invoke(true);
                 } else {
-                    canBuildMore = MoneyController.s.money >= tempBuilding.cost*2;
+                    canBuildMore = MoneyController.s.scraps >= tempBuilding.cost*2;
                 }
 
                 var newBuilding = tempBuilding;
@@ -191,7 +191,7 @@ public class PlayerBuildingController : MonoBehaviour {
                 newBuilding.transform.position = activeSlot.transform.position;
                 newBuilding.CompleteBuilding();
                 if (SceneLoader.s.isLevelStarted())
-                    MoneyController.s.SubtractMoney(newBuilding.cost);
+                    MoneyController.s.SubtractScraps(newBuilding.cost);
 
                 LogData(currentlyMultiBuilding, newBuilding);
 
@@ -248,20 +248,22 @@ public class PlayerBuildingController : MonoBehaviour {
 
             resultingDictionary["buildCount"] = constStats.Count;
 
-            var averageTrainPosition = constStats.Average(x => x.buildTrainPercent);
-            resultingDictionary["buildTrainPercent"] = RatioToStatsPercent(averageTrainPosition);
+            if (constStats.Count > 0) {
+                var averageTrainPosition = constStats.Average(x => x.buildTrainPercent);
+                resultingDictionary["buildTrainPercent"] = RatioToStatsPercent(averageTrainPosition);
 
-            var multiBuildRatio = (float)constStats.Count(x => x.isMultiBuild) / (float)constStats.Count;
-            resultingDictionary["isMultiBuild"] = RatioToStatsPercent(multiBuildRatio);
+                var multiBuildRatio = (float)constStats.Count(x => x.isMultiBuild) / (float)constStats.Count;
+                resultingDictionary["isMultiBuild"] = RatioToStatsPercent(multiBuildRatio);
+
+                var averageBuildLevelDistance = constStats.Average(x => x.buildLevelDistance);
+                resultingDictionary["buildMissionDistance"] = DistanceToStats(averageBuildLevelDistance);
+
+                TrainBuilding.Rots maxRepeated = constStats.GroupBy(s => s.buildRotation)
+                    .OrderByDescending(s => s.Count())
+                    .First().Key;
+                resultingDictionary["buildRotation"] = maxRepeated;
+            } 
             
-            
-            var averageBuildLevelDistance = constStats.Average(x => x.buildLevelDistance);
-            resultingDictionary["buildMissionDistance"] = DistanceToStats(averageBuildLevelDistance);
-            
-            TrainBuilding.Rots maxRepeated = constStats.GroupBy(s => s.buildRotation)
-                .OrderByDescending(s => s.Count())
-                .First().Key;
-            resultingDictionary["buildRotation"] = maxRepeated;
 
             resultingDictionary["buildDamage"] = (int)bData.damageData;
 

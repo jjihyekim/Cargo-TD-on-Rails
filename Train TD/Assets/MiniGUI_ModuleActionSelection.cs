@@ -22,14 +22,14 @@ public class MiniGUI_ModuleActionSelection : MonoBehaviour {
 		var myActions = myModule.GetComponents<ModuleAction>();
 
 		for (int i = 0; i < myActions.Length; i++) {
-			if (myActions[i].isUnlocked) {
+			if (myActions[i].isUnlocked && myActions[i].enabled) {
 				var button = Instantiate(singleActionPrefab, singleActionParent).GetComponent<MiniGUI_ModuleSingleAction>().SetUp(myActions[i]);
 				extraRects.Add(button.GetComponent<RectTransform>());
 			}
 		}
 		
 		
-		var myInfo = myModule.GetComponents<ClickableEntityInfo>();
+		var myInfo = myModule.GetComponents<IClickableInfo>();
 		for (int i = 0; i < myInfo.Length; i++) {
 			var info = Instantiate(singleInfoPrefab, singleActionParent).GetComponent<MiniGUI_SingleInfo>().SetUp(myInfo[i]);
 			extraRects.Add(info.GetComponent<RectTransform>());
@@ -49,7 +49,7 @@ public class MiniGUI_ModuleActionSelection : MonoBehaviour {
 		extraRects.Clear();
 		
 		myEnemy = enemyHealth;
-		var myInfo = myEnemy.GetComponents<ClickableEntityInfo>();
+		var myInfo = myEnemy.GetComponents<IClickableInfo>();
 		for (int i = 0; i < myInfo.Length; i++) {
 			var info = Instantiate(singleInfoPrefab, singleActionParent).GetComponent<MiniGUI_SingleInfo>().SetUp(myInfo[i]);
 			extraRects.Add(info.GetComponent<RectTransform>());
@@ -121,11 +121,11 @@ public class MiniGUI_ModuleActionSelection : MonoBehaviour {
 	    
 	    Vector2 mousePos = Mouse.current.position.ReadValue();
 	    var rect = reticle;
-	    var isOverRect = RectTransformUtility.RectangleContainsScreenPoint(rect, mousePos);
+	    var isOverRect = RectTransformUtility.RectangleContainsScreenPoint(rect, mousePos, MainCameraReference.s.uiCam);
 
 	    for (int i = 0; i < extraRects.Count; i++) {
 		    if (extraRects[i] != null) {
-			    var isOverButton = RectTransformUtility.RectangleContainsScreenPoint(extraRects[i], mousePos);
+			    var isOverButton = RectTransformUtility.RectangleContainsScreenPoint(extraRects[i], mousePos, MainCameraReference.s.uiCam);
 			    isOverRect = isOverRect || isOverButton;
 		    }
 	    }

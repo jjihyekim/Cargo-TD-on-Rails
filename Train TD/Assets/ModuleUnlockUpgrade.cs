@@ -7,7 +7,6 @@ using UnityEngine;
 public class ModuleUnlockUpgrade : Upgrade {
     public TrainBuilding module;
     
-    
     public override void _ApplyUniqueName() {
         //upgradeUniqueName = module.uniqueName;
     }

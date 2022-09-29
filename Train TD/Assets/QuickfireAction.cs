@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class QuickfireAction : ModuleAction {
+public class QuickfireAction : ModuleAction, IActiveDuringCombat {
 
 	[Space]
 	public float actionTime = 10f;
@@ -33,5 +33,13 @@ public class QuickfireAction : ModuleAction {
 
 	void ResumeShooting() {
 		GetComponent<GunModule>().ActivateGun();
+	}
+	
+	public void ActivateForCombat() {
+		this.enabled = true;
+	}
+
+	public void Disable() {
+		this.enabled = false;
 	}
 }

@@ -611,6 +611,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_MoveRepeatDelay: 0.5
   m_MoveRepeatRate: 0.1
+  m_XRTrackingOrigin: {fileID: 0}
   m_ActionsAsset: {fileID: -944628639613478452, guid: ca9f5fa95ffab41fb9a615ab714db018, type: 3}
   m_PointAction: {fileID: 1054132383583890850, guid: ca9f5fa95ffab41fb9a615ab714db018, type: 3}
   m_MoveAction: {fileID: 3710738434707379630, guid: ca9f5fa95ffab41fb9a615ab714db018, type: 3}
@@ -792,30 +793,69 @@ MonoBehaviour:
     - saveName: unnamed
       isActiveSave: 0
       isRealSaveFile: 0
-      playtime: 0
-      money: 0
-      debugExtraReputation: 0
-      missionStatsList: []
-      upgradeDatas: []
-      lastLoadedLevelName: unset
+      isInARun: 0
+      currentRun:
+        character: unnamed
+        myTrain:
+          myCarts:
+          - buildings:
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            healths: 000000000000000000000000000000000000000000000000
+        map:
+          chunks: []
+        upgrades: []
+        playtime: 0
+        money: 0
+        scraps: 200
     - saveName: unnamed
       isActiveSave: 0
       isRealSaveFile: 0
-      playtime: 0
-      money: 0
-      debugExtraReputation: 0
-      missionStatsList: []
-      upgradeDatas: []
-      lastLoadedLevelName: unset
+      isInARun: 0
+      currentRun:
+        character: unnamed
+        myTrain:
+          myCarts:
+          - buildings:
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            healths: 000000000000000000000000000000000000000000000000
+        map:
+          chunks: []
+        upgrades: []
+        playtime: 0
+        money: 0
+        scraps: 200
     - saveName: unnamed
       isActiveSave: 0
       isRealSaveFile: 0
-      playtime: 0
-      money: 0
-      debugExtraReputation: 0
-      missionStatsList: []
-      upgradeDatas: []
-      lastLoadedLevelName: unset
+      isInARun: 0
+      currentRun:
+        character: unnamed
+        myTrain:
+          myCarts:
+          - buildings:
+            - 
+            - 
+            - 
+            - 
+            - 
+            - 
+            healths: 000000000000000000000000000000000000000000000000
+        map:
+          chunks: []
+        upgrades: []
+        playtime: 0
+        money: 0
+        scraps: 200
     loadingComplete: 0
     dontSave: 0
 --- !u!114 &1066860337956249595
@@ -838,18 +878,9 @@ MonoBehaviour:
     scenePath: Assets/Scenes/InitialScene.unity
   _currentLevel:
     levelName: unset
-    levelMenuOrder: -1
-    trainLength: 3
     missionRewardMoney: 200
-    starterModules: []
     enemyWaves: []
-    startingMoney: 40
-    moneyGainSpeed: 1
     missionDistance: 300
-    bestEngineSpeed: 200
-    mediumEngineSpeed: 150
-    worstEngineSpeed: 100
-    reputationRequirement: 0
   _gameState: 0
   autoOpenProfiles: 0
   loadingScreen: {fileID: 1740159616}
@@ -892,6 +923,11 @@ MonoBehaviour:
     data: {fileID: 8567764965066828291, guid: 167eb19127e4fa74aa76b56e51367d6b, type: 3}
   - uniqueName: Army
     data: {fileID: 3387775018460824596, guid: e4c52cae8d2083a4cb1df1e0ed443938, type: 3}
+  characters:
+  - {fileID: 11400000, guid: 2ee611f29a603744199eea6d9a3668ca, type: 2}
+  moneyBackColor: {r: 0.7830189, g: 0.64343905, b: 0, a: 1}
+  repairPrefab: {fileID: 172524484023753321, guid: 63ac6f74862b66b49b9d837b5a27adf3, type: 3}
+  sellPrefab: {fileID: 172524484023753321, guid: 5c944d37062c8b04d8a0fa76e4e24049, type: 3}
 --- !u!114 &1197221469
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1125,7 +1161,7 @@ Camera:
   m_AllowMSAA: 0
   m_AllowDynamicResolution: 0
   m_ForceIntoRT: 0
-  m_OcclusionCulling: 1
+  m_OcclusionCulling: 0
   m_StereoConvergence: 10
   m_StereoSeparation: 0.022
 --- !u!114 &2002237706439093763
@@ -1140,7 +1176,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a79441f348de89743a2939f4d699eac1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_RenderShadows: 1
+  m_RenderShadows: 0
   m_RequiresDepthTextureOption: 2
   m_RequiresOpaqueTextureOption: 2
   m_CameraType: 1
@@ -1150,6 +1186,7 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 1
   m_VolumeTrigger: {fileID: 0}
+  m_VolumeFrameworkUpdateModeOption: 2
   m_RenderPostProcessing: 0
   m_Antialiasing: 2
   m_AntialiasingQuality: 2
@@ -1251,6 +1288,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   cam: {fileID: 6359738491335803624}
+  uiCam: {fileID: 0}
 --- !u!114 &9133881934467385671
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1274,9 +1312,10 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 1
   m_VolumeTrigger: {fileID: 0}
+  m_VolumeFrameworkUpdateModeOption: 2
   m_RenderPostProcessing: 1
   m_Antialiasing: 2
-  m_AntialiasingQuality: 2
+  m_AntialiasingQuality: 0
   m_StopNaN: 0
   m_Dithering: 0
   m_ClearDepth: 1

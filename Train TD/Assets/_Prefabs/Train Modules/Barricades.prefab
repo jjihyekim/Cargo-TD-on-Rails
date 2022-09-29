@@ -357,6 +357,7 @@ GameObject:
   - component: {fileID: 5979747418293226766}
   - component: {fileID: 5228073955104434930}
   - component: {fileID: 8226302762231608207}
+  - component: {fileID: -7344034144211211981}
   m_Layer: 0
   m_Name: Barricades
   m_TagString: Untagged
@@ -397,15 +398,10 @@ MonoBehaviour:
   uniqueName: Barricade
   Icon: {fileID: 21300000, guid: d9c0d923f9c40054192fa54d6dcfab6f, type: 3}
   mySlot: {fileID: 0}
-  mySlotIndex: 0
   canPointSide: 1
   canPointUp: 0
   canBeRotatedSides: 1
   canBeRotatedUp: 1
-  disabledWhenBuilding:
-  - {fileID: 8749129171857330258}
-  - {fileID: 8437430307720242801}
-  - {fileID: 5979747418293226766}
   cost: 25
   myRotation: 0
   canBeTargetingAreaRotatable: 0
@@ -489,8 +485,24 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e03d89f262df7ef43ad10e8140eccbf4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  tooltip: {fileID: 0}
-  info: 
+--- !u!114 &-7344034144211211981
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2004138274288182073}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7dd82790b735196458fe58421304356e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  isUnlocked: 1
+  unlockingUpgrade: {fileID: 0}
+  actionName: Repair
+  cost: 25
+  cooldown: -1
+  curCooldown: 0
 --- !u!1 &3582889087803998002
 GameObject:
   m_ObjectHideFlags: 0

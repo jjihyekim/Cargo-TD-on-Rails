@@ -62,21 +62,39 @@ public class Slot : MonoBehaviour/*, IPointerEnterHandler, IPointerExitHandler*/
 		}
 	}
 
-	public void AddBuilding(TrainBuilding building, int slot) {
+	public void AddBuilding(TrainBuilding building, int slot, bool fixSlot = false) {
+		building.mySlot = this;
 		if (building.occupiesEntireSlot) {
 			for (int i = 0; i < myBuildings.Length; i++) {
 				myBuildings[i] = building;
 			}
-			building.mySlotIndex = 0;
+			if(slot != 0)
+				if(!fixSlot)
+					Debug.LogError($"Wrong building slot provided given:{slot} correct:{0} due to {building.uniqueName} entire slot occupation");
+			slot = 0;
+
+			myBuildings[0].SetRotationBasedOnIndex(0, isFrontSlot);
 		} else {
+			if (slot == 0 && !building.canPointUp) {
+				if(!fixSlot)
+					Debug.LogError($"Wrong building slot provided given:{slot} correct:{1} due to {building.uniqueName} cannot point up");
+				slot = 1;
+			}else if (slot != 0 && !building.canPointSide) {
+				if(!fixSlot)
+					Debug.LogError($"Wrong building slot provided given:{slot} correct:{0} due to {building.uniqueName} cannot point sides");
+				slot = 0;
+			}
+			
+			if(myBuildings[slot] != null)
+				if(!fixSlot)
+					Debug.LogError($"Slot {slot} is already full but trying to put {building.uniqueName}");
+
 			myBuildings[slot] = building;
-			myBuildings[slot].mySlotIndex = slot;
+			myBuildings[slot].SetRotationBasedOnIndex(slot, isFrontSlot);
 		}
 
 		myBuildings[slot].transform.SetParent(transform);
 		myBuildings[slot].transform.localPosition = Vector3.zero;
-
-		building.mySlot = this;
 		
 		GetComponentInParent<Cart>().SlotsAreUpdated();
 	}

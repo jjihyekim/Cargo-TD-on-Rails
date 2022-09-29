@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class AmmoOverTimeAction : ModuleAction {
+public class AmmoOverTimeAction : ModuleAction, IActiveDuringCombat {
     public float ammoPerSecond = 20;
     public float duration = 10;
 
@@ -26,5 +26,13 @@ public class AmmoOverTimeAction : ModuleAction {
             timer -= Time.deltaTime;
             yield return new WaitForSeconds(0.5f);
         }
+    }
+    
+    public void ActivateForCombat() {
+        this.enabled = true;
+    }
+
+    public void Disable() {
+        this.enabled = false;
     }
 }

@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using Dreamteck;
 using Sirenix.OdinInspector;
 using UnityEngine;
 using UnityEditor;
@@ -140,28 +141,7 @@ public class LevelDataLoader : MonoBehaviour {
 
 
     LevelData ConvertScriptableToLevelData(LevelDataScriptable input) {
-        var output = new LevelData();
-        output.levelName = input.levelName;
-        output.levelMenuOrder = input.levelMenuOrder;
-
-        output.missionRewardMoney = input.missionRewardMoney;
-        
-        output.trainLength = input.trainLength;
-        output.starterModules = (TrainBuildingData[])input.starterModules.Clone();
-        //output.levelTrain = (TrainCartData[])input.levelTrain.Clone();
-        output.enemyWaves = (EnemyWaveData[])input.enemyWaves.Clone();
-        
-        output.startingMoney = input.startingMoney;
-        output.moneyGainSpeed = input.moneyGainSpeed;
-        
-        output.missionDistance = input.missionDistance;
-        
-        output.bestEngineSpeed = input.bestEngineSpeed;
-        output.mediumEngineSpeed = input.mediumEngineSpeed;
-        output.worstEngineSpeed = input.worstEngineSpeed;
-
-        output.reputationRequirement = input.reputationRequirement;
-
+        var output = input.myData;
         return output;
     }
 }
