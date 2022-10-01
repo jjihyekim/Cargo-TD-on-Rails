@@ -10,7 +10,6 @@ GameObject:
   m_Component:
   - component: {fileID: 5319305344347187649}
   - component: {fileID: 1937555671459338783}
-  - component: {fileID: 6801581009051527171}
   - component: {fileID: -4991895112995230910}
   m_Layer: 0
   m_Name: BikerSwarm
@@ -45,29 +44,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5716f35fe7475df4a8a2ab97df72a4c4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  buggyPrefab: {fileID: 2144092535843778906, guid: ee2923760cac7d446b602f5e41fea2d8, type: 3}
+  enemyPrefab: {fileID: 2144092535843778906, guid: ee2923760cac7d446b602f5e41fea2d8, type: 3}
+  enemyIcon: {fileID: 21300000, guid: 820183029d375fd489ba2a4d39ae8bac, type: 3}
   spreadAndCounts:
+  - count: 3
+    spread: 0.5
   - count: 6
-    spread: 0.4
-  - count: 12
     spread: 1
---- !u!114 &6801581009051527171
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5055315991105005710}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c007bddb68fd80c4aa2f7fdbd41eed31, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  myPath: {fileID: 0}
-  speed: 0.4
-  curDistance: 0
-  goingBack: 0
-  editorFoldout: 1
+  - count: 9
+    spread: 1.5
 --- !u!114 &-4991895112995230910
 MonoBehaviour:
   m_ObjectHideFlags: 0

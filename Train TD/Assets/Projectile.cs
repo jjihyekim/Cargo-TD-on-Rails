@@ -65,11 +65,11 @@ public class Projectile : MonoBehaviour {
                 curSeekStrength = seekStrength;
                 var targetPos = target.position;
                 
-                var circiut = target.GetComponentInParent<EnemyCircuitFollowAI>();
+                var enemyWave = target.GetComponentInParent<EnemyWave>();
 
                 
-                if (circiut != null) {
-                    targetPos = circiut.GetFurtherPositionInCircuit(mortarAimPredictTime);
+                if (enemyWave != null) {
+                    targetPos +=  Vector3.forward * enemyWave.myEnemy.enemySpeed * mortarAimPredictTime;
                 }
 
                 var randomOffset = Random.insideUnitSphere * mortarRange;

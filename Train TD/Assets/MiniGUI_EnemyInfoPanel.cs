@@ -10,9 +10,8 @@ public class MiniGUI_EnemyInfoPanel : MonoBehaviour {
     public TMP_Text enemyDistance;
     public TMP_Text enemySide;
 
-    public void SetUp (EnemyWaveData data) {
-        enemyType.text = data.enemyUniqueName + ((int)data.enemyData);
-        enemyDistance.text = data.startDistance.ToString();
-        enemySide.text = data.isLeft ? "Left" : "Right";
+    public void SetUp (EnemyIdentifier data) {
+        enemyType.text = data.enemyUniqueName + ((int)data.enemyCount);
+        enemyDistance.text = data.enemySpeed.ToString();
     }
 }

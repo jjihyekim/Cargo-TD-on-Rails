@@ -22,13 +22,13 @@ public class MiniGUI_IncomingWave : MonoBehaviour {
 
     public void SetUp(EnemyWave enemyWave) {
         myWave = enemyWave;
-        sourcePosition = enemyWave.myCircuit.Waypoints[1].position;
-        sourcePosition = new Vector3(sourcePosition.x * (myWave.myData.isLeft ? 1 : -1), sourcePosition.y, sourcePosition.z);
+        //sourcePosition = enemyWave.myCircuit.Waypoints[1].position;
+        //sourcePosition = new Vector3(sourcePosition.x * (myWave.myData.isLeft ? 1 : -1), sourcePosition.y, sourcePosition.z);
         CanvasRect = transform.root.GetComponent<RectTransform>();
         UIRect = GetComponent<RectTransform>();
         ParentRect = transform.parent.GetComponent<RectTransform>();
         mainCam = LevelReferences.s.mainCam;
-        counter = myWave.myData.headsUpTime;
+        //counter = myWave.myData.headsUpTime;
         Update();
     }
 
@@ -100,7 +100,7 @@ public class MiniGUI_IncomingWave : MonoBehaviour {
     }
 
     void SetText() {
-        text.text = myWave.myData.enemyUniqueName+ ((myWave.myData.enemyData != -1) ?  " " + myWave.myData.enemyData.ToString() : "") + "\n" + GetTime(counter);
+        text.text = myWave.myEnemy.enemyUniqueName+ ((myWave.myEnemy.enemyCount != -1) ?  " " + myWave.myEnemy.enemyCount.ToString() : "") + "\n" + GetTime(counter);
     }
 
     string GetTime(float time) {

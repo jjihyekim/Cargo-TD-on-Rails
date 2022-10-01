@@ -14,18 +14,20 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   myData:
     levelName: Smol Starts
-    missionRewardMoney: 200
-    enemyWaves:
-    - enemyUniqueName: Buggy
-      enemyData: 1
-      isLeft: 1
-      enemyPathType: 0
-      startDistance: 10
-      headsUpTime: 15
-    - enemyUniqueName: Buggy
-      enemyData: 1
+    enemiesOnPath:
+    - enemyIdentifier:
+        enemyUniqueName: Buggy
+        enemyCount: 1
+        enemySpeed: 7
+      distanceOnPath: 30
+      startMoving: 0
       isLeft: 0
-      enemyPathType: 0
-      startDistance: 60
-      headsUpTime: 30
+    - enemyIdentifier:
+        enemyUniqueName: Buggy
+        enemyCount: 1
+        enemySpeed: 7
+      distanceOnPath: 90
+      startMoving: 0
+      isLeft: 0
+    dynamicSpawnEnemies: []
     missionDistance: 300

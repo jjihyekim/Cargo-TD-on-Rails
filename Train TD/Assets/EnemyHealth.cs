@@ -55,7 +55,6 @@ public class EnemyHealth : MonoBehaviour, IHealth {
 		enemyKilled += 1;
 		isAlive = false;
 		LevelReferences.s.SpawnScrapsAtLocation(scrapReward, aliveObject.transform.position);
-		LevelReferences.s.SpawnScrapsAtLocation(scrapReward, aliveObject.transform.position);
 
 		var pos = aliveObject.position;
 		var rot = aliveObject.rotation;

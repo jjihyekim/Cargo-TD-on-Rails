@@ -29,13 +29,21 @@ public class CarLikeMovementOffsetsController : MonoBehaviour{
 
     public float forwardForce = 100f;
 
+    private Rigidbody rg;
+    
     private void Start() {
-        GetComponent<Rigidbody>().centerOfMass = centerOfMass;
+        rg = GetComponent<Rigidbody>();
+        rg.centerOfMass = centerOfMass;
+    }
+
+    private void FixedUpdate() {
+        UpdatePosition();
+        ApplyForces();
     }
 
     public bool stickToGround = false;
 
-    private void Update() {
+    private void UpdatePosition() {
         target.y = transform.localPosition.y;
         if (stickToGround) {
             if (Physics.Raycast(transform.position + Vector3.up * 20, Vector3.down, out RaycastHit hit, 100, LevelReferences.s.groundLayer)) {
@@ -73,12 +81,12 @@ public class CarLikeMovementOffsetsController : MonoBehaviour{
         transform.rotation = Quaternion.Lerp(transform.rotation, adjustedLookRotation, lookRotationDelta * Time.deltaTime);
     }
 
-    private void FixedUpdate() {
+    private void ApplyForces() {
         curTime -= Time.fixedDeltaTime;
         if (curTime <= 0) {
             var randomWheel = wheels[Random.Range(0, wheels.Length)];
             var force = Random.Range(randomBumpForce.x, randomBumpForce.y);
-            GetComponent<Rigidbody>().AddForceAtPosition(Vector3.up * force, randomWheel.transform.position);
+            rg.AddForceAtPosition(Vector3.up * force, randomWheel.transform.position);
 
             curTime = Random.Range(randomBumpTimer.x, randomBumpTimer.y);
         }
@@ -87,7 +95,7 @@ public class CarLikeMovementOffsetsController : MonoBehaviour{
         if (curSmallTime <= 0) {
             var randomWheel = wheels[Random.Range(0, wheels.Length)];
             var force = Random.Range(randomSmallBumpForce.x, randomSmallBumpForce.y);
-            GetComponent<Rigidbody>().AddForceAtPosition(Vector3.up * force, randomWheel.transform.position);
+            rg.AddForceAtPosition(Vector3.up * force, randomWheel.transform.position);
 
             curSmallTime = Random.Range(randomSmallBumpTimer.x, randomSmallBumpTimer.y);
         }

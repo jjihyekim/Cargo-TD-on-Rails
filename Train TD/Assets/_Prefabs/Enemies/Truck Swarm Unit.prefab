@@ -1096,8 +1096,8 @@ Transform:
   m_LocalPosition: {x: 0, y: 0.3, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
-  m_Father: {fileID: 9165746279054586430}
-  m_RootOrder: 1
+  m_Father: {fileID: 9165746279452390608}
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &9070103392597033835
 GameObject:
@@ -1163,7 +1163,6 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 9165746279452390608}
-  - {fileID: 3417967029610559229}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -1181,7 +1180,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   maxHealth: 100
   currentHealth: 100
-  moneyReward: 10
+  scrapReward: 10
+  fuelReward: 2
   deathPrefab: {fileID: 1420579702169288803, guid: 0706a8a8e0baad24f9bf6f7c9dededcc, type: 3}
   aliveObject: {fileID: 9165746279452390608}
   isAlive: 1
@@ -1273,8 +1273,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e03d89f262df7ef43ad10e8140eccbf4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  tooltip: {fileID: 0}
-  info: 
 --- !u!114 &-4902470469518268426
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1287,8 +1285,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c000a03ade147ef4e8a60dfb7de82121, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  tooltip: {fileID: 0}
-  info: 
 --- !u!1 &9165746279452390611
 GameObject:
   m_ObjectHideFlags: 0
@@ -1320,6 +1316,7 @@ Transform:
   m_Children:
   - {fileID: 7627932632113787831}
   - {fileID: 7023591830521435555}
+  - {fileID: 3417967029610559229}
   m_Father: {fileID: 9165746279054586430}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}

@@ -10,7 +10,6 @@ GameObject:
   m_Component:
   - component: {fileID: 8727764750241672012}
   - component: {fileID: 3039176949979322514}
-  - component: {fileID: 7974421589099621006}
   - component: {fileID: -2166461343806366461}
   m_Layer: 0
   m_Name: SupplierSwarm
@@ -45,29 +44,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5716f35fe7475df4a8a2ab97df72a4c4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  buggyPrefab: {fileID: 2757841068463546042, guid: 1b643b8e294976a478306f43886a2edb, type: 3}
+  enemyPrefab: {fileID: 2757841068463546042, guid: 1b643b8e294976a478306f43886a2edb, type: 3}
+  enemyIcon: {fileID: 21300000, guid: 820183029d375fd489ba2a4d39ae8bac, type: 3}
   spreadAndCounts:
-  - count: 4
-    spread: 0.7
-  - count: 2
+  - count: 3
+    spread: 0.5
+  - count: 6
     spread: 1
---- !u!114 &7974421589099621006
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8567764965066828291}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c007bddb68fd80c4aa2f7fdbd41eed31, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  myPath: {fileID: 0}
-  speed: 0.4
-  curDistance: 0
-  goingBack: 0
-  editorFoldout: 1
+  - count: 9
+    spread: 1.5
 --- !u!114 &-2166461343806366461
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -8,11 +8,9 @@ using UnityEngine;
 public class LevelData {
 	public string levelName = "unset";
 
-	//public int missionRewardMoney = 200;
+	public EnemyOnPathData[] enemiesOnPath;
+	public EnemyDynamicSpawnData[] dynamicSpawnEnemies;
 	
-	public EnemyWaveData[] enemyWaves;
-	
-
 	[Header("Mission Length")]
 	public int missionDistance = 300;
 	
@@ -23,25 +21,36 @@ public class LevelData {
 }
 
 [Serializable]
-public class EnemyWaveData {
+public class EnemyOnPathData {
+	public EnemyIdentifier enemyIdentifier = new EnemyIdentifier();
+
+	public int distanceOnPath = 30;
+	public bool startMoving = false;
+	public bool isLeft = false;
+}
+
+[Serializable]
+public class EnemyDynamicSpawnData {
+	public EnemyIdentifier enemyIdentifier = new EnemyIdentifier();
+
+	public int distanceFromTrain = 30;
+	public float firstSpawnTime = 30;
+	public float spawnInterval = 30;
+	public bool isLeft = false;
+}
+
+[Serializable]
+public class EnemyIdentifier{
+
 	[Title("$enemyUniqueName")]
 	[ValueDropdown("GetAllEnemyNames")]
 	public string enemyUniqueName = "unset";
-	public float enemyData = -1;
-
-	public enum EnemyPathType {
-		backFarToClose, backClose, mountainsToFront, mountainsToBack, frontToBack, 
-	}
+	public int enemyCount = 1;
+	// 5 speed ~= regular speed
+	// 1 speed ~= min train sped
+	// 10 speed ~= max speed
+	public int enemySpeed = 7; 
 	
-	[HorizontalGroup("Group 1")]
-	public bool isLeft = true;
-	[HideLabel]
-	[HorizontalGroup("Group 1")]
-	public EnemyPathType enemyPathType;
-
-	public int startDistance = 10;
-	public float headsUpTime = 30;
-
 	private static IEnumerable GetAllEnemyNames() {
 		var enemies = GameObject.FindObjectOfType<DataHolder>().enemies;
 		var enemyNames = new List<string>();
@@ -51,6 +60,8 @@ public class EnemyWaveData {
 		return enemyNames;
 	}
 }
+
+
 
 public interface IData {
 	public void SetData(float data);

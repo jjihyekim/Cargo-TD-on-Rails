@@ -29,12 +29,14 @@ public class DistanceAndEnemyRadarController : MonoBehaviour {
 
     public void RemoveUnit(IShowOnDistanceRadar unit) {
         var index = myUnits.IndexOf(unit);
-        
-        myUnits.RemoveAt(index);
-        Destroy(unitDisplays[index]);
-        unitDisplays.RemoveAt(index);
-        
-        Update();
+
+        if (index > 0) {
+            myUnits.RemoveAt(index);
+            Destroy(unitDisplays[index]);
+            unitDisplays.RemoveAt(index);
+
+            Update();
+        }
     }
 
     // Update is called once per frame

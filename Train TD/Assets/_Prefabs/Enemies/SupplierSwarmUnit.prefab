@@ -142,7 +142,6 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 2757841070207719514}
-  - {fileID: 8270258553029418106}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -160,7 +159,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   maxHealth: 60
   currentHealth: 60
-  moneyReward: 15
+  scrapReward: 15
+  fuelReward: 2
   deathPrefab: {fileID: 65092263363361576, guid: 8926fbd338070fe4eb8bf41957e8f2df, type: 3}
   aliveObject: {fileID: 2757841070207719514}
   isAlive: 1
@@ -195,8 +195,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e03d89f262df7ef43ad10e8140eccbf4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  tooltip: {fileID: 0}
-  info: 
 --- !u!1 &2757841070207719513
 GameObject:
   m_ObjectHideFlags: 0
@@ -228,6 +226,7 @@ Transform:
   m_Children:
   - {fileID: 5022944536906667913}
   - {fileID: 4039267019348523305}
+  - {fileID: 8270258553029418106}
   m_Father: {fileID: 2757841068463546036}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -1663,8 +1662,8 @@ Transform:
   m_LocalPosition: {x: 0, y: 0.3, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
-  m_Father: {fileID: 2757841068463546036}
-  m_RootOrder: 1
+  m_Father: {fileID: 2757841070207719514}
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &6964512127389729904
 GameObject:
