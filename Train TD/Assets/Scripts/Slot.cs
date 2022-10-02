@@ -44,7 +44,7 @@ public class Slot : MonoBehaviour/*, IPointerEnterHandler, IPointerExitHandler*/
 	}
 	
 
-	public bool CanBuiltInSlot(TrainBuilding building, int slot) {
+	public bool CanBuiltInSlot(TrainBuilding building, ref int slot) {
 		if (building.occupiesEntireSlot) {
 			var isAllEmpty = true;
 			for (int i = 0; i < myBuildings.Length; i++) {
@@ -54,6 +54,14 @@ public class Slot : MonoBehaviour/*, IPointerEnterHandler, IPointerExitHandler*/
 
 			return isAllEmpty;
 		} else {
+			if (slot == 0 && !building.canPointUp) {
+					Debug.LogError($"Wrong building slot provided given:{slot} correct:{1} due to {building.uniqueName} cannot point up");
+				slot = 1;
+			}else if (slot != 0 && !building.canPointSide) {
+					Debug.LogError($"Wrong building slot provided given:{slot} correct:{0} due to {building.uniqueName} cannot point sides");
+				slot = 0;
+			}
+			
 			if (slot >= 0 && slot <= myBuildings.Length) {
 				return myBuildings[slot] == null;
 			} else {
@@ -97,6 +105,8 @@ public class Slot : MonoBehaviour/*, IPointerEnterHandler, IPointerExitHandler*/
 		myBuildings[slot].transform.localPosition = Vector3.zero;
 		
 		GetComponentInParent<Cart>().SlotsAreUpdated();
+		if(GetComponentInParent<Train>())
+			GetComponentInParent<Train>().trainWeight += building.weight;
 	}
 
 	public void RemoveBuilding(TrainBuilding building) {
@@ -109,5 +119,7 @@ public class Slot : MonoBehaviour/*, IPointerEnterHandler, IPointerExitHandler*/
 		building.mySlot = null;
 		
 		GetComponentInParent<Cart>().SlotsAreUpdated();
+		if(GetComponentInParent<Train>())
+			GetComponentInParent<Train>().trainWeight -= building.weight;
 	}
 }

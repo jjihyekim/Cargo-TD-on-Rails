@@ -18,7 +18,6 @@ public class ModuleHealth : MonoBehaviour, IHealth, IActiveDuringCombat, IActive
     public bool isDead = false;
     
     
-
     public static int buildingsBuild;
     public static int buildingsDestroyed;
     

@@ -1604,6 +1604,7 @@ GameObject:
   - component: {fileID: 9090104958068192164}
   - component: {fileID: 2708098742696797523}
   - component: {fileID: 3597698845088625360}
+  - component: {fileID: -4803158718244268573}
   m_Layer: 0
   m_Name: Civilian Supplies
   m_TagString: Untagged
@@ -1650,6 +1651,7 @@ MonoBehaviour:
   canBeRotatedSides: 1
   canBeRotatedUp: 0
   cost: 50
+  weight: 25
   myRotation: 0
   canBeTargetingAreaRotatable: 0
   occupiesEntireSlot: 0
@@ -1677,6 +1679,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   cargoSize: 1
   moneyReward: 200
+  moneyCost: 50
 --- !u!114 &3260352214045705965
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1734,6 +1737,18 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: e03d89f262df7ef43ad10e8140eccbf4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &-4803158718244268573
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5407064463434758410}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9598745dd159cf844a3671183fd2ff75, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!1 &5802816712457697084

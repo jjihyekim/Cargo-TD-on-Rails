@@ -10,6 +10,8 @@ public class Cart : MonoBehaviour {
 
     public float damageModifier = 1f;
     public float attackSpeedModifier = 1f;
+
+    public int weight = 50;
     
     public GameObject fullCart;
     public GameObject halfCartBehindCut;
@@ -19,6 +21,8 @@ public class Cart : MonoBehaviour {
 
     public Slot frontSlot;
     public Slot backSlot;
+
+    public Transform uiTargetTransform;
 
     private void Start() {
         SlotsAreUpdated();
@@ -49,6 +53,30 @@ public class Cart : MonoBehaviour {
             halfCartFrontCut.SetActive(false);
             cutCart.SetActive(false);
             
+        }
+
+        var isThereAnyBuildingOnCart = false;
+        for (int i = 0; i < frontSlot.myBuildings.Length; i++) {
+            if (frontSlot.myBuildings[i] != null)
+                isThereAnyBuildingOnCart = true;
+        }
+        for (int i = 0; i < backSlot.myBuildings.Length; i++) {
+            if (backSlot.myBuildings[i] != null)
+                isThereAnyBuildingOnCart = true;
+        }
+
+        if (isThereAnyBuildingOnCart) {
+            GetComponent<PossibleTarget>().enabled = false;
+        } else {
+            GetComponent<PossibleTarget>().enabled = true;
+        }
+    }
+
+    private void OnDestroy() {
+        var train = GetComponentInParent<Train>();
+
+        if (train != null) {
+            train.CartDestroyed(this);
         }
     }
 }

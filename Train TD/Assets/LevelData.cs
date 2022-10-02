@@ -26,7 +26,7 @@ public class EnemyOnPathData {
 
 	public int distanceOnPath = 30;
 	public bool startMoving = false;
-	public bool isLeft = false;
+	//public bool isLeft = false;
 }
 
 [Serializable]
@@ -36,7 +36,11 @@ public class EnemyDynamicSpawnData {
 	public int distanceFromTrain = 30;
 	public float firstSpawnTime = 30;
 	public float spawnInterval = 30;
-	public bool isLeft = false;
+	[NonSerialized]
+	public float curTime = 0;
+	[NonSerialized]
+	public bool firstSpawned = false;
+	//public bool isLeft = false;
 }
 
 [Serializable]
@@ -46,10 +50,6 @@ public class EnemyIdentifier{
 	[ValueDropdown("GetAllEnemyNames")]
 	public string enemyUniqueName = "unset";
 	public int enemyCount = 1;
-	// 5 speed ~= regular speed
-	// 1 speed ~= min train sped
-	// 10 speed ~= max speed
-	public int enemySpeed = 7; 
 	
 	private static IEnumerable GetAllEnemyNames() {
 		var enemies = GameObject.FindObjectOfType<DataHolder>().enemies;

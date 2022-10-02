@@ -19,6 +19,8 @@ public class Train : MonoBehaviour {
     public List<Transform> carts = new List<Transform>();
     public List<Vector3> cartDefPositions = new List<Vector3>();
 
+    public int trainWeight = 0;
+
     public int GetEmptySlotCount() {
         var slots = GetComponentsInChildren<Slot>();
         int emptyCount = 0;
@@ -42,6 +44,7 @@ public class Train : MonoBehaviour {
 
     public void DrawTrain(DataSaver.TrainState trainState) {
         transform.DeleteAllChildren();
+        trainWeight = 0;
 
         carts = new List<Transform>();
         cartDefPositions = new List<Vector3>();
@@ -57,6 +60,7 @@ public class Train : MonoBehaviour {
             for (int i = 0; i < cartCount; i++) {
                 var cart = Instantiate(DataHolder.s.cartPrefab, transform);
                 carts.Add(cart.transform);
+                trainWeight += cart.GetComponent<Cart>().weight;
                 //AddCartBuildings(cart.GetComponent<Cart>(), SceneLoader.s.currentLevel.levelTrain[SceneLoader.s.currentLevel.levelTrain.Length - i - 1]);
                 cartDefPositions.Add(cart.transform.position);
             }
@@ -180,6 +184,19 @@ public class Train : MonoBehaviour {
         
         carts.Reverse();
         cartDefPositions.Reverse();
+    }
+
+    public void CartDestroyed(Cart cart) {
+        var index = carts.IndexOf(cart.transform);
+
+        if (index > -1) {
+            var state = GetTrainState();
+            state.myCarts.RemoveAt(index);
+            DrawTrain(state);
+        }
+        
+        if(carts.Count <= 0)
+            MissionLoseFinisher.s.MissionLost();
     }
 
     public UnityEvent onLevelStateChanged = new UnityEvent();

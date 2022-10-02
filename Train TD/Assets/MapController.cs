@@ -107,7 +107,7 @@ public class MapController : MonoBehaviour {
     private StarState CreateStarState(int starChunk) {
 
 	    LevelData level;
-	    if (starChunk < 3) {
+	    if (starChunk < 2) {
 		    level = firstLevels[Random.Range(0, firstLevels.Length)].myData;
 	    } else {
 		    level = remainingLevels[Random.Range(0, remainingLevels.Length)].myData;

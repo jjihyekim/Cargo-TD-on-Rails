@@ -34,21 +34,38 @@ public class DistanceAndEnemyRadarController : MonoBehaviour {
             myUnits.RemoveAt(index);
             Destroy(unitDisplays[index]);
             unitDisplays.RemoveAt(index);
-
-            Update();
         }
     }
 
+    public float baseHeight = 25f;
+    public float increaseHeight = 25f;
     // Update is called once per frame
     void Update() {
         var totalDistance = SpeedController.s.missionDistance;
         var width = unitsArea.rect.width;
-        
+
+        var lastDistance = float.NegativeInfinity;
+        var curHeight = 0f;
+        //myUnits.Sort((x, y) => x.GetDistance().CompareTo(y.GetDistance()));
         for (int i = 0; i < myUnits.Count; i++) {
 
             var percentage = myUnits[i].GetDistance() / totalDistance;
+            var distance = percentage * width;
 
-            unitDisplays[i].GetComponent<RectTransform>().anchoredPosition = new Vector2(percentage * width, 25);
+            if (Mathf.Abs(lastDistance - distance) < 25) {
+                curHeight += 1;
+            } else {
+                curHeight = 0;
+            }
+
+            unitDisplays[i].GetComponent<RectTransform>().anchoredPosition = 
+                Vector2.Lerp(
+                    unitDisplays[i].GetComponent<RectTransform>().anchoredPosition, 
+                    new Vector2(distance, baseHeight + (curHeight*increaseHeight)), 
+                    10*Time.deltaTime
+                    );
+
+            lastDistance = distance;
         }
     }
 }

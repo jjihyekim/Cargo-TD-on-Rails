@@ -120,6 +120,16 @@ public class UpgradesController : MonoBehaviour {
 		return results;
 	}
 
+	public Upgrade GetUpgrade(string upgradeName) {
+		for (int i = 0; i < allUpgrades.Count; i++) {
+			if (allUpgrades[i].upgradeUniqueName == upgradeName) {
+				return allUpgrades[i];
+			}
+		}
+
+		return null;
+	}
+
 	public Upgrade[] GetRandomBossRewards() {
 		return GetRandomLevelRewards();
 	}

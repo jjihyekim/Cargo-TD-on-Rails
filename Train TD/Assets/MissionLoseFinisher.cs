@@ -13,21 +13,16 @@ public class MissionLoseFinisher : MonoBehaviour {
         s = this;
     }
 
-
     public MonoBehaviour[] scriptsToDisable;
     public GameObject[] gameObjectsToDisable;
     
-    
     public GameObject loseUI;
-    public GameObject speedLose;
-    public GameObject cargoLose;
 
     public TMP_Text tipText;
 
-    public string[] speedLoseTips;
-    public string[] cargoLoseTips;
+    public string[] loseTips;
 
-    public void MissionLost(bool isLostBecauseOfCargo) {
+    public void MissionLost() {
         SceneLoader.s.FinishLevel();
         
         for (int i = 0; i < scriptsToDisable.Length; i++) {
@@ -39,33 +34,22 @@ public class MissionLoseFinisher : MonoBehaviour {
         }
         
         loseUI.SetActive(true);
-        if (isLostBecauseOfCargo) {
-            cargoLose.SetActive(true);
-            speedLose.SetActive(false);
-            tipText.text = cargoLoseTips[Random.Range(0, cargoLoseTips.Length)];
-        } else {
-            cargoLose.SetActive(false);
-            speedLose.SetActive(true);
-            tipText.text = speedLoseTips[Random.Range(0, speedLoseTips.Length)];
-        }
         
-        var myMission = DataSaver.s.GetCurrentSave().currentRun.character;
+        
+        var myChar = DataSaver.s.GetCurrentSave().currentRun.character;
         AnalyticsResult analyticsResult = Analytics.CustomEvent(
             "LevelLost",
             new Dictionary<string, object> {
                 { "Level", SceneLoader.s.currentLevel.levelName },
                 { "distance", Mathf.RoundToInt(SpeedController.s.currentDistance / 10) *10},
                 { "time", Mathf.RoundToInt(SpeedController.s.currentTime/10) * 10},
-                { "isLostDueCargo", isLostBecauseOfCargo},
                 
-                {"character", myMission},
-
-                { "buildingsBuild", ModuleHealth.buildingsBuild },
-                { "buildingsDestroyed", ModuleHealth.buildingsDestroyed },
+                {"character", myChar},
 				
-                { "remainingMoney", MoneyController.s.scraps },
+                { "remainingScraps", MoneyController.s.scraps },
+                { "remainingMoney", DataSaver.s.GetCurrentSave().currentRun.money },
+                
                 { "enemiesLeftAlive", EnemyHealth.enemySpawned - EnemyHealth.enemyKilled},
-                { "emptyTrainSlots", Train.s.GetEmptySlotCount() },
             }
         );
         

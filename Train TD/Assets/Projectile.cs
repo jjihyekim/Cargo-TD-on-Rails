@@ -69,7 +69,7 @@ public class Projectile : MonoBehaviour {
 
                 
                 if (enemyWave != null) {
-                    targetPos +=  Vector3.forward * enemyWave.myEnemy.enemySpeed * mortarAimPredictTime;
+                    targetPos +=  Vector3.forward * enemyWave.currentSpeed * mortarAimPredictTime;
                 }
 
                 var randomOffset = Random.insideUnitSphere * mortarRange;

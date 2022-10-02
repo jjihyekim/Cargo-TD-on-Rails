@@ -16,14 +16,13 @@ public class MiniGUI_IncomingWave : MonoBehaviour {
 
     public TMP_Text text;
 
-    public float counter;
+    public float distance;
 
     
-
     public void SetUp(EnemyWave enemyWave) {
         myWave = enemyWave;
-        //sourcePosition = enemyWave.myCircuit.Waypoints[1].position;
-        //sourcePosition = new Vector3(sourcePosition.x * (myWave.myData.isLeft ? 1 : -1), sourcePosition.y, sourcePosition.z);
+        sourcePosition = enemyWave.transform.position;
+        sourcePosition.z = Mathf.Clamp(sourcePosition.z, -5, 5);
         CanvasRect = transform.root.GetComponent<RectTransform>();
         UIRect = GetComponent<RectTransform>();
         ParentRect = transform.parent.GetComponent<RectTransform>();
@@ -34,7 +33,7 @@ public class MiniGUI_IncomingWave : MonoBehaviour {
 
     const float edgeGive = 5;
     private void Update() {
-        counter -= Time.deltaTime;
+        distance = myWave.distance;
         SetPosition();
         SetText();
     }
@@ -61,7 +60,7 @@ public class MiniGUI_IncomingWave : MonoBehaviour {
         );
         WorldObject_ScreenPosition.y = Mathf.Clamp(WorldObject_ScreenPosition.y,
             -halfHeightLimit + (0.2f * CanvasRect.rect.height),
-            halfHeightLimit - (0.2f * CanvasRect.rect.height)
+            halfHeightLimit - (0.15f * CanvasRect.rect.height)
         );
 
         myVecRef.vector2 = WorldObject_ScreenPosition;
@@ -82,6 +81,7 @@ public class MiniGUI_IncomingWave : MonoBehaviour {
 
     private void OnDisable() {
         globalPositions.Remove(myVecRef);
+        PointerExit();
     }
 
     void AdjustPositionBasedOnOtherPositions() {
@@ -100,13 +100,7 @@ public class MiniGUI_IncomingWave : MonoBehaviour {
     }
 
     void SetText() {
-        text.text = myWave.myEnemy.enemyUniqueName+ ((myWave.myEnemy.enemyCount != -1) ?  " " + myWave.myEnemy.enemyCount.ToString() : "") + "\n" + GetTime(counter);
-    }
-
-    string GetTime(float time) {
-        var minutes = (int) (time / 60);
-        var remainingSeconds = (int) (time - minutes * 60);
-        return (minutes.ToString("00") + ':' + remainingSeconds.ToString("00"));
+        text.text = myWave.myEnemy.enemyUniqueName+ ((myWave.myEnemy.enemyCount != -1) ?  " " + myWave.myEnemy.enemyCount.ToString() : "") + "\n" + distance.ToString("F1");
     }
 
 

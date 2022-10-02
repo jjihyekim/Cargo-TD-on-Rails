@@ -203,6 +203,8 @@ public class DataSaver {
 		public int fuel = 25;
 		public int maxFuel = 50;
 
+		public List<string> unclaimedRewards = new List<string>();
+
 		public void SetCharacter(CharacterData characterData) {
 			character = characterData.uniqueName;
 			myTrain = characterData.starterTrain.Copy();
@@ -213,6 +215,8 @@ public class DataSaver {
 
 			money = characterData.starterMoney;
 			scraps = characterData.starterScraps;
+			fuel = characterData.starterFuel;
+			maxFuel = characterData.maxFuel;
 		}
 	}
 

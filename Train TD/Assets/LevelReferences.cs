@@ -80,7 +80,7 @@ public class LevelReferences : MonoBehaviour {
 
         while(amount > 0) {
             var random = Random.insideUnitCircle * (count / 4f);
-            var pile = Instantiate(scrapPile, location + new Vector3(random.x, 0, random.y), Quaternion.identity);
+            var pile = Instantiate(fuelPile, location + new Vector3(random.x, 0, random.y), Quaternion.identity);
             var pileComp = pile.GetComponent<ScrapPile>();
             var targetAmount = amount % maxMoneyPileCount;
             if (targetAmount == 0)

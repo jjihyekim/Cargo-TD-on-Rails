@@ -8,6 +8,7 @@ public class CargoModule : MonoBehaviour, IActiveDuringCombat {
     public int cargoSize = 1;
 
     public int moneyReward = 100;
+    public int moneyCost = 50;
 
     private void OnEnable() {
         /*if(SceneLoader.s.isLevelInProgress)
@@ -25,5 +26,9 @@ public class CargoModule : MonoBehaviour, IActiveDuringCombat {
 
     public void Disable() {
         this.enabled = false;
+    }
+
+    public void CargoSold() {
+        Destroy(gameObject);
     }
 }

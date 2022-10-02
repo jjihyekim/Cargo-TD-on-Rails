@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Analytics;
@@ -38,7 +39,7 @@ public class MissionWinFinisher : MonoBehaviour {
 		winUI.SetActive(false);
 	}
 
-	public void MissionWon() {
+	public void MissionWon(bool isShowingPrevRewards = false) {
 		SceneLoader.s.FinishLevel();
 		
 		for (int i = 0; i < scriptsToDisable.Length; i++) {
@@ -50,8 +51,22 @@ public class MissionWinFinisher : MonoBehaviour {
 		}
 
 		DeactiveRangeShows();
+		
+		var mySave = DataSaver.s.GetCurrentSave();
+		
 
 		// mission rewards
+		if(!isShowingPrevRewards)
+			GenerateMissionRewards();
+		
+		
+		// save our resources
+		mySave.currentRun.scraps = MoneyController.s.scraps;
+		mySave.currentRun.myTrain = Train.s.GetTrainState();
+		mySave.currentRun.fuel = (int)SpeedController.s.fuel;
+		
+		DataSaver.s.SaveActiveGame();
+		
 		ShowAndGiveMissionRewards();
 		cameraSwitcher.Engage();
 		winUI.SetActive(true);
@@ -89,37 +104,85 @@ public class MissionWinFinisher : MonoBehaviour {
 		}
 	}
 
-	void ShowAndGiveMissionRewards() {
-		//var rewardMoney = SceneLoader.s.currentLevel.missionRewardMoney;
+	public void ShowUnclaimedRewards() {
+		Invoke(nameof(DelayedShowRewards), 0.05f);
+	}
+
+	void DelayedShowRewards() {
+		MissionWon(true);
+	}
+
+	void GenerateMissionRewards() {
 		var rewardMoney = 0;
 		var allCargo = Train.s.GetComponentsInChildren<CargoModule>();
 		foreach (var cargo in allCargo) {
 			var cargoObj = Instantiate(cargoDeliveredPrefab, cargoDeliveredParent);
 			rewardMoney += cargoObj.GetComponent<MiniGUI_DeliveredCargo>().SetUp(cargo);
+			cargo.CargoSold();
 		}
 
 		cargoText.text = $"Cargo Delivered {allCargo.Length}";
 
 		var mySave = DataSaver.s.GetCurrentSave();
-		
-		//mySave.currentRun.money += totalRewards;
 
-		mySave.currentRun.scraps = MoneyController.s.scraps;
-		mySave.currentRun.myTrain = Train.s.GetTrainState();
-		DataSaver.s.SaveActiveGame();
-		
-		
 		// mission rewards, must do after the stuff above
-		Instantiate(scrapRewardPrefab, rewardsParent).GetComponent<MiniGUI_ScrapsReward>().SetUpReward(Random.Range(10,20));
-		Instantiate(moneyRewardPrefab, rewardsParent).GetComponent<MiniGUI_MoneyReward>().SetUpReward(rewardMoney);
-
+		mySave.currentRun.unclaimedRewards.Add($"s{Random.Range(10,20)}");
+		mySave.currentRun.unclaimedRewards.Add($"m{rewardMoney}");
+		
 		var upgradeRewards = UpgradesController.s.GetRandomLevelRewards();
+		var upgradesString = string.Join(",", upgradeRewards.Select(u => u.upgradeUniqueName));
+		mySave.currentRun.unclaimedRewards.Add($"u{upgradesString}");
 		
-		Instantiate(upgradeRewardPrefab, rewardsParent).GetComponent<MiniGUI_UpgradeReward>().SetUpReward(upgradeRewards);
-		
-		//if(mySave.currentRun.map.GetPlayerStar().isBoss)
 		if(mySave.currentRun.map.GetPlayerStar().rewardCart > 0)
-			Instantiate(cartRewardPrefab, rewardsParent).GetComponent<MiniGUI_CartReward>().SetUpReward(mySave.currentRun.map.GetPlayerStar().rewardCart);
+			mySave.currentRun.unclaimedRewards.Add($"c{mySave.currentRun.map.GetPlayerStar().rewardCart}");
+	}
+
+	void ShowAndGiveMissionRewards() {
+		ClearOldRewards();
+		//var rewardMoney = SceneLoader.s.currentLevel.missionRewardMoney;
+		var mySave = DataSaver.s.GetCurrentSave();
+
+		for (int i = 0; i < mySave.currentRun.unclaimedRewards.Count; i++) {
+			var cur = mySave.currentRun.unclaimedRewards[i];
+
+			switch (cur[0]) {
+				case 's':
+					if (int.TryParse(cur.Substring(1), out var scrap)) {
+						Instantiate(scrapRewardPrefab, rewardsParent).GetComponent<MiniGUI_ScrapsReward>().SetUpReward(scrap);
+					} else {
+						Debug.LogError($"Can't parse reward: {cur}");
+					}
+					break;
+				case 'm':
+					if (int.TryParse(cur.Substring(1), out var money)) {
+						Instantiate(moneyRewardPrefab, rewardsParent).GetComponent<MiniGUI_MoneyReward>().SetUpReward(money);
+					} else {
+						Debug.LogError($"Can't parse reward: {cur}");
+					}
+					break;
+				case 'u':
+					var upgradeNames = cur.Substring(1).Split(',');
+					List<Upgrade> upgradeRewards = new List<Upgrade>();
+					for (int j = 0; j < upgradeNames.Length; j++) {
+						upgradeRewards.Add(UpgradesController.s.GetUpgrade(upgradeNames[j]));
+					}
+					
+					Instantiate(upgradeRewardPrefab, rewardsParent).GetComponent<MiniGUI_UpgradeReward>().SetUpReward(upgradeRewards.ToArray());
+					
+					break;
+				case 'c':
+					if (int.TryParse(cur.Substring(1), out var cartCount)) {
+						Instantiate(cartRewardPrefab, rewardsParent).GetComponent<MiniGUI_CartReward>().SetUpReward(cartCount);
+					} else {
+						Debug.LogError($"Can't parse reward: {cur}");
+					}
+					
+					break;
+				default:
+					Debug.LogError($"Unknown reward: {cur}");
+					break;
+			}
+		}
 	}
 
 	void ClearOldRewards() {
@@ -134,6 +197,8 @@ public class MissionWinFinisher : MonoBehaviour {
 
 	public void ContinueToStarterMenu() {
 		ClearOldRewards();
+		DataSaver.s.GetCurrentSave().currentRun.unclaimedRewards = new List<string>();
+		DataSaver.s.SaveActiveGame();
 		SceneLoader.s.BackToStarterMenuHardLoad();
 	}
 	

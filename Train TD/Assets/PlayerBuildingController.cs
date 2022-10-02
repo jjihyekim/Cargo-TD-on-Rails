@@ -30,7 +30,8 @@ public class PlayerBuildingController : MonoBehaviour {
     public string buildingActionMap;
     public string nonbuildingActionMap;
 
-    TrueFalseCallback finishBuildingCallback;
+    BuildingDoneCallback finishBuildingCallback;
+    GetTheFinishedBuilding returnFinishedBuilding;
 
     private void Start() {
         StopBuilding();
@@ -161,7 +162,7 @@ public class PlayerBuildingController : MonoBehaviour {
     void UpdateCanBuildable() {
         if (tempBuilding) {
             if (activeSlot != null) {
-                tempBuilding.SetBuildingMode(true, activeSlot.CanBuiltInSlot(tempBuilding, activeIndex));
+                tempBuilding.SetBuildingMode(true, activeSlot.CanBuiltInSlot(tempBuilding, ref activeIndex));
             } else {
                 tempBuilding.SetBuildingMode(true, false);
             }
@@ -170,7 +171,7 @@ public class PlayerBuildingController : MonoBehaviour {
 
     private void TryToPutDownBuilding(InputAction.CallbackContext context) {
         if (activeSlot != null) {
-            if (activeSlot.CanBuiltInSlot(tempBuilding, activeIndex)) {
+            if (activeSlot.CanBuiltInSlot(tempBuilding, ref activeIndex)) {
                 var canBuildMore = true;
                 if (finishBuildingCallback != null) {
                     // This means we are doing building in menu
@@ -190,6 +191,7 @@ public class PlayerBuildingController : MonoBehaviour {
                 activeSlot.AddBuilding(newBuilding, activeIndex);
                 newBuilding.transform.position = activeSlot.transform.position;
                 newBuilding.CompleteBuilding();
+                returnFinishedBuilding?.Invoke(newBuilding);
                 if (SceneLoader.s.isLevelStarted())
                     MoneyController.s.SubtractScraps(newBuilding.cost);
 
@@ -311,6 +313,7 @@ public class PlayerBuildingController : MonoBehaviour {
         if (isBuilding) {
             finishBuildingCallback?.Invoke(false);
             finishBuildingCallback = null;
+            returnFinishedBuilding = null;
             StopBuilding();
             
             PlayerModuleSelector.s.playerBuildingDisableOverride = false;
@@ -334,7 +337,7 @@ public class PlayerBuildingController : MonoBehaviour {
     }
 
 
-    public void StartBuilding(TrainBuilding building, TrueFalseCallback callback = null) {
+    public void StartBuilding(TrainBuilding building, BuildingDoneCallback callback = null, GetTheFinishedBuilding buildingReturn = null) {
         inputActionMap.FindActionMap(buildingActionMap).Enable();
         inputActionMap.FindActionMap(nonbuildingActionMap).Disable();
         
@@ -349,6 +352,7 @@ public class PlayerBuildingController : MonoBehaviour {
         
         MenuToggle.HideAllToggleMenus();
         finishBuildingCallback = callback;
+        returnFinishedBuilding = buildingReturn;
         
         Debug.Log($"Starting building: {building.displayName}");
     }
@@ -364,7 +368,9 @@ public class PlayerBuildingController : MonoBehaviour {
         }
         isBuilding = false;
     }
+    public delegate bool BuildingDoneCallback(bool isSuccess);
+
+    public delegate void GetTheFinishedBuilding(TrainBuilding building);
 }
 
 
-public delegate bool TrueFalseCallback(bool isSuccess);

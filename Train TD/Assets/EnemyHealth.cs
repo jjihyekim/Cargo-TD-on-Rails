@@ -46,15 +46,18 @@ public class EnemyHealth : MonoBehaviour, IHealth {
 	private void Update() {
 		if (SceneLoader.s.isLevelFinished()) {
 			if(isAlive)
-				Die();
+				Die(false);
 		}
 	}
 
 
-	void Die() {
+	void Die(bool giveRewards = true) {
 		enemyKilled += 1;
 		isAlive = false;
-		LevelReferences.s.SpawnScrapsAtLocation(scrapReward, aliveObject.transform.position);
+		if (giveRewards) {
+			LevelReferences.s.SpawnScrapsAtLocation(scrapReward, aliveObject.transform.position);
+			LevelReferences.s.SpawnFuelAtLocation(fuelReward, aliveObject.transform.position + Vector3.forward);
+		}
 
 		var pos = aliveObject.position;
 		var rot = aliveObject.rotation;
@@ -63,6 +66,8 @@ public class EnemyHealth : MonoBehaviour, IHealth {
 		Destroy(healthBar.gameObject);
 		
 		Instantiate(deathPrefab, pos, rot);
+		
+		GetComponentInParent<EnemySwarmMaker>().EnemyDeath();
 
 		Destroy(gameObject);
 	}

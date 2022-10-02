@@ -420,6 +420,8 @@ GameObject:
   - component: {fileID: 2199384508793199889}
   - component: {fileID: 4987274482128882662}
   - component: {fileID: -6193737250328446293}
+  - component: {fileID: -5961050653454529255}
+  - component: {fileID: -2543070092906998890}
   m_Layer: 0
   m_Name: CargoModule
   m_TagString: Untagged
@@ -465,6 +467,7 @@ MonoBehaviour:
   canBeRotatedSides: 0
   canBeRotatedUp: 0
   cost: 50
+  weight: 50
   myRotation: 0
   canBeTargetingAreaRotatable: 0
   occupiesEntireSlot: 1
@@ -490,6 +493,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   cargoSize: 1
   moneyReward: 100
+  moneyCost: 50
 --- !u!114 &5592445795315755096
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -549,6 +553,37 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e03d89f262df7ef43ad10e8140eccbf4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &-5961050653454529255
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3146471024428373951}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9598745dd159cf844a3671183fd2ff75, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &-2543070092906998890
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3146471024428373951}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3fc12dfc22da57840a0a8c87d9cdd0f0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  isUnlocked: 1
+  unlockingUpgrade: {fileID: 0}
+  actionName: Return Cargo
+  cost: 0
+  cooldown: -1
+  curCooldown: 0
+  myButton: {fileID: 0}
 --- !u!1 &3469176668768950665
 GameObject:
   m_ObjectHideFlags: 0

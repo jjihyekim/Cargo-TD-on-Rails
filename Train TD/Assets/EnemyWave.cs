@@ -3,10 +3,12 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityStandardAssets.Utility;
+using Random = UnityEngine.Random;
 
 public class EnemyWave : MonoBehaviour, IShowOnDistanceRadar {
     public EnemyIdentifier myEnemy;
     public GameObject drawnEnemies;
+    public float mySpeed;
 
     public MiniGUI_IncomingWave waveDisplay;
                 
@@ -17,44 +19,48 @@ public class EnemyWave : MonoBehaviour, IShowOnDistanceRadar {
     
     public Material deadlyMaterial;
     public Material safeMaterial;
+
+    public float myXOffset = 0;
     
     private void Start() {
-        lineRenderer = GetComponent<LineRenderer>();
+        lineRenderer = GetComponentInChildren<LineRenderer>();
     }
 
     public void SetUp(EnemyIdentifier data, float position, bool isMoving, bool isLeft) {
         myEnemy = data;
+        mySpeed = DataHolder.s.GetEnemy(myEnemy.enemyUniqueName).GetComponent<EnemySwarmMaker>().speed;
         wavePosition = position;
         isWaveMoving = isMoving;
         SpawnEnemy();
-        CreateRouteDisplay();
+
+        myXOffset = Random.Range(0.7f, 3.2f);
+        if (isLeft)
+            myXOffset = -myXOffset;
         
         DistanceAndEnemyRadarController.s.RegisterUnit(this);
     }
 
     private void OnDestroy() {
-        
+        DestroyRouteDisplay();
         DistanceAndEnemyRadarController.s.RemoveUnit(this);
+        EnemyWavesController.s.RemoveWave(this);
     }
 
 
     public float speedChangeDelta = 0.5f;
     public float currentSpeed = 0;
     public float targetSpeed = 0;
+    public float distance;
     public void UpdateBasedOnDistance(float playerPos) {
-        var distance = Mathf.Abs(playerPos - wavePosition);
-        if (distance > 10 && distance < 30) {
-            CreateRouteDisplay();
-        } else {
-            DestroyRouteDisplay();
-        }
+        distance = Mathf.Abs(playerPos - wavePosition);
+        
 
         if (!isWaveMoving) {
             if (distance < 10)
                 isWaveMoving = true;
         }
 
-        targetSpeed = myEnemy.enemySpeed;
+        targetSpeed = Mathf.Min(mySpeed, Mathf.Max(distance, LevelReferences.s.speed)+0.2f);
 
         if (isWaveMoving) {
             if (playerPos < wavePosition) {
@@ -67,13 +73,19 @@ public class EnemyWave : MonoBehaviour, IShowOnDistanceRadar {
             wavePosition += currentSpeed * Time.deltaTime;
         }
         
-        transform.position = Vector3.forward* (wavePosition - playerPos);
+        transform.position = Vector3.forward* (wavePosition - playerPos) + Vector3.left*myXOffset;
+        
+        if (distance > 10 && distance < 60) {
+            CreateRouteDisplay();
+        } else {
+            DestroyRouteDisplay();
+        }
     }
 
     void SpawnEnemy() {
-        var enemy = Instantiate(DataHolder.s.GetEnemy(myEnemy.enemyUniqueName), transform);
-        enemy.transform.ResetTransformation();
-        enemy.GetComponent<IData>()?.SetData(myEnemy.enemyCount);
+        drawnEnemies = Instantiate(DataHolder.s.GetEnemy(myEnemy.enemyUniqueName), transform);
+        drawnEnemies.transform.ResetTransformation();
+        drawnEnemies.GetComponent<IData>()?.SetData(myEnemy.enemyCount);
     }
 
     void DestroyRouteDisplay() {
@@ -92,23 +104,28 @@ public class EnemyWave : MonoBehaviour, IShowOnDistanceRadar {
             waveDisplay.SetUp(this);
 
 
-            /*var points = new List<Vector3>();
-            var segmentCount = myCircuit.Waypoints.Length;
-            for (int i = 0; i < segmentCount; i++) {
-                points.Add(myCircuit.Waypoints[i].position);
-                var xDirection = myData.isLeft ? 1 : -1;
-                points[points.Count - 1] = new Vector3(points[points.Count - 1].x * xDirection, lineHeight, points[points.Count - 1].z);
-                points[points.Count - 1] = transform.InverseTransformPoint(points[points.Count - 1]);
-            }
+            var points = new List<Vector3>();
+            
+            var myPos = transform.position;
+            var close = myPos;
+            close.z = Mathf.Clamp(close.z, -2, 2);
+            var far = myPos;
+            far.z = Mathf.Clamp(far.z, -15, 15);
 
+            close.y = 0.5f;
+            far.y = 0.5f;
+            
+            points.Add(far);
+            points.Add(close);
+
+            lineRenderer = GetComponentInChildren<LineRenderer>();
             lineRenderer.positionCount = points.Count;
-            lineRenderer.SetPositions(points.ToArray());*/
+            lineRenderer.SetPositions(points.ToArray());
             var enemyType = DataHolder.s.GetEnemy(myEnemy.enemyUniqueName).GetComponent<EnemyTypeData>().myType;
-            /*lineRenderer = GetComponent<LineRenderer>();
             lineRenderer.material = enemyType == EnemyTypeData.EnemyType.Deadly ? deadlyMaterial : safeMaterial;
             targetAlpha = 0f;
             lineRenderer.material.SetFloat("alpha", targetAlpha);
-            lineRenderer.enabled = true;*/
+            lineRenderer.enabled = true;
         }
     }
 
@@ -138,7 +155,7 @@ public class EnemyWave : MonoBehaviour, IShowOnDistanceRadar {
 
 
     private void Update() {
-        //LerpLineRenderedAlpha();
+        LerpLineRenderedAlpha();
     }
 
     void LerpLineRenderedAlpha() {

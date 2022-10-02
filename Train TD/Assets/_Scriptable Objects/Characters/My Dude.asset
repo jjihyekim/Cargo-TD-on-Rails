@@ -18,13 +18,23 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 494fbaab215e62f4e8459a02ff7fb485, type: 2}
   starterTrain:
     myCarts:
-    - cartType: cart
-      buildings:
+    - buildings:
       - Engine
       - 
       - 
       - 
       - 
       - 
-  starterMoney: 0
+      healths: 000000000000000000000000000000000000000000000000
+    - buildings:
+      - 
+      - 
+      - 
+      - 
+      - 
+      - 
+      healths: 000000000000000000000000000000000000000000000000
+  starterMoney: 200
   starterScraps: 200
+  starterFuel: 50
+  maxFuel: 100

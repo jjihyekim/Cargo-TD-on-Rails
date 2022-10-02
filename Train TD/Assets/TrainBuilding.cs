@@ -38,6 +38,7 @@ public class TrainBuilding : MonoBehaviour {
     //public MonoBehaviour[] disabledWhenBuilding;
 
     public int cost = 50;
+    public int weight = 50;
     
     public enum Rots {
         left, right, forward, backwards
@@ -139,17 +140,19 @@ public class TrainBuilding : MonoBehaviour {
         
         for (int i = 0; i < duringCombat.Length; i++) { duringCombat[i].Disable(); }
         for (int i = 0; i < duringShopping.Length; i++) { duringShopping[i].Disable(); }
-        
-        if (SceneLoader.s.isLevelStarted()) {
-            for (int i = 0; i < duringCombat.Length; i++) {
-                duringCombat[i].ActivateForCombat();
-            }
-        }else if (SceneLoader.s.isStarterMenu()) {
-            for (int i = 0; i < duringShopping.Length; i++) {
-                duringShopping[i].ActivateForShopping();
+
+        if (!isBuildingHologram) {
+            if (SceneLoader.s.isLevelStarted()) {
+                for (int i = 0; i < duringCombat.Length; i++) {
+                    duringCombat[i].ActivateForCombat();
+                }
+            } else if (SceneLoader.s.isStarterMenu()) {
+                for (int i = 0; i < duringShopping.Length; i++) {
+                    duringShopping[i].ActivateForShopping();
+                }
             }
         }
-        
+
 
         var moduleGfxs = GetComponentsInChildren<ModuleGraphics>(true);
 

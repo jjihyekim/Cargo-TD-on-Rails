@@ -34,6 +34,10 @@ public class StarterUIController : MonoBehaviour {
 
 	public void OpenStarterUI() {
 		starterUI.SetActive(true);
+		if (DataSaver.s.GetCurrentSave().currentRun.unclaimedRewards.Count > 0) {
+			SelectLevelAndStart(DataSaver.s.GetCurrentSave().currentRun.map.GetPlayerStar().level);
+			MissionWinFinisher.s.ShowUnclaimedRewards();
+		}
 	}
 
 	void StartLevel() {
