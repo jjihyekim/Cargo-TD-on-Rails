@@ -44,9 +44,10 @@ public class ModuleHealth : MonoBehaviour, IHealth, IActiveDuringCombat, IActive
         isDead = true;
         Instantiate(explodePrefab, transform.position, transform.rotation);
         Destroy(healthBar.gameObject);
-        Destroy(gameObject);
         
         buildingsDestroyed += 1;
+        
+        Destroy(gameObject);
     }
 
     private void OnDestroy() {

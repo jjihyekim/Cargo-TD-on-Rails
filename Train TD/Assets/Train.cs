@@ -19,7 +19,28 @@ public class Train : MonoBehaviour {
     public List<Transform> carts = new List<Transform>();
     public List<Vector3> cartDefPositions = new List<Vector3>();
 
-    public int trainWeight = 0;
+    public bool trainWeightDirty = false;
+    private int trainWeight = 0;
+
+    public int GetTrainWeight() {
+        if (!trainWeightDirty) {
+            return trainWeight;
+        } else {
+            trainWeight = 0;
+            var cartComponents = GetComponentsInChildren<Cart>();
+            var trainBuildingComponents = GetComponentsInChildren<TrainBuilding>();
+
+            for (int i = 0; i < cartComponents.Length; i++) {
+                trainWeight += cartComponents[i].weight;
+            }
+            for (int i = 0; i < trainBuildingComponents.Length; i++) {
+                trainWeight += trainBuildingComponents[i].weight;
+            }
+
+            trainWeightDirty = false;
+            return trainWeight;
+        }
+    }
 
     public int GetEmptySlotCount() {
         var slots = GetComponentsInChildren<Slot>();
@@ -43,8 +64,9 @@ public class Train : MonoBehaviour {
     }
 
     public void DrawTrain(DataSaver.TrainState trainState) {
+        StopAllCoroutines();
         transform.DeleteAllChildren();
-        trainWeight = 0;
+        trainWeightDirty = true;
 
         carts = new List<Transform>();
         cartDefPositions = new List<Vector3>();
@@ -60,8 +82,6 @@ public class Train : MonoBehaviour {
             for (int i = 0; i < cartCount; i++) {
                 var cart = Instantiate(DataHolder.s.cartPrefab, transform);
                 carts.Add(cart.transform);
-                trainWeight += cart.GetComponent<Cart>().weight;
-                //AddCartBuildings(cart.GetComponent<Cart>(), SceneLoader.s.currentLevel.levelTrain[SceneLoader.s.currentLevel.levelTrain.Length - i - 1]);
                 cartDefPositions.Add(cart.transform.position);
             }
 
@@ -76,7 +96,6 @@ public class Train : MonoBehaviour {
         
         carts.Reverse();
         cartDefPositions.Reverse();
-        
         
         UpdateCartPositions();
 
@@ -162,6 +181,8 @@ public class Train : MonoBehaviour {
     }
 
     void UpdateCartPositions() {
+        if(carts.Count == 0)
+            return;
         carts.Reverse();
         cartDefPositions.Reverse();
         var startPlace = transform.position + Vector3.back * DataHolder.s.cartLength * cartCount / 2f;
@@ -176,7 +197,6 @@ public class Train : MonoBehaviour {
             cartScript.index = index ;
             cartDefPositions[i] = cart.transform.position;
         }
-        
         
         trainFront.transform.position = carts[carts.Count-1].position + trainFrontOffset;
         trainBack.transform.position = carts[0].position + trainFrontOffset;
@@ -195,7 +215,7 @@ public class Train : MonoBehaviour {
             DrawTrain(state);
         }
         
-        if(carts.Count <= 0)
+        if(carts.Count <= 0 && SceneLoader.s.isLevelInProgress)
             MissionLoseFinisher.s.MissionLost();
     }
 
@@ -307,5 +327,9 @@ public class Train : MonoBehaviour {
                 carts[lastCart].position = cartDefPositions[lastCart];
             }
         }
+    }
+
+    public float GetTrainLength() {
+        return Train.s.carts.Count *DataHolder.s.cartLength;
     }
 }

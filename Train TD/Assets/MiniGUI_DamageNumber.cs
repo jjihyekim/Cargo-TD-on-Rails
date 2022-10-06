@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
@@ -22,6 +23,11 @@ public class MiniGUI_DamageNumber : MonoBehaviour {
         GetComponent<UIElementFollowWorldTarget>().SetUp(targetWithOffset);
 
         StartCoroutine(DamageAnimation());
+    }
+
+    private void OnDestroy() {
+        if (targetWithOffset != null)
+            Destroy(targetWithOffset.gameObject);
     }
 
 

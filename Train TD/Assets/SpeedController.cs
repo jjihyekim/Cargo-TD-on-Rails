@@ -84,15 +84,17 @@ public class SpeedController : MonoBehaviour, IShowOnDistanceRadar {
             
             
             fuelText.text = $"{fuel:F0}/{maxFuel:F0}";
-            trainWeightText.text = Train.s.trainWeight.ToString();
+            var trainWeight = Train.s.GetTrainWeight();
+            trainWeightText.text = trainWeight.ToString();
 
             DoFuelAndPlayerEngineControls();
 
-            targetSpeed = 2 * (enginePower / Train.s.trainWeight);
-            var acceleration = 0.5f - (Train.s.trainWeight/5000f);
-            acceleration = Mathf.Clamp(acceleration, 0.1f, 0.5f);
+            var minSpeed = 0.5f / Train.s.carts.Count;
+            targetSpeed = 2 * (enginePower / trainWeight) + minSpeed;
+            var acceleration = 0.35f - (trainWeight/5000f);
+            acceleration = Mathf.Clamp(acceleration, 0.05f, 0.35f);
             if (targetSpeed > LevelReferences.s.speed) {
-                var excessEnginePower = (enginePower / Train.s.trainWeight);
+                var excessEnginePower = (enginePower / trainWeight);
                 acceleration += (excessEnginePower / 4f);
             }
 
@@ -132,9 +134,11 @@ public class SpeedController : MonoBehaviour, IShowOnDistanceRadar {
         var fuelUse = (enginePowerTarget*enginePowerPlayerControl)/100 * fuelUseMultiplier;
         if (enginePowerPlayerControl > 1f) {
             fuelUse *= enginePowerPlayerControl;
-        } 
+        }else if (enginePowerPlayerControl <= 0.5f) {
+            fuelUse *= 0.8f;
+        }
 
-        fuelUseText.text = $"-{fuelUse:F1}/s";
+        fuelUseText.text = $"-{fuelUse:F2}/s";
         fuel -= fuelUse * Time.deltaTime;
         fuel = Mathf.Clamp(fuel, 0, maxFuel);
 
@@ -151,16 +155,18 @@ public class SpeedController : MonoBehaviour, IShowOnDistanceRadar {
         }
     }
 
+
+
     // v2 = u2 + 2as
     // 0 = u2 + 2as
     // u2 = 2as
     // u2/2s = a
-    public readonly float stopDistance = 20.101f;
+    public readonly float stopDistance = 20f;
     private float stopAcceleration = 0;
 
     void CalculateStopAcceleration() {
         var speed = LevelReferences.s.speed;
-        var realStopDistance = stopDistance - (Mathf.Floor(Train.s.carts.Count / 2f) * DataHolder.s.cartLength);
+        var realStopDistance = stopDistance - (Train.s.GetTrainLength()/2f);
         stopAcceleration = (speed * speed) / (2 * realStopDistance);
         stopAcceleration = Mathf.Clamp(stopAcceleration, 0.05f, float.MaxValue);
     }

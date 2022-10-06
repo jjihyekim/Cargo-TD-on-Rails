@@ -17,14 +17,13 @@ public class RepairAction : ModuleAction, IActiveDuringShopping {
     }
 
     protected override void _EngageAction() {
-        GetComponentInParent<Slot>().RemoveBuilding(GetComponent<TrainBuilding>());
         Instantiate(DataHolder.s.repairPrefab, transform.position, transform.rotation);
         _health.DealDamage(-(_health.maxHealth + 10));
     }
 
     protected override void _Update() {
         var hpPercent = _health.currentHealth / _health.maxHealth;
-        cost = Mathf.CeilToInt(_building.cost * (1-hpPercent));
+        cost = Mathf.CeilToInt(_building.cost * (1-hpPercent) * 0.5f);
         
         if (Mathf.Approximately(_health.currentHealth,_health.maxHealth)) {
             this.enabled = false;

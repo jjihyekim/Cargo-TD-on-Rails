@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.SceneManagement;
 
 
 public abstract class ModuleAction : UnlockableEffect {
@@ -21,15 +22,31 @@ public abstract class ModuleAction : UnlockableEffect {
 		if (canEngage) {
 			if (curCooldown <= 0) {
 				if (cost > 0) {
-					if (MoneyController.s.scraps > cost) {
-						MoneyController.s.SubtractScraps(cost);
-						curCooldown = cooldown;
-						_EngageAction();
+					if (SceneLoader.s.isLevelInProgress) {
+						if (MoneyController.s.scraps > cost) {
+							MoneyController.s.SubtractScraps(cost);
+							curCooldown = cooldown;
+							_EngageAction();
+						}
+					} else {
+						if (DataSaver.s.GetCurrentSave().currentRun.scraps > cost) {
+							DataSaver.s.GetCurrentSave().currentRun.scraps -= cost;
+							curCooldown = cooldown;
+							_EngageAction();
+							DataSaver.s.SaveActiveGame();
+						}
 					}
 				} else {
-					MoneyController.s.AddScraps(-cost);
-					curCooldown = cooldown;
-					_EngageAction();
+					if (SceneLoader.s.isLevelInProgress) {
+						MoneyController.s.AddScraps(-cost);
+						curCooldown = cooldown;
+						_EngageAction();
+					} else {
+						DataSaver.s.GetCurrentSave().currentRun.scraps += -cost;
+						curCooldown = cooldown;
+						_EngageAction();
+						DataSaver.s.SaveActiveGame();
+					}
 				}
 			}
 		}

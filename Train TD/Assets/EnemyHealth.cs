@@ -22,7 +22,8 @@ public class EnemyHealth : MonoBehaviour, IHealth {
 	public bool isAlive = true;
 
 	public Transform uiTransform;
-	
+
+	public static bool winSelfDestruct = false;
 	
 	[ReadOnly]
 	public MiniGUI_HealthBar healthBar;
@@ -44,10 +45,13 @@ public class EnemyHealth : MonoBehaviour, IHealth {
 	}
 
 	private void Update() {
-		if (SceneLoader.s.isLevelFinished()) {
+		/*if (SceneLoader.s.isLevelFinished()) {
 			if(isAlive)
 				Die(false);
-		}
+		}*/
+		
+		if(winSelfDestruct)
+			Die(false);
 	}
 
 

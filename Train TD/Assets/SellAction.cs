@@ -19,7 +19,6 @@ public class SellAction : ModuleAction, IActiveDuringCombat, IActiveDuringShoppi
 	}
 
 	protected override void _EngageAction() {
-		GetComponentInParent<Slot>().RemoveBuilding(GetComponent<TrainBuilding>());
 		Instantiate(DataHolder.s.sellPrefab, transform.position, transform.rotation);
 		Destroy(gameObject);
 	}

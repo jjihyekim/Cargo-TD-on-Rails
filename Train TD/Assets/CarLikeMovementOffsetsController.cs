@@ -56,7 +56,7 @@ public class CarLikeMovementOffsetsController : MonoBehaviour{
         transform.localPosition = Vector3.Lerp(transform.localPosition, target, lerpSpeed * Time.deltaTime);
 
         targetTargetPosition.y = target.y;
-        target = Vector3.MoveTowards(target, targetTargetPosition, targetMoveSpeed * Time.deltaTime);
+        target = Vector3.MoveTowards(target, targetTargetPosition, targetMoveSpeed * Time.deltaTime * GetRealMoveSpeed());
 
         if (Vector3.Distance(target, targetTargetPosition) < 0.01f) {
             var randomInCircle = Random.insideUnitCircle;
@@ -64,7 +64,7 @@ public class CarLikeMovementOffsetsController : MonoBehaviour{
             targetTargetPosition = new Vector3(randomInCircle.x, 0, randomInCircle.y);
         }
 
-        if (transform.position.y < -5) {
+        if (transform.position.y < -1) {
             transform.position += Vector3.up*20;
             GetComponent<Rigidbody>().velocity = Vector3.zero;
         }
@@ -85,7 +85,7 @@ public class CarLikeMovementOffsetsController : MonoBehaviour{
         curTime -= Time.fixedDeltaTime;
         if (curTime <= 0) {
             var randomWheel = wheels[Random.Range(0, wheels.Length)];
-            var force = Random.Range(randomBumpForce.x, randomBumpForce.y);
+            var force = Random.Range(randomBumpForce.x, randomBumpForce.y) * GetRealMoveSpeed();
             rg.AddForceAtPosition(Vector3.up * force, randomWheel.transform.position);
 
             curTime = Random.Range(randomBumpTimer.x, randomBumpTimer.y);
@@ -94,12 +94,16 @@ public class CarLikeMovementOffsetsController : MonoBehaviour{
         curSmallTime -= Time.fixedDeltaTime;
         if (curSmallTime <= 0) {
             var randomWheel = wheels[Random.Range(0, wheels.Length)];
-            var force = Random.Range(randomSmallBumpForce.x, randomSmallBumpForce.y);
+            var force = Random.Range(randomSmallBumpForce.x, randomSmallBumpForce.y) * GetRealMoveSpeed();
             rg.AddForceAtPosition(Vector3.up * force, randomWheel.transform.position);
 
             curSmallTime = Random.Range(randomSmallBumpTimer.x, randomSmallBumpTimer.y);
         }
         
         //GetComponent<Rigidbody>().AddForce(transform.forward * forwardForce);
+    }
+
+    float GetRealMoveSpeed() {
+        return Mathf.Clamp(LevelReferences.s.speed/3f, -2, 2);
     }
 }

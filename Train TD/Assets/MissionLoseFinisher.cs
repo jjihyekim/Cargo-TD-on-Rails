@@ -68,6 +68,7 @@ public class MissionLoseFinisher : MonoBehaviour {
 
 
     public void BackToMenu() {
-        SceneLoader.s.BackToStarterMenuHardLoad();
+        SettingsController.s.ResetRun();
+        //SceneLoader.s.BackToStarterMenuHardLoad();
     }
 }

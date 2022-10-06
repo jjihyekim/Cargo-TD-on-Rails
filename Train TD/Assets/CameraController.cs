@@ -71,17 +71,13 @@ public class CameraController : MonoBehaviour {
         rotateAction.action.performed -= FlipCamera;
     }
 
-    private GameObject cameraLerpDummy;
+    public GameObject cameraLerpDummy;
+    public GameObject cameraShakeDummy;
     private void Start() {
 #if UNITY_EDITOR
         edgeScrollMoveSpeed = 0; // we dont want edge scroll in the editor
 #endif
         cameraCenter.transform.rotation = Quaternion.Euler(0, isRight ? -rotationAngleTarget : rotationAngleTarget, 0);
-        cameraLerpDummy = new GameObject();
-        cameraLerpDummy.name = "Camera Lerp Dummy";
-        cameraLerpDummy.transform.SetParent(cameraOffset);
-        cameraLerpDummy.transform.position = cameraOffset.position;
-        cameraLerpDummy.transform.rotation = cameraOffset.rotation;
         SetMainCamPos();
     }
 
@@ -136,8 +132,8 @@ public class CameraController : MonoBehaviour {
     }
 
     void SetMainCamPos() {
-        mainCamera.transform.position = cameraLerpDummy.transform.position;
-        mainCamera.transform.rotation = cameraLerpDummy.transform.rotation;
+        mainCamera.transform.position = cameraShakeDummy.transform.position;
+        mainCamera.transform.rotation = cameraShakeDummy.transform.rotation;
     }
 
     void ProcessZoom(float value) {

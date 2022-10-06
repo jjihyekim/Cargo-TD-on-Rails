@@ -41,7 +41,7 @@ public class EngineFireController : MonoBehaviour {
     }
 
     private float lastSpeed = 0;
-    private int lastEnginePower = 100;
+    private float lastEnginePower = 100;
     public float lastSpeedSound = 0;
     //public float pitchRange = 0.2f;
     void Update()
@@ -51,12 +51,11 @@ public class EngineFireController : MonoBehaviour {
 		    UpdateEngineParticleSystemValues();
 	    }
 
-	    if (_engine != null) {
-		    if (Mathf.Abs(lastEnginePower - _engine.enginePower) > 5) {
-			    lastEnginePower = _engine.enginePower;
-			    UpdateEngineParticleSystemValues();
-		    }
+	    if (Mathf.Abs(lastEnginePower - SpeedController.s.enginePower) > 5) {
+		    lastEnginePower = SpeedController.s.enginePower;
+		    UpdateEngineParticleSystemValues();
 	    }
+	    
 
 	    if (SceneLoader.s.isLevelInProgress) {
 		    var speed = 0;

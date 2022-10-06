@@ -57,6 +57,11 @@ public class ScrapPile : MonoBehaviour {
     public float acc = 0.5f;
     public Transform target;
     private void Update() {
+        if (target == null) {
+            PickTarget();
+            if (target == null)
+                enabled = false;
+        }
         var distance = Vector3.Distance(transform.position, target.position);
         if (isCollected) {
             transform.position = Vector3.MoveTowards(transform.position, target.position, speed * Time.deltaTime);

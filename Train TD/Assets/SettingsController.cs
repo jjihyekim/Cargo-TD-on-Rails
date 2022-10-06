@@ -1,8 +1,14 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class SettingsController : MonoBehaviour {
+    public static SettingsController s;
+
+    private void Awake() {
+        s = this;
+    }
 
     public GameObject settingsParent;
     

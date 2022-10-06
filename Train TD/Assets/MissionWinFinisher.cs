@@ -41,6 +41,7 @@ public class MissionWinFinisher : MonoBehaviour {
 
 	public void MissionWon(bool isShowingPrevRewards = false) {
 		SceneLoader.s.FinishLevel();
+		EnemyHealth.winSelfDestruct = true;
 		
 		for (int i = 0; i < scriptsToDisable.Length; i++) {
 			scriptsToDisable[i].enabled = false;
@@ -126,7 +127,7 @@ public class MissionWinFinisher : MonoBehaviour {
 		var mySave = DataSaver.s.GetCurrentSave();
 
 		// mission rewards, must do after the stuff above
-		mySave.currentRun.unclaimedRewards.Add($"s{Random.Range(10,20)}");
+		mySave.currentRun.unclaimedRewards.Add($"s{Random.Range(50,60)}");
 		mySave.currentRun.unclaimedRewards.Add($"m{rewardMoney}");
 		
 		var upgradeRewards = UpgradesController.s.GetRandomLevelRewards();
@@ -196,10 +197,12 @@ public class MissionWinFinisher : MonoBehaviour {
 
 
 	public void ContinueToStarterMenu() {
+		EnemyHealth.winSelfDestruct = true;
 		ClearOldRewards();
 		DataSaver.s.GetCurrentSave().currentRun.unclaimedRewards = new List<string>();
 		DataSaver.s.SaveActiveGame();
 		SceneLoader.s.BackToStarterMenuHardLoad();
+		
 	}
 	
 	void SetStarAmount(Image[] stars, int amount) {

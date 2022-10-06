@@ -5,7 +5,7 @@ using UnityEngine;
 using UnityStandardAssets.Utility;
 using Random = UnityEngine.Random;
 
-public class EnemyWave : MonoBehaviour, IShowOnDistanceRadar {
+public class EnemyWave : MonoBehaviour, IShowOnDistanceRadar, ISpeedForEngineSoundsProvider {
     public EnemyIdentifier myEnemy;
     public GameObject drawnEnemies;
     public float mySpeed;
@@ -21,7 +21,7 @@ public class EnemyWave : MonoBehaviour, IShowOnDistanceRadar {
     public Material safeMaterial;
 
     public float myXOffset = 0;
-    
+
     private void Start() {
         lineRenderer = GetComponentInChildren<LineRenderer>();
     }
@@ -51,34 +51,54 @@ public class EnemyWave : MonoBehaviour, IShowOnDistanceRadar {
     public float currentSpeed = 0;
     public float targetSpeed = 0;
     public float distance;
+    public float targetDistanceOffset;
+    public float currentDistanceOffset;
+    public float targetDistChangeTimer;
     public void UpdateBasedOnDistance(float playerPos) {
-        distance = Mathf.Abs(playerPos - wavePosition);
-        
+        if (SceneLoader.s.isLevelInProgress) {
+            distance = Mathf.Abs(playerPos - wavePosition);
 
-        if (!isWaveMoving) {
-            if (distance < 10)
-                isWaveMoving = true;
-        }
 
-        targetSpeed = Mathf.Min(mySpeed, Mathf.Max(distance, LevelReferences.s.speed)+0.2f);
+            if (!isWaveMoving) {
+                if (distance < 10)
+                    isWaveMoving = true;
+            }
 
-        if (isWaveMoving) {
-            if (playerPos < wavePosition) {
-                targetSpeed = Mathf.FloorToInt(LevelReferences.s.speed - 1) ;
+            targetSpeed = Mathf.Min(mySpeed, Mathf.Max(distance, LevelReferences.s.speed) + 0.2f);
+
+            if (isWaveMoving) {
+                if (playerPos < wavePosition) {
+                    targetSpeed = Mathf.FloorToInt(LevelReferences.s.speed - 1);
+                }
+
+
+                currentSpeed = Mathf.MoveTowards(currentSpeed, targetSpeed, speedChangeDelta * Time.deltaTime);
+
+                wavePosition += currentSpeed * Time.deltaTime;
+            }
+
+            transform.position = Vector3.forward * (wavePosition - playerPos + currentDistanceOffset - 0.2f) + Vector3.left * myXOffset;
+            currentDistanceOffset = Mathf.MoveTowards(currentDistanceOffset, targetDistanceOffset, currentSpeed / 2f * Time.deltaTime);
+
+            targetDistChangeTimer -= Time.deltaTime;
+            if (targetDistChangeTimer <= 0) {
+                targetDistChangeTimer = Random.Range(2f, 15f);
+                var trainLength = Train.s.GetTrainLength();
+                targetDistanceOffset = Random.Range(-trainLength, trainLength);
             }
 
 
-            currentSpeed = Mathf.MoveTowards(currentSpeed, targetSpeed, speedChangeDelta * Time.deltaTime);
-            
-            wavePosition += currentSpeed * Time.deltaTime;
-        }
-        
-        transform.position = Vector3.forward* (wavePosition - playerPos) + Vector3.left*myXOffset;
-        
-        if (distance > 10 && distance < 60) {
-            CreateRouteDisplay();
+            if (distance > 10 && distance < 60) {
+                CreateRouteDisplay();
+            } else {
+                DestroyRouteDisplay();
+            }
         } else {
-            DestroyRouteDisplay();
+            
+            transform.position = Vector3.forward * (wavePosition - playerPos + currentDistanceOffset - 0.2f) + Vector3.left * myXOffset;
+            wavePosition += currentSpeed * Time.deltaTime;
+            currentSpeed = Mathf.MoveTowards(currentSpeed, targetSpeed, speedChangeDelta * Time.deltaTime);
+            targetSpeed = mySpeed;
         }
     }
 
@@ -173,5 +193,9 @@ public class EnemyWave : MonoBehaviour, IShowOnDistanceRadar {
 
     public Sprite GetIcon() {
         return DataHolder.s.GetEnemy(myEnemy.enemyUniqueName).GetComponent<EnemySwarmMaker>().enemyIcon;
+    }
+
+    public float GetSpeed() {
+        return currentSpeed;
     }
 }

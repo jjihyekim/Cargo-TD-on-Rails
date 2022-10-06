@@ -53,8 +53,8 @@ public class MiniGUI_Star : MonoBehaviour {
 	}
 
 	public void ClickOnStar() {
-		//if (currentlyPlayerTravelable) {
+		if (currentlyPlayerTravelable) {
 			MapController.s.ShowStarInfo(myInfo);
-		//}
+		}
 	}
 }

@@ -57,6 +57,12 @@ public class EnemyWavesController : MonoBehaviour {
 
 			    enemy.curTime += Time.deltaTime;
 		    }
+	    } else {
+		    var playerDistance = SpeedController.s.currentDistance;
+		    
+		    for (int i = 0; i < waves.Count; i++) {
+			    waves[i].UpdateBasedOnDistance(playerDistance);
+		    }
 	    }
     }
 

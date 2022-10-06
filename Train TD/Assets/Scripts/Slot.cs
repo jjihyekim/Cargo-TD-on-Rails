@@ -55,10 +55,8 @@ public class Slot : MonoBehaviour/*, IPointerEnterHandler, IPointerExitHandler*/
 			return isAllEmpty;
 		} else {
 			if (slot == 0 && !building.canPointUp) {
-					Debug.LogError($"Wrong building slot provided given:{slot} correct:{1} due to {building.uniqueName} cannot point up");
 				slot = 1;
 			}else if (slot != 0 && !building.canPointSide) {
-					Debug.LogError($"Wrong building slot provided given:{slot} correct:{0} due to {building.uniqueName} cannot point sides");
 				slot = 0;
 			}
 			
@@ -76,20 +74,14 @@ public class Slot : MonoBehaviour/*, IPointerEnterHandler, IPointerExitHandler*/
 			for (int i = 0; i < myBuildings.Length; i++) {
 				myBuildings[i] = building;
 			}
-			if(slot != 0)
-				if(!fixSlot)
-					Debug.LogError($"Wrong building slot provided given:{slot} correct:{0} due to {building.uniqueName} entire slot occupation");
+			
 			slot = 0;
 
 			myBuildings[0].SetRotationBasedOnIndex(0, isFrontSlot);
 		} else {
 			if (slot == 0 && !building.canPointUp) {
-				if(!fixSlot)
-					Debug.LogError($"Wrong building slot provided given:{slot} correct:{1} due to {building.uniqueName} cannot point up");
 				slot = 1;
 			}else if (slot != 0 && !building.canPointSide) {
-				if(!fixSlot)
-					Debug.LogError($"Wrong building slot provided given:{slot} correct:{0} due to {building.uniqueName} cannot point sides");
 				slot = 0;
 			}
 			
@@ -105,8 +97,8 @@ public class Slot : MonoBehaviour/*, IPointerEnterHandler, IPointerExitHandler*/
 		myBuildings[slot].transform.localPosition = Vector3.zero;
 		
 		GetComponentInParent<Cart>().SlotsAreUpdated();
-		if(GetComponentInParent<Train>())
-			GetComponentInParent<Train>().trainWeight += building.weight;
+		if (GetComponentInParent<Train>())
+			GetComponentInParent<Train>().trainWeightDirty = true;
 	}
 
 	public void RemoveBuilding(TrainBuilding building) {
@@ -118,8 +110,9 @@ public class Slot : MonoBehaviour/*, IPointerEnterHandler, IPointerExitHandler*/
 		
 		building.mySlot = null;
 		
-		GetComponentInParent<Cart>().SlotsAreUpdated();
+		if(GetComponentInParent<Cart>())
+			GetComponentInParent<Cart>().SlotsAreUpdated();
 		if(GetComponentInParent<Train>())
-			GetComponentInParent<Train>().trainWeight -= building.weight;
+			GetComponentInParent<Train>().trainWeightDirty = true;
 	}
 }

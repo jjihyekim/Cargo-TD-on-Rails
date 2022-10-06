@@ -177,6 +177,11 @@ public class TrainBuilding : MonoBehaviour {
         Train.s.onLevelStateChanged.RemoveListener(OnLevelStateChanged);
     }
 
+    private void OnDestroy() {
+        if(mySlot != null)
+            mySlot.RemoveBuilding(this);
+    }
+
     public void CompleteBuilding(bool playSound = true) {
         isBuilt = true;
         SetGfxBasedOnRotation();

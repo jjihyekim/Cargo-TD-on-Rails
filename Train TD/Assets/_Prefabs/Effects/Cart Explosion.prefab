@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1046195756885079350}
   - component: {fileID: 6378122716270451896}
+  - component: {fileID: 8390361461870831541}
   m_Layer: 0
   m_Name: Cart Explosion
   m_TagString: Untagged
@@ -47,6 +48,21 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   slowBuildupSpeedPercentPerSecond: 0.2
   currentSpeedPercent: 0
+--- !u!114 &8390361461870831541
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1046195756885079355}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: da3087ec6d2956c4685e7b69646f49b9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  shakeAtStart: 1
+  shakeMagnitude: 1
+  shakeTime: 0.8
 --- !u!1 &5943011520292208098
 GameObject:
   m_ObjectHideFlags: 0
