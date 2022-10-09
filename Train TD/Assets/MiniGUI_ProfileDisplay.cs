@@ -24,9 +24,9 @@ public class MiniGUI_ProfileDisplay : MonoBehaviour {
 
 
     private void Update() {
-        fuelText.text = $"{mySave.currentRun.fuel}/{mySave.currentRun.maxFuel}";
-        moneyText.text = mySave.currentRun.money.ToString();
-        scrapsText.text = mySave.currentRun.scraps.ToString();
+        fuelText.text = $"{mySave.currentRun.myResources.fuel}/{mySave.currentRun.myResources.maxFuel}";
+        moneyText.text = mySave.currentRun.myResources.money.ToString();
+        scrapsText.text = mySave.currentRun.myResources.scraps.ToString();
         profileName.text = mySave.currentRun.character;
         playTime.text = SpeedController.GetNiceTime(mySave.currentRun.playtime);
     }

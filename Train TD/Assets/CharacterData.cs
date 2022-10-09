@@ -7,10 +7,7 @@ public class CharacterData : ScriptableObject {
 
     public Upgrade[] starterUpgrades;
     public DataSaver.TrainState starterTrain;
-    
-    
-    public int starterMoney = 0;
-    public int starterScraps = 200;
-    public int starterFuel = 50;
-    public int maxFuel = 100;
+
+
+    public DataSaver.RunResources starterResources;
 }

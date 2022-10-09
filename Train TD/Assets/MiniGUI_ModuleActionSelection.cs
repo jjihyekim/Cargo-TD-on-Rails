@@ -121,11 +121,11 @@ public class MiniGUI_ModuleActionSelection : MonoBehaviour {
 	    
 	    Vector2 mousePos = Mouse.current.position.ReadValue();
 	    var rect = reticle;
-	    var isOverRect = RectTransformUtility.RectangleContainsScreenPoint(rect, mousePos, MainCameraReference.s.uiCam);
+	    var isOverRect = RectTransformUtility.RectangleContainsScreenPoint(rect, mousePos, OverlayCamsReference.s.uiCam);
 
 	    for (int i = 0; i < extraRects.Count; i++) {
 		    if (extraRects[i] != null) {
-			    var isOverButton = RectTransformUtility.RectangleContainsScreenPoint(extraRects[i], mousePos, MainCameraReference.s.uiCam);
+			    var isOverButton = RectTransformUtility.RectangleContainsScreenPoint(extraRects[i], mousePos, OverlayCamsReference.s.uiCam);
 			    isOverRect = isOverRect || isOverButton;
 		    }
 	    }

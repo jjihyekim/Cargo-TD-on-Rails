@@ -15,7 +15,7 @@ public class MiniGUI_MoneyReward : MonoBehaviour
 
 
     public void GetRewards() {
-        DataSaver.s.GetCurrentSave().currentRun.money += money;
+        DataSaver.s.GetCurrentSave().currentRun.myResources.money += money;
         DataSaver.s.SaveActiveGame();
         Destroy(gameObject);
     }

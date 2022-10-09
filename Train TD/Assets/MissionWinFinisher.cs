@@ -62,9 +62,9 @@ public class MissionWinFinisher : MonoBehaviour {
 		
 		
 		// save our resources
-		mySave.currentRun.scraps = MoneyController.s.scraps;
+		mySave.currentRun.myResources.scraps = MoneyController.s.scraps;
 		mySave.currentRun.myTrain = Train.s.GetTrainState();
-		mySave.currentRun.fuel = (int)SpeedController.s.fuel;
+		mySave.currentRun.myResources.fuel = (int)SpeedController.s.fuel;
 		
 		DataSaver.s.SaveActiveGame();
 		

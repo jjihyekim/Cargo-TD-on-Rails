@@ -47,7 +47,7 @@ public class MissionLoseFinisher : MonoBehaviour {
                 {"character", myChar},
 				
                 { "remainingScraps", MoneyController.s.scraps },
-                { "remainingMoney", DataSaver.s.GetCurrentSave().currentRun.money },
+                { "remainingMoney", DataSaver.s.GetCurrentSave().currentRun.myResources.money },
                 
                 { "enemiesLeftAlive", EnemyHealth.enemySpawned - EnemyHealth.enemyKilled},
             }

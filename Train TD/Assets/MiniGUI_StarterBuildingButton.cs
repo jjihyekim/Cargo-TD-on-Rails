@@ -48,7 +48,7 @@ public class MiniGUI_StarterBuildingButton : MonoBehaviour {
 		building.GetComponent<ReturnCargoAction>().myButton = this;
 		
 
-		DataSaver.s.GetCurrentSave().currentRun.money -= mod.moneyCost;
+		DataSaver.s.GetCurrentSave().currentRun.myResources.money -= mod.moneyCost;
 		DataSaver.s.GetCurrentSave().currentRun.myTrain = Train.s.GetTrainState();
 		
 		DataSaver.s.SaveActiveGame();
@@ -74,7 +74,7 @@ public class MiniGUI_StarterBuildingButton : MonoBehaviour {
 	private void Update() {
 		var cost = mod.moneyCost;
 		var reward = mod.moneyReward;
-		canBuild = DataSaver.s.GetCurrentSave().currentRun.money >= cost && count > 0;
+		canBuild = DataSaver.s.GetCurrentSave().currentRun.myResources.money >= cost && count > 0;
 		costText.text = cost.ToString();
 		rewardText.text = $"+{reward}";
 		myButton.interactable = canBuild;
@@ -83,7 +83,7 @@ public class MiniGUI_StarterBuildingButton : MonoBehaviour {
 	public void ReturnCargo(ReturnCargoAction source) {
 		count += 1;
 		var cost = mod.moneyCost;
-		DataSaver.s.GetCurrentSave().currentRun.money += cost;
+		DataSaver.s.GetCurrentSave().currentRun.myResources.money += cost;
 		
 		Destroy(source.gameObject);
 		DataSaver.s.GetCurrentSave().currentRun.myTrain = Train.s.GetTrainState();

@@ -21,13 +21,13 @@ public class MiniGUI_BuySupplies : MonoBehaviour
 	//public TMP_Text costText;
 
 	public void Buy() {
-		curRun.money -= moneyCost;
+		curRun.myResources.money -= moneyCost;
 		switch (myType) {
 			case Types.fuel:
-				curRun.fuel += rewardAmount;
+				curRun.myResources.fuel += rewardAmount;
 				break;
 			case Types.scraps:
-				curRun.scraps += rewardAmount;
+				curRun.myResources.scraps += rewardAmount;
 				break;
 		}
 		
@@ -39,6 +39,6 @@ public class MiniGUI_BuySupplies : MonoBehaviour
 
 
 	private void Update() {
-		myButton.interactable = curRun.money >= moneyCost;
+		myButton.interactable = curRun.myResources.money >= moneyCost;
 	}
 }

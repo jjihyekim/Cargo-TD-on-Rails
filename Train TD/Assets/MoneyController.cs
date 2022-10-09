@@ -12,12 +12,26 @@ public class MoneyController : MonoBehaviour {
     }
 
 
-    public TMP_Text moneyText;
+    public ScrapBoxScript myScraps;
+    public ScrapBoxScript myAmmo;
 
     public int scraps = 50;
+    public int maxScraps = 200;
+    public int ammo = 50;
+    public int maxAmmo = 100;
 
     public void UpdateBasedOnLevelData() {
-        scraps = DataSaver.s.GetCurrentSave().currentRun.scraps;
+        var resources = DataSaver.s.GetCurrentSave().currentRun.myResources;
+        
+        scraps = resources.scraps;
+        maxScraps = resources.maxScraps;
+        myScraps.SetMaxScrap(resources.maxScraps);
+        myScraps.SetScrap(scraps);
+        
+        ammo = resources.ammo;
+        maxAmmo = resources.maxAmmo;
+        myAmmo.SetMaxScrap(resources.maxAmmo);
+        myAmmo.SetScrap(resources.ammo);
     }
 
 
@@ -31,17 +45,31 @@ public class MoneyController : MonoBehaviour {
                 perSecondMoneyCounter -= addition;
             }
             */
-
-            moneyText.text = scraps.ToString();
         }
     }
 
 
     public void SubtractScraps(int amount) {
         scraps -= amount;
+        scraps = Mathf.Clamp(scraps, 0, maxScraps);
+        myScraps.SetScrap(scraps);
     }
 
     public void AddScraps(int amount) {
         scraps += amount;
+        scraps = Mathf.Clamp(scraps, 0, maxScraps);
+        myScraps.SetScrap(scraps);
+    }
+    
+    public void SubtractAmmo(int amount) {
+        ammo -= amount;
+        ammo = Mathf.Clamp(ammo, 0, maxAmmo);
+        myAmmo.SetScrap(ammo);
+    }
+
+    public void AddAmmo(int amount) {
+        ammo += amount;
+        ammo = Mathf.Clamp(ammo, 0, maxAmmo);
+        myAmmo.SetScrap(ammo);
     }
 }

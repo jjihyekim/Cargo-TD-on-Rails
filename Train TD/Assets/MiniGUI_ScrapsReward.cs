@@ -15,7 +15,7 @@ public class MiniGUI_ScrapsReward : MonoBehaviour {
 
 
 	public void GetRewards() {
-		DataSaver.s.GetCurrentSave().currentRun.scraps += scraps;
+		DataSaver.s.GetCurrentSave().currentRun.myResources.scraps += scraps;
 		DataSaver.s.SaveActiveGame();
 		Destroy(gameObject);
 	}

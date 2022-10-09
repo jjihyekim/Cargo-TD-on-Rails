@@ -35,7 +35,13 @@ MonoBehaviour:
       - 
       - 
       healths: 000000000000000000000000000000000000000000000000
-  starterMoney: 200
-  starterScraps: 200
-  starterFuel: 50
-  maxFuel: 100
+  starterResources:
+    money: 200
+    scraps: 200
+    maxScraps: 400
+    ammo: 50
+    maxAmmo: 100
+    fuel: 25
+    maxFuel: 50
+    steam: 100
+    maxSteam: 100

@@ -29,8 +29,8 @@ public abstract class ModuleAction : UnlockableEffect {
 							_EngageAction();
 						}
 					} else {
-						if (DataSaver.s.GetCurrentSave().currentRun.scraps > cost) {
-							DataSaver.s.GetCurrentSave().currentRun.scraps -= cost;
+						if (DataSaver.s.GetCurrentSave().currentRun.myResources.scraps > cost) {
+							DataSaver.s.GetCurrentSave().currentRun.myResources.scraps -= cost;
 							curCooldown = cooldown;
 							_EngageAction();
 							DataSaver.s.SaveActiveGame();
@@ -42,7 +42,7 @@ public abstract class ModuleAction : UnlockableEffect {
 						curCooldown = cooldown;
 						_EngageAction();
 					} else {
-						DataSaver.s.GetCurrentSave().currentRun.scraps += -cost;
+						DataSaver.s.GetCurrentSave().currentRun.myResources.scraps += -cost;
 						curCooldown = cooldown;
 						_EngageAction();
 						DataSaver.s.SaveActiveGame();

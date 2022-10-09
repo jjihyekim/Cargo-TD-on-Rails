@@ -78,8 +78,8 @@ public class UpgradesController : MonoBehaviour {
 
 	public void BuyUpgrade(Upgrade toBuy) {
 		var mySave = DataSaver.s.GetCurrentSave();
-		if (!toBuy.isUnlocked && mySave.currentRun.money >= toBuy.shopCost) {
-			mySave.currentRun.money -= toBuy.shopCost;
+		if (!toBuy.isUnlocked && mySave.currentRun.myResources.money >= toBuy.shopCost) {
+			mySave.currentRun.myResources.money -= toBuy.shopCost;
 			GetUpgrade(toBuy);
 		}
 	}

@@ -198,10 +198,7 @@ public class DataSaver {
 		public List<string> upgrades = new List<string>();
 
 		public float playtime;
-		public int money = 0;
-		public int scraps = 200;
-		public int fuel = 25;
-		public int maxFuel = 50;
+		public RunResources myResources = new RunResources();
 
 		public List<string> unclaimedRewards = new List<string>();
 
@@ -213,10 +210,34 @@ public class DataSaver {
 				upgrades.Add(characterData.starterUpgrades[i].upgradeUniqueName);
 			}
 
-			money = characterData.starterMoney;
-			scraps = characterData.starterScraps;
-			fuel = characterData.starterFuel;
-			maxFuel = characterData.maxFuel;
+			myResources = characterData.starterResources.Copy();
+		}
+	}
+
+	[Serializable]
+	public class RunResources {
+		public int money = 200;
+		public int scraps = 200;
+		public int maxScraps = 400;
+		public int ammo = 50;
+		public int maxAmmo = 100;
+		public int fuel = 25;
+		public int maxFuel = 50;
+		public int steam = 100;
+		public int maxSteam = 100;
+
+		public RunResources Copy() {
+			var copy = new RunResources();
+			copy.money = money;
+			copy.scraps = scraps;
+			copy.maxScraps = maxScraps;
+			copy.ammo = ammo;
+			copy.maxAmmo = maxAmmo;
+			copy.fuel = fuel;
+			copy.maxFuel = maxFuel;
+			copy.steam = steam;
+			copy.maxSteam = maxSteam;
+			return copy;
 		}
 	}
 
