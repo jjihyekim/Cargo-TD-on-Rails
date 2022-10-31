@@ -154,7 +154,7 @@ public class Projectile : MonoBehaviour {
                 if (particle.gameObject != instantDestroy) {
                     particle.transform.SetParent(null);
                     particle.Stop();
-                    Destroy(particle.gameObject, 5f);
+                    Destroy(particle.gameObject, 1f);
                 }
             }
             

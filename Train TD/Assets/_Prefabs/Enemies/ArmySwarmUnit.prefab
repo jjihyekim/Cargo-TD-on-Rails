@@ -43,8 +43,7 @@ GameObject:
   - component: {fileID: 3038431739623073054}
   - component: {fileID: 3038431739623073049}
   - component: {fileID: 3038431739623073048}
-  - component: {fileID: 7970675599268963483}
-  - component: {fileID: 6756957768208578145}
+  - component: {fileID: 7440264286695437326}
   m_Layer: 14
   m_Name: ArmySwarmUnit
   m_TagString: Untagged
@@ -82,6 +81,7 @@ MonoBehaviour:
   maxHealth: 200
   currentHealth: 200
   scrapReward: 20
+  ammoReward: 5
   fuelReward: 20
   deathPrefab: {fileID: 2226602934599951851, guid: 3194e3df78498b049bf0fc925a059cce, type: 3}
   aliveObject: {fileID: 3038431740301894644}
@@ -126,6 +126,10 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   canPenetrateArmor: 0
+  ammoUsePerShot: 0
+  scrapUsePerShot: 0
+  fuelUsePerShot: 0
+  steamUsePerShot: 0
 --- !u!114 &3038431739623073049
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -159,7 +163,7 @@ MonoBehaviour:
     rotations: 
     rotationSpanOverride: 0
   myPossibleTargets: 01000000
---- !u!114 &7970675599268963483
+--- !u!114 &7440264286695437326
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -168,21 +172,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 3038431739623073044}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e03d89f262df7ef43ad10e8140eccbf4, type: 3}
+  m_Script: {fileID: 11500000, guid: b44c169ad6aaecd4bb7f7534554cbdfa, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &6756957768208578145
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3038431739623073044}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c000a03ade147ef4e8a60dfb7de82121, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
+  tooltip: {fileID: 0}
+  info: Hits hard and has lots of health.
 --- !u!1 &3038431740301894647
 GameObject:
   m_ObjectHideFlags: 0

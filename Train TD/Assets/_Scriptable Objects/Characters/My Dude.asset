@@ -12,36 +12,147 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a0c4fe353d996bd4ba6e61968d6269fe, type: 3}
   m_Name: My Dude
   m_EditorClassIdentifier: 
-  uniqueName: My Dude
-  starterUpgrades:
-  - {fileID: 11400000, guid: 9689f95a25c2a604da4233da4da6e7d3, type: 2}
-  - {fileID: 11400000, guid: 494fbaab215e62f4e8459a02ff7fb485, type: 2}
-  - {fileID: 11400000, guid: bb9a07f134773024ebcbc669ebedfeeb, type: 2}
-  starterTrain:
-    myCarts:
-    - buildings:
-      - Engine
-      - 
-      - 
-      - 
-      - 
-      - 
-      healths: 000000000000000000000000000000000000000000000000
-    - buildings:
-      - 
-      - 
-      - 
-      - 
-      - 
-      - 
-      healths: 000000000000000000000000000000000000000000000000
-  starterResources:
-    money: 200
-    scraps: 200
-    maxScraps: 400
-    ammo: 50
-    maxAmmo: 100
-    fuel: 25
-    maxFuel: 50
-    steam: 100
-    maxSteam: 100
+  myCharacter:
+    uniqueName: My Dude
+    description: Just your average dude. Starts with a regular gun and a regular
+      train.
+    starterUpgrades:
+    - {fileID: 11400000, guid: bb9a07f134773024ebcbc669ebedfeeb, type: 2}
+    starterModules:
+    - moduleUniqueName: Engine
+      amount: 2
+    - moduleUniqueName: AVR
+      amount: 2
+    starterTrain:
+      myCarts:
+      - buildingStates:
+        - uniqueName: engine
+          health: -1
+          ammo: -1
+          cargoCost: -1
+          cargoReward: -1
+        - uniqueName: 
+          health: -1
+          ammo: -1
+          cargoCost: -1
+          cargoReward: -1
+        - uniqueName: 
+          health: -1
+          ammo: -1
+          cargoCost: -1
+          cargoReward: -1
+        - uniqueName: 
+          health: -1
+          ammo: -1
+          cargoCost: -1
+          cargoReward: -1
+        - uniqueName: 
+          health: -1
+          ammo: -1
+          cargoCost: -1
+          cargoReward: -1
+        - uniqueName: 
+          health: -1
+          ammo: -1
+          cargoCost: -1
+          cargoReward: -1
+        - uniqueName: 
+          health: -1
+          ammo: -1
+          cargoCost: -1
+          cargoReward: -1
+        - uniqueName: 
+          health: -1
+          ammo: -1
+          cargoCost: -1
+          cargoReward: -1
+      - buildingStates:
+        - uniqueName: 
+          health: -1
+          ammo: -1
+          cargoCost: -1
+          cargoReward: -1
+        - uniqueName: 
+          health: -1
+          ammo: -1
+          cargoCost: -1
+          cargoReward: -1
+        - uniqueName: 
+          health: -1
+          ammo: -1
+          cargoCost: -1
+          cargoReward: -1
+        - uniqueName: 
+          health: -1
+          ammo: -1
+          cargoCost: -1
+          cargoReward: -1
+        - uniqueName: 
+          health: -1
+          ammo: -1
+          cargoCost: -1
+          cargoReward: -1
+        - uniqueName: 
+          health: -1
+          ammo: -1
+          cargoCost: -1
+          cargoReward: -1
+        - uniqueName: 
+          health: -1
+          ammo: -1
+          cargoCost: -1
+          cargoReward: -1
+        - uniqueName: 
+          health: -1
+          ammo: -1
+          cargoCost: -1
+          cargoReward: -1
+      - buildingStates:
+        - uniqueName: 
+          health: -1
+          ammo: -1
+          cargoCost: -1
+          cargoReward: -1
+        - uniqueName: 
+          health: -1
+          ammo: -1
+          cargoCost: -1
+          cargoReward: -1
+        - uniqueName: 
+          health: -1
+          ammo: -1
+          cargoCost: -1
+          cargoReward: -1
+        - uniqueName: 
+          health: -1
+          ammo: -1
+          cargoCost: -1
+          cargoReward: -1
+        - uniqueName: 
+          health: -1
+          ammo: -1
+          cargoCost: -1
+          cargoReward: -1
+        - uniqueName: 
+          health: -1
+          ammo: -1
+          cargoCost: -1
+          cargoReward: -1
+        - uniqueName: 
+          health: -1
+          ammo: -1
+          cargoCost: -1
+          cargoReward: -1
+        - uniqueName: 
+          health: -1
+          ammo: -1
+          cargoCost: -1
+          cargoReward: -1
+    starterResources:
+      money: 200
+      scraps: 200
+      maxScraps: 400
+      ammo: 50
+      maxAmmo: 100
+      fuel: 25
+      maxFuel: 150

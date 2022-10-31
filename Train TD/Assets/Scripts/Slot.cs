@@ -7,7 +7,7 @@ using UnityEngine.EventSystems;
 public class Slot : MonoBehaviour/*, IPointerEnterHandler, IPointerExitHandler*/ {
 	public bool isFrontSlot = false;
 	
-	public TrainBuilding[] myBuildings = new TrainBuilding[3];
+	public TrainBuilding[] myBuildings = new TrainBuilding[4];
 	public bool isCompletelyEmpty() {
 		var isAllSlotsEmpty = true;
 		for (int i = 0; i < myBuildings.Length; i++) {
@@ -54,16 +54,26 @@ public class Slot : MonoBehaviour/*, IPointerEnterHandler, IPointerExitHandler*/
 
 			return isAllEmpty;
 		} else {
-			if (slot == 0 && !building.canPointUp) {
-				slot = 1;
-			}else if (slot != 0 && !building.canPointSide) {
+			if (slot <= 1 && !building.canPointUp) {
+				slot = 2;
+			}else if (slot >1 && !building.canPointSide) {
 				slot = 0;
 			}
-			
-			if (slot >= 0 && slot <= myBuildings.Length) {
-				return myBuildings[slot] == null;
-			} else {
-				return false;
+
+			switch (slot) {
+				case 0:
+					case 1:
+					// top buildings occupy a "single" slot but can be rotated, hence occupying both
+					return myBuildings[0] == null && myBuildings[1] == null;
+					break;
+				case 2:
+					case 3:
+					return myBuildings[slot] == null;
+					break;
+				default:
+					Debug.LogError($"Illegal slot {slot}");
+					return false;
+					break;
 			}
 		}
 	}
@@ -79,9 +89,9 @@ public class Slot : MonoBehaviour/*, IPointerEnterHandler, IPointerExitHandler*/
 
 			myBuildings[0].SetRotationBasedOnIndex(0, isFrontSlot);
 		} else {
-			if (slot == 0 && !building.canPointUp) {
-				slot = 1;
-			}else if (slot != 0 && !building.canPointSide) {
+			if (slot <= 1 && !building.canPointUp) {
+				slot = 2;
+			}else if (slot >1 && !building.canPointSide) {
 				slot = 0;
 			}
 			
@@ -89,7 +99,9 @@ public class Slot : MonoBehaviour/*, IPointerEnterHandler, IPointerExitHandler*/
 				if(!fixSlot)
 					Debug.LogError($"Slot {slot} is already full but trying to put {building.uniqueName}");
 
+			
 			myBuildings[slot] = building;
+
 			myBuildings[slot].SetRotationBasedOnIndex(slot, isFrontSlot);
 		}
 
@@ -112,7 +124,10 @@ public class Slot : MonoBehaviour/*, IPointerEnterHandler, IPointerExitHandler*/
 		
 		if(GetComponentInParent<Cart>())
 			GetComponentInParent<Cart>().SlotsAreUpdated();
-		if(GetComponentInParent<Train>())
-			GetComponentInParent<Train>().trainWeightDirty = true;
+		var train = GetComponentInParent<Train>();
+		if (train != null) {
+			train.trainWeightDirty = true;
+			train.trainUpdatedThroughNonBuildingActions?.Invoke();
+		}
 	}
 }

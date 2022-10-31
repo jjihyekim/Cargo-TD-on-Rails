@@ -20,6 +20,9 @@ public class CheatsController : MonoBehaviour
 
     private void EngageCheat(InputAction.CallbackContext obj) {
         if (!SceneLoader.s.isLevelStarted()) {
+            if(SceneLoader.s.isProfileMenu())
+                ProfileSelectionMenu.s.StartGame();
+            
             StarterUIController.s.QuickStart();
 
             //DataSaver.s.GetCurrentSave().currentRun.money += 10000;

@@ -16,22 +16,27 @@ public class EnemyWavesController : MonoBehaviour {
 
 	public List<EnemyWave> waves = new List<EnemyWave>();
 
+	public bool enemiesInitialized = false;
     public void UpdateBasedOnLevelData() {
-	    var enemiesOnPath = SceneLoader.s.currentLevel.enemiesOnPath;
-	    for (int i = 0; i < enemiesOnPath.Length; i++) {
-		    SpawnEnemy(enemiesOnPath[i].enemyIdentifier, enemiesOnPath[i].distanceOnPath, enemiesOnPath[i].startMoving/*, enemiesOnPath[i].isLeft*/);
+	    enemiesInitialized = !SceneLoader.s.currentLevel.isEncounter;
+	    if (enemiesInitialized) {
+		    var enemiesOnPath = SceneLoader.s.currentLevel.enemiesOnPath;
+		    for (int i = 0; i < enemiesOnPath.Length; i++) {
+			    SpawnEnemy(enemiesOnPath[i].enemyIdentifier, enemiesOnPath[i].distanceOnPath, enemiesOnPath[i].startMoving /*, enemiesOnPath[i].isLeft*/);
+		    }
 	    }
     }
 
     void SpawnEnemy(EnemyIdentifier enemyIdentifier, float distance, bool startMoving) {
-	    var wave = Instantiate(enemyWavePrefab, transform).GetComponent<EnemyWave>();
+	    var wave = Instantiate(enemyWavePrefab, Vector3.forward*1000 + Vector3.left*1000, Quaternion.identity).GetComponent<EnemyWave>();
+	    wave.transform.SetParent(transform);
 	    wave.SetUp(enemyIdentifier, distance, startMoving, Random.value > 0.5f);
 	    waves.Add(wave);
     }
     
     void Update()
     {
-	    if (SceneLoader.s.isLevelInProgress) {
+	    if (SceneLoader.s.isLevelInProgress && enemiesInitialized) {
 
 		    var playerDistance = SpeedController.s.currentDistance;
 		    
@@ -46,6 +51,12 @@ public class EnemyWavesController : MonoBehaviour {
 				    if (enemy.curTime >= enemy.spawnInterval) {
 					    SpawnEnemy(enemy.enemyIdentifier, playerDistance - enemy.distanceFromTrain, true);
 					    enemy.curTime = 0;
+
+					    enemy.curIncreaseInNumberCount += 1;
+					    if (enemy.curIncreaseInNumberCount >= enemy.increaseInNumberInterval) {
+						    enemy.enemyIdentifier.enemyCount += 1;
+						    enemy.curIncreaseInNumberCount = 0;
+					    }
 				    }
 			    } else {
 				    if (enemy.curTime >= enemy.firstSpawnTime) {

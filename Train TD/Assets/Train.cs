@@ -22,6 +22,8 @@ public class Train : MonoBehaviour {
     public bool trainWeightDirty = false;
     private int trainWeight = 0;
 
+    public UnityEvent trainUpdatedThroughNonBuildingActions = new UnityEvent();
+
     public int GetTrainWeight() {
         if (!trainWeightDirty) {
             return trainWeight;
@@ -100,6 +102,7 @@ public class Train : MonoBehaviour {
         UpdateCartPositions();
 
         AddBuildingsToTrain(trainState);
+        trainUpdatedThroughNonBuildingActions?.Invoke();
     }
 
     public DataSaver.TrainState GetTrainState() {
@@ -110,29 +113,47 @@ public class Train : MonoBehaviour {
             var cartState = new DataSaver.TrainState.CartState();
 
             for (int j = 0; j < cartScript.frontSlot.myBuildings.Length; j++) {
-                if (cartScript.frontSlot.myBuildings[j] != null) {
-                    cartState.buildings[j] = cartScript.frontSlot.myBuildings[j].uniqueName;
-                    cartState.healths[j] = cartScript.frontSlot.myBuildings[j].GetCurrentHealth();
-                } else {
-                    cartState.buildings[j] = "";
-                    cartState.healths[j] = 0;
-                }
+                var buildingState = cartState.buildingStates[j];
+                var building = cartScript.frontSlot.myBuildings[j];
+                ApplyBuildingToState(building, buildingState);
             }
             
             for (int j = 0; j < cartScript.backSlot.myBuildings.Length; j++) {
-                if (cartScript.backSlot.myBuildings[j] != null) {
-                    cartState.buildings[j+3] = cartScript.backSlot.myBuildings[j].uniqueName;
-                    cartState.healths[j+3] = cartScript.backSlot.myBuildings[j].GetCurrentHealth();
-                } else {
-                    cartState.buildings[j+3] = "";
-                    cartState.healths[j+3] = 0;
-                }
+                var buildingState = cartState.buildingStates[j+4];
+                var building = cartScript.backSlot.myBuildings[j];
+                ApplyBuildingToState(building, buildingState);
             }
 
             trainState.myCarts.Add(cartState);
         }
 
         return trainState;
+    }
+
+    private static void ApplyBuildingToState(TrainBuilding building, DataSaver.TrainState.CartState.BuildingState buildingState) {
+        if (building != null) {
+            buildingState.uniqueName = building.uniqueName;
+            buildingState.health = building.GetCurrentHealth();
+
+            var cargo = building.GetComponent<CargoModule>();
+            if (cargo != null) {
+                buildingState.cargoCost = cargo.moneyCost;
+                buildingState.cargoReward = cargo.moneyReward;
+            } else {
+                buildingState.cargoCost = -1;
+                buildingState.cargoReward = -1;
+            }
+
+            var ammo = building.GetComponent<ModuleAmmo>();
+            
+            if (ammo != null) {
+                buildingState.ammo = ammo.curAmmo;
+            } else {
+                buildingState.ammo = -1;
+            }
+        } else {
+            buildingState.EmptyState();
+        }
     }
 
     void AddBuildingsToTrain(DataSaver.TrainState trainState) {
@@ -142,29 +163,46 @@ public class Train : MonoBehaviour {
             var cart = carts[i].GetComponent<Cart>();
 
             var skipCount = 0;
-            for (int j = 0; j < cartState.buildings.Count; j++) {
-                if (skipCount > 0) { // we skip the next two duplicates if the prev building was an entire slot building
+            for (int j = 0; j < cartState.buildingStates.Length; j++) {
+                if (skipCount > 0) { // we skip the next three duplicates if the prev building was an entire slot building
                     skipCount -= 1;
                     continue;
                 }
-                if (cartState.buildings[j].Length > 0) {
-                    var slot = j < 3 ? cart.frontSlot : cart.backSlot;
-                    AddBuildingToSlot(slot, j % 3, cartState.buildings[j], cartState.healths[j]);
-                    if (DataHolder.s.GetBuilding(cartState.buildings[j]).occupiesEntireSlot)
-                        skipCount = 2;
+
+                if (cartState.buildingStates[j].uniqueName.Length > 0) {
+                    var slot = j < 4 ? cart.frontSlot : cart.backSlot;
+                    var buildingScript = DataHolder.s.GetBuilding(cartState.buildingStates[j].uniqueName);
+                    if (buildingScript != null) {
+                        AddBuildingToSlot(slot, j % 4,buildingScript, cartState.buildingStates[j]);
+                        if (buildingScript.occupiesEntireSlot) {
+                            skipCount = 3;
+                        } else if (j%4 == 0) {//we skip the second top slot as it is just for forward/backward slot
+                            skipCount = 1;
+                        }
+                    }
                 }
             }
         }
     }
 
-    private static void AddBuildingToSlot(Slot slot, int slotIndex, string building, int health) {
-        var newBuilding = Instantiate(DataHolder.s.GetBuilding(building).gameObject).GetComponent<TrainBuilding>();
+    private static void AddBuildingToSlot(Slot slot, int slotIndex, TrainBuilding buildingScript, DataSaver.TrainState.CartState.BuildingState buildingState) {
+        var newBuilding = Instantiate(buildingScript.gameObject).GetComponent<TrainBuilding>();
         slot.AddBuilding(newBuilding, slotIndex);
-        if (health > 0) {
-            newBuilding.SetCurrentHealth(health);
+        if (buildingState.health > 0) {
+            newBuilding.SetCurrentHealth(buildingState.health);
         }
-        
-        newBuilding.CompleteBuilding();
+
+        if (buildingState.ammo >= 0) {
+            newBuilding.GetComponent<ModuleAmmo>().SetAmmo(buildingState.ammo);
+        }
+
+        if (buildingState.cargoCost >= 0) {
+            var cargo = newBuilding.GetComponent<CargoModule>();
+            cargo.moneyCost = buildingState.cargoCost;
+            cargo.moneyReward = buildingState.cargoReward;
+        }
+
+        newBuilding.CompleteBuilding(false);
     }
 
     public Transform AddTrainCartAtIndex(int index) {
@@ -217,6 +255,9 @@ public class Train : MonoBehaviour {
         
         if(carts.Count <= 0 && SceneLoader.s.isLevelInProgress)
             MissionLoseFinisher.s.MissionLost();
+        
+        
+        trainUpdatedThroughNonBuildingActions?.Invoke();
     }
 
     public UnityEvent onLevelStateChanged = new UnityEvent();

@@ -3,8 +3,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Serialization;
+using Random = UnityEngine.Random;
 
-public class EnemySwarmMaker : MonoBehaviour, IData
+public class EnemySwarmMaker : MonoBehaviour
 {
     public GameObject enemyPrefab;
     public Sprite enemyIcon;
@@ -21,6 +22,9 @@ public class EnemySwarmMaker : MonoBehaviour, IData
     };
 
     public int activeEnemies;
+    
+    public AudioClip[] enemyEnterSounds;
+    public AudioClip[] enemyDieSounds;
 
     public void SetData(float data) {
         var totalCount = Mathf.RoundToInt(data);
@@ -50,17 +54,23 @@ public class EnemySwarmMaker : MonoBehaviour, IData
 
                 n++;
             }
-
         }
     }
 
     public void EnemyDeath() {
         activeEnemies -= 1;
+        
+        if(!EnemyHealth.winSelfDestruct)
+            SoundscapeController.s.PlayEnemyDie(enemyDieSounds[Random.Range(0,enemyDieSounds.Length)]);
 
         if (activeEnemies == 0) {
             Destroy(GetComponentInParent<EnemyWave>().gameObject);
             Destroy(gameObject);
         }
+    }
+    
+    public void PlayEnemyEnterSound() {
+        SoundscapeController.s.PlayEnemyEnter(enemyEnterSounds[Random.Range(0,enemyEnterSounds.Length)]);
     }
 }
 

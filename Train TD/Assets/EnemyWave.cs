@@ -7,7 +7,7 @@ using Random = UnityEngine.Random;
 
 public class EnemyWave : MonoBehaviour, IShowOnDistanceRadar, ISpeedForEngineSoundsProvider {
     public EnemyIdentifier myEnemy;
-    public GameObject drawnEnemies;
+    public EnemySwarmMaker drawnEnemies;
     public float mySpeed;
 
     public MiniGUI_IncomingWave waveDisplay;
@@ -103,16 +103,21 @@ public class EnemyWave : MonoBehaviour, IShowOnDistanceRadar, ISpeedForEngineSou
     }
 
     void SpawnEnemy() {
-        drawnEnemies = Instantiate(DataHolder.s.GetEnemy(myEnemy.enemyUniqueName), transform);
+        drawnEnemies = Instantiate(DataHolder.s.GetEnemy(myEnemy.enemyUniqueName), transform).GetComponent<EnemySwarmMaker>();
         drawnEnemies.transform.ResetTransformation();
-        drawnEnemies.GetComponent<IData>()?.SetData(myEnemy.enemyCount);
+        drawnEnemies.SetData(myEnemy.enemyCount);
     }
 
     void DestroyRouteDisplay() {
         if (waveDisplay != null) {
             Destroy(waveDisplay.gameObject);
+            PlayEnemyEnterSound();
             //lineRenderer.enabled = false;
         }
+    }
+
+    void PlayEnemyEnterSound() {
+        drawnEnemies.PlayEnemyEnterSound();
     }
 
 

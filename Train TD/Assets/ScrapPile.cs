@@ -11,10 +11,14 @@ public class ScrapPile : MonoBehaviour {
     public int scrapAmount = 0;
     public bool isCollected = false;
 
-    public bool isScrap = false;
+    public enum RewardType {
+        ammo, fuel, scrap
+    }
+
+    public RewardType myType;
     
-    public void SetUp(int scrap, bool _isScrap) {
-        isScrap = _isScrap;
+    public void SetUp(int scrap, RewardType _type) {
+        myType = _type;
         scrapAmount = scrap;
         StickToGround();
         GetComponentInChildren<ScrapPileMaker>().MakePile(scrapAmount);
@@ -68,10 +72,18 @@ public class ScrapPile : MonoBehaviour {
             speed += Time.deltaTime * acc;
             
             if (distance < 0.01f) {
-                if(isScrap)
-                    MoneyController.s.AddScraps(scrapAmount);
-                else 
-                    SpeedController.s.AddFuel(scrapAmount);
+                switch (myType) {
+                    case RewardType.ammo:
+                        MoneyController.s.AddAmmo(scrapAmount);
+                        break;
+                    case RewardType.fuel:
+                        SpeedController.s.AddFuel(scrapAmount);
+                        break;
+                    case RewardType.scrap:
+                        MoneyController.s.AddScraps(scrapAmount);
+                        break;
+                }
+                    
                 
                 Destroy(gameObject);
             }

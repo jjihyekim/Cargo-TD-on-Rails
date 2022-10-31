@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 8727764750241672012}
   - component: {fileID: 3039176949979322514}
   - component: {fileID: -7476763475874578264}
+  - component: {fileID: 6193127909260925957}
   m_Layer: 0
   m_Name: Truck Swarm
   m_TagString: Untagged
@@ -54,6 +55,13 @@ MonoBehaviour:
     spread: 1
   - count: 9
     spread: 1.5
+  activeEnemies: 0
+  enemyEnterSounds:
+  - {fileID: 8300000, guid: c7cabe91c0c5aad498dbd65444b1de17, type: 3}
+  - {fileID: 8300000, guid: 1f80aec3f6e94124e8fe15c736558600, type: 3}
+  - {fileID: 8300000, guid: 2eb65a6bdb0dfa84d8cc55a4df69be24, type: 3}
+  enemyDieSounds:
+  - {fileID: 8300000, guid: c3a770767c607c44982bf4ed42c146c0, type: 3}
 --- !u!114 &-7476763475874578264
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -67,3 +75,16 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   myType: 0
+--- !u!114 &6193127909260925957
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8567764965066828291}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0cc01deab1bf7f14ba0e5cb44a21c12f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  uniqueName: Truck

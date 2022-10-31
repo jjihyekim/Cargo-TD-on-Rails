@@ -9,8 +9,9 @@ public class EnemyHealth : MonoBehaviour, IHealth {
 	public float maxHealth = 20f;
 	public float currentHealth = 20f;
 
-	[FormerlySerializedAs("moneyReward")] public int scrapReward = 25;
-	public int fuelReward = 2;
+	public int scrapReward = 10;
+	public int ammoReward = 10;
+	public int fuelReward = 10;
 
 
 	public GameObject deathPrefab;
@@ -60,7 +61,8 @@ public class EnemyHealth : MonoBehaviour, IHealth {
 		isAlive = false;
 		if (giveRewards) {
 			LevelReferences.s.SpawnScrapsAtLocation(scrapReward, aliveObject.transform.position);
-			LevelReferences.s.SpawnFuelAtLocation(fuelReward, aliveObject.transform.position + Vector3.forward);
+			LevelReferences.s.SpawnFuelAtLocation(fuelReward, aliveObject.transform.position + Vector3.forward/2f);
+			LevelReferences.s.SpawnAmmoAtLocation(ammoReward, aliveObject.transform.position + Vector3.left/2f);
 		}
 
 		var pos = aliveObject.position;

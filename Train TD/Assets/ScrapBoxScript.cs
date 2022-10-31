@@ -12,8 +12,7 @@ public class ScrapBoxScript : MonoBehaviour
 
     public Transform dropPointAndParent;
     public GameObject scrapPrefab;
-
-
+    
     public List<ScrapPieceScript> myScraps = new List<ScrapPieceScript>();
 
     public float maxScrap = 100;
@@ -22,25 +21,31 @@ public class ScrapBoxScript : MonoBehaviour
 
     public int maxPieces = 50;
     public float scrapPerPiece = 5;
+    [Tooltip("Pieces smaller than this won't be added")]
+    public float mininumChunkPercent = 0.2f;
 
     public TMP_Text uiText;
 
-    private float maxSize = 0.05f;
-    private float minSize = 0.01f;
+    public float maxSize = 0.05f;
+    public float minSize = 0.01f;
+    //public float minSizeCapacity = 50;
+    //public float maxSizeCapacity = 50;
+    
     public float scaler = 1f;
     public void SetMaxScrap(float amount) {
 	    maxScrap = amount;
-	    scrapPerPiece = 5;
-
-	    scaler = maxScrap;
-	    scaler = scaler.Remap(50, 400, 1.6f, 0.65f);
-	    Debug.Log(scaler);
+	    //scaler = maxScrap;
+	    //scaler = scaler.Remap(50, 400, 1.6f, 0.65f);
+	    //Debug.Log(scaler);
+	    scrapPerPiece = maxScrap / maxPieces;
     }
-
+    
 
     public void SetScrap(float amount) {
 	    if(Mathf.Approximately( curScrap, amount))
 		    return;
+
+	    amount = Mathf.Clamp(amount, 0, maxScrap);
 	    targetScraps = amount;
 
 	    uiText.text = $"{targetScraps:F0}/{maxScrap:F0}";
@@ -48,22 +53,25 @@ public class ScrapBoxScript : MonoBehaviour
 
     public float randomDropMagnitude = 0.3f;
 
-
     public float timer = 0;
     private void Update() {
-	    if (targetScraps > curScrap) {
-		    if (timer <= 0) {
-			    timer = 0.1f;
-			    AddScrap(targetScraps - curScrap);
-		    } else {
-			    timer -= Time.deltaTime;
-		    }
-	    }else if (targetScraps < curScrap) {
-		    if (timer <= 0) {
-			    timer = 0.1f;
-			    RemoveScrap(curScrap - targetScraps);
-		    } else {
-			    timer -= Time.deltaTime;
+	    var delta = Mathf.Abs(targetScraps - curScrap);
+
+	    if (delta > scrapPerPiece*mininumChunkPercent) {
+		    if (targetScraps > curScrap) {
+			    if (timer <= 0) {
+				    timer = 0.1f;
+				    AddScrap(targetScraps - curScrap);
+			    } else {
+				    timer -= Time.deltaTime;
+			    }
+		    } else if (targetScraps < curScrap) {
+			    if (timer <= 0) {
+				    timer = 0.1f;
+				    RemoveScrap(curScrap - targetScraps);
+			    } else {
+				    timer -= Time.deltaTime;
+			    }
 		    }
 	    }
     }
@@ -76,7 +84,11 @@ public class ScrapBoxScript : MonoBehaviour
 			var targetAmount = scrapPerPiece;
 			if (amount < scrapPerPiece)
 				targetAmount = amount;
-			scrapScript.SetUpScrapPiece(targetAmount / scrapPerPiece, maxSize * scaler, minSize * scaler);
+			
+			if(targetAmount < scrapPerPiece*mininumChunkPercent)
+				return;
+			
+			scrapScript.SetUpScrapPiece(targetAmount ,scrapPerPiece, maxSize * scaler, minSize * scaler);
 			myScraps.Add(scrapScript);
 			curScrap += targetAmount;
 		} else {
@@ -86,13 +98,14 @@ public class ScrapBoxScript : MonoBehaviour
 
 	void RemoveScrap(float amount) {
 		foreach (var scrap in myScraps.OrderBy(x => x.myAmount)) {
-			var realAmount = scrap.myAmount * scrapPerPiece;
+			var realAmount = scrap.myAmount;
 			if (amount >= realAmount) {
-				Destroy(scrap.gameObject);
+				scrap.DestroySelf();
 				myScraps.Remove(scrap);
 				curScrap -= realAmount;
 			} else {
-				scrap.SetUpScrapPiece((realAmount-amount)/scrapPerPiece,maxSize * scaler,minSize * scaler);
+				scrap.SetUpScrapPiece((realAmount-amount),scrapPerPiece,maxSize * scaler,minSize * scaler);
+				//print(realAmount - amount);
 				curScrap -= amount;
 				break;
 			}

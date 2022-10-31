@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.UI;
 
 public class MiniGUI_ModuleActionSelection : MonoBehaviour {
 
@@ -12,6 +13,7 @@ public class MiniGUI_ModuleActionSelection : MonoBehaviour {
 
 	private TrainBuilding myModule;
 	private EnemyHealth myEnemy;
+
 	
 	public void SetUp(TrainBuilding module) {
 		singleActionParent.DeleteAllChildren();
@@ -41,6 +43,7 @@ public class MiniGUI_ModuleActionSelection : MonoBehaviour {
 		CanvasRect = transform.root.GetComponent<RectTransform>();
 		UIRect = GetComponent<RectTransform>();
 		mainCam = LevelReferences.s.mainCam;
+		parentTransform = UIRect.parent;
 		Update();
 	}
 
@@ -61,6 +64,7 @@ public class MiniGUI_ModuleActionSelection : MonoBehaviour {
 		CanvasRect = transform.root.GetComponent<RectTransform>();
 		UIRect = GetComponent<RectTransform>();
 		mainCam = LevelReferences.s.mainCam;
+		parentTransform = UIRect.parent;
 		Update();
 	}
 	
@@ -75,12 +79,20 @@ public class MiniGUI_ModuleActionSelection : MonoBehaviour {
 	private Dictionary<TrainBuilding.Rots, Vector3> rotToOffset;
 
 
+	private Transform parentTransform;
 	private void Update() {
 		if (sourceTransform == null || ((myModule == null || !myModule.isBuilt) && (myEnemy == null))) {
 			PlayerModuleSelector.s.HideModuleActionSelector();
 		}
 
 		SetPosition();
+
+
+		var childIndex = UIRect.transform.GetSiblingIndex();
+
+		if (childIndex < parentTransform.childCount - 1) {
+			UIRect.transform.SetAsLastSibling();
+		}
 	}
 
 

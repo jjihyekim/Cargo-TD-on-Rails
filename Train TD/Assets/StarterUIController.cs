@@ -20,6 +20,7 @@ public class StarterUIController : MonoBehaviour {
 
 	public TMP_Text missionDistance;
 
+	public UnityEvent OnEnteredStarterUI = new UnityEvent();
 	public UnityEvent OnLevelChanged = new UnityEvent();
 	public UnityEvent OnLevelStarted = new UnityEvent();
 
@@ -27,27 +28,51 @@ public class StarterUIController : MonoBehaviour {
 	public GameObject starterUI;
 	public GameObject gameUI;
 	
+	
+	public bool levelSelected = false;
+	public int selectedLevelIndex = -1;
+	
 	public void BackToProfileSelection() {
 		starterUI.SetActive(false);
 		SceneLoader.s.OpenProfileScreen();
+		MusicPlayer.s.SwapMusicTracksAndPlay(false);
 	}
 
 	public void OpenStarterUI() {
 		starterUI.SetActive(true);
 		if (DataSaver.s.GetCurrentSave().currentRun.unclaimedRewards.Count > 0) {
-			SelectLevelAndStart(DataSaver.s.GetCurrentSave().currentRun.map.GetPlayerStar().level);
+			StartLevel(false);
 			MissionWinFinisher.s.ShowUnclaimedRewards();
+		} else {
+			OnEnteredStarterUI?.Invoke();
 		}
 	}
 
-	void StartLevel() {
-		ClearStaticTrackers();
-		
-		starterUI.SetActive(false);
-		gameUI.SetActive(true);
-		SceneLoader.s.StartLevel();
-		OnLevelStarted?.Invoke();
-		Train.s.LevelStateChanged();
+	public void StartLevel(bool legitStart = true) {
+		if (levelSelected) {
+			var playerStar = DataSaver.s.GetCurrentSave().currentRun.map.GetPlayerStar();
+			starterUI.SetActive(false);
+
+			if (!playerStar.outgoingConnectionLevels[selectedLevelIndex].isEncounter) {
+				ClearStaticTrackers();
+
+				gameUI.SetActive(true);
+				SceneLoader.s.StartLevel();
+				Train.s.LevelStateChanged();
+				
+				OnLevelStarted?.Invoke();
+
+				if (legitStart) {
+					RangeVisualizer.SetAllRangeVisualiserState(true);
+
+					SoundscapeController.s.PlayMissionStartSound();
+					MusicPlayer.s.SwapMusicTracksAndPlay(true);
+				}
+			} else {
+				SceneLoader.s.FinishLevel();
+				EncounterController.s.EngageEncounter(playerStar.outgoingConnectionLevels[selectedLevelIndex]);
+			}
+		}
 	}
 
 	void ClearStaticTrackers() {
@@ -58,18 +83,57 @@ public class StarterUIController : MonoBehaviour {
 		PlayerBuildingController.s.currentLevelStats = new Dictionary<string, PlayerBuildingController.BuildingData>();
 	}
 
-	public void SelectLevelAndStart(LevelData data) {
-		SceneLoader.s.SetCurrentLevel(data);
-		missionDistance.text = "Mission Length: " + data.missionDistance;
-		OnLevelChanged?.Invoke();
+	public void SelectLevelAndStart(StarState targetStar) {
+		SelectLevel(targetStar);
 		StartLevel();
+		/*var playerStar = DataSaver.s.GetCurrentSave().currentRun.map.GetPlayerStar();
 
-		RangeVisualizer.SetAllRangeVisualiserState(true);
+		for (int i = 0; i < playerStar.outgoingConnections.Count; i++) {
+			if (playerStar.outgoingConnections[i] == targetStar.starName) {
+				selectedLevelIndex = i;
+				break;
+			}
+		}
+
+		if (selectedLevelIndex == -1) {
+			Debug.LogError($"Illegal star target: {targetStar.starName}");
+			return;
+		}
+
+		if (!playerStar.outgoingConnectionLevels[selectedLevelIndex].isEncounter) {
+			SelectLevel(data);
+			StartLevel();
+		} else {
+			starterUI.SetActive(false);
+			EncounterController.s.EngageEncounter(data);
+		}*/
+	}
+
+	public void SelectLevel(StarState targetStar) {
+		var playerStar = DataSaver.s.GetCurrentSave().currentRun.map.GetPlayerStar();
+
+		for (int i = 0; i < playerStar.outgoingConnections.Count; i++) {
+			if (playerStar.outgoingConnections[i] == targetStar.starName) {
+				selectedLevelIndex = i;
+				break;
+			}
+		}
+
+		if (selectedLevelIndex == -1) {
+			Debug.LogError($"Illegal star target: {targetStar.starName}");
+			return;
+		}
+		
+		SceneLoader.s.SetCurrentLevel(playerStar.outgoingConnectionLevels[selectedLevelIndex]);
+		missionDistance.text = "Mission Length: " + playerStar.outgoingConnectionLevels[selectedLevelIndex].missionDistance;
+		levelSelected = true;
+		OnLevelChanged?.Invoke();
 	}
 
 
-	
 	public void QuickStart() {
-		SelectLevelAndStart(allLevels[0]);
+		var playerStar = DataSaver.s.GetCurrentSave().currentRun.map.GetPlayerStar();
+		var targetStar = DataSaver.s.GetCurrentSave().currentRun.map.GetStarWithName(playerStar.outgoingConnections[0]);
+		SelectLevelAndStart(targetStar);
 	}
 }

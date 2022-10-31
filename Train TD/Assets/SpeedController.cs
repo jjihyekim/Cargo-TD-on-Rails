@@ -21,8 +21,8 @@ public class SpeedController : MonoBehaviour, IShowOnDistanceRadar {
 
     public float enginePower = 0;
     public float enginePowerTarget = 0;
+    public float enginePowerBoost = 1f;
     public float enginePowerPlayerControl = 1f;
-    public float throttlePlayerControl = 1f;
     public float targetSpeed;
     public float speedMultiplier = 1.5f;
 
@@ -37,31 +37,21 @@ public class SpeedController : MonoBehaviour, IShowOnDistanceRadar {
 
     public float fuel;
     public float maxFuel;
-    public ScrapBoxScript fuelAmount;
+
+    //public TMP_Text fuelText;
     public TMP_Text fuelUseText;
+
     public Slider enginePowerSlider;
     public Image engineFill;
     public Color[] engineFillColors;
     public Color engineDisabledColor;
     public GameObject engineDisabledWarning;
-    public float fuelUseMultiplier = 0.25f;
-    public TMP_Text steamGenerationText;
-    public float steamGenerationMultiplier = 0.25f;
-    
-    
+
+    public ScrapBoxScript myFuelShower;
+    public ScrapBoxScript mySteamShower;
+
     public float steam;
     public float maxSteam;
-    public ScrapBoxScript steamAmount;
-    public TMP_Text steamUseText;
-    public Slider throttleSlider;
-    public Image throttleFill;
-    public Color[] throttleFillColors;
-    public Color throttleDisabledColor;
-    public GameObject throttleDisabledWarning;
-    public float steamUseMultiplier = 0.25f;
-
-    
-    
 
     public List<EngineModule> engines = new List<EngineModule>();
 
@@ -69,16 +59,14 @@ public class SpeedController : MonoBehaviour, IShowOnDistanceRadar {
         var myLevel = SceneLoader.s.currentLevel;
         missionDistance = myLevel.missionDistance;
         endTrainStation.startPos = Vector3.forward * missionDistance;
-        var currentResources = DataSaver.s.GetCurrentSave().currentRun.myResources;
-        fuel = currentResources.fuel;
-        maxFuel = currentResources.maxFuel;
-        steam = currentResources.steam;
-        maxSteam = currentResources.maxSteam;
-        
-        fuelAmount.SetScrap(fuel);
-        fuelAmount.SetMaxScrap(maxFuel);
-        steamAmount.SetScrap(steam);
-        steamAmount.SetMaxScrap(maxSteam);
+        enginePowerBoost = 1;
+        var myResources = DataSaver.s.GetCurrentSave().currentRun.myResources;
+        fuel = myResources.fuel;
+        maxFuel = myResources.maxFuel;
+        myFuelShower.SetMaxScrap(maxFuel);
+        maxSteam = engines.Count*100;
+        steam = maxSteam/2f;
+        mySteamShower.SetMaxScrap(maxSteam);
     }
 
     private void Start() {
@@ -87,15 +75,39 @@ public class SpeedController : MonoBehaviour, IShowOnDistanceRadar {
 
     public void AddEngine(EngineModule engineModule) {
         engines.Add(engineModule);
+        maxSteam = engines.Count*100;
+        mySteamShower.SetMaxScrap(maxSteam);
+
+        if (!SceneLoader.s.isLevelInProgress) {
+            steam = maxSteam/2f;
+        }
     }
 
     public void RemoveEngine(EngineModule engineModule) {
         engines.Remove(engineModule);
+        maxSteam = engines.Count*100;
+        mySteamShower.SetMaxScrap(maxSteam);
+        if (!SceneLoader.s.isLevelInProgress) {
+            steam = maxSteam/2f;
+        }
     }
     
 
     public float enginePowerChangeDelta = 100f;
 
+    public float fuelUseMultiplier = 1f;
+    public SpeedometerScript mySpeedometer;
+
+    public float steamPer100EnginePower = 1;
+    public float steamUsePercentage = 0.15f;
+    public float steamUseToEnginePowerConversion = 100;
+
+    public float debugSteamGeneration;
+    public float debugSteamUse;
+
+    public float excessPowerAccelerationBonus = 1f;
+
+    public float trainWeightMultiplier = 0.8f;
     private void Update() {
         if (SceneLoader.s.isLevelInProgress) {
             enginePowerTarget = 0;
@@ -103,33 +115,51 @@ public class SpeedController : MonoBehaviour, IShowOnDistanceRadar {
                 enginePowerTarget += engines[i].enginePower;
             }
             
-            
             var trainWeight = Train.s.GetTrainWeight();
             trainWeightText.text = trainWeight.ToString();
+            trainWeight = (int)(trainWeight * trainWeightMultiplier);
 
-            DoFuelAndPlayerThrottleControls();
-            DoSteamAndPlayerEngineControls();
-
-            var minSpeed = 0.5f / Train.s.carts.Count;
-            targetSpeed = 2 * (enginePower / trainWeight) + minSpeed;
-            var acceleration = 0.35f - (trainWeight/5000f);
-            acceleration = Mathf.Clamp(acceleration, 0.05f, 0.35f);
-            if (targetSpeed > LevelReferences.s.speed) {
-                var excessEnginePower = (enginePower / trainWeight);
-                acceleration += (excessEnginePower / 4f);
-            }
+            DoFuelAndPlayerEngineControls();
             
-            var steamGen = (enginePower/100) * throttlePlayerControl * steamGenerationMultiplier;
-            steam += steamGen * Time.deltaTime;
-            steamGenerationText.text = $"+{steamGen:F2}/s";
+            
+            var engineTarget = enginePowerTarget * enginePowerBoost * enginePowerPlayerControl;
+            enginePower = Mathf.MoveTowards(enginePower, engineTarget, enginePowerChangeDelta * Time.deltaTime);
+
+            var steamGenerationPerSecond = steamPer100EnginePower * (enginePower/100f);
+            debugSteamGeneration = steamGenerationPerSecond;
+            steam += steamGenerationPerSecond * Time.deltaTime;
+            
+            mySteamShower.SetScrap(steam);
+
+            var steamUsePerSecond = steam * steamUsePercentage;
+            debugSteamUse = steamUsePerSecond;
+            steam -= steamUsePerSecond*Time.deltaTime;
+            
+            mySteamShower.SetScrap(steam);
+
             steam = Mathf.Clamp(steam, 0, maxSteam);
 
+            var pressurePower = steamUsePerSecond * steamUseToEnginePowerConversion;
+            
 
-            enginePower = Mathf.MoveTowards(enginePower, enginePowerTarget * enginePowerPlayerControl, enginePowerChangeDelta * Time.deltaTime);
+            var minSpeed = 0.5f / Train.s.carts.Count;
+            targetSpeed = 2 * (pressurePower / (Mathf.Sqrt(trainWeight)*17)) + minSpeed;
+            var acceleration = 0.2f - (trainWeight/2000f);
+            acceleration = Mathf.Clamp(acceleration, 0.01f, 0.35f);
+            if (targetSpeed > LevelReferences.s.speed) {
+                var excessEnginePower = (pressurePower / trainWeight);
+                acceleration += excessEnginePower * excessPowerAccelerationBonus;
+            }
+
+
+            
             LevelReferences.s.speed = Mathf.MoveTowards(LevelReferences.s.speed, targetSpeed*speedMultiplier, acceleration * Time.deltaTime);
 
             trainSpeedText.text = $"{LevelReferences.s.speed:F1}";
+            mySpeedometer.SetSpeed(LevelReferences.s.speed);
             enginePowerText.text = enginePower.ToString("F0");
+            
+            myFuelShower.SetScrap(fuel);
 
             currentTime += Time.deltaTime;
             timeText.text = GetNiceTime(currentTime);
@@ -157,61 +187,46 @@ public class SpeedController : MonoBehaviour, IShowOnDistanceRadar {
         }
     }
 
-    void DoSteamAndPlayerEngineControls() {
-        var steamUse = (enginePowerTarget*enginePowerPlayerControl)/100 * steamUseMultiplier;
-        if (enginePowerPlayerControl > 1f) {
-            steamUse *= enginePowerPlayerControl;
+    private bool playedNoFuelSound = false;
+    void DoFuelAndPlayerEngineControls() {
+        var engineCountMultiplier = 1f;
+        if(engines.Count > 0)
+            engineCountMultiplier = ((engines.Count-1)/2f + 1)/engines.Count;
+
+        var fuelUse = (enginePowerTarget*enginePowerPlayerControl)/100 * fuelUseMultiplier;
+        if (enginePowerPlayerControl > 1.25f) {
+            fuelUse *= 1.2f;
+        }else if(enginePowerPlayerControl > 1f) {
+            fuelUse *= 1.1f;
         }else if (enginePowerPlayerControl <= 0.5f) {
-            steamUse *= 0.8f;
+            fuelUse *= 0.8f;
         }
 
-        steamUseText.text = $"-{steamUse:F2}/s";
+        fuelUse *= engineCountMultiplier;
 
-        if (steamUse > 0) {
-            steam -= steamUse * Time.deltaTime;
-            steam = Mathf.Clamp(steam, 0, maxSteam);
-            steamAmount.SetScrap(steam);
-        }
+        fuelUseText.text = $"-{fuelUse:F2}/s";
+        fuel -= fuelUse * Time.deltaTime;
+        fuel = Mathf.Clamp(fuel, 0, maxFuel);
 
-        if (steam <= 0) {
+        if (fuel <= 0) {
             enginePowerPlayerControl = 0;
             
             engineFill.color = engineDisabledColor;
             engineDisabledWarning.SetActive( true);
+            
+            if (!playedNoFuelSound) {
+                SoundscapeController.s.PlayNoMoreResource(DataSaver.RunResources.Types.fuel);
+                playedNoFuelSound = true;
+            }
         } else {
             enginePowerPlayerControl = enginePowerSlider.value/4f;
             
             engineFill.color = engineFillColors[(int)enginePowerSlider.value];
             engineDisabledWarning.SetActive( false);
-        }
-    }
-    
-    void DoFuelAndPlayerThrottleControls() {
-        var fuelUse = (enginePowerTarget*throttlePlayerControl)/100 * fuelUseMultiplier;
-        if (throttlePlayerControl > 1f) {
-            fuelUse *= throttlePlayerControl;
-        }else if (throttlePlayerControl <= 0.5f) {
-            fuelUse *= 0.8f;
-        }
-
-        fuelUseText.text = $"-{fuelUse:F2}/s";
-
-        if (fuelUse > 0) {
-            fuel -= fuelUse * Time.deltaTime;
-            fuel = Mathf.Clamp(fuel, 0, maxFuel);
-            fuelAmount.SetScrap(fuel);
-        }
-
-        if (fuel <= 0) {
-            throttlePlayerControl = 0;
             
-            throttleFill.color = throttleDisabledColor;
-            throttleDisabledWarning.SetActive( true);
-        } else {
-            throttlePlayerControl = throttleSlider.value/4f;
-            
-            throttleFill.color = throttleFillColors[(int)throttleSlider.value];
-            throttleDisabledWarning.SetActive( false);
+            if (playedNoFuelSound) {
+                playedNoFuelSound = false;
+            }
         }
     }
 
@@ -241,9 +256,18 @@ public class SpeedController : MonoBehaviour, IShowOnDistanceRadar {
         return GetNiceTime(currentTime);
     }
     
-    public void AddFuel(int amount) {
+    public void AddFuel(float amount) {
         fuel += amount;
         fuel = Mathf.Clamp(fuel, 0, maxFuel);
+    }
+    
+    public void SubtractFuel(float amount) {
+        fuel -= amount;
+        fuel = Mathf.Clamp(fuel, 0, maxFuel);
+    }
+
+    public void UseSteam(float amount) {
+        steam -= amount;
     }
 
     public float GetDistance() {

@@ -18,7 +18,9 @@ public class MiniGUI_DamageNumber : MonoBehaviour {
         canvasGroup = GetComponent<CanvasGroup>();
         target = _target.position;
 
-        targetWithOffset = Instantiate(new GameObject()).transform;
+        var obj = new GameObject("yeet");
+        obj.name = "damage numbers tracking object";
+        targetWithOffset = obj.transform;
         targetWithOffset.transform.position = target;
         GetComponent<UIElementFollowWorldTarget>().SetUp(targetWithOffset);
 

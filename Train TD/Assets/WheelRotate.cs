@@ -16,7 +16,7 @@ public class WheelRotate : MonoBehaviour {
     // angle = speed * (180/(pi r))
     private void Start() {
         radius = GetComponent<SphereCollider>().radius;
-        multiplier = 180 / (Mathf.PI * radius);
+        multiplier = (180 / (Mathf.PI * radius))*2 ;//double it because for some reason it is too slow
     }
 
     void Update()

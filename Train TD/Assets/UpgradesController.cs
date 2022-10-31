@@ -26,32 +26,59 @@ public class UpgradesController : MonoBehaviour {
 
 	public HashSet<string> unlockedUpgrades = new HashSet<string>();
 
-	public UnityEvent callWhenUpgradesChanged = new UnityEvent();
+	public UnityEvent callWhenUpgradesOrModuleAmountsChanged = new UnityEvent();
+
+	public Transform shopOptionsParent;
+	public GameObject shopOptionPrefab;
+
+	public MiniGUI_BuySupplies[] supplies;
 
 	private void Start() {
-		foreach (var upgrade in allUpgrades) {
-			upgrade.Initialize();
-		}
+		if (DataSaver.s.GetCurrentSave().isInARun) {
+			foreach (var upgrade in allUpgrades) {
+				upgrade.Initialize();
+			}
 
-		InitializeUpgradeButtons();
-		
-		callWhenUpgradesChanged?.Invoke();
+			StartCoroutine(InitializeUpgradeButtons());
+			DrawShopOptions();
+		}
 	}
 
-	void InitializeUpgradeButtons() {
+	void DrawShopOptions() {
+		shopOptionsParent.DeleteAllChildren();
+		
+		// must initialize supplies before shop modules so that they can set themselves up based on the save status
+		for (int i = 0; i < supplies.Length; i++) {
+			supplies[i].Setup();
+		}
+		var shopOptions = ModuleRewardsMaster.s.GetShopContent();
+
+
+		for (int i = 0; i < shopOptions.Length; i++) {
+			var option = Instantiate(shopOptionPrefab, shopOptionsParent).GetComponent<MiniGUI_BuyBuilding>();
+			option.Setup(shopOptions[i]);
+		}
+	}
+	
+	IEnumerator InitializeUpgradeButtons() {
 		myUpgradeCompounds = UpgradesParent.GetComponentsInChildren<MiniGUI_UpgradeCompound>(true);
-		myUpgradeButtons = UpgradesParent.GetComponentsInChildren<MiniGUI_UpgradeButton>(true);
 
 		foreach (var upgradeCompound in myUpgradeCompounds) {
 			upgradeCompound.Initialize();
 		}
 
+		yield return null;
+		
+		myUpgradeButtons = UpgradesParent.GetComponentsInChildren<MiniGUI_UpgradeButton>(true);
+
 		ChangeSelectedUpgrade(selectedUpgrade);
+		
+		callWhenUpgradesOrModuleAmountsChanged?.Invoke();
 	}
-	
+
 	public void SetUpgradeScreenStatus(bool isOpen) {
 		if (isOpen) {
-			InitializeUpgradeButtons();
+			StartCoroutine(InitializeUpgradeButtons());
 		} 
 	}
 
@@ -74,7 +101,31 @@ public class UpgradesController : MonoBehaviour {
 			}
 		}
 	}
-	
+
+
+	public void AddModulesToAvailableModules(TrainBuilding module, int count) {
+		var curRun = DataSaver.s.GetCurrentSave().currentRun;
+		TrainModuleHolder myHolder = null;
+		for (int i = 0; i < curRun.trainBuildings.Count; i++) {
+			if (curRun.trainBuildings[i].moduleUniqueName == module.uniqueName) {
+				myHolder = curRun.trainBuildings[i];
+				break;
+			}
+		}
+
+		if (myHolder == null) {
+			myHolder = new TrainModuleHolder();
+			myHolder.moduleUniqueName = module.uniqueName;
+			myHolder.amount = 0;
+			curRun.trainBuildings.Add(myHolder);
+		}
+
+		myHolder.amount += 1;
+		
+		DataSaver.s.SaveActiveGame();
+		
+		callWhenUpgradesOrModuleAmountsChanged?.Invoke();
+	}
 
 	public void BuyUpgrade(Upgrade toBuy) {
 		var mySave = DataSaver.s.GetCurrentSave();
@@ -92,8 +143,10 @@ public class UpgradesController : MonoBehaviour {
 			toGet.isUnlocked = true;
 			toGet.ApplyUpgradeEffects();
 
-			callWhenUpgradesChanged?.Invoke();
+			callWhenUpgradesOrModuleAmountsChanged?.Invoke();
 			DataSaver.s.SaveActiveGame();
+		} else {
+			AddModulesToAvailableModules(toGet.parentUpgrade.module, 1);
 		}
 	}
 
@@ -105,6 +158,10 @@ public class UpgradesController : MonoBehaviour {
 				if (allUpgrades[i].parentUpgrade.upgradeUniqueName == allUpgrades[i].upgradeUniqueName || allUpgrades[i].parentUpgrade.isUnlocked) {
 					eligibleRewards.Add(allUpgrades[i]);
 				} 
+			} else {
+				if (allUpgrades[i].parentUpgrade == allUpgrades[i]) {
+					eligibleRewards.Add(allUpgrades[i]);
+				}
 			}
 		}
 		

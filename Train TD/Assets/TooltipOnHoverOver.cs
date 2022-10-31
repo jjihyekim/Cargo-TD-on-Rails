@@ -4,20 +4,19 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
-public class TooltipOnHoverOver : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler {
+public class TooltipOnHoverOver : MonoBehaviour {
 
-	private float hoverOverTime = 0.8f;
 	private float curTimer = 0;
 
 	public Tooltip tooltip;
 
 	public bool pointerIn = false;
 	public bool displayingTooltip = false;
-	public void OnPointerEnter(PointerEventData eventData) {
+	public void OnPointerEnter() {
 		pointerIn = true;
 	}
 
-	public void OnPointerExit(PointerEventData eventData) {
+	public void OnPointerExit() {
 		pointerIn = false;
 		curTimer = 0;
 	}
@@ -27,7 +26,7 @@ public class TooltipOnHoverOver : MonoBehaviour, IPointerEnterHandler, IPointerE
 			if (!displayingTooltip) {
 				curTimer += Time.deltaTime;
 
-				if (curTimer >= hoverOverTime) {
+				if (curTimer >= TooltipsMaster.tooltipShowTime) {
 					ShowTooltip();
 				}
 			}

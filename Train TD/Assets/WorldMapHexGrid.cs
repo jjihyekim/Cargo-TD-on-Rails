@@ -61,7 +61,7 @@ public class WorldMapHexGrid : MonoBehaviour {
 	public int gridCount = 3;
 	void CreateGrids() {
 		for (int i = 0; i < gridCount; i++) {
-			var hex = new GameObject();
+			var hex = new GameObject("yeet");
 			hex.gameObject.name = "Hex Chunk";
 			hexParents.Add(hex.transform);
 			/*var rigid= hex.AddComponent<Rigidbody>();

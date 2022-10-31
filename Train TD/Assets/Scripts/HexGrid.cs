@@ -80,7 +80,7 @@ public class HexGrid : MonoBehaviour {
 	public int gridCount = 3;
 	void CreateGrids() {
 		for (int i = 0; i < gridCount; i++) {
-			var hex = new GameObject();
+			var hex = new GameObject("yeet");
 			hex.gameObject.name = "Hex Chunk";
 			/*var rigid= hex.AddComponent<Rigidbody>();
 			rigid.useGravity = false;

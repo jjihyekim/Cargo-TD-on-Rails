@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
@@ -19,7 +20,7 @@ public class FeedbackSender : MonoBehaviour {
     
     public bool isMenuActive = false;
     public GameObject menu;
-    public RectTransform menuRectArea;
+    public RectTransform[] menuRectArea;
 
     public ToggleGroup feedbackType;
     public TMP_InputField details;
@@ -38,9 +39,14 @@ public class FeedbackSender : MonoBehaviour {
         if (Mouse.current.leftButton.wasPressedThisFrame) {
             Vector2 mousePos = Mouse.current.position.ReadValue();
             if (isMenuActive) {
-                var rect1 = menuRectArea.GetComponent<RectTransform>();
-                var rect1Val = RectTransformUtility.RectangleContainsScreenPoint(rect1, mousePos, OverlayCamsReference.s.uiCam);
-                if (!rect1Val) {
+                var rectVal = false;
+                for (int i = 0; i < menuRectArea.Length; i++) {
+                    var rect = menuRectArea[i].GetComponent<RectTransform>();
+                    rectVal = rectVal || RectTransformUtility.RectangleContainsScreenPoint(rect, mousePos, OverlayCamsReference.s.uiCam);
+                    
+                }
+                
+                if (!rectVal) {
                     HideMenu();
                 }
             }
@@ -181,6 +187,15 @@ public class FeedbackSender : MonoBehaviour {
     void EmailCleanup() {
         if (!saveScreenshot.isOn) {
             DeleteScreenshot();
+        }
+    }
+
+    private void OnDisable() {
+        if (!saveScreenshot.isOn) {
+            if (pngPath != null && pngPath.Length > 0) {
+                new FileInfo(pngPath).Delete();
+                Debug.Log($"Screenshot deleted successfully: {pngPath}");
+            }
         }
     }
 

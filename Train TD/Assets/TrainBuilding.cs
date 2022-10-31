@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Sirenix.OdinInspector;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 public class TrainBuilding : MonoBehaviour {
 
@@ -10,6 +11,8 @@ public class TrainBuilding : MonoBehaviour {
     public string uniqueName = "unnamed";
 
     public Sprite Icon;
+
+    public AudioClip[] moduleBuiltSound;
 
     [ReadOnly] 
     public Slot mySlot;
@@ -37,6 +40,7 @@ public class TrainBuilding : MonoBehaviour {
 
     //public MonoBehaviour[] disabledWhenBuilding;
 
+    public int localShopCost = 100;
     public int cost = 50;
     public int weight = 50;
     
@@ -103,16 +107,17 @@ public class TrainBuilding : MonoBehaviour {
     };
     
     private Dictionary<Rots, int> rotationToIndex = new Dictionary<Rots, int>() {
-        {Rots.left, 0},
-        {Rots.forward, 1},
+        {Rots.forward, 0},
         {Rots.backwards, 1},
-        {Rots.right, 2},
+        {Rots.left, 2},
+        {Rots.right, 3},
     };
     
     private Dictionary<int, Rots> indexToRotation = new Dictionary<int, Rots>() {
-        { 0, Rots.left},
+        { 0, Rots.forward},
         { 1, Rots.backwards},
-        { 2, Rots.right},
+        { 2, Rots.left},
+        { 3, Rots.right},
     };
 
     public bool isBuilt = false;
@@ -186,8 +191,11 @@ public class TrainBuilding : MonoBehaviour {
         isBuilt = true;
         SetGfxBasedOnRotation();
         SetBuildingMode(!isBuilt);
-        if(playSound)
+        if (playSound) {
             GetComponentInChildren<ConstructionSounds>().PlayConstructionSound();
+            if(moduleBuiltSound.Length > 0)
+                SoundscapeController.s.PlayModuleBuilt(moduleBuiltSound[Random.Range(0, moduleBuiltSound.Length)]);
+        }
     }
     
     public int SetRotationBasedOnIndex(int index, bool isFrontSlot) {
@@ -369,7 +377,7 @@ public class TrainBuilding : MonoBehaviour {
         return (int)GetComponent<ModuleHealth>().currentHealth;
     }
 
-    public void SetCurrentHealth(int health) {
+    public void SetCurrentHealth(float health) {
         GetComponent<ModuleHealth>().currentHealth = health;
     }
     

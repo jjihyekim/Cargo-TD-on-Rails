@@ -15,6 +15,12 @@ public class MiniGUI_ModuleSingleAction : MonoBehaviour {
     public TMP_Text cooldown;
     public Slider curCooldown;
     public Button myButton;
+    
+    
+    public Image icon;
+	
+    public Sprite moneyCost;
+    public Sprite scrapCost;
 
     public MiniGUI_ModuleSingleAction SetUp(ModuleAction myAction) {
         this.myAction = myAction;
@@ -26,6 +32,18 @@ public class MiniGUI_ModuleSingleAction : MonoBehaviour {
         } else {
             cost.text = $"+{-myAction.cost}";
             cost.color = DataHolder.s.moneyBackColor;
+        }
+
+        switch (myAction.myType) {
+            case DataSaver.RunResources.Types.scraps:
+                icon.sprite = scrapCost;
+                break;
+            case DataSaver.RunResources.Types.money:
+                icon.sprite = moneyCost;
+                break;
+            default:
+                Debug.LogError($"Action type {myAction.myType} not implemented");
+            break;
         }
 
 

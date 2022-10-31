@@ -32,7 +32,7 @@ namespace O3DWB
         #region Private Static Functions
         private static ObjectGroup CreateNewObjectGroupWithUniqueName(string name, List<string> existingGroupNames)
         {
-            GameObject groupParent = new GameObject();
+            GameObject groupParent = new GameObject("yeet");
             UndoEx.RegisterCreatedGameObject(groupParent);
 
             ObjectGroup newObjectGroup = Octave3DWorldBuilder.ActiveInstance.CreateScriptableObject<ObjectGroup>();

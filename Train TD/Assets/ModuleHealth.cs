@@ -43,6 +43,7 @@ public class ModuleHealth : MonoBehaviour, IHealth, IActiveDuringCombat, IActive
     public void Die() {
         isDead = true;
         Instantiate(explodePrefab, transform.position, transform.rotation);
+        SoundscapeController.s.PlayModuleExplode();
         Destroy(healthBar.gameObject);
         
         buildingsDestroyed += 1;

@@ -7,11 +7,15 @@ public class ReturnCargoAction : ModuleAction, IActiveDuringShopping {
 	public MiniGUI_StarterBuildingButton myButton;
 	
 	protected override void _EngageAction() {
-		myButton.ReturnCargo(this);
+		myButton.ReturnCargo(GetComponent<TrainBuilding>());
 	}
 
 	public void ActivateForShopping() {
-		this.enabled = true;
+		if(myButton != null)
+			this.enabled = true;
+		else 
+			this.enabled = false;
+		
 	}
 
 	public void Disable() {

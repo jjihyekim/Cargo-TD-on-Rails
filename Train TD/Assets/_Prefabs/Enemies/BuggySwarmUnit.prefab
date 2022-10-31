@@ -1186,8 +1186,7 @@ GameObject:
   - component: {fileID: 2942942888468131768}
   - component: {fileID: 2942942888468131775}
   - component: {fileID: 2942942888468131774}
-  - component: {fileID: 4192769933199489092}
-  - component: {fileID: 3649343596253522010}
+  - component: {fileID: -5213072349006234106}
   m_Layer: 14
   m_Name: BuggySwarmUnit
   m_TagString: Untagged
@@ -1222,10 +1221,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1a7eab1db79f56c47b0647f898b7c2c9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxHealth: 30
-  currentHealth: 30
+  maxHealth: 20
+  currentHealth: 20
   scrapReward: 5
-  fuelReward: 5
+  ammoReward: 2
+  fuelReward: 10
   deathPrefab: {fileID: 7595974982892567073, guid: e237b4e98a04bba49a1b0358ac8cf0f8, type: 3}
   aliveObject: {fileID: 2942942886986099026}
   isAlive: 1
@@ -1269,6 +1269,10 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   canPenetrateArmor: 0
+  ammoUsePerShot: 0
+  scrapUsePerShot: 0
+  fuelUsePerShot: 0
+  steamUsePerShot: 0
 --- !u!114 &2942942888468131775
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1302,7 +1306,7 @@ MonoBehaviour:
     rotations: 
     rotationSpanOverride: 0
   myPossibleTargets: 01000000
---- !u!114 &4192769933199489092
+--- !u!114 &-5213072349006234106
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -1311,21 +1315,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 2942942888468131762}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e03d89f262df7ef43ad10e8140eccbf4, type: 3}
+  m_Script: {fileID: 11500000, guid: b44c169ad6aaecd4bb7f7534554cbdfa, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &3649343596253522010
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2942942888468131762}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c000a03ade147ef4e8a60dfb7de82121, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
+  tooltip: {fileID: 0}
+  info: Regular enemy with average everything.
 --- !u!1 &3043115728015220457
 GameObject:
   m_ObjectHideFlags: 0

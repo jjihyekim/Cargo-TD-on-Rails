@@ -677,9 +677,9 @@ GameObject:
   - component: {fileID: -5048292488576981045}
   - component: {fileID: 7605554476854228898}
   - component: {fileID: -5925618615010043299}
-  - component: {fileID: -6492455264289817050}
-  - component: {fileID: -8461885604784074741}
   - component: {fileID: -5413692381133718793}
+  - component: {fileID: 1513791444851784707}
+  - component: {fileID: -2279841472330544923}
   m_Layer: 0
   m_Name: RocketLauncher
   m_TagString: Untagged
@@ -720,11 +720,14 @@ MonoBehaviour:
   displayName: Rocket Launcher
   uniqueName: Rocket
   Icon: {fileID: 21300000, guid: fec227fc5b9ef8848bc5c349d122d353, type: 3}
+  moduleBuiltSound:
+  - {fileID: 8300000, guid: 5c52707c32006774c98dc889e3f840d3, type: 3}
   mySlot: {fileID: 0}
   canPointSide: 0
   canPointUp: 1
   canBeRotatedSides: 0
   canBeRotatedUp: 1
+  localShopCost: 150
   cost: 100
   weight: 25
   myRotation: 2
@@ -768,7 +771,7 @@ MonoBehaviour:
   fireDelay: 3
   fireBarrageCount: 1
   fireBarrageDelay: 0.5
-  projectileDamage: 20
+  projectileDamage: 40
   rotateSpeed: 10
   gunActive: 1
   CanShoot: 0
@@ -778,6 +781,10 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   canPenetrateArmor: 1
+  ammoUsePerShot: 3
+  scrapUsePerShot: 0
+  fuelUsePerShot: 3
+  steamUsePerShot: 0
 --- !u!114 &7641972898590985362
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -790,7 +797,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 526befd34cf41534caf067b5a62ca473, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  rotationSpan: 60
+  rotationSpan: 80
   range: 7
   myOverride:
     isOverride: 0
@@ -859,6 +866,7 @@ MonoBehaviour:
   isUnlocked: 1
   unlockingUpgrade: {fileID: 0}
   actionName: Sell
+  myType: 1
   cost: -50
   cooldown: -1
   curCooldown: 0
@@ -878,10 +886,7 @@ MonoBehaviour:
   curAmmo: 0
   maxAmmo: 100
   ammoPerShot: 5
-  damageMultiplier: 1.5
-  fireSpeedBoost: 1
-  ammoGivesArmorPenetration: 1
-  isUnlocked: 0
+  isUnlocked: 1
   unlockingUpgrade: {fileID: 11400000, guid: ff0b64170da4a224883a5aa5c9ff6f66, type: 2}
 --- !u!114 &-5925618615010043299
 MonoBehaviour:
@@ -898,6 +903,7 @@ MonoBehaviour:
   isUnlocked: 0
   unlockingUpgrade: {fileID: 11400000, guid: 3139769320654044683ab5c56c1efbb1, type: 2}
   actionName: Salvo
+  myType: 1
   cost: 50
   cooldown: 60
   curCooldown: 0
@@ -907,30 +913,6 @@ MonoBehaviour:
   rangeBoost: 2
   fireSpeedBoost: 20
   angleBoost: 30
---- !u!114 &-6492455264289817050
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2876656872020492522}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e03d89f262df7ef43ad10e8140eccbf4, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!114 &-8461885604784074741
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2876656872020492522}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c000a03ade147ef4e8a60dfb7de82121, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &-5413692381133718793
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -946,8 +928,43 @@ MonoBehaviour:
   isUnlocked: 1
   unlockingUpgrade: {fileID: 0}
   actionName: Repair
+  myType: 1
   cost: 25
   cooldown: -1
+  curCooldown: 0
+--- !u!114 &1513791444851784707
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2876656872020492522}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b44c169ad6aaecd4bb7f7534554cbdfa, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  tooltip:
+    text: Rockets go BOOM! Needs both fuel and ammo to work.
+  info: Rocket Launcher
+--- !u!114 &-2279841472330544923
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2876656872020492522}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d8b3a4bd1ddc40646b537648a04bdd51, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  isUnlocked: 1
+  unlockingUpgrade: {fileID: 0}
+  actionName: Move Gun
+  myType: 1
+  cost: 10
+  cooldown: 1
   curCooldown: 0
 --- !u!1 &2983896549083203264
 GameObject:

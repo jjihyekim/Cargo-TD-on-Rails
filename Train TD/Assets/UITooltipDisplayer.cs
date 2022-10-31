@@ -2,25 +2,25 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class UITooltipDisplayer : MonoBehaviour {
     public Tooltip myTooltip;
     public RectTransform targetRect;
 
-    public float mouseOverTimer = 1f;
     public float curTimer = 0;
 
     public bool showingTooltip = false;
     private void Update() {
         if (myTooltip != null) {
-            Vector2 localMousePosition = targetRect.InverseTransformPoint(Input.mousePosition);
-            if (targetRect.rect.Contains(localMousePosition)) {
+            Vector2 mousePos = Mouse.current.position.ReadValue();
+            if (RectTransformUtility.RectangleContainsScreenPoint(GetComponent<RectTransform>(), mousePos, OverlayCamsReference.s.uiCam)) {
                 curTimer += Time.deltaTime;
             } else {
                 curTimer = 0;
             }
 
-            if (curTimer > mouseOverTimer) {
+            if (curTimer > TooltipsMaster.tooltipShowTime) {
                 Show();
             } else {
                 Hide();

@@ -32,6 +32,8 @@ public class PlayerBuildingController : MonoBehaviour {
 
     BuildingDoneCallback finishBuildingCallback;
     GetTheFinishedBuilding returnFinishedBuilding;
+    public bool nextBuildIsFree = false;
+    public bool nextBuildSayVoiceline = true;
 
     private void Start() {
         StopBuilding();
@@ -106,15 +108,30 @@ public class PlayerBuildingController : MonoBehaviour {
                 var index = NormalToIndex(hit.normal);
 
                 if (index != -1 && index != lastRaycastIndex) {
-                    lastRaycastIndex = index;
-                    activeIndex = index;
-                    activeIndex = tempBuilding.SetRotationBasedOnIndex(index, true);
+                    if (index <= 1 && activeIndex <= 1) {
+                        //do nothing
+                    } else {
+                        lastRaycastIndex = index;
+                        activeIndex = index;
+                        activeIndex = tempBuilding.SetRotationBasedOnIndex(index, true);
+                    }
                     PlayerModuleSelector.s.playerBuildingDisableOverride = false;
                 }
             }
+            
+            var ranges = tempBuilding.GetComponentsInChildren<RangeVisualizer>();
+            for (int i = 0; i < ranges.Length; i++) {
+                ranges[i].ChangeVisualizerEdgeShowState(true);
+            }
+            
         } else {
             activeSlot = null;
             activeIndex = -2;
+            
+            var ranges = tempBuilding.GetComponentsInChildren<RangeVisualizer>();
+            for (int i = 0; i < ranges.Length; i++) {
+                ranges[i].ChangeVisualizerEdgeShowState(false);
+            }
         }
 
         UpdateCanBuildable();
@@ -122,15 +139,19 @@ public class PlayerBuildingController : MonoBehaviour {
 
     public static int NormalToIndex(Vector3 normal) {
         var index = -1;
-        if (Vector3.Angle(normal, Vector3.right) < 10) {
+        if (Vector3.Angle(normal, Vector3.up) < 10) {
             index = 0;
         }
-        if (Vector3.Angle(normal, Vector3.up) < 10) {
-            index = 1;
-        }
-        if (Vector3.Angle(normal, Vector3.left) < 10) {
+        
+        if (Vector3.Angle(normal, Vector3.right) < 10) {
             index = 2;
         }
+        
+        if (Vector3.Angle(normal, Vector3.left) < 10) {
+            index = 3;
+        }
+        
+        
 
         return index;
     }
@@ -190,10 +211,17 @@ public class PlayerBuildingController : MonoBehaviour {
                 
                 activeSlot.AddBuilding(newBuilding, activeIndex);
                 newBuilding.transform.position = activeSlot.transform.position;
-                newBuilding.CompleteBuilding();
+                newBuilding.CompleteBuilding(nextBuildSayVoiceline);
                 returnFinishedBuilding?.Invoke(newBuilding);
-                if (SceneLoader.s.isLevelStarted())
+                
+                if(!nextBuildIsFree)
                     MoneyController.s.SubtractScraps(newBuilding.cost);
+                nextBuildIsFree = false;
+                
+                if (!SceneLoader.s.isLevelInProgress) {
+                    DataSaver.s.GetCurrentSave().currentRun.myTrain = Train.s.GetTrainState();
+                    DataSaver.s.SaveActiveGame();
+                }
 
                 LogData(currentlyMultiBuilding, newBuilding);
 
@@ -337,7 +365,9 @@ public class PlayerBuildingController : MonoBehaviour {
     }
 
 
-    public void StartBuilding(TrainBuilding building, BuildingDoneCallback callback = null, GetTheFinishedBuilding buildingReturn = null) {
+    public void StartBuilding(TrainBuilding building, 
+        BuildingDoneCallback callback = null, GetTheFinishedBuilding buildingReturn = null, bool isFree = false, bool sayVoiceline = true
+        ) {
         inputActionMap.FindActionMap(buildingActionMap).Enable();
         inputActionMap.FindActionMap(nonbuildingActionMap).Disable();
         
@@ -353,9 +383,12 @@ public class PlayerBuildingController : MonoBehaviour {
         MenuToggle.HideAllToggleMenus();
         finishBuildingCallback = callback;
         returnFinishedBuilding = buildingReturn;
-        
+        nextBuildIsFree = isFree;
+        nextBuildSayVoiceline = sayVoiceline;
+
         Debug.Log($"Starting building: {building.displayName}");
     }
+
 
     public void StopBuilding() {
         inputActionMap.FindActionMap(buildingActionMap).Disable();

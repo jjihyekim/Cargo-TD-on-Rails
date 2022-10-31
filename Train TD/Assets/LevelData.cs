@@ -2,11 +2,13 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using Sirenix.OdinInspector;
+using Sirenix.Serialization;
 using UnityEngine;
 
 [Serializable]
 public class LevelData {
 	public string levelName = "unset";
+	public bool isEncounter = false;
 
 	public EnemyOnPathData[] enemiesOnPath;
 	public EnemyDynamicSpawnData[] dynamicSpawnEnemies;
@@ -14,9 +16,13 @@ public class LevelData {
 	[Header("Mission Length")]
 	public int missionDistance = 300;
 	
-	
 	public bool isRealLevel() {
 		return levelName != "unset";
+	}
+
+	public LevelData Copy() {
+		var serialized = SerializationUtility.SerializeValue(this, DataFormat.Binary);
+		return SerializationUtility.DeserializeValue<LevelData>(serialized, DataFormat.Binary);
 	}
 }
 
@@ -36,10 +42,14 @@ public class EnemyDynamicSpawnData {
 	public int distanceFromTrain = 30;
 	public float firstSpawnTime = 30;
 	public float spawnInterval = 30;
+
+	public int increaseInNumberInterval = 2;
 	[NonSerialized]
 	public float curTime = 0;
 	[NonSerialized]
 	public bool firstSpawned = false;
+	[NonSerialized] 
+	public int curIncreaseInNumberCount = 0;
 	//public bool isLeft = false;
 }
 
@@ -59,10 +69,4 @@ public class EnemyIdentifier{
 		}
 		return enemyNames;
 	}
-}
-
-
-
-public interface IData {
-	public void SetData(float data);
 }

@@ -43,8 +43,7 @@ GameObject:
   - component: {fileID: 2144092535843778896}
   - component: {fileID: 2144092535843778903}
   - component: {fileID: 2144092535843778902}
-  - component: {fileID: -7516049447118759473}
-  - component: {fileID: -3516316361053104066}
+  - component: {fileID: -3559663181302352896}
   m_Layer: 14
   m_Name: BikerSwarmUnit
   m_TagString: Untagged
@@ -82,6 +81,7 @@ MonoBehaviour:
   maxHealth: 10
   currentHealth: 10
   scrapReward: 2
+  ammoReward: 1
   fuelReward: 2
   deathPrefab: {fileID: 7789772247874358278, guid: d379c6693c04463469cb996bd3ec7d18, type: 3}
   aliveObject: {fileID: 2144092536254166970}
@@ -126,6 +126,10 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   canPenetrateArmor: 0
+  ammoUsePerShot: 0
+  scrapUsePerShot: 0
+  fuelUsePerShot: 0
+  steamUsePerShot: 0
 --- !u!114 &2144092535843778903
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -159,7 +163,7 @@ MonoBehaviour:
     rotations: 
     rotationSpanOverride: 0
   myPossibleTargets: 01000000
---- !u!114 &-7516049447118759473
+--- !u!114 &-3559663181302352896
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -168,21 +172,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 2144092535843778906}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e03d89f262df7ef43ad10e8140eccbf4, type: 3}
+  m_Script: {fileID: 11500000, guid: b44c169ad6aaecd4bb7f7534554cbdfa, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &-3516316361053104066
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2144092535843778906}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c000a03ade147ef4e8a60dfb7de82121, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
+  tooltip: {fileID: 0}
+  info: Tiny biker with a tiny gun. Too bad he brought friends.
 --- !u!1 &2144092536254166969
 GameObject:
   m_ObjectHideFlags: 0

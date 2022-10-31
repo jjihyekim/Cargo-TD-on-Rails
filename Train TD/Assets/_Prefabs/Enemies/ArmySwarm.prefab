@@ -54,6 +54,13 @@ MonoBehaviour:
     spread: 1
   - count: 9
     spread: 1.5
+  activeEnemies: 0
+  enemyEnterSounds:
+  - {fileID: 8300000, guid: 349a5a230c978644aa3e65c14d237c67, type: 3}
+  - {fileID: 8300000, guid: 0ecbc6dc43a428340854c5aa44d239a1, type: 3}
+  - {fileID: 8300000, guid: 89edf244b7eee194da5e96ece6fa39b5, type: 3}
+  enemyDieSounds:
+  - {fileID: 8300000, guid: a7307a066ee2e504480fc0dd242610e8, type: 3}
 --- !u!114 &123470354885627655
 MonoBehaviour:
   m_ObjectHideFlags: 0

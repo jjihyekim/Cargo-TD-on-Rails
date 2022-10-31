@@ -14,26 +14,27 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   myData:
     levelName: Smol Starts
+    isEncounter: 0
     enemiesOnPath:
     - enemyIdentifier:
         enemyUniqueName: Buggy
         enemyCount: 1
-      distanceOnPath: 30
+      distanceOnPath: 15
       startMoving: 0
     - enemyIdentifier:
         enemyUniqueName: Buggy
         enemyCount: 2
+      distanceOnPath: 45
+      startMoving: 0
+    - enemyIdentifier:
+        enemyUniqueName: Buggy
+        enemyCount: 3
       distanceOnPath: 90
       startMoving: 0
     - enemyIdentifier:
         enemyUniqueName: Buggy
         enemyCount: 3
-      distanceOnPath: 150
-      startMoving: 0
-    - enemyIdentifier:
-        enemyUniqueName: Buggy
-        enemyCount: 3
-      distanceOnPath: 400
+      distanceOnPath: 200
       startMoving: 0
     dynamicSpawnEnemies:
     - enemyIdentifier:
@@ -41,5 +42,6 @@ MonoBehaviour:
         enemyCount: 1
       distanceFromTrain: 30
       firstSpawnTime: 30
-      spawnInterval: 30
-    missionDistance: 500
+      spawnInterval: 40
+      increaseInNumberInterval: 3
+    missionDistance: 300

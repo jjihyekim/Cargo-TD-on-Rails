@@ -2,16 +2,10 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class QuickfireAction : ModuleAction, IActiveDuringCombat {
+public class QuickfireAction : ModuleActionTweakable, IActiveDuringCombat {
 
-	[Space]
-	public float actionTime = 10f;
-	public float initialDelay = 2f;
-	public float endDelay = 2f;
-	
-	public float fireSpeedBoost = 10f;
 	protected override void _EngageAction() {
-		GetComponent<GunModule>().fireDelay /= fireSpeedBoost;
+		GetComponent<GunModule>().fireDelay /= boost;
 		GetComponent<GunModule>().DeactivateGun();
 		
 		
@@ -26,7 +20,7 @@ public class QuickfireAction : ModuleAction, IActiveDuringCombat {
 	}
 
 	void StopAction() {
-		GetComponent<GunModule>().fireDelay *= fireSpeedBoost;
+		GetComponent<GunModule>().fireDelay *= boost;
 		GetComponent<GunModule>().DeactivateGun();
 		Invoke(nameof(ResumeShooting), endDelay);
 	}

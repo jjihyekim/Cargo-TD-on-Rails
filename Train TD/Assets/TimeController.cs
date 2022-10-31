@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.InputSystem;
 
 public class TimeController : MonoBehaviour {
@@ -13,16 +14,22 @@ public class TimeController : MonoBehaviour {
 
 
     public float currentTimeScale = 1f;
+    public bool isPaused = false;
 
-    private bool isPaused = false;
+    public UnityEvent<bool> PausedEvent = new UnityEvent<bool>();
+
     public void Pause() {
         isPaused = true;
         Time.timeScale = 0f;
+        
+        PausedEvent?.Invoke(true);
     }
 
     public void UnPause() {
         isPaused = false;
         Time.timeScale = currentTimeScale;
+        
+        PausedEvent?.Invoke(false);
     }
 
 

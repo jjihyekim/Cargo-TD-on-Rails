@@ -23,9 +23,7 @@ public class MiniGUI_UpgradeButton : MonoBehaviour {
 
     public void Initialize() {
         selectedOverlay.enabled = false;
-        if (myUpgrade != null) {
-            SetUp(myUpgrade);
-        }
+        SetUp(myUpgrade);
     }
 
     public void SetUp(Upgrade upgrade) {

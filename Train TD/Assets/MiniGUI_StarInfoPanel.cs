@@ -11,38 +11,42 @@ public class MiniGUI_StarInfoPanel : MonoBehaviour {
     public GameObject infoScreen;
     public TMP_Text starName;
 
-    public GameObject miniPortal;
-    public TMP_Text miniPortalText;
+    public GameObject bossDetected;
     public GameObject shipDetected;
-    public TMP_Text shipDetectedText;
+    public GameObject encounterDetected;
     
     private StarState currentStar;
-    public void Initialize(StarState star) {
+
+    public bool isTravel;
+    public void Initialize(StarState star, LevelData connectionLevel) {
         StopAllCoroutines();
         currentStar = star;
         starName.text = currentStar.starName;
 
-        miniPortal.SetActive(currentStar.isShop || currentStar.isBoss);
-        
-        if (currentStar.isBoss) {
-            miniPortalText.text = "Boss";
+        bossDetected.SetActive(star.isBoss);
+
+        if (!star.isBoss) {
+            var isEncounter = connectionLevel.isEncounter;
+            encounterDetected.SetActive(isEncounter);
+            shipDetected.SetActive(!isEncounter);
         } else {
-            miniPortalText.text = "Shop";
+            encounterDetected.SetActive(false);
+            shipDetected.SetActive(false);
         }
 
-        var shipSizeText = "Unknown Enemies";
-        /*if (currentStar.enemyShip.HullModule.DisplayName.Contains("SMALL")) {
-            shipSizeText = "Small Ship";
-        }else if (currentStar.enemyShip.HullModule.DisplayName.Contains("MEDIUM")) {
-            shipSizeText = "Medium Ship";
-        }else if (currentStar.enemyShip.HullModule.DisplayName.Contains("BIG")) {
-            shipSizeText = "Big Ship";
-        }*/
-
-        shipDetectedText.text = shipSizeText;
-        
-        
         gameObject.SetActive(true);
+    }
+    
+    public void Initialize(StarState sourceStar, StarState targetStar, LevelData connectionLevel) {
+        Initialize(targetStar, connectionLevel);
+        starName.text = $"{sourceStar.starName}\nto\n{targetStar.starName}";
+    }
+
+    public void SetSelectable(bool isSelectable) {
+        var buttons = GetComponentsInChildren<Button>();
+        for (int i = 0; i < buttons.Length; i++) {
+            buttons[i].interactable = isSelectable;
+        }
     }
 
     /*IEnumerator Scan() {
@@ -61,16 +65,27 @@ public class MiniGUI_StarInfoPanel : MonoBehaviour {
 
     
     private void Update() {
-        if (Mouse.current.leftButton.wasPressedThisFrame) {
-            Vector2 mousePos = Mouse.current.position.ReadValue();
-            if (!RectTransformUtility.RectangleContainsScreenPoint(GetComponent<RectTransform>(), mousePos, Camera.main)) {
-                Hide();
+        if (!isTravel) {
+            if (Mouse.current.leftButton.wasPressedThisFrame) {
+                Vector2 mousePos = Mouse.current.position.ReadValue();
+                if (!RectTransformUtility.RectangleContainsScreenPoint(GetComponent<RectTransform>(), mousePos, OverlayCamsReference.s.uiCam)) {
+                    Hide();
+                }
             }
         }
     }
 
     public void Travel() {
-        MapController.s.TravelToStar();
+        if (isTravel) {
+            MapController.s.StartTravelingToStar();
+        } else {
+            MapController.s.SelectStar();
+        }
+    }
+
+    public void CancelTravel() {
+        Hide();
+        SetUpBuyCargo.s.ClearPreviousCargo();
     }
 
     public void Hide() {

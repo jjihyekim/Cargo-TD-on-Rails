@@ -55,10 +55,9 @@ public class Pauser : MonoBehaviour {
 
 
     public void Pause() {
-        
-            pauseMenu.SetActive(true);
-            TimeController.s.Pause();
-            isPaused = true;
+        pauseMenu.SetActive(true);
+        TimeController.s.Pause();
+        isPaused = true;
     }
 
     public void Unpause() {

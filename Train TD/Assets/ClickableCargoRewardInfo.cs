@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class ClickableCargoRewardInfo : MonoBehaviour, IClickableInfo {
     private CargoModule myModule;
-
+    
     private void Start() {
         myModule = GetComponent<CargoModule>();
     }
@@ -14,7 +14,7 @@ public class ClickableCargoRewardInfo : MonoBehaviour, IClickableInfo {
     }
 
     public Tooltip GetTooltip() {
-        return null;
+        return new Tooltip() { text = $"Bring this cargo safely to the next city to earn {myModule.moneyReward} money" };;
     }
 
 }

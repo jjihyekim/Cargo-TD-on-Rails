@@ -7,6 +7,7 @@ public class RepairModule : MonoBehaviour, IActiveDuringCombat {
     private float curRepairDelay = 0.5f;
     public float repairDelay = 2;
     public float repairAmount = 25;
+    public float steamUsePerRepair = 0.5f;
     
     private Cart myCart;
     private Train myTrain;
@@ -22,6 +23,7 @@ public class RepairModule : MonoBehaviour, IActiveDuringCombat {
     void Update() {
         if (curRepairDelay <= 0) {
             BreadthFirstRepairSearch();
+            SpeedController.s.UseSteam(steamUsePerRepair);
             curRepairDelay = repairDelay;
         } else {
             curRepairDelay -= Time.deltaTime;

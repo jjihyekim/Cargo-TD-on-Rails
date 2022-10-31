@@ -56,7 +56,7 @@ public class MiniGUI_IncomingWave : MonoBehaviour {
         var halfHeightLimit = (CanvasRect.rect.height - (UIRect.rect.height + edgeGive)) / 2f;
         WorldObject_ScreenPosition.x = Mathf.Clamp(WorldObject_ScreenPosition.x,
             -halfWidthLimit,
-            halfWidthLimit
+            halfWidthLimit - (0.1f * CanvasRect.rect.width)
         );
         WorldObject_ScreenPosition.y = Mathf.Clamp(WorldObject_ScreenPosition.y,
             -halfHeightLimit + (0.2f * CanvasRect.rect.height),

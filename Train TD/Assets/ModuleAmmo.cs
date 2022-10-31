@@ -9,22 +9,12 @@ public class ModuleAmmo : MonoBehaviour, IResupplyAble {
     public int maxAmmo = 100;
     public int ammoPerShot = 5;
 
-    public float damageMultiplier = 2f;
-    public float fireSpeedBoost = 1f;
-
-    private float defFireDelay;
-    private float defDamage;
-
     private GunModule myGunModule;
-
-    private bool isUsingSpecialAmmo = false;
-
-    public bool ammoGivesArmorPenetration = true;
-
     public bool isUnlocked = false;
     public Upgrade unlockingUpgrade;
     
     private  void Start() {
+        this.enabled = false;
         if (!isUnlocked) {
             if (UpgradesController.s.unlockedUpgrades.Contains(unlockingUpgrade.upgradeUniqueName)) {
                 isUnlocked = true;
@@ -38,13 +28,7 @@ public class ModuleAmmo : MonoBehaviour, IResupplyAble {
         }
 
         myGunModule = GetComponent<GunModule>();
-        defDamage = myGunModule.projectileDamage;
-        defFireDelay = myGunModule.fireDelay;
         myGunModule.barrageShot.AddListener(UseAmmo);
-
-        if (myGunModule.canPenetrateArmor) {
-            ammoGivesArmorPenetration = false;
-        }
     }
 
     public bool ShowAmmoBar() {
@@ -68,30 +52,8 @@ public class ModuleAmmo : MonoBehaviour, IResupplyAble {
         UpdateModuleState();
     }
 
-    private bool isCurrentlyUsingSpecialAmmo = false;
     void UpdateModuleState() {
-        isUsingSpecialAmmo = curAmmo > ammoPerShot;
-
-        if (isCurrentlyUsingSpecialAmmo != isUsingSpecialAmmo) {
-            if (isUsingSpecialAmmo) {
-                myGunModule.projectileDamage *= damageMultiplier;
-                myGunModule.fireDelay /= fireSpeedBoost;
-
-                if (ammoGivesArmorPenetration) {
-                    myGunModule.canPenetrateArmor = true;
-                }
-                
-            } else {
-                myGunModule.projectileDamage /= damageMultiplier;
-                myGunModule.fireDelay *= fireSpeedBoost;
-                
-                if (ammoGivesArmorPenetration) {
-                    myGunModule.canPenetrateArmor = false;
-                }
-            }
-        }
-
-        isCurrentlyUsingSpecialAmmo = isUsingSpecialAmmo;
+        myGunModule.CanShoot = curAmmo >= ammoPerShot;
     }
 
     public int MissingSupplies() {
@@ -100,5 +62,9 @@ public class ModuleAmmo : MonoBehaviour, IResupplyAble {
 
     public Transform GetResupplyEffectSpawnTransform() {
         return transform;
+    }
+
+    public void SetAmmo(int ammo) {
+        curAmmo = ammo;
     }
 }

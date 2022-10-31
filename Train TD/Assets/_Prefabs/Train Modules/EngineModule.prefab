@@ -4960,7 +4960,7 @@ AudioSource:
   m_GameObject: {fileID: 312933283592938120}
   m_Enabled: 1
   serializedVersion: 4
-  OutputAudioMixerGroup: {fileID: 0}
+  OutputAudioMixerGroup: {fileID: 4226279657425738903, guid: 660d07ac376d6214b99c5d084e20d01f, type: 2}
   m_audioClip: {fileID: 0}
   m_PlayOnAwake: 0
   m_Volume: 0.4
@@ -5087,7 +5087,7 @@ AudioSource:
   m_GameObject: {fileID: 541250411011283989}
   m_Enabled: 1
   serializedVersion: 4
-  OutputAudioMixerGroup: {fileID: 0}
+  OutputAudioMixerGroup: {fileID: 4226279657425738903, guid: 660d07ac376d6214b99c5d084e20d01f, type: 2}
   m_audioClip: {fileID: 8300000, guid: bfc0dfeaa04791b4ab0f77610c66a6c4, type: 3}
   m_PlayOnAwake: 1
   m_Volume: 0.1
@@ -10086,7 +10086,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &4431747873971229637
 Transform:
   m_ObjectHideFlags: 0
@@ -20006,7 +20006,7 @@ AudioSource:
   m_GameObject: {fileID: 1970872807041473464}
   m_Enabled: 1
   serializedVersion: 4
-  OutputAudioMixerGroup: {fileID: 0}
+  OutputAudioMixerGroup: {fileID: 4226279657425738903, guid: 660d07ac376d6214b99c5d084e20d01f, type: 2}
   m_audioClip: {fileID: 8300000, guid: bfc0dfeaa04791b4ab0f77610c66a6c4, type: 3}
   m_PlayOnAwake: 1
   m_Volume: 0.1
@@ -20549,7 +20549,7 @@ AudioSource:
   m_GameObject: {fileID: 2675438988464570213}
   m_Enabled: 1
   serializedVersion: 4
-  OutputAudioMixerGroup: {fileID: 0}
+  OutputAudioMixerGroup: {fileID: 4226279657425738903, guid: 660d07ac376d6214b99c5d084e20d01f, type: 2}
   m_audioClip: {fileID: 8300000, guid: 4d785aa41837d9544a53d651d68f3257, type: 3}
   m_PlayOnAwake: 1
   m_Volume: 1
@@ -20676,7 +20676,7 @@ AudioSource:
   m_GameObject: {fileID: 2712839456802974046}
   m_Enabled: 1
   serializedVersion: 4
-  OutputAudioMixerGroup: {fileID: 0}
+  OutputAudioMixerGroup: {fileID: 4226279657425738903, guid: 660d07ac376d6214b99c5d084e20d01f, type: 2}
   m_audioClip: {fileID: 0}
   m_PlayOnAwake: 0
   m_Volume: 0.4
@@ -20803,7 +20803,7 @@ AudioSource:
   m_GameObject: {fileID: 2775935578601208457}
   m_Enabled: 1
   serializedVersion: 4
-  OutputAudioMixerGroup: {fileID: 0}
+  OutputAudioMixerGroup: {fileID: 4226279657425738903, guid: 660d07ac376d6214b99c5d084e20d01f, type: 2}
   m_audioClip: {fileID: 8300000, guid: 4d785aa41837d9544a53d651d68f3257, type: 3}
   m_PlayOnAwake: 1
   m_Volume: 0.7
@@ -26175,7 +26175,7 @@ AudioSource:
   m_GameObject: {fileID: 3034904442741351674}
   m_Enabled: 1
   serializedVersion: 4
-  OutputAudioMixerGroup: {fileID: 0}
+  OutputAudioMixerGroup: {fileID: 4226279657425738903, guid: 660d07ac376d6214b99c5d084e20d01f, type: 2}
   m_audioClip: {fileID: 8300000, guid: 4d785aa41837d9544a53d651d68f3257, type: 3}
   m_PlayOnAwake: 1
   m_Volume: 1
@@ -31529,8 +31529,9 @@ GameObject:
   - component: {fileID: 1657592566804371533}
   - component: {fileID: 8099302677170761538}
   - component: {fileID: -5921104565242264179}
-  - component: {fileID: -7834070156642343872}
   - component: {fileID: -8062254177491749771}
+  - component: {fileID: 7680171318465439623}
+  - component: {fileID: 8165811245893185045}
   m_Layer: 0
   m_Name: EngineModule
   m_TagString: Untagged
@@ -31571,11 +31572,14 @@ MonoBehaviour:
   displayName: Engine Module
   uniqueName: Engine
   Icon: {fileID: 21300000, guid: 889b1f9ff81b88041a3788953b9a4bb1, type: 3}
+  moduleBuiltSound:
+  - {fileID: 8300000, guid: 0716e7b1b9f906147ab360341b1dac04, type: 3}
   mySlot: {fileID: 0}
   canPointSide: 0
   canPointUp: 0
   canBeRotatedSides: 0
   canBeRotatedUp: 0
+  localShopCost: 200
   cost: 100
   weight: 50
   myRotation: 0
@@ -31601,7 +31605,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: afb08d649479059448083408d2f118e9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  enginePower: 200
+  enginePower: 300
 --- !u!114 &8022081648539341584
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -31664,6 +31668,7 @@ MonoBehaviour:
   isUnlocked: 1
   unlockingUpgrade: {fileID: 0}
   actionName: Sell
+  myType: 1
   cost: -50
   cooldown: -1
   curCooldown: 0
@@ -31683,6 +31688,7 @@ MonoBehaviour:
   isUnlocked: 0
   unlockingUpgrade: {fileID: 11400000, guid: c1365fbf018b8d54582197f3f3222bf8, type: 2}
   actionName: Overload
+  myType: 1
   cost: 50
   cooldown: 120
   curCooldown: 0
@@ -31703,6 +31709,7 @@ MonoBehaviour:
   isUnlocked: 0
   unlockingUpgrade: {fileID: 11400000, guid: e9f31f3927636234aae2fa4233ff98ff, type: 2}
   actionName: Stop
+  myType: 1
   cost: 0
   cooldown: 60
   curCooldown: 0
@@ -31711,18 +31718,6 @@ MonoBehaviour:
   scrapChunkAmount: 10
   initialDelay: 2
   dropDistance: {x: 2, y: 5}
---- !u!114 &-7834070156642343872
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4191698785256518694}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e03d89f262df7ef43ad10e8140eccbf4, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &-8062254177491749771
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -31738,9 +31733,38 @@ MonoBehaviour:
   isUnlocked: 1
   unlockingUpgrade: {fileID: 0}
   actionName: Repair
+  myType: 1
   cost: 25
   cooldown: -1
   curCooldown: 0
+--- !u!114 &7680171318465439623
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4191698785256518694}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 42a2f1756d052d44ba1769b3301a1c66, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  uniqueName: Engine
+--- !u!114 &8165811245893185045
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4191698785256518694}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b44c169ad6aaecd4bb7f7534554cbdfa, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  tooltip:
+    text: You need this to go forward!
+  info: Engine Module
 --- !u!1 &4193415880286589700
 GameObject:
   m_ObjectHideFlags: 0
@@ -52538,7 +52562,7 @@ AudioSource:
   m_GameObject: {fileID: 7004699154241675681}
   m_Enabled: 1
   serializedVersion: 4
-  OutputAudioMixerGroup: {fileID: 0}
+  OutputAudioMixerGroup: {fileID: 4226279657425738903, guid: 660d07ac376d6214b99c5d084e20d01f, type: 2}
   m_audioClip: {fileID: 8300000, guid: 4d785aa41837d9544a53d651d68f3257, type: 3}
   m_PlayOnAwake: 1
   m_Volume: 0.7

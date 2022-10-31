@@ -16,9 +16,25 @@ public class MiniGUI_UpgradeCompound : MonoBehaviour {
     public void Initialize() {
         unlockUpgradeButton.myUpgrade = unlockUpgrade;
         unlockUpgradeButton.Initialize();
-        skillUpgrade1Button.myUpgrade = skillUpgrade1;
-        skillUpgrade1Button.Initialize();
-        skillUpgrade2Button.myUpgrade = skillUpgrade2;
-        skillUpgrade2Button.Initialize();
+        
+        if (skillUpgrade1 != null) {
+            skillUpgrade1Button.myUpgrade = skillUpgrade1;
+            skillUpgrade1Button.Initialize();
+        } else {
+            if (skillUpgrade1Button != null) {
+                Destroy(skillUpgrade1Button.gameObject);
+                skillUpgrade1Button = null;
+            }
+        }
+        
+        if (skillUpgrade2 != null) {
+            skillUpgrade2Button.myUpgrade = skillUpgrade2;
+            skillUpgrade2Button.Initialize();
+        } else {
+            if (skillUpgrade2Button != null) {
+                Destroy(skillUpgrade2Button.gameObject);
+                skillUpgrade2Button = null;
+            }
+        }
     }
 }

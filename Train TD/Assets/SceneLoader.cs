@@ -82,7 +82,7 @@ public class SceneLoader : MonoBehaviour {
     }
     
     public void SetCurrentLevel(LevelData levelData) {
-        _currentLevel = levelData;
+        _currentLevel = levelData.Copy();
     }
 
     public GameObject loadingScreen;

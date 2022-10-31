@@ -36,10 +36,20 @@ public class MapController : MonoBehaviour {
     public LevelDataScriptable[] remainingLevels;
     public LevelDataScriptable[] bossLevels;
 
+    public CityDataScriptable[] firstCities;
+    public CityDataScriptable[] remainingCities;
+    public CityDataScriptable[] bossCities;
+
+    public CargoPrices[] cargoTiers = new CargoPrices[2];
+    
     public MenuToggle mapUI;
+
+    public float encounterChance = 0.5f;
 
     private void Start() {
 	    //GenerateStarMap();
+	    targetStarInfoScreen.Hide();
+	    selectedStarInfoScreen.Hide();
 	    ApplyStarMapFromSave();
     }
 
@@ -55,17 +65,18 @@ public class MapController : MonoBehaviour {
 	    
 	    PutPlayerInStar(starMapState.chunks[0].myStars[0]);
 	    
-	    var shops = MakeShops(starMapState);
+	    //var shops = MakeShops(starMapState);
 	    MakeBoss(starMapState);
 
 	    DataSaver.s.GetCurrentSave().currentRun.map = starMapState;
 	    Debug.Log($"Star map instantiation complete");
 
-	    ApplyStarMapFromSave();
+	    ApplyStarMapFromSave(true);
     }
 
-    public void ApplyStarMapFromSave() {
-	    SpawnStarsAndConnections(DataSaver.s.GetCurrentSave().currentRun.map);
+    public void ApplyStarMapFromSave(bool force = false) {
+	    if(DataSaver.s.GetCurrentSave().isInARun || force)
+			SpawnStarsAndConnections(DataSaver.s.GetCurrentSave().currentRun.map);
 	    //targetStarInfoScreen.Hide();
     }
 
@@ -91,13 +102,22 @@ public class MapController : MonoBehaviour {
     }
 
     private void MakeBoss(StarMapState starMapState) {
-	    MakeBossStar(starMapState.chunks[timePortalDistance - 1].myStars[0]);
+	    MakeBossStar(starMapState.chunks[timePortalDistance - 1].myStars[0], starMapState.chunks[timePortalDistance-2]);
     }
 
-    void MakeBossStar(StarState starState) {
+    void MakeBossStar(StarState starState, StarMapChunk leadingChunk) {
 	    starState.isBoss = true;
-	    starState.level = bossLevels[Random.Range(0, bossLevels.Length)].myData;
-	    //starState.enemyShip = sectorBoss;
+	    //starState.level = bossLevels[Random.Range(0, bossLevels.Length)].myData;
+	    starState.city = bossCities[Random.Range(0, bossCities.Length)].cityData;
+
+	    var bossLevelPick = bossLevels[Random.Range(0, bossLevels.Length)].myData.Copy();
+
+	    for (int i = 0; i < leadingChunk.myStars.Count; i++) {
+		    var levels = leadingChunk.myStars[i].outgoingConnectionLevels;
+		    for (int j = 0; j < levels.Count; j++) {
+			    levels[j] = bossLevelPick;
+		    }
+	    }
     }
 
     readonly string[] prefixes = new []{"Slam", "Slo","Ose","Yellow","Flu", "Nice", "Bad", "Great", "Bear"};
@@ -106,14 +126,7 @@ public class MapController : MonoBehaviour {
 
     private StarState CreateStarState(int starChunk) {
 
-	    LevelData level;
-	    if (starChunk < 2) {
-		    level = firstLevels[Random.Range(0, firstLevels.Length)].myData;
-	    } else {
-		    level = remainingLevels[Random.Range(0, remainingLevels.Length)].myData;
-	    }
 
-	    
 
 
 	    var count = 0;
@@ -130,13 +143,43 @@ public class MapController : MonoBehaviour {
 	    givenStarNames.Add(potentialStarName);
 
 
-	    var info = new StarState(potentialStarName);
-	    info.level = level;
-	    
-	    if (starChunk % 2 == 1) {
-		    info.rewardCart = 1;
+
+	    CityData city;
+	    if (starChunk < 1) {
+		    city = firstCities[Random.Range(0, firstCities.Length)].cityData;
+	    } else {
+		    city = remainingCities[Random.Range(0, remainingCities.Length)].cityData;
 	    }
 	    
+	    var info = new StarState($"{potentialStarName} {city.nameSuffix}");
+	    
+	    info.city = city;
+
+
+	    /*for (int i = 0; i < cargoTiers.Length; i++) {
+		    var cost = cargoTiers[i].cost * (1 + Random.Range(-cargoTiers[i].costVariance, + cargoTiers[i].costVariance));
+		    var reward = cargoTiers[i].reward * (1 + Random.Range(-cargoTiers[i].rewardVariance, + cargoTiers[i].rewardVariance));
+		    
+		    info.cargoData.Add(new CargoDeliverMissionData(){cost =  (int)cost, reward = (int)reward});
+	    }*/
+
+
+	    /*if (starChunk % 2 == 1) {
+		    info.rewardCart = 1;
+	    } */
+	    
+	    info.rewardCart = 1;
+
+	    info.starChunk = starChunk;
+
+	    if (starChunk == 0) {
+		    info.missionDistanceModifier = 0.6f;
+	    }
+
+	    if (starChunk == 1) {
+		    info.missionDistanceModifier = 0.8f;
+	    }
+
 	    return info;
     }
 
@@ -197,6 +240,8 @@ public class MapController : MonoBehaviour {
 				    }else if (a.myInfo.previouslyVisited && b.myInfo.previouslyVisited) {
 					    connection.SetPreviouslyVisited();
 				    }
+
+				    connection.SetEncounter(a.myInfo.outgoingConnectionLevels[k].isEncounter);
 			    }
 		    }
 	    }
@@ -247,24 +292,61 @@ public class MapController : MonoBehaviour {
 
 
     public MiniGUI_StarInfoPanel targetStarInfoScreen;
+    public MiniGUI_StarInfoPanel selectedStarInfoScreen;
 
     //public StarState playerStar => StateMaster.s.currentState.starMapState.GetPlayerStar();
     public StarState playerStar => DataSaver.s.GetCurrentSave().currentRun.map.GetPlayerStar();
 	private StarState targetStar;
     public void ShowStarInfo(StarState star) {
 	    targetStar = star;
-	    targetStarInfoScreen.Initialize(targetStar);
+	    
+	    var _playerStar = DataSaver.s.GetCurrentSave().currentRun.map.GetPlayerStar();
+	    LevelData level = null;
+	    for (int i = 0; i < _playerStar.outgoingConnections.Count; i++) {
+		    if (_playerStar.outgoingConnections[i] == targetStar.starName) {
+			    level = _playerStar.outgoingConnectionLevels[i];
+		    }
+	    }
+	    
+	    targetStarInfoScreen.Initialize(targetStar, level);
+	    
+	    targetStarInfoScreen.SetSelectable(!SceneLoader.s.isLevelStarted());
     }
 
-    public void TravelToStar() {
-	    RemovePlayerFromStar();
-	    PutPlayerInStar(targetStar);
-	    
+    public void SelectStar() {
 	    targetStarInfoScreen.Hide();
 	    mapUI.HideMenu();
 	    
+	    var _playerStar = DataSaver.s.GetCurrentSave().currentRun.map.GetPlayerStar();
+	    LevelData level = null;
+	    for (int i = 0; i < _playerStar.outgoingConnections.Count; i++) {
+		    if (_playerStar.outgoingConnections[i] == targetStar.starName) {
+			    level = _playerStar.outgoingConnectionLevels[i];
+		    }
+	    }
+	    
+	    selectedStarInfoScreen.Initialize(_playerStar, targetStar, level);
+	    
+	    StarterUIController.s.SelectLevel(targetStar);
+    }
+
+    public void StartTravelingToStar() {
+	    StarterUIController.s.StartLevel();
+    }
+
+    public void FinishTravelingToStar() {
+	    var _playerStar = DataSaver.s.GetCurrentSave().currentRun.map.GetPlayerStar();
+	    RemovePlayerFromStar();
+	    LevelData level = null;
+	    for (int i = 0; i < _playerStar.outgoingConnections.Count; i++) {
+		    if (_playerStar.outgoingConnections[i] == targetStar.starName) {
+			    level = _playerStar.outgoingConnectionLevels[i];
+		    }
+	    }
+
+	    PutPlayerInStar(targetStar);
+	    
 	    ApplyStarMapFromSave();
-	    StarterUIController.s.SelectLevelAndStart(targetStar.level);
     }
 
     public void RemovePlayerFromStar() {
@@ -464,6 +546,45 @@ public class MapController : MonoBehaviour {
 
     private void ConnectStars(StarState a, StarState b) {
 	    a.outgoingConnections.Add(b.starName);
+	    
+	    
+	    var rollEncounter = Random.value < encounterChance;
+	    LevelData level;
+	    if (rollEncounter && b.starChunk >= 2) {
+		    var encounterName = DataHolder.s.encounters[Random.Range(0, DataHolder.s.encounters.Length)].encounterUniqueName;
+		    level = new LevelData() { levelName = encounterName, isEncounter = true };
+	    }else{
+		    if (b.starChunk < 2) {
+			    level = firstLevels[Random.Range(0, firstLevels.Length)].myData.Copy();
+		    } else {
+			    level = remainingLevels[Random.Range(0, remainingLevels.Length)].myData.Copy();
+		    }
+	    }
+	    
+	    
+	    //apply distance
+	    if (!level.isEncounter) {
+		    level.missionDistance = (int)(level.missionDistance * a.missionDistanceModifier);
+		    for (int i = 0; i < level.enemiesOnPath.Length; i++) {
+			    level.enemiesOnPath[i].distanceOnPath = (int)(level.enemiesOnPath[i].distanceOnPath * a.missionDistanceModifier);
+		    }
+	    }
+
+
+	    a.outgoingConnectionLevels.Add(level);
+
+
+	    var cargoType = cargoTiers[Random.Range(0, cargoTiers.Length)];
+	    
+	    var cargoCost = cargoType.cost * (1f+Random.Range(-cargoType.costVariance, +cargoType.costVariance));
+	    var cargoReward = cargoType.reward * (1f+Random.Range(-cargoType.rewardVariance, +cargoType.rewardVariance));
+
+	    if (b.starChunk == timePortalDistance - 1) {
+		    cargoCost *= 2;
+		    cargoReward *= 3;
+	    }
+	    var cargoData = new CargoDeliverMissionData() { cost = (int)cargoCost, reward = (int)cargoReward };
+	    a.outgoingConnectionCargoData.Add(cargoData);
     }
 
     class MapChunk {
@@ -499,6 +620,16 @@ public class StarMapState {
 		}
 		return null;
 	}
+	
+	public StarState GetStarWithName(string starName) {
+		for (int i = 0; i < chunks.Count; i++) {
+			for (int j = 0; j < chunks[i].myStars.Count; j++) {
+				if (chunks[i].myStars[j].starName == starName)
+					return chunks[i].myStars[j];
+			}
+		}
+		return null;
+	}
 }
 
 
@@ -515,15 +646,33 @@ public class StarState {
 	public bool isBoss;
 	public bool isPlayerHere;
 	public bool previouslyVisited;
-	public int starVariation = -1;
-	public LevelData level;
+	//public int starVariation = -1;
+	public int starChunk = -1;
+	public CityData city;
 	public int rewardCart = 0;
 
+	public float missionDistanceModifier = 1f;
+
 	public List<string> outgoingConnections = new List<string>();
+	public List<LevelData> outgoingConnectionLevels = new List<LevelData>();
+	public List<CargoDeliverMissionData> outgoingConnectionCargoData = new List<CargoDeliverMissionData>();
+	//public List<CargoDeliverMissionData> cargoData = new List<CargoDeliverMissionData>();
 
 	public StarState(string _starName) {
 		starName = _starName;
 	}
 }
 
+[Serializable]
+public class CargoDeliverMissionData {
+	public int cost = 50;
+	public int reward = 150;
+}
 
+[Serializable]
+public class CargoPrices {
+	public int cost = 50;
+	public float costVariance = 0.2f;
+	public int reward = 150;
+	public float rewardVariance = 0.2f;
+}

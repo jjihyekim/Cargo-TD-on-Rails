@@ -455,16 +455,22 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1292632657}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fb352d346def23840b985160eb9af777, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  musicTracks: []
+  gameMusicTracks:
+  - {fileID: 8300000, guid: 5fe069162135ea84a9bcd38a782154e4, type: 3}
+  - {fileID: 8300000, guid: 902c9ffdb73a3bd45a53c9dc84cd0907, type: 3}
+  menuMusicTracks:
+  - {fileID: 8300000, guid: 79d64bb9c00ac9a45a2071f501d04bb5, type: 3}
   clipOrder: 
   trackNameAndTime: 
   curTrackClip: {fileID: 0}
   curTrackTime: 0
+  isPlaying: 1
+  realVolume: -1
 --- !u!82 &1292632658
 AudioSource:
   m_ObjectHideFlags: 0
@@ -477,7 +483,7 @@ AudioSource:
   OutputAudioMixerGroup: {fileID: 1362322790299354881, guid: 660d07ac376d6214b99c5d084e20d01f, type: 2}
   m_audioClip: {fileID: 0}
   m_PlayOnAwake: 0
-  m_Volume: 1
+  m_Volume: 0.797
   m_Pitch: 1
   Loop: 0
   Mute: 0
@@ -941,7 +947,21 @@ MonoBehaviour:
       isRealSaveFile: 0
       isInARun: 0
       currentRun:
-        character: unnamed
+        character:
+          uniqueName: unset
+          description: 
+          starterUpgrades: []
+          starterModules: []
+          starterTrain:
+            myCarts: []
+          starterResources:
+            money: 200
+            scraps: 200
+            maxScraps: 400
+            ammo: 50
+            maxAmmo: 100
+            fuel: 25
+            maxFuel: 50
         myTrain:
           myCarts:
           - buildings:
@@ -955,18 +975,39 @@ MonoBehaviour:
         map:
           chunks: []
         upgrades: []
+        trainBuildings: []
         playtime: 0
-        money: 0
-        scraps: 200
-        fuel: 25
-        maxFuel: 50
+        myResources:
+          money: 200
+          scraps: 200
+          maxScraps: 400
+          ammo: 50
+          maxAmmo: 100
+          fuel: 25
+          maxFuel: 50
         unclaimedRewards: []
+        shopInitialized: 0
+        currentShopModules: []
     - saveName: unnamed
       isActiveSave: 0
       isRealSaveFile: 0
       isInARun: 0
       currentRun:
-        character: unnamed
+        character:
+          uniqueName: unset
+          description: 
+          starterUpgrades: []
+          starterModules: []
+          starterTrain:
+            myCarts: []
+          starterResources:
+            money: 200
+            scraps: 200
+            maxScraps: 400
+            ammo: 50
+            maxAmmo: 100
+            fuel: 25
+            maxFuel: 50
         myTrain:
           myCarts:
           - buildings:
@@ -980,18 +1021,39 @@ MonoBehaviour:
         map:
           chunks: []
         upgrades: []
+        trainBuildings: []
         playtime: 0
-        money: 0
-        scraps: 200
-        fuel: 25
-        maxFuel: 50
+        myResources:
+          money: 200
+          scraps: 200
+          maxScraps: 400
+          ammo: 50
+          maxAmmo: 100
+          fuel: 25
+          maxFuel: 50
         unclaimedRewards: []
+        shopInitialized: 0
+        currentShopModules: []
     - saveName: unnamed
       isActiveSave: 0
       isRealSaveFile: 0
       isInARun: 0
       currentRun:
-        character: unnamed
+        character:
+          uniqueName: unset
+          description: 
+          starterUpgrades: []
+          starterModules: []
+          starterTrain:
+            myCarts: []
+          starterResources:
+            money: 200
+            scraps: 200
+            maxScraps: 400
+            ammo: 50
+            maxAmmo: 100
+            fuel: 25
+            maxFuel: 50
         myTrain:
           myCarts:
           - buildings:
@@ -1005,12 +1067,19 @@ MonoBehaviour:
         map:
           chunks: []
         upgrades: []
+        trainBuildings: []
         playtime: 0
-        money: 0
-        scraps: 200
-        fuel: 25
-        maxFuel: 50
+        myResources:
+          money: 200
+          scraps: 200
+          maxScraps: 400
+          ammo: 50
+          maxAmmo: 100
+          fuel: 25
+          maxFuel: 50
         unclaimedRewards: []
+        shopInitialized: 0
+        currentShopModules: []
     loadingComplete: 0
     dontSave: 0
 --- !u!114 &1066860337956249595
@@ -1033,6 +1102,7 @@ MonoBehaviour:
     scenePath: Assets/Scenes/InitialScene.unity
   _currentLevel:
     levelName: unset
+    isEncounter: 0
     enemiesOnPath: []
     dynamicSpawnEnemies: []
     missionDistance: 300
@@ -1056,17 +1126,18 @@ MonoBehaviour:
   cartPrefab: {fileID: 3399934084524781478, guid: 86c82cfee32788c49a35e2e0e34bf7b7, type: 3}
   cartLength: 1.148
   buildings:
-  - {fileID: 2268375937375898836, guid: 9e4dd68ad28e1e84abdbaddcfcb31e0f, type: 3}
-  - {fileID: 3064274167022659530, guid: 4bc891603e7923d4f925ce4ed653e14a, type: 3}
-  - {fileID: 1944673793999917900, guid: fe303064230d8754b8cf128cb5e90af2, type: 3}
-  - {fileID: 8817938401368358393, guid: bce4227270cdc2b43ae296fbca46243d, type: 3}
-  - {fileID: 1944673793999917900, guid: 26de1ff1103cc944b87936d4f1ef47b4, type: 3}
-  - {fileID: 2221048273178476507, guid: 6599a63150f0b7c41b839415953a7eac, type: 3}
-  - {fileID: 8182526161237629157, guid: 711ec8b6df0437f47887fd0afe1462ff, type: 3}
   - {fileID: 1944673793999917900, guid: cff0a9005e5d2d549a05c9f2c4642474, type: 3}
-  - {fileID: 1944673793999917900, guid: b7f790acb48b0334a9052fa27f9fa237, type: 3}
-  - {fileID: 1944673793999917900, guid: c335dea14655a554ba2833a9056de068, type: 3}
+  - {fileID: 1944673793999917900, guid: 87dae615e5dfebc4a8b1302ef9414a6b, type: 3}
+  - {fileID: 2221048273178476507, guid: 6599a63150f0b7c41b839415953a7eac, type: 3}
+  - {fileID: 1944673793999917900, guid: c2a828c2c3de1204b8d85bc812c6f3c0, type: 3}
+  - {fileID: 1944673793999917900, guid: a4c60bfbea1db6349af418df7f9501a0, type: 3}
+  - {fileID: 1944673793999917900, guid: 94d57c6143665da4084100fd533410ca, type: 3}
+  - {fileID: 1944673793999917900, guid: 20a4e61dba4d8884ba9bce0eaae47c33, type: 3}
   - {fileID: 1638655049536848921, guid: f40636b96185aa64fbaa8e7c17e9942e, type: 3}
+  - {fileID: 1944673793999917900, guid: ba29916364ff95b4fbde4de152374781, type: 3}
+  - {fileID: 1944673793999917900, guid: fe303064230d8754b8cf128cb5e90af2, type: 3}
+  - {fileID: 1944673793999917900, guid: 5248b9d7c0e5e0746a821b4ca1ee9431, type: 3}
+  - {fileID: 1944673793999917900, guid: 386e278be9a163a41b58c19e1683fe2b, type: 3}
   enemies:
   - uniqueName: Buggy
     data: {fileID: 5297413553918262561, guid: 845f1cf4e800d8e45b607240c9e6190c, type: 3}
@@ -1079,10 +1150,38 @@ MonoBehaviour:
   - uniqueName: Army
     data: {fileID: 3387775018460824596, guid: e4c52cae8d2083a4cb1df1e0ed443938, type: 3}
   characters:
+  - {fileID: 11400000, guid: 059b7d277410e644482aaf682aef739f, type: 2}
   - {fileID: 11400000, guid: 2ee611f29a603744199eea6d9a3668ca, type: 2}
+  - {fileID: 11400000, guid: 72517930d567d1e47828c0af9641b34e, type: 2}
+  cities:
+  - {fileID: 11400000, guid: 0d188d5e11ddb9a40ad5c80faa6f299f, type: 2}
+  - {fileID: 11400000, guid: 165b7fcbc45535f4ba349a69363afb7a, type: 2}
+  - {fileID: 11400000, guid: df2731e787113964c8404bd51c21d06b, type: 2}
+  - {fileID: 11400000, guid: 789eeadd031e172459190bd7f9bacc86, type: 2}
+  - {fileID: 11400000, guid: 576dcaa7b4e01164286bb74a9069e977, type: 2}
+  - {fileID: 11400000, guid: f2a6d41814c22c745aa4b687dc4c231d, type: 2}
+  - {fileID: 11400000, guid: 346c7b87b2c9a0d49af351b9699b543d, type: 2}
+  encounters:
+  - {fileID: 7040572843744904232, guid: a4edeca98fdb5064a8186ddbb921430e, type: 3}
   moneyBackColor: {r: 0.7830189, g: 0.64343905, b: 0, a: 1}
   repairPrefab: {fileID: 172524484023753321, guid: 63ac6f74862b66b49b9d837b5a27adf3, type: 3}
   sellPrefab: {fileID: 172524484023753321, guid: 5c944d37062c8b04d8a0fa76e4e24049, type: 3}
+  myTweakable: {fileID: 11400000, guid: 0367cf1fdaa96e342aeb8acdc6b4294e, type: 2}
+  fullCopy:
+    globalTweaks:
+      repairAndSellCostPerHealthLost_Battle: 0.5
+      repairAndSellCostPerHealthLost_Shop: 0.75
+      moduleActionInitialDelay: 1
+      moduleActionEndDelay: 2
+      cartHealth: 200
+      cartWeight: 50
+    trainBuildings: []
+    enemies: []
+    missions: []
+    rewards: []
+  tweakableChanged:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!114 &1197221469
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1351,6 +1450,7 @@ MonoBehaviour:
   m_RequiresOpaqueTextureOption: 2
   m_CameraType: 0
   m_Cameras:
+  - {fileID: 0}
   - {fileID: 0}
   - {fileID: 0}
   m_RendererIndex: -1

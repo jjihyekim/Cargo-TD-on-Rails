@@ -1,0 +1,159 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a0c4fe353d996bd4ba6e61968d6269fe, type: 3}
+  m_Name: Ms Steamy
+  m_EditorClassIdentifier: 
+  myCharacter:
+    uniqueName: Ms Steamy
+    description: Loves everything steam. Start with Pneumatic and steamvent guns.
+    starterUpgrades:
+    - {fileID: 11400000, guid: bb9a07f134773024ebcbc669ebedfeeb, type: 2}
+    starterModules:
+    - moduleUniqueName: Engine
+      amount: 3
+    - moduleUniqueName: pneumatic
+      amount: 1
+    - moduleUniqueName: steamvents
+      amount: 2
+    starterTrain:
+      myCarts:
+      - buildingStates:
+        - uniqueName: Engine
+          health: -1
+          ammo: -1
+          cargoCost: -1
+          cargoReward: -1
+        - uniqueName: 
+          health: -1
+          ammo: -1
+          cargoCost: -1
+          cargoReward: -1
+        - uniqueName: 
+          health: -1
+          ammo: -1
+          cargoCost: -1
+          cargoReward: -1
+        - uniqueName: 
+          health: -1
+          ammo: -1
+          cargoCost: -1
+          cargoReward: -1
+        - uniqueName: 
+          health: -1
+          ammo: -1
+          cargoCost: -1
+          cargoReward: -1
+        - uniqueName: 
+          health: -1
+          ammo: -1
+          cargoCost: -1
+          cargoReward: -1
+        - uniqueName: 
+          health: -1
+          ammo: -1
+          cargoCost: -1
+          cargoReward: -1
+        - uniqueName: 
+          health: -1
+          ammo: -1
+          cargoCost: -1
+          cargoReward: -1
+      - buildingStates:
+        - uniqueName: 
+          health: -1
+          ammo: -1
+          cargoCost: -1
+          cargoReward: -1
+        - uniqueName: 
+          health: -1
+          ammo: -1
+          cargoCost: -1
+          cargoReward: -1
+        - uniqueName: 
+          health: -1
+          ammo: -1
+          cargoCost: -1
+          cargoReward: -1
+        - uniqueName: 
+          health: -1
+          ammo: -1
+          cargoCost: -1
+          cargoReward: -1
+        - uniqueName: 
+          health: -1
+          ammo: -1
+          cargoCost: -1
+          cargoReward: -1
+        - uniqueName: 
+          health: -1
+          ammo: -1
+          cargoCost: -1
+          cargoReward: -1
+        - uniqueName: 
+          health: -1
+          ammo: -1
+          cargoCost: -1
+          cargoReward: -1
+        - uniqueName: 
+          health: -1
+          ammo: -1
+          cargoCost: -1
+          cargoReward: -1
+      - buildingStates:
+        - uniqueName: 
+          health: -1
+          ammo: -1
+          cargoCost: -1
+          cargoReward: -1
+        - uniqueName: 
+          health: -1
+          ammo: -1
+          cargoCost: -1
+          cargoReward: -1
+        - uniqueName: 
+          health: -1
+          ammo: -1
+          cargoCost: -1
+          cargoReward: -1
+        - uniqueName: 
+          health: -1
+          ammo: -1
+          cargoCost: -1
+          cargoReward: -1
+        - uniqueName: 
+          health: -1
+          ammo: -1
+          cargoCost: -1
+          cargoReward: -1
+        - uniqueName: 
+          health: -1
+          ammo: -1
+          cargoCost: -1
+          cargoReward: -1
+        - uniqueName: 
+          health: -1
+          ammo: -1
+          cargoCost: -1
+          cargoReward: -1
+        - uniqueName: 
+          health: -1
+          ammo: -1
+          cargoCost: -1
+          cargoReward: -1
+    starterResources:
+      money: 200
+      scraps: 200
+      maxScraps: 400
+      ammo: 0
+      maxAmmo: 50
+      fuel: 50
+      maxFuel: 100

@@ -65,6 +65,10 @@ public class PlayerModuleSelector : MonoBehaviour {
         activeActionSelection.gameObject.SetActive(false);
     }
 
+    public void ShowModuleActionSelector() {
+        activeActionSelection.gameObject.SetActive(true);
+    }
+
 
     private void Update() {
         CastRayToSelectBuilding();

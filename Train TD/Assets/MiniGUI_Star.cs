@@ -20,6 +20,8 @@ public class MiniGUI_Star : MonoBehaviour {
 		myInfo = info;
 		
 		gfx.transform.localPosition = Random.insideUnitCircle * randomOffsetMagnitude;
+
+		starImg.sprite = DataHolder.s.GetCitySprite(info.city.nameSuffix);
         
 		if(myInfo.isPlayerHere)
 			SetPlayerHere();
@@ -49,7 +51,8 @@ public class MiniGUI_Star : MonoBehaviour {
 	}
 
 	private void SetBossStar() {
-		starImg.sprite = bossIndicator;
+		//starImg.sprite = bossIndicator;
+		starImg.color = Color.red;
 	}
 
 	public void ClickOnStar() {

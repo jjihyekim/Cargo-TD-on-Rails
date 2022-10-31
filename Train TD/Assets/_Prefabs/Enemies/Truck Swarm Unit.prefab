@@ -1142,8 +1142,7 @@ GameObject:
   - component: {fileID: 9165746279054586426}
   - component: {fileID: 9165746279054586429}
   - component: {fileID: 9165746279054586428}
-  - component: {fileID: -7259306776473084474}
-  - component: {fileID: -4902470469518268426}
+  - component: {fileID: 1563071942605154401}
   m_Layer: 14
   m_Name: Truck Swarm Unit
   m_TagString: Untagged
@@ -1181,6 +1180,7 @@ MonoBehaviour:
   maxHealth: 100
   currentHealth: 100
   scrapReward: 10
+  ammoReward: 2
   fuelReward: 10
   deathPrefab: {fileID: 1420579702169288803, guid: 0706a8a8e0baad24f9bf6f7c9dededcc, type: 3}
   aliveObject: {fileID: 9165746279452390608}
@@ -1228,6 +1228,10 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   canPenetrateArmor: 0
+  ammoUsePerShot: 0
+  scrapUsePerShot: 0
+  fuelUsePerShot: 0
+  steamUsePerShot: 0
 --- !u!114 &9165746279054586429
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1261,7 +1265,7 @@ MonoBehaviour:
     rotations: 
     rotationSpanOverride: 0
   myPossibleTargets: 01000000
---- !u!114 &-7259306776473084474
+--- !u!114 &1563071942605154401
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -1270,21 +1274,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 9165746279054586416}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e03d89f262df7ef43ad10e8140eccbf4, type: 3}
+  m_Script: {fileID: 11500000, guid: b44c169ad6aaecd4bb7f7534554cbdfa, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &-4902470469518268426
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 9165746279054586416}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c000a03ade147ef4e8a60dfb7de82121, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
+  tooltip: {fileID: 0}
+  info: A big truck with two whole guns.
 --- !u!1 &9165746279452390611
 GameObject:
   m_ObjectHideFlags: 0

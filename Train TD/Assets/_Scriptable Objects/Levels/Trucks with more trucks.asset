@@ -14,6 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   myData:
     levelName: Smol Starts
+    isEncounter: 0
     enemiesOnPath:
     - enemyIdentifier:
         enemyUniqueName: Truck
@@ -41,5 +42,6 @@ MonoBehaviour:
         enemyCount: 1
       distanceFromTrain: 30
       firstSpawnTime: 30
-      spawnInterval: 30
+      spawnInterval: 45
+      increaseInNumberInterval: 3
     missionDistance: 500

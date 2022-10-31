@@ -4,14 +4,12 @@ using UnityEngine;
 
 public class ClickableEntityInfo : MonoBehaviour, IClickableInfo {
     public Tooltip tooltip;
+    
     [TextArea]
     public string info;
 
     public string GetInfo() {
-        if (tooltip != null)
-            return tooltip.text;
-        else
-            return info;
+        return info;
     }
 
     public Tooltip GetTooltip() {

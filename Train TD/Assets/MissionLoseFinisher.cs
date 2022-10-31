@@ -58,6 +58,7 @@ public class MissionLoseFinisher : MonoBehaviour {
         
         
         PlayerBuildingController.s.LogCurrentLevelBuilds(false);
+        MusicPlayer.s.Stop();
     }
 
 
@@ -69,6 +70,7 @@ public class MissionLoseFinisher : MonoBehaviour {
 
     public void BackToMenu() {
         SettingsController.s.ResetRun();
+        MusicPlayer.s.SwapMusicTracksAndPlay(false);
         //SceneLoader.s.BackToStarterMenuHardLoad();
     }
 }

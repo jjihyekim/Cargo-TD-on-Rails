@@ -11,11 +11,6 @@ public class MiniGUI_Draggable : MonoBehaviour, IPointerDownHandler, IPointerUpH
 	private Vector3 startPosition;
 	public bool shouldReturn;
 
-	// Use this for initialization
-	void Start () {
-	
-	}
-
 	public void OnPointerDown(PointerEventData dt) {
 		isMouseDown = true;
 

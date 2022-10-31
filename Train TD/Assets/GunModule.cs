@@ -40,6 +40,12 @@ public class GunModule : MonoBehaviour, IComponentWithTarget, IActiveDuringComba
     public UnityEvent barrageShot;
 
     public bool canPenetrateArmor = false;
+
+    public float ammoUsePerShot = 0;
+    public float scrapUsePerShot = 0;
+    public float fuelUsePerShot = 0;
+    public float steamUsePerShot = 0;
+    
     private void Update() {
         if (target != null) {
             // Look at target
@@ -109,28 +115,45 @@ public class GunModule : MonoBehaviour, IComponentWithTarget, IActiveDuringComba
                 yield return null;
             }
 
-            var barrelEnd = GetShootTransform().transform;
-            var position = barrelEnd.position;
-            var rotation = barrelEnd.rotation;
-            var bullet = Instantiate(bulletPrefab, position + barrelEnd.forward * projectileSpawnOffset, rotation);
-            var muzzleFlash = Instantiate(muzzleFlashPrefab, position, rotation);
-            var projectile = bullet.GetComponent<Projectile>();
-            projectile.myOriginObject = this.gameObject;
-            projectile.damage = projectileDamage*GetDamageMultiplier();
-            projectile.isTargetSeeking = true;
-            projectile.canPenetrateArmor = canPenetrateArmor;
-            
-            projectile.isPlayerBullet = isPlayer;
-            projectile.source = this;
+            if (AreThereEnoughMaterialsToShoot()) {
+                var barrelEnd = GetShootTransform().transform;
+                var position = barrelEnd.position;
+                var rotation = barrelEnd.rotation;
+                var bullet = Instantiate(bulletPrefab, position + barrelEnd.forward * projectileSpawnOffset, rotation);
+                var muzzleFlash = Instantiate(muzzleFlashPrefab, position, rotation);
+                var projectile = bullet.GetComponent<Projectile>();
+                projectile.myOriginObject = this.gameObject;
+                projectile.damage = projectileDamage*GetDamageMultiplier();
+                projectile.isTargetSeeking = true;
+                projectile.canPenetrateArmor = canPenetrateArmor;
+                
+                projectile.isPlayerBullet = isPlayer;
+                projectile.source = this;
 
-            if(myCart != null)
-                LogShotData(projectileDamage*GetDamageMultiplier());
-            
+                if(myCart != null)
+                    LogShotData(projectileDamage*GetDamageMultiplier());
 
+                if (isPlayer) {
+                    MoneyController.s.SubtractAmmo(ammoUsePerShot);
+                    MoneyController.s.SubtractScraps(scrapUsePerShot);
+                    SpeedController.s.SubtractFuel(fuelUsePerShot);
+                    SpeedController.s.UseSteam(steamUsePerShot);
+                }
+            }
             yield return new WaitForSeconds(fireBarrageDelay);
         }
-        
         barrageShot?.Invoke();
+    }
+
+    bool AreThereEnoughMaterialsToShoot() {
+        var areThereEnough = true;
+
+        // ReSharper disable once ConditionIsAlwaysTrueOrFalse
+        areThereEnough = areThereEnough && MoneyController.s.ammo >= ammoUsePerShot;
+        areThereEnough = areThereEnough && MoneyController.s.scraps >= scrapUsePerShot;
+        areThereEnough = areThereEnough && SpeedController.s.fuel >= fuelUsePerShot;
+        
+        return areThereEnough;
     }
 
     void LogShotData(float damage) {

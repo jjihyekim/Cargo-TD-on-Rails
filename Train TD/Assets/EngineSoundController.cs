@@ -17,7 +17,6 @@ public class EngineSoundController : MonoBehaviour {
     public float targetPitch = 1f;
     public float pitchMultiplier = 1f;
     void Update() {
-        
         targetPitch = _provider.GetSpeed().Remap(0, 10, 0.5f, 1.5f);
         
         _source.pitch = Mathf.Lerp(_source.pitch, naturalPitch * targetPitch * pitchMultiplier, 1f*Time.deltaTime);

@@ -5,6 +5,7 @@ using System.Linq;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Analytics;
+using UnityEngine.Events;
 using UnityEngine.UI;
 using Random = UnityEngine.Random;
 
@@ -34,9 +35,10 @@ public class MissionWinFinisher : MonoBehaviour {
 	public GameObject scrapRewardPrefab;
 	public GameObject cartRewardPrefab;
 	public GameObject upgradeRewardPrefab;
-	
+
 	private void Start() {
 		winUI.SetActive(false);
+		EnemyHealth.winSelfDestruct = false;
 	}
 
 	public void MissionWon(bool isShowingPrevRewards = false) {
@@ -62,9 +64,10 @@ public class MissionWinFinisher : MonoBehaviour {
 		
 		
 		// save our resources
-		mySave.currentRun.myResources.scraps = MoneyController.s.scraps;
+		mySave.currentRun.myResources.scraps = Mathf.FloorToInt(MoneyController.s.scraps);
 		mySave.currentRun.myTrain = Train.s.GetTrainState();
-		mySave.currentRun.myResources.fuel = (int)SpeedController.s.fuel;
+		mySave.currentRun.myResources.fuel = Mathf.FloorToInt(SpeedController.s.fuel);
+		mySave.currentRun.myResources.ammo = Mathf.FloorToInt(MoneyController.s.ammo);
 		
 		DataSaver.s.SaveActiveGame();
 		
@@ -72,14 +75,16 @@ public class MissionWinFinisher : MonoBehaviour {
 		cameraSwitcher.Engage();
 		winUI.SetActive(true);
 		
-		
+		MapController.s.FinishTravelingToStar();
+
+
 		//send analytics
 		AnalyticsResult analyticsResult = Analytics.CustomEvent(
 			"LevelWon",
 			new Dictionary<string, object> {
 				{ "Level", SceneLoader.s.currentLevel.levelName },
 				
-				{"character", DataSaver.s.GetCurrentSave().currentRun.character},
+				{"character", DataSaver.s.GetCurrentSave().currentRun.character.uniqueName},
 				
 				{ "buildingsBuild", ModuleHealth.buildingsBuild },
 				{ "buildingsDestroyed", ModuleHealth.buildingsDestroyed },
@@ -93,6 +98,9 @@ public class MissionWinFinisher : MonoBehaviour {
 		Debug.Log("Mission Won Analytics: " + analyticsResult);
 		
 		PlayerBuildingController.s.LogCurrentLevelBuilds(true);
+
+		SoundscapeController.s.PlayMissionWonSound();
+		MusicPlayer.s.SwapMusicTracksAndPlay(false);
 	}
 
 	void DeactiveRangeShows() {
@@ -114,6 +122,8 @@ public class MissionWinFinisher : MonoBehaviour {
 	}
 
 	void GenerateMissionRewards() {
+		var mySave = DataSaver.s.GetCurrentSave();
+		
 		var rewardMoney = 0;
 		var allCargo = Train.s.GetComponentsInChildren<CargoModule>();
 		foreach (var cargo in allCargo) {
@@ -123,8 +133,6 @@ public class MissionWinFinisher : MonoBehaviour {
 		}
 
 		cargoText.text = $"Cargo Delivered {allCargo.Length}";
-
-		var mySave = DataSaver.s.GetCurrentSave();
 
 		// mission rewards, must do after the stuff above
 		mySave.currentRun.unclaimedRewards.Add($"s{Random.Range(50,60)}");
@@ -197,12 +205,12 @@ public class MissionWinFinisher : MonoBehaviour {
 
 
 	public void ContinueToStarterMenu() {
-		EnemyHealth.winSelfDestruct = true;
+		EnemyHealth.winSelfDestruct = false;
 		ClearOldRewards();
 		DataSaver.s.GetCurrentSave().currentRun.unclaimedRewards = new List<string>();
+		DataSaver.s.GetCurrentSave().currentRun.shopInitialized = false;
 		DataSaver.s.SaveActiveGame();
 		SceneLoader.s.BackToStarterMenuHardLoad();
-		
 	}
 	
 	void SetStarAmount(Image[] stars, int amount) {

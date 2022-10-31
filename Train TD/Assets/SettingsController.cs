@@ -20,11 +20,12 @@ public class SettingsController : MonoBehaviour {
         }
     }
 
-
+    
     public void ResetRun() {
-        DataSaver.s.GetCurrentSave().currentRun = new DataSaver.RunState();
-        DataSaver.s.GetCurrentSave().currentRun.SetCharacter( DataHolder.s.GetCharacter("My Dude"));
-        MapController.s.GenerateStarMap();
+        DataSaver.s.GetCurrentSave().currentRun = null;
+        DataSaver.s.GetCurrentSave().isInARun = false;
+        //DataSaver.s.GetCurrentSave().currentRun.SetCharacter( DataHolder.s.GetCharacter("Le Cheater"));
+        //MapController.s.GenerateStarMap();
         DataSaver.s.SaveActiveGame();
         SceneLoader.s.BackToStarterMenuHardLoad();
     }

@@ -29,12 +29,16 @@ public class Upgrade : ScriptableObject {
     public virtual void Initialize() {
         var mySave = DataSaver.s.GetCurrentSave();
 
-        var index = mySave.currentRun.upgrades.FindIndex(x => x == upgradeUniqueName);
-
-        if (index != -1) {
+        if (parentUpgrade == this) {
             isUnlocked = true;
+        } else {
+
+            var index = mySave.currentRun.upgrades.FindIndex(x => x == upgradeUniqueName);
+
+            if (index != -1) {
+                isUnlocked = true;
+            }
         }
-        
 
         ApplyUpgradeEffects();
     }
