@@ -1215,6 +1215,9 @@ MonoBehaviour:
   cost: -25
   cooldown: -1
   curCooldown: 0
+  soundEffect: []
+  myTooltip:
+    text: 
   isCombatMode: 1
 --- !u!114 &-4750669455784004260
 MonoBehaviour:
@@ -1235,6 +1238,9 @@ MonoBehaviour:
   cost: 25
   cooldown: -1
   curCooldown: 0
+  soundEffect: []
+  myTooltip:
+    text: Repair this module over time.
 --- !u!114 &-7871351293360654903
 MonoBehaviour:
   m_ObjectHideFlags: 0

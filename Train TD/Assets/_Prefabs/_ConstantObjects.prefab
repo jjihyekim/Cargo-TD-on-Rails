@@ -470,6 +470,7 @@ MonoBehaviour:
   curTrackClip: {fileID: 0}
   curTrackTime: 0
   isPlaying: 1
+  isPaused: 0
   realVolume: -1
 --- !u!82 &1292632658
 AudioSource:
@@ -964,14 +965,47 @@ MonoBehaviour:
             maxFuel: 50
         myTrain:
           myCarts:
-          - buildings:
-            - 
-            - 
-            - 
-            - 
-            - 
-            - 
-            healths: 000000000000000000000000000000000000000000000000
+          - buildingStates:
+            - uniqueName: 
+              health: -1
+              ammo: -1
+              cargoCost: -1
+              cargoReward: -1
+            - uniqueName: 
+              health: -1
+              ammo: -1
+              cargoCost: -1
+              cargoReward: -1
+            - uniqueName: 
+              health: -1
+              ammo: -1
+              cargoCost: -1
+              cargoReward: -1
+            - uniqueName: 
+              health: -1
+              ammo: -1
+              cargoCost: -1
+              cargoReward: -1
+            - uniqueName: 
+              health: -1
+              ammo: -1
+              cargoCost: -1
+              cargoReward: -1
+            - uniqueName: 
+              health: -1
+              ammo: -1
+              cargoCost: -1
+              cargoReward: -1
+            - uniqueName: 
+              health: -1
+              ammo: -1
+              cargoCost: -1
+              cargoReward: -1
+            - uniqueName: 
+              health: -1
+              ammo: -1
+              cargoCost: -1
+              cargoReward: -1
         map:
           chunks: []
         upgrades: []
@@ -988,6 +1022,7 @@ MonoBehaviour:
         unclaimedRewards: []
         shopInitialized: 0
         currentShopModules: []
+        currentShopPrices: []
     - saveName: unnamed
       isActiveSave: 0
       isRealSaveFile: 0
@@ -1010,14 +1045,47 @@ MonoBehaviour:
             maxFuel: 50
         myTrain:
           myCarts:
-          - buildings:
-            - 
-            - 
-            - 
-            - 
-            - 
-            - 
-            healths: 000000000000000000000000000000000000000000000000
+          - buildingStates:
+            - uniqueName: 
+              health: -1
+              ammo: -1
+              cargoCost: -1
+              cargoReward: -1
+            - uniqueName: 
+              health: -1
+              ammo: -1
+              cargoCost: -1
+              cargoReward: -1
+            - uniqueName: 
+              health: -1
+              ammo: -1
+              cargoCost: -1
+              cargoReward: -1
+            - uniqueName: 
+              health: -1
+              ammo: -1
+              cargoCost: -1
+              cargoReward: -1
+            - uniqueName: 
+              health: -1
+              ammo: -1
+              cargoCost: -1
+              cargoReward: -1
+            - uniqueName: 
+              health: -1
+              ammo: -1
+              cargoCost: -1
+              cargoReward: -1
+            - uniqueName: 
+              health: -1
+              ammo: -1
+              cargoCost: -1
+              cargoReward: -1
+            - uniqueName: 
+              health: -1
+              ammo: -1
+              cargoCost: -1
+              cargoReward: -1
         map:
           chunks: []
         upgrades: []
@@ -1034,6 +1102,7 @@ MonoBehaviour:
         unclaimedRewards: []
         shopInitialized: 0
         currentShopModules: []
+        currentShopPrices: []
     - saveName: unnamed
       isActiveSave: 0
       isRealSaveFile: 0
@@ -1056,14 +1125,47 @@ MonoBehaviour:
             maxFuel: 50
         myTrain:
           myCarts:
-          - buildings:
-            - 
-            - 
-            - 
-            - 
-            - 
-            - 
-            healths: 000000000000000000000000000000000000000000000000
+          - buildingStates:
+            - uniqueName: 
+              health: -1
+              ammo: -1
+              cargoCost: -1
+              cargoReward: -1
+            - uniqueName: 
+              health: -1
+              ammo: -1
+              cargoCost: -1
+              cargoReward: -1
+            - uniqueName: 
+              health: -1
+              ammo: -1
+              cargoCost: -1
+              cargoReward: -1
+            - uniqueName: 
+              health: -1
+              ammo: -1
+              cargoCost: -1
+              cargoReward: -1
+            - uniqueName: 
+              health: -1
+              ammo: -1
+              cargoCost: -1
+              cargoReward: -1
+            - uniqueName: 
+              health: -1
+              ammo: -1
+              cargoCost: -1
+              cargoReward: -1
+            - uniqueName: 
+              health: -1
+              ammo: -1
+              cargoCost: -1
+              cargoReward: -1
+            - uniqueName: 
+              health: -1
+              ammo: -1
+              cargoCost: -1
+              cargoReward: -1
         map:
           chunks: []
         upgrades: []
@@ -1080,6 +1182,7 @@ MonoBehaviour:
         unclaimedRewards: []
         shopInitialized: 0
         currentShopModules: []
+        currentShopPrices: []
     loadingComplete: 0
     dontSave: 0
 --- !u!114 &1066860337956249595
@@ -1102,6 +1205,7 @@ MonoBehaviour:
     scenePath: Assets/Scenes/InitialScene.unity
   _currentLevel:
     levelName: unset
+    specialIcon: {fileID: 0}
     isEncounter: 0
     enemiesOnPath: []
     dynamicSpawnEnemies: []
@@ -1138,17 +1242,37 @@ MonoBehaviour:
   - {fileID: 1944673793999917900, guid: fe303064230d8754b8cf128cb5e90af2, type: 3}
   - {fileID: 1944673793999917900, guid: 5248b9d7c0e5e0746a821b4ca1ee9431, type: 3}
   - {fileID: 1944673793999917900, guid: 386e278be9a163a41b58c19e1683fe2b, type: 3}
+  - {fileID: 1944673793999917900, guid: 3f2fce884d4397342b6ed9393f603486, type: 3}
+  - {fileID: 1944673793999917900, guid: 326a02377fc214b4497d74e4650644fd, type: 3}
+  - {fileID: 1944673793999917900, guid: 526049ba670f7764783345211dabcca4, type: 3}
+  - {fileID: 1944673793999917900, guid: f22255233f6a08e469901467224c72cc, type: 3}
   enemies:
-  - uniqueName: Buggy
+  - uniqueName: BuggyAVC
     data: {fileID: 5297413553918262561, guid: 845f1cf4e800d8e45b607240c9e6190c, type: 3}
-  - uniqueName: Truck
-    data: {fileID: 8567764965066828291, guid: e222b2c7b0266e045b51df477b0386b1, type: 3}
+  - uniqueName: BuggyPneumatic
+    data: {fileID: 5297413553918262561, guid: 35d98120faee6a84e898ff25fe528024, type: 3}
+  - uniqueName: BuggyCannon
+    data: {fileID: 5297413553918262561, guid: 31656bdda0a3b6e47b73b5c9bf17a4b3, type: 3}
   - uniqueName: Biker
     data: {fileID: 5055315991105005710, guid: 2435e3645a7ab1c46ad8aa27ff70b2b6, type: 3}
-  - uniqueName: Supply
-    data: {fileID: 8567764965066828291, guid: 167eb19127e4fa74aa76b56e51367d6b, type: 3}
   - uniqueName: Army
     data: {fileID: 3387775018460824596, guid: e4c52cae8d2083a4cb1df1e0ed443938, type: 3}
+  - uniqueName: TruckCannon
+    data: {fileID: 8567764965066828291, guid: e222b2c7b0266e045b51df477b0386b1, type: 3}
+  - uniqueName: TruckFlamer
+    data: {fileID: 8567764965066828291, guid: 9a104d6286ff59440b75af80fe23d7a0, type: 3}
+  - uniqueName: SupplierSafe
+    data: {fileID: 8567764965066828291, guid: 167eb19127e4fa74aa76b56e51367d6b, type: 3}
+  - uniqueName: SupplierGatling
+    data: {fileID: 8567764965066828291, guid: 692722e00ae7e5b4f8252280d55f2d4e, type: 3}
+  - uniqueName: TurretAVC
+    data: {fileID: 5297413553918262561, guid: f2ab42356cb1d354e8baabef15711c3d, type: 3}
+  - uniqueName: TurretCannon
+    data: {fileID: 5297413553918262561, guid: 2b549ab8f0a6dbc4b8a1753d55b16f53, type: 3}
+  - uniqueName: TurretGatling
+    data: {fileID: 5297413553918262561, guid: 34ca2d4f5ac5ede48bd7fee1048c7fe3, type: 3}
+  - uniqueName: TurretRockets
+    data: {fileID: 5297413553918262561, guid: de9ec9fad091ac8449fa4a6f450d7d7e, type: 3}
   characters:
   - {fileID: 11400000, guid: 059b7d277410e644482aaf682aef739f, type: 2}
   - {fileID: 11400000, guid: 2ee611f29a603744199eea6d9a3668ca, type: 2}
@@ -1400,7 +1524,7 @@ Camera:
     y: 0
     width: 1
     height: 1
-  near clip plane: 0.1
+  near clip plane: 0.01
   far clip plane: 50
   field of view: 60
   orthographic: 0
@@ -1408,7 +1532,7 @@ Camera:
   m_Depth: 0
   m_CullingMask:
     serializedVersion: 2
-    m_Bits: 32567
+    m_Bits: 65335
   m_RenderingPath: -1
   m_TargetTexture: {fileID: 0}
   m_TargetDisplay: 0
@@ -1449,10 +1573,7 @@ MonoBehaviour:
   m_RequiresDepthTextureOption: 2
   m_RequiresOpaqueTextureOption: 2
   m_CameraType: 0
-  m_Cameras:
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
+  m_Cameras: []
   m_RendererIndex: -1
   m_VolumeLayerMask:
     serializedVersion: 2

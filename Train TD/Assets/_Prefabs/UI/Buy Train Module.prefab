@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 2889928298154714127}
   - component: {fileID: 1292279605626436357}
   - component: {fileID: 3134512872099083194}
+  - component: {fileID: 6748249830334423903}
   m_Layer: 6
   m_Name: Buy Train Module
   m_TagString: Untagged
@@ -99,6 +100,22 @@ MonoBehaviour:
   icon: {fileID: 6997733788450715974}
   myButton: {fileID: 6781398419736388641}
   costText: {fileID: 9102430510152416924}
+--- !u!114 &6748249830334423903
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2057097529962732840}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bdcee4c1407ad384fb315781e1889bf9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  myTooltip:
+    text: 
+  curTimer: 0
+  showingTooltip: 0
 --- !u!1 &2397267024404629096
 GameObject:
   m_ObjectHideFlags: 0

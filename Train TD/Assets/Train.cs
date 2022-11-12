@@ -84,7 +84,7 @@ public class Train : MonoBehaviour {
             for (int i = 0; i < cartCount; i++) {
                 var cart = Instantiate(DataHolder.s.cartPrefab, transform);
                 carts.Add(cart.transform);
-                cartDefPositions.Add(cart.transform.position);
+                cartDefPositions.Add(cart.transform.localPosition);
             }
 
             trainFront = new GameObject().transform;
@@ -102,6 +102,7 @@ public class Train : MonoBehaviour {
         UpdateCartPositions();
 
         AddBuildingsToTrain(trainState);
+        ReCalculateStorageAmounts();
         trainUpdatedThroughNonBuildingActions?.Invoke();
     }
 
@@ -147,7 +148,7 @@ public class Train : MonoBehaviour {
             var ammo = building.GetComponent<ModuleAmmo>();
             
             if (ammo != null) {
-                buildingState.ammo = ammo.curAmmo;
+                buildingState.ammo = (int)ammo.curAmmo;
             } else {
                 buildingState.ammo = -1;
             }
@@ -193,7 +194,15 @@ public class Train : MonoBehaviour {
         }
 
         if (buildingState.ammo >= 0) {
-            newBuilding.GetComponent<ModuleAmmo>().SetAmmo(buildingState.ammo);
+            var ammo = newBuilding.GetComponent<ModuleAmmo>();
+            ammo.SetAmmo(buildingState.ammo);
+        }else if (buildingState.ammo == -2) {
+            var ammo = newBuilding.GetComponent<ModuleAmmo>();
+            if (ammo != null) {
+                ammo.SetAmmo(ammo.maxAmmo);
+            } else {
+                buildingState.ammo = -1;
+            }
         }
 
         if (buildingState.cargoCost >= 0) {
@@ -211,7 +220,7 @@ public class Train : MonoBehaviour {
         
         cart.name = $"Cart {index }";
         carts.Insert(index, cart.transform);
-        cartDefPositions.Add(cart.transform.position);
+        cartDefPositions.Add(cart.transform.localPosition);
         
         UpdateCartPositions();
 
@@ -223,21 +232,21 @@ public class Train : MonoBehaviour {
             return;
         carts.Reverse();
         cartDefPositions.Reverse();
-        var startPlace = transform.position + Vector3.back * DataHolder.s.cartLength * cartCount / 2f;
+        var startPlace = transform.localPosition + Vector3.back * DataHolder.s.cartLength * cartCount / 2f;
 
         for (int i = 0; i < carts.Count; i++) {
             var cart = carts[i];
             
-            cart.position = startPlace + Vector3.forward * i * DataHolder.s.cartLength;
+            cart.localPosition = startPlace + Vector3.forward * i * DataHolder.s.cartLength;
             var index = carts.Count - i - 1; // because we start counting from back
             cart.name = $"Cart {index }";
             var cartScript = cart.GetComponent<Cart>();
             cartScript.index = index ;
-            cartDefPositions[i] = cart.transform.position;
+            cartDefPositions[i] = cart.transform.localPosition;
         }
         
-        trainFront.transform.position = carts[carts.Count-1].position + trainFrontOffset;
-        trainBack.transform.position = carts[0].position + trainFrontOffset;
+        trainFront.transform.localPosition = carts[carts.Count-1].localPosition + trainFrontOffset;
+        trainBack.transform.localPosition = carts[0].localPosition + trainFrontOffset;
         
         
         carts.Reverse();
@@ -282,8 +291,48 @@ public class Train : MonoBehaviour {
             curDistance -= LevelReferences.s.speed * Time.deltaTime;
         }
     }
-    
-    
+
+
+    public void ReCalculateStorageAmounts() {
+        if (DataSaver.s.GetCurrentSave().isInARun) {
+            var charMinAmounts = DataSaver.s.GetCurrentSave().currentRun.character.starterResources;
+            var maxScraps = 0;
+            var maxFuel = 0;
+            var maxAmmo = 0;
+
+
+            var modules = GetComponentsInChildren<ModuleStorage>();
+
+            for (int i = 0; i < modules.Length; i++) {
+                switch (modules[i].myType) {
+                    case ResourceTypes.ammo:
+                        maxAmmo += modules[i].amount;
+                        break;
+                    case ResourceTypes.fuel:
+                        maxFuel += modules[i].amount;
+                        break;
+                    case ResourceTypes.scraps:
+                        maxScraps += modules[i].amount;
+                        break;
+                }
+            }
+
+            maxScraps = Mathf.Max(maxScraps, charMinAmounts.maxScraps);
+            maxFuel = Mathf.Max(maxFuel, charMinAmounts.maxFuel);
+            maxAmmo = Mathf.Max(maxAmmo, charMinAmounts.maxAmmo);
+
+
+            var mySave = DataSaver.s.GetCurrentSave().currentRun.myResources;
+
+            mySave.maxFuel = maxFuel;
+            mySave.maxScraps = maxScraps;
+            mySave.maxAmmo = maxAmmo;
+
+            MoneyController.s.ApplyStorageAmounts(maxScraps, maxAmmo);
+            SpeedController.s.ApplyStorageAmounts(maxFuel);
+        }
+    }
+
 
     IEnumerator ShakeWave() {
         if (SceneLoader.s.isLevelInProgress) {
@@ -297,7 +346,7 @@ public class Train : MonoBehaviour {
                 curCart = Mathf.Clamp(curCart, 0, cartCount - 1);
 
                 if (curCart != lastCart) {
-                    carts[curCart].position = cartDefPositions[curCart] + new Vector3(
+                    carts[curCart].localPosition = cartDefPositions[curCart] + new Vector3(
                         Random.Range(-shakeOffsetMax.x, shakeOffsetMax.x),
                         Random.Range(-shakeOffsetMax.y, shakeOffsetMax.y),
                         Random.Range(-shakeOffsetMax.z, shakeOffsetMax.z)
@@ -326,7 +375,7 @@ public class Train : MonoBehaviour {
                 curCart = Mathf.Clamp(curCart, 0, cartCount - 1);
 
                 if (curCart != lastCart) {
-                    carts[curCart].position = cartDefPositions[curCart];
+                    carts[curCart].localPosition = cartDefPositions[curCart];
                 }
 
                 curShakePos += LevelReferences.s.speed * Time.deltaTime;
@@ -349,9 +398,9 @@ public class Train : MonoBehaviour {
 
                 if (curCart != lastCart) {
                     if (lastCart >= 0)
-                        carts[lastCart].position = cartDefPositions[lastCart];
+                        carts[lastCart].localPosition = cartDefPositions[lastCart];
 
-                    carts[curCart].position = cartDefPositions[curCart] + new Vector3(
+                    carts[curCart].localPosition = cartDefPositions[curCart] + new Vector3(
                         Random.Range(-shakeOffsetMax.x, shakeOffsetMax.x),
                         Random.Range(-shakeOffsetMax.y, shakeOffsetMax.y),
                         Random.Range(-shakeOffsetMax.z, shakeOffsetMax.z)
@@ -365,7 +414,7 @@ public class Train : MonoBehaviour {
             }
 
             if (lastCart != -1) {
-                carts[lastCart].position = cartDefPositions[lastCart];
+                carts[lastCart].localPosition = cartDefPositions[lastCart];
             }
         }
     }

@@ -258,6 +258,36 @@ MonoBehaviour:
   precomputeOutline: 0
   bakeKeys: []
   bakeValues: []
+--- !u!1 &2785949129178292243
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1331385832299919269}
+  m_Layer: 0
+  m_Name: Direct Control Top
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1331385832299919269
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2785949129178292243}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0.435, z: 0.056}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 7044172329879874496}
+  m_RootOrder: 4
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &3146471024428373951
 GameObject:
   m_ObjectHideFlags: 0
@@ -280,6 +310,8 @@ GameObject:
   - component: {fileID: -3899644368452891966}
   - component: {fileID: -4436386175787380805}
   - component: {fileID: 6514594741195338095}
+  - component: {fileID: -7798884607359021634}
+  - component: {fileID: 4675222740554035278}
   m_Layer: 0
   m_Name: Cannon
   m_TagString: Untagged
@@ -337,11 +369,6 @@ MonoBehaviour:
   topGfx: {fileID: 6329249715763517730}
   frontGfx: {fileID: 0}
   backGfx: {fileID: 0}
-  myUITargetTransforms:
-  - possibleRotations: 0000000001000000
-    transform: {fileID: 7161388625536572706}
-  - possibleRotations: 0200000003000000
-    transform: {fileID: 7245608951228961668}
   isBuilt: 0
   autoSetUp: 0
   _outlines: []
@@ -375,14 +402,13 @@ MonoBehaviour:
   rotateSpeed: 10
   gunActive: 1
   CanShoot: 0
+  hasAmmo: 1
   isPlayer: 1
   rangeOrigin: {fileID: 0}
   barrageShot:
     m_PersistentCalls:
       m_Calls: []
-  canPenetrateArmor: 0
-  ammoUsePerShot: 1.5
-  scrapUsePerShot: 0
+  canPenetrateArmor: 1
   fuelUsePerShot: 0
   steamUsePerShot: 0
 --- !u!114 &7371494607064308679
@@ -402,7 +428,7 @@ MonoBehaviour:
   myOverride:
     isOverride: 1
     rotations: 0200000003000000
-    rotationSpanOverride: 120
+    rotationSpanOverride: 90
   myPossibleTargets: 00000000
 --- !u!114 &5592445795315755096
 MonoBehaviour:
@@ -470,6 +496,12 @@ MonoBehaviour:
   cost: -25
   cooldown: -1
   curCooldown: 0
+  canEngage: 1
+  canAfford: 1
+  isCooldownOver: 1
+  soundEffect: []
+  myTooltip:
+    text: 
   isCombatMode: 1
 --- !u!114 &-5567612607224715663
 MonoBehaviour:
@@ -490,6 +522,12 @@ MonoBehaviour:
   cost: 25
   cooldown: 60
   curCooldown: 0
+  canEngage: 1
+  canAfford: 1
+  isCooldownOver: 1
+  soundEffect: []
+  myTooltip:
+    text: 
   actionTime: 8
   initialDelay: 1
   endDelay: 2
@@ -506,11 +544,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ffd4c45972e0fc54a84560b4d5de93b9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  curAmmo: 0
-  maxAmmo: 100
-  ammoPerShot: 5
-  isUnlocked: 0
-  unlockingUpgrade: {fileID: 11400000, guid: 70b5cd6404493994d8b364c6ddb95b10, type: 2}
+  maxAmmo: 60
+  ammoPerShot: 1
 --- !u!114 &-2809547468729876337
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -530,6 +565,12 @@ MonoBehaviour:
   cost: 25
   cooldown: -1
   curCooldown: 0
+  canEngage: 1
+  canAfford: 1
+  isCooldownOver: 1
+  soundEffect: []
+  myTooltip:
+    text: Repair this module over time.
 --- !u!114 &-3899644368452891966
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -556,7 +597,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   tooltip:
-    text: A heavy duty cannon. Uses more ammo than AVC but hits a lot harder.
+    text: A heavy duty cannon. Uses more ammo than AVC but hits a lot harder. Penetrates
+      armor.
   info: Cannon
 --- !u!114 &6514594741195338095
 MonoBehaviour:
@@ -577,6 +619,67 @@ MonoBehaviour:
   cost: 10
   cooldown: 1
   curCooldown: 0
+  canEngage: 1
+  canAfford: 1
+  isCooldownOver: 1
+  soundEffect: []
+  myTooltip:
+    text: Move this module to another slot instantly.
+  freeInStation: 0
+--- !u!114 &-7798884607359021634
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3146471024428373951}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c33a412f8442bd34aa1db59cc3bad577, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  isUnlocked: 1
+  unlockingUpgrade: {fileID: 0}
+  actionName: Reload
+  myType: 2
+  cost: 40
+  cooldown: 5
+  curCooldown: 0
+  canEngage: 1
+  canAfford: 1
+  isCooldownOver: 1
+  soundEffect:
+  - {fileID: 8300000, guid: 9158afb6966d445db9caf1dccf7acbcc, type: 3}
+  myTooltip:
+    text: 
+--- !u!114 &4675222740554035278
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3146471024428373951}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8f88ead1c80db9e4984329978c418b9e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  isUnlocked: 1
+  unlockingUpgrade: {fileID: 0}
+  actionName: Assume Direct Control
+  myType: 1
+  cost: 0
+  cooldown: 5
+  curCooldown: 0
+  canEngage: 1
+  canAfford: 1
+  isCooldownOver: 1
+  soundEffect:
+  - {fileID: 8300000, guid: 7a62ba64a520e914d9d311eface499d5, type: 3}
+  myTooltip:
+    text: Control this weapon manually. During this the weapon won't use any ammo!
+  directControlTransformSide: {fileID: 342001272044580163}
+  directControlTransformTop: {fileID: 1331385832299919269}
 --- !u!1 &3469176668768950665
 GameObject:
   m_ObjectHideFlags: 0
@@ -852,6 +955,7 @@ Transform:
   - {fileID: 3433463975809730509}
   - {fileID: 7135073031330819134}
   - {fileID: 7245608951228961668}
+  - {fileID: 1331385832299919269}
   m_Father: {fileID: 3248300930352555991}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -964,6 +1068,36 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 1, y: 1, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!1 &8553338849957477165
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 342001272044580163}
+  m_Layer: 0
+  m_Name: Direct Control Side
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &342001272044580163
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8553338849957477165}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0.087, z: 0.231}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 5891583664425259778}
+  m_RootOrder: 4
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &8793443569306674401
 GameObject:
   m_ObjectHideFlags: 0
@@ -996,6 +1130,7 @@ Transform:
   - {fileID: 6156380201183467145}
   - {fileID: 5900020399321395338}
   - {fileID: 7161388625536572706}
+  - {fileID: 342001272044580163}
   m_Father: {fileID: 3248300930352555991}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -1555,11 +1690,6 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 1d1d11020ea56d146843b720ba5c90bb, type: 3}
---- !u!4 &7732790356907241669 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 899157318495988652, guid: 1d1d11020ea56d146843b720ba5c90bb, type: 3}
-  m_PrefabInstance: {fileID: 7433772883469458281}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &7776442071500318264 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: 1d1d11020ea56d146843b720ba5c90bb, type: 3}
@@ -1573,5 +1703,10 @@ Transform:
 --- !u!4 &4534926090967561581 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 6468675729011076612, guid: 1d1d11020ea56d146843b720ba5c90bb, type: 3}
+  m_PrefabInstance: {fileID: 7433772883469458281}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &7732790356907241669 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 899157318495988652, guid: 1d1d11020ea56d146843b720ba5c90bb, type: 3}
   m_PrefabInstance: {fileID: 7433772883469458281}
   m_PrefabAsset: {fileID: 0}

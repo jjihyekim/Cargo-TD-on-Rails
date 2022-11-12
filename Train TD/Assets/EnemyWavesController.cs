@@ -27,8 +27,10 @@ public class EnemyWavesController : MonoBehaviour {
 	    }
     }
 
+    public int maxConcurrentWaves = 6;
+
     void SpawnEnemy(EnemyIdentifier enemyIdentifier, float distance, bool startMoving) {
-	    var wave = Instantiate(enemyWavePrefab, Vector3.forward*1000 + Vector3.left*1000, Quaternion.identity).GetComponent<EnemyWave>();
+	    var wave = Instantiate(enemyWavePrefab, Vector3.forward*distance, Quaternion.identity).GetComponent<EnemyWave>();
 	    wave.transform.SetParent(transform);
 	    wave.SetUp(enemyIdentifier, distance, startMoving, Random.value > 0.5f);
 	    waves.Add(wave);
@@ -45,28 +47,30 @@ public class EnemyWavesController : MonoBehaviour {
 		    }
 
 
-		    for (int i = 0; i < SceneLoader.s.currentLevel.dynamicSpawnEnemies.Length; i++) {
-			    var enemy = SceneLoader.s.currentLevel.dynamicSpawnEnemies[i];
-			    if (enemy.firstSpawned) {
-				    if (enemy.curTime >= enemy.spawnInterval) {
-					    SpawnEnemy(enemy.enemyIdentifier, playerDistance - enemy.distanceFromTrain, true);
-					    enemy.curTime = 0;
+		    if (waves.Count < maxConcurrentWaves) {
+			    for (int i = 0; i < SceneLoader.s.currentLevel.dynamicSpawnEnemies.Length; i++) {
+				    var enemy = SceneLoader.s.currentLevel.dynamicSpawnEnemies[i];
+				    if (enemy.firstSpawned) {
+					    if (enemy.curTime >= enemy.spawnInterval) {
+						    SpawnEnemy(enemy.enemyIdentifier, playerDistance - enemy.distanceFromTrain, true);
+						    enemy.curTime = 0;
 
-					    enemy.curIncreaseInNumberCount += 1;
-					    if (enemy.curIncreaseInNumberCount >= enemy.increaseInNumberInterval) {
-						    enemy.enemyIdentifier.enemyCount += 1;
-						    enemy.curIncreaseInNumberCount = 0;
+						    enemy.curIncreaseInNumberCount += 1;
+						    if (enemy.curIncreaseInNumberCount >= enemy.increaseInNumberInterval) {
+							    enemy.enemyIdentifier.enemyCount += 1;
+							    enemy.curIncreaseInNumberCount = 0;
+						    }
+					    }
+				    } else {
+					    if (enemy.curTime >= enemy.firstSpawnTime) {
+						    SpawnEnemy(enemy.enemyIdentifier, playerDistance - enemy.distanceFromTrain, true);
+						    enemy.curTime = 0;
+						    enemy.firstSpawned = true;
 					    }
 				    }
-			    } else {
-				    if (enemy.curTime >= enemy.firstSpawnTime) {
-					    SpawnEnemy(enemy.enemyIdentifier, playerDistance - enemy.distanceFromTrain, true);
-					    enemy.curTime = 0;
-					    enemy.firstSpawned = true;
-				    }
-			    }
 
-			    enemy.curTime += Time.deltaTime;
+				    enemy.curTime += Time.deltaTime;
+			    }
 		    }
 	    } else {
 		    var playerDistance = SpeedController.s.currentDistance;

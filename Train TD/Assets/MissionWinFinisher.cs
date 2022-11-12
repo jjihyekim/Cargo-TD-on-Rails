@@ -101,6 +101,7 @@ public class MissionWinFinisher : MonoBehaviour {
 
 		SoundscapeController.s.PlayMissionWonSound();
 		MusicPlayer.s.SwapMusicTracksAndPlay(false);
+		DirectControlMaster.s.DisableDirectControl();
 	}
 
 	void DeactiveRangeShows() {
@@ -210,9 +211,14 @@ public class MissionWinFinisher : MonoBehaviour {
 		DataSaver.s.GetCurrentSave().currentRun.unclaimedRewards = new List<string>();
 		DataSaver.s.GetCurrentSave().currentRun.shopInitialized = false;
 		DataSaver.s.SaveActiveGame();
-		SceneLoader.s.BackToStarterMenuHardLoad();
+		
+		if (DataSaver.s.GetCurrentSave().currentRun.map.GetPlayerStar().isBoss) {
+			ActFinishController.s.OpenActWinUI();
+		} else {
+			SceneLoader.s.BackToStarterMenuHardLoad();
+		}
 	}
-	
+
 	void SetStarAmount(Image[] stars, int amount) {
 		if(stars[0] == null || stars[1] == null)
 			return;

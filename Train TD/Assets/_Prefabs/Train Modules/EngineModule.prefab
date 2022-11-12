@@ -31672,6 +31672,9 @@ MonoBehaviour:
   cost: -50
   cooldown: -1
   curCooldown: 0
+  soundEffect: []
+  myTooltip:
+    text: 
   isCombatMode: 1
 --- !u!114 &8099302677170761538
 MonoBehaviour:
@@ -31692,6 +31695,9 @@ MonoBehaviour:
   cost: 50
   cooldown: 120
   curCooldown: 0
+  soundEffect: []
+  myTooltip:
+    text: 
   actionTime: 60
   engineSpeedMultiplier: 2
 --- !u!114 &-5921104565242264179
@@ -31713,6 +31719,9 @@ MonoBehaviour:
   cost: 0
   cooldown: 60
   curCooldown: 0
+  soundEffect: []
+  myTooltip:
+    text: 
   actionTime: 25
   totalScrapsDropped: 50
   scrapChunkAmount: 10
@@ -31737,6 +31746,9 @@ MonoBehaviour:
   cost: 25
   cooldown: -1
   curCooldown: 0
+  soundEffect: []
+  myTooltip:
+    text: Repair this module over time.
 --- !u!114 &7680171318465439623
 MonoBehaviour:
   m_ObjectHideFlags: 0

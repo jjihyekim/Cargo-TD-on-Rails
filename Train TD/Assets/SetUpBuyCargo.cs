@@ -72,16 +72,30 @@ public class SetUpBuyCargo : MonoBehaviour {
         var trainState = Train.s.GetTrainState();
 
         bool isDirty = false;
+        var skipCount = 0;
         for (int i = 0; i < trainState.myCarts.Count; i++) {
             for (int j = 0; j < trainState.myCarts[i].buildingStates.Length; j++) {
+                
+                
                 var state = trainState.myCarts[i].buildingStates[j];
-
+                
                 for (int k = 0; k < cargoBuildings.Length; k++) {
+                    var buildingScript = cargoBuildings[k].GetComponent<TrainBuilding>();
+                    if (state.uniqueName == buildingScript.uniqueName) {
+                        if (skipCount > 0) { // we dont add money for the next 3 duplicates but we still need to make the state empty.
+                            skipCount -= 1;
+                        } else {
+                            MoneyController.s.ModifyResource(ResourceTypes.money, state.cargoCost);
+                        }
 
-                    if (state.uniqueName == cargoBuildings[k].GetComponent<TrainBuilding>().uniqueName) {
-                        DataSaver.s.GetCurrentSave().currentRun.myResources.money += state.cargoCost;
                         state.EmptyState();
                         isDirty = true;
+                        
+                        if (buildingScript.occupiesEntireSlot && skipCount == 0) {
+                            skipCount = 3;
+                        } else if (j%4 == 0 && skipCount == 0) {//we skip the second top slot as it is just for forward/backward slot
+                            skipCount = 1;
+                        }
                         break;
                     }
                 }

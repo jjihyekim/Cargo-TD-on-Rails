@@ -40,12 +40,22 @@ public class StarterUIController : MonoBehaviour {
 
 	public void OpenStarterUI() {
 		starterUI.SetActive(true);
-		if (DataSaver.s.GetCurrentSave().currentRun.unclaimedRewards.Count > 0) {
-			StartLevel(false);
-			MissionWinFinisher.s.ShowUnclaimedRewards();
-		} else {
-			OnEnteredStarterUI?.Invoke();
-		}
+		CharacterSelector.s.CheckAndShowCharSelectionScreen();
+		
+		if (DataSaver.s.GetCurrentSave().isInARun) {
+			Train.s.DrawTrain(DataSaver.s.GetCurrentSave().currentRun.myTrain);
+			
+			if (DataSaver.s.GetCurrentSave().currentRun.unclaimedRewards.Count > 0) {
+				StartLevel(false);
+				MissionWinFinisher.s.ShowUnclaimedRewards();
+			} else {
+				OnEnteredStarterUI?.Invoke();
+			}
+		} 
+	}
+
+	public void SetStarterUIStatus(bool status) {
+		starterUI.SetActive(status);
 	}
 
 	public void StartLevel(bool legitStart = true) {

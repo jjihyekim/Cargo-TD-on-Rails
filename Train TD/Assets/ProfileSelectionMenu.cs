@@ -100,7 +100,6 @@ public class ProfileSelectionMenu : MonoBehaviour {
         }
         
         
-        Train.s.DrawTrain(DataSaver.s.GetCurrentSave().currentRun.myTrain);
         SceneLoader.s.SetToStarterMenu();
         RangeVisualizer.SetAllRangeVisualiserState(false);
         StarterUIController.s.OpenStarterUI();

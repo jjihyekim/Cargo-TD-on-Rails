@@ -8,6 +8,18 @@ public class Slot : MonoBehaviour/*, IPointerEnterHandler, IPointerExitHandler*/
 	public bool isFrontSlot = false;
 	
 	public TrainBuilding[] myBuildings = new TrainBuilding[4];
+	
+	
+	[Tooltip("0 - forward, 1 - backwards, 2 - left, 3 - right, 4 - all slot")]
+	public Transform[] myUITargetTransforms;
+	public Transform[] myUIBottomTargetTransforms;
+	public Transform GetUITargetTransform (int slotIndex, bool isBottom) {
+		if (isBottom)
+			return myUIBottomTargetTransforms[slotIndex];
+		else
+			return myUITargetTransforms[slotIndex];
+	}
+	
 	public bool isCompletelyEmpty() {
 		var isAllSlotsEmpty = true;
 		for (int i = 0; i < myBuildings.Length; i++) {

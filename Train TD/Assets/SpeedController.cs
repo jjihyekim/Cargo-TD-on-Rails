@@ -215,7 +215,7 @@ public class SpeedController : MonoBehaviour, IShowOnDistanceRadar {
             engineDisabledWarning.SetActive( true);
             
             if (!playedNoFuelSound) {
-                SoundscapeController.s.PlayNoMoreResource(DataSaver.RunResources.Types.fuel);
+                SoundscapeController.s.PlayNoMoreResource(ResourceTypes.fuel);
                 playedNoFuelSound = true;
             }
         } else {
@@ -231,6 +231,10 @@ public class SpeedController : MonoBehaviour, IShowOnDistanceRadar {
     }
 
 
+    public void ApplyStorageAmounts(int _maxFuel) {
+        maxFuel = _maxFuel;
+        myFuelShower.SetMaxScrap(maxFuel);
+    }
 
     // v2 = u2 + 2as
     // 0 = u2 + 2as
@@ -255,16 +259,26 @@ public class SpeedController : MonoBehaviour, IShowOnDistanceRadar {
     public string GetCurrentTime() {
         return GetNiceTime(currentTime);
     }
-    
-    public void AddFuel(float amount) {
-        fuel += amount;
-        fuel = Mathf.Clamp(fuel, 0, maxFuel);
+
+
+    public void ModifyFuel(float amount) {
+        if (fuel + amount > maxFuel || fuel + amount < 0) {
+            return;
+        }
+        if (SceneLoader.s.isLevelInProgress) {
+            fuel += amount;
+        } else {
+            var currentRunMyResources = DataSaver.s.GetCurrentSave().currentRun.myResources;
+            currentRunMyResources.fuel += (int)amount;
+            currentRunMyResources.fuel = Mathf.Clamp(currentRunMyResources.fuel, 0, currentRunMyResources.maxFuel);
+            fuel = currentRunMyResources.fuel;
+        }
+        
+        if (fuel <= 0) {
+            SoundscapeController.s.PlayNoMoreResource(ResourceTypes.fuel);
+        }
     }
     
-    public void SubtractFuel(float amount) {
-        fuel -= amount;
-        fuel = Mathf.Clamp(fuel, 0, maxFuel);
-    }
 
     public void UseSteam(float amount) {
         steam -= amount;

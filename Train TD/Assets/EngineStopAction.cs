@@ -51,7 +51,7 @@ public class EngineStopAction : ModuleAction, IActiveDuringCombat
         var randomDistance = Random.Range(dropDistance.x, dropDistance.y);
         randomDirection = randomDirection.normalized * randomDistance;
             
-        LevelReferences.s.SpawnScrapsAtLocation(amount, transform.position + randomDirection);
+        LevelReferences.s.SpawnResourceAtLocation(ResourceTypes.scraps, amount, transform.position + randomDirection);
     }
 
     void StopAction() {

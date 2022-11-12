@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2235051045617389836}
   - component: {fileID: 2235051045607377730}
-  m_Layer: 0
+  m_Layer: 13
   m_Name: Basic Mountain Cell
   m_TagString: Ground
   m_Icon: {fileID: 0}
@@ -45,10 +45,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e3d3de04c7eaa4677adc5cb5e120ecef, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  coordinates:
-    x: 0
-    z: 0
+  coordinates: {x: 0, y: 0}
   expectedCoordinates: {x: 0, y: 0, z: 0}
+  randomHeightAdjustment: 0
   myType: 1
 --- !u!1 &3899337621899183950
 GameObject:
@@ -60,7 +59,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4518308400685676546}
   - component: {fileID: 8619271217194270795}
-  m_Layer: 0
+  m_Layer: 13
   m_Name: RandomPrefab
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -124,19 +123,6 @@ MonoBehaviour:
   spawnCount: {x: 0, y: 3}
   spawnScale: {x: 0.05, y: 0.15}
   spawnSpread: 0.4
---- !u!65 &4633308978279215873
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6744820022246954058}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 0
-  serializedVersion: 2
-  m_Size: {x: 0.98828346, y: 0.17521837, z: 0.86454666}
-  m_Center: {x: 0, y: 0.25898176, z: 0}
 --- !u!1001 &5162533216714475512
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -150,7 +136,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -9127733504259109842, guid: 5a1e7365e6686f14a8a1413f7dc62e95, type: 3}
       propertyPath: m_Enabled
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 5a1e7365e6686f14a8a1413f7dc62e95, type: 3}
       propertyPath: m_RootOrder
@@ -196,10 +182,22 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: -8136994942902657864, guid: 5a1e7365e6686f14a8a1413f7dc62e95, type: 3}
+      propertyPath: m_Convex
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: -8136994942902657864, guid: 5a1e7365e6686f14a8a1413f7dc62e95, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: -3875847363185068945, guid: 5a1e7365e6686f14a8a1413f7dc62e95, type: 3}
       propertyPath: m_Materials.Array.data[0]
       value: 
       objectReference: {fileID: 2100000, guid: 38ecf745b1dab7743aecbaf60a175450, type: 2}
+    - target: {fileID: -1333353751923425087, guid: 5a1e7365e6686f14a8a1413f7dc62e95, type: 3}
+      propertyPath: m_Layer
+      value: 13
+      objectReference: {fileID: 0}
     - target: {fileID: -1333353751923425087, guid: 5a1e7365e6686f14a8a1413f7dc62e95, type: 3}
       propertyPath: m_TagString
       value: Ground
@@ -213,12 +211,20 @@ PrefabInstance:
       value: basic grass cell
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: 5a1e7365e6686f14a8a1413f7dc62e95, type: 3}
+      propertyPath: m_Layer
+      value: 13
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 5a1e7365e6686f14a8a1413f7dc62e95, type: 3}
       propertyPath: m_TagString
       value: Ground
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: 5a1e7365e6686f14a8a1413f7dc62e95, type: 3}
       propertyPath: m_StaticEditorFlags
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1891347503560987570, guid: 5a1e7365e6686f14a8a1413f7dc62e95, type: 3}
+      propertyPath: m_Layer
+      value: 13
       objectReference: {fileID: 0}
     - target: {fileID: 1891347503560987570, guid: 5a1e7365e6686f14a8a1413f7dc62e95, type: 3}
       propertyPath: m_TagString
@@ -232,16 +238,10 @@ PrefabInstance:
       propertyPath: m_Materials.Array.data[0]
       value: 
       objectReference: {fileID: 2100000, guid: 38ecf745b1dab7743aecbaf60a175450, type: 2}
-    m_RemovedComponents:
-    - {fileID: -8136994942902657864, guid: 5a1e7365e6686f14a8a1413f7dc62e95, type: 3}
+    m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 5a1e7365e6686f14a8a1413f7dc62e95, type: 3}
 --- !u!4 &4625119743145582611 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 5a1e7365e6686f14a8a1413f7dc62e95, type: 3}
-  m_PrefabInstance: {fileID: 5162533216714475512}
-  m_PrefabAsset: {fileID: 0}
---- !u!1 &6744820022246954058 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 1891347503560987570, guid: 5a1e7365e6686f14a8a1413f7dc62e95, type: 3}
   m_PrefabInstance: {fileID: 5162533216714475512}
   m_PrefabAsset: {fileID: 0}

@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using FullSerializer;
+using Sirenix.OdinInspector;
 
 [Serializable]
 public class DataSaver {
@@ -211,6 +212,14 @@ public class DataSaver {
 			character = characterData;
 			myTrain = characterData.starterTrain.Copy();
 
+			for (int i = 0; i < myTrain.myCarts.Count; i++) {
+				for (int j = 0; j < myTrain.myCarts[i].buildingStates.Length; j++) {
+					var build = myTrain.myCarts[i].buildingStates[j];
+
+					build.ammo = -2;
+				}
+			}
+
 			for (int i = 0; i < characterData.starterUpgrades.Length; i++) {
 				upgrades.Add(characterData.starterUpgrades[i].upgradeUniqueName);
 			}
@@ -233,30 +242,26 @@ public class DataSaver {
 		public int maxAmmo = 100;
 		public int fuel = 25;
 		public int maxFuel = 100;
-		
-		
-		public enum Types {
-			fuel, scraps, ammo, money
-		}
 
-		public static string GetTypeInNiceString(Types types) {
+
+		public static string GetTypeInNiceString(ResourceTypes types) {
 			return types.ToString();
 		}
 
-		public void AddResource(int amount, Types types) {
+		public void AddResource(int amount, ResourceTypes types) {
 			switch (types) {
-				case Types.fuel:
+				case ResourceTypes.fuel:
 					fuel += amount;
 					fuel = Mathf.Clamp(fuel, 0, maxFuel);
 					break;
-				case Types.ammo:
+				case ResourceTypes.ammo:
 					ammo += amount;
 					ammo = Mathf.Clamp(ammo, 0, maxAmmo);
 					break;
-				case Types.money:
+				case ResourceTypes.money:
 					money += amount;
 					break;
-				case Types.scraps:
+				case ResourceTypes.scraps:
 					scraps += amount;
 					scraps = Mathf.Clamp(scraps, 0, maxScraps);
 					break;
@@ -285,13 +290,23 @@ public class DataSaver {
 		public class CartState {
 			[Serializable]
 			public class BuildingState {
+				[ValueDropdown("GetAllModuleNames")]
 				public string uniqueName = "";
+
+				/*private bool showInfoThing => uniqueName != "";
+				[ShowIf("showInfoThing")]
+				public bool hideExtraInfo = true;*/
+				
+				//[HideIf("hideExtraInfo")]
 				[HideInInspector]
 				public int health = -1;
+				//[HideIf("hideExtraInfo")]
 				[HideInInspector]
 				public int ammo = -1;
+				//[HideIf("hideExtraInfo")]
 				[HideInInspector]
 				public int cargoCost = -1;
+				//[HideIf("hideExtraInfo")]
 				[HideInInspector]
 				public int cargoReward = -1;
 
@@ -301,6 +316,15 @@ public class DataSaver {
 					ammo = -1;
 					cargoCost = -1;
 					cargoReward = -1;
+				}
+				
+				private static IEnumerable GetAllModuleNames() {
+					var buildings = GameObject.FindObjectOfType<DataHolder>().buildings;
+					var buildingNames = new List<string>();
+					for (int i = 0; i < buildings.Length; i++) {
+						buildingNames.Add(buildings[i].uniqueName);
+					}
+					return buildingNames;
 				}
 			}
 			//public string cartType = "cart";
@@ -334,4 +358,9 @@ public class DataSaver {
 			return copyState;
 		}
 	}
+}
+
+[Serializable]
+public enum ResourceTypes {
+	fuel, scraps, ammo, money
 }

@@ -24,14 +24,20 @@ public class MiniGUI_BuyBuilding : MonoBehaviour {
         nameText.text = myBuilding.displayName;
         icon.sprite = myBuilding.Icon;
         costText.text = moneyCost.ToString();
+
+        var tooltip = myBuilding.GetComponent<ClickableEntityInfo>();
+
+        if (tooltip != null) {
+            GetComponent<UITooltipDisplayer>().myTooltip = tooltip.GetTooltip();
+        }
     }
 
     public void Buy() {
-        curRun.myResources.money -= moneyCost;
+        MoneyController.s.ModifyResource(ResourceTypes.money, -moneyCost);
 
         UpgradesController.s.AddModulesToAvailableModules(myBuilding, 1);
         ModuleRewardsMaster.s.ShopModuleBought(holder);
-        
+
         Destroy(gameObject);
     }
 
@@ -45,7 +51,7 @@ public class MiniGUI_BuyBuilding : MonoBehaviour {
 
     private void Update() {
         if (DataSaver.s.GetCurrentSave().isInARun) {
-            myButton.interactable = curRun.myResources.money >= moneyCost;
+            myButton.interactable = MoneyController.s.HasResource(ResourceTypes.money, moneyCost);
         }
     }
 }

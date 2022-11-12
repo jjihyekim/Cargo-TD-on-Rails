@@ -13,7 +13,7 @@ public class MiniGUI_BuyCart : MonoBehaviour
     public TMP_Text costText;
 
     public void Buy() {
-        curRun.myResources.money -= moneyCost;
+        MoneyController.s.ModifyResource(ResourceTypes.money, -moneyCost);
         DataSaver.s.GetCurrentSave().currentRun.myTrain.myCarts.Add(new DataSaver.TrainState.CartState());
         Train.s.DrawTrain(DataSaver.s.GetCurrentSave().currentRun.myTrain);
         DataSaver.s.SaveActiveGame();
@@ -36,7 +36,7 @@ public class MiniGUI_BuyCart : MonoBehaviour
 
     private void Update() {
         if (DataSaver.s.GetCurrentSave().isInARun && curRun != null && myButton != null) {
-            myButton.interactable = curRun.myResources.money >= moneyCost;
+            myButton.interactable = MoneyController.s.HasResource(ResourceTypes.money, moneyCost);
         }
     }
 }

@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Sirenix.OdinInspector;
 using UnityEngine;
 
 public class ScrapPileMaker : MonoBehaviour {
@@ -23,6 +24,7 @@ public class ScrapPileMaker : MonoBehaviour {
         }
     }
     
+    [Button]
     public void EditorMakePile() {
         EditorClear();
         MakePile(4, false);
@@ -35,6 +37,7 @@ public class ScrapPileMaker : MonoBehaviour {
         }
     }
 
+    [Button]
     void EditorClear() {
         var childCount = transform.childCount;
         for (int i = childCount-1; i >= 0; i--) {
@@ -43,8 +46,4 @@ public class ScrapPileMaker : MonoBehaviour {
     }
     
     
-#if UNITY_EDITOR
-    [MethodButton("EditorMakePile", "EditorClear")]
-    [SerializeField] private bool editorFoldout;
-#endif
 }

@@ -13,8 +13,9 @@ public class CharacterSelector : MonoBehaviour {
     public GameObject charSelectUI;
     public Transform charsParent;
     public GameObject charPanelPrefab;
-    void Start()
-    {
+    
+
+    public void CheckAndShowCharSelectionScreen() {
         if (!DataSaver.s.GetCurrentSave().isInARun) {
             charSelectUI.SetActive(true);
             SetUpCharPanel();

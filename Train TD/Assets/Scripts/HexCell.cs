@@ -3,7 +3,7 @@ using UnityEngine;
 
 public class HexCell : MonoBehaviour {
 
-	public HexCoordinates coordinates;
+	public Vector2Int coordinates;
 
 	public Vector3 expectedCoordinates;
 

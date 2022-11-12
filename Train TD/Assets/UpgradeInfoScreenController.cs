@@ -13,6 +13,7 @@ public class UpgradeInfoScreenController : MonoBehaviour {
     
     [Header("Upgrade Info Display")] 
     public Image icon;
+    public Image extraInfoImage;
     public TMP_Text moduleName;
     public TMP_Text moduleCost;
     [Space] 
@@ -20,11 +21,13 @@ public class UpgradeInfoScreenController : MonoBehaviour {
     public TMP_Text upgradeDescription;
     public MiniGUI_UpgradeButton upgradeButton;
 
+    public Sprite armorPenetrationIcon;
+
 
     public void ChangeSelectedUpgrade(Upgrade toSelect) {
         selectedUpgrade = toSelect;
         var parentUpgrade = selectedUpgrade.parentUpgrade;
-		
+        
         if (previewBuilding == null || previewBuilding.uniqueName != parentUpgrade.module.uniqueName) {
             if (previewBuilding != null) {
                 myArea.previewSlots[curSlot].RemoveBuilding(previewBuilding);
@@ -48,6 +51,13 @@ public class UpgradeInfoScreenController : MonoBehaviour {
             foreach (var audio in audioSources) {
                 audio.enabled = false;
             }
+
+            var gunModule = previewBuilding.GetComponent<GunModule>();
+            if (gunModule != null) {
+                extraInfoImage.gameObject.SetActive(gunModule.canPenetrateArmor);
+            } else {
+                extraInfoImage.gameObject.SetActive(false);
+            }
         }
 
         icon.sprite = parentUpgrade.icon;
@@ -60,6 +70,15 @@ public class UpgradeInfoScreenController : MonoBehaviour {
 
         upgradeName.text = selectedUpgrade.upgradeName;
         upgradeDescription.text = selectedUpgrade.upgradeDescription;
+
+        if (selectedUpgrade == parentUpgrade) {
+            var parentInfo = parentUpgrade.module.GetComponent<ClickableEntityInfo>();
+
+            if (parentInfo != null) {
+                upgradeDescription.text = parentInfo.GetTooltip().text;
+            }
+        }
+        
         upgradeButton.SetUp(selectedUpgrade);
         
         upgradeButton.Refresh();

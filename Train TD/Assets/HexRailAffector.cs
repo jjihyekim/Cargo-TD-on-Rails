@@ -7,7 +7,10 @@ public class HexRailAffector : MonoBehaviour {
    public Vector3 startPos;
    public Vector3 endPos;
    
-   
+   private void OnDrawGizmos() {
+      Gizmos.color = Color.blue;
+      Gizmos.DrawLine(startPos + Vector3.up*3, endPos + Vector3.up*1);
+   }
 }
 
 

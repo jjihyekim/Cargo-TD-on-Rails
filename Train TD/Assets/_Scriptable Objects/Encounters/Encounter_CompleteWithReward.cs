@@ -36,7 +36,7 @@ public class Encounter_CompleteWithReward : RandomEncounter {
 
 [Serializable]
 public class RandomResourceReward {
-    public DataSaver.RunResources.Types myType;
+    public ResourceTypes myType;
     public int amount = 50;
     public float randomPercent = 0.1f;
 

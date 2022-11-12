@@ -21,6 +21,7 @@ public class CameraController : MonoBehaviour {
     public Transform cameraCornerBottomLeft;
     public Transform cameraCornerTopRight;
 
+
     public Transform cameraCenter;
     public Transform cameraOffset;
     public Transform cameraOffsetFlat;
@@ -29,6 +30,7 @@ public class CameraController : MonoBehaviour {
 
     public float edgeScrollMoveSpeed = 8f;
     public float wasdSpeed = 8f;
+    public float snappedwasdDelay = 0.5f; 
     public float zoomSpeed = 0.1f;
     public bool canZoom = true;
     public float middleMoveSpeed = 2f;
@@ -45,13 +47,18 @@ public class CameraController : MonoBehaviour {
     public InputActionProperty rotateAction;
     public InputActionProperty zoomAction;
     public InputActionProperty rotateCameraAction;
-
+    
 
     public float currentZoom = 0;
     public float realZoom = 0f;
     public Vector2 zoomLimit = new Vector2(-2, 2);
 
+    public float snapZoomCutoff = 2f;
+
+    public bool isSnappedToTrain = false;
+
     public bool canEdgeMove = false;
+
     protected void OnEnable()
     {
         moveAction.action.Enable();
@@ -63,7 +70,7 @@ public class CameraController : MonoBehaviour {
 
 
     protected void OnDisable()
-    {
+    { 
         moveAction.action.Disable();
         rotateAction.action.Disable();
         zoomAction.action.Disable();
@@ -81,15 +88,29 @@ public class CameraController : MonoBehaviour {
         SetMainCamPos();
     }
 
+    private bool snappedToTrainLastFrame = false;
     private void LateUpdate() {
-        var mousePos = Mouse.current.position.ReadValue();
-        if(canEdgeMove)
-            ProcessScreenCorners(mousePos);
-        ProcessMovementInput(moveAction.action.ReadValue<Vector2>(), wasdSpeed);
-        if(canZoom)
-            ProcessZoom(zoomAction.action.ReadValue<float>());
-        ProcessMiddleMouseRotation(rotateCameraAction.action.ReadValue<float>(), mousePos);
-        LerpCameraTarget();
+        if (directControlActive) {
+            ProcessDirectControl(moveAction.action.ReadValue<Vector2>());
+        } else {
+            var mousePos = Mouse.current.position.ReadValue();
+            if (canEdgeMove)
+                ProcessScreenCorners(mousePos);
+
+            if (!isSnappedToTrain)
+                ProcessMovementInput(moveAction.action.ReadValue<Vector2>(), wasdSpeed);
+            else
+                ProcessMovementSnapped(moveAction.action.ReadValue<Vector2>(), snappedwasdDelay);
+
+            if (canZoom)
+                ProcessZoom(zoomAction.action.ReadValue<float>());
+
+            ProcessMiddleMouseRotation(rotateCameraAction.action.ReadValue<float>(), mousePos);
+
+            LerpCameraTarget();
+        }
+        
+
         SetMainCamPos();
     }
 
@@ -108,9 +129,6 @@ public class CameraController : MonoBehaviour {
                 rotationAngleTarget = Mathf.MoveTowards(rotationAngleTarget, rotationAngle, 10 * Time.deltaTime);
             }
         }
-
-
-
 
         mousePosLastFrame = mousePos;
     }
@@ -143,11 +161,29 @@ public class CameraController : MonoBehaviour {
             CancelInvoke(nameof(SnapZoom));
             Invoke(nameof(SnapZoom),0.7f);
         }
+
+        if (isSnappedToMap) {
+            isSnappedToTrain = false;
+        } else {
+            if (currentZoom >= snapZoomCutoff) {
+                if (!isSnappedToTrain) {
+                    SnapToNearestCart();
+                }
+
+                isSnappedToTrain = true;
+            } else {
+                isSnappedToTrain = false;
+            }
+        }
     }
 
     void SnapZoom() {
         if (Mathf.Abs(currentZoom) < 1.25) {
             currentZoom = 0;
+        }
+
+        if (Mathf.Abs(currentZoom - snapZoomCutoff) < 1.25) {
+            currentZoom = snapZoomCutoff;
         }
     }
 
@@ -175,26 +211,110 @@ public class CameraController : MonoBehaviour {
         ProcessMovementInput(output, edgeScrollMoveSpeed);
     }
 
-    public void ProcessMovementInput(Vector2 value, float multiplier) {
+    [Header("Map Settings")]
+    
+    public bool isSnappedToMap = false;
+    public Transform mapCameraCornerBottomLeft;
+    public Transform mapCameraCornerTopRight;
+    public Vector3 mapStartPos = new Vector3(100, 0, -100);
+    public Vector3 mapPos;
+    private Vector3 regularPos;
+    private float mapZoom;
+    private float regularZoom;
+
+    public void ResetMapPos() {
+        mapPos = mapStartPos;
+        mapZoom = 0;
+    }
+
+    public void EnterMapMode() {
+        isSnappedToMap = true;
+        regularPos = cameraCenter.position;
+        cameraCenter.position = mapPos;
+        regularZoom = currentZoom;
+        currentZoom = mapZoom;
+    }
+
+    public void ExitMapMode() {
+        isSnappedToMap = false;
+        mapPos = cameraCenter.position;
+        cameraCenter.position = regularPos;
+        mapZoom = currentZoom;
+        currentZoom = regularZoom;
+    }
+
+    void ProcessMovementInput(Vector2 value, float multiplier) {
         var delta = new Vector3(value.x, 0, value.y);
         
         var transformed = cameraOffsetFlat.TransformDirection(delta);
         
-
         cameraCenter.position += transformed * multiplier * Time.deltaTime;
 
-        if (cameraCenter.transform.position.x < cameraCornerBottomLeft.position.x) {
-            cameraCenter.position = new Vector3(cameraCornerBottomLeft.position.x, cameraCenter.position.y, cameraCenter.position.z);
-        }else if (cameraCenter.position.x > cameraCornerTopRight.position.x) {
-            cameraCenter.position = new Vector3(cameraCornerTopRight.position.x, cameraCenter.position.y, cameraCenter.position.z);
+        Transform topRight = isSnappedToMap ? mapCameraCornerTopRight : cameraCornerTopRight;
+        Transform bottomLeft = isSnappedToMap ? mapCameraCornerBottomLeft : cameraCornerBottomLeft;
+
+
+        var camPos = cameraCenter.position;
+        if (camPos.x < bottomLeft.position.x) {
+            cameraCenter.position = new Vector3(bottomLeft.position.x, camPos.y, camPos.z);
+        }else if (camPos.x > topRight.position.x) {
+            cameraCenter.position = new Vector3(topRight.position.x, camPos.y, camPos.z);
         }
         
-        if (cameraCenter.position.z < cameraCornerBottomLeft.position.z) {
-            cameraCenter.position = new Vector3(cameraCenter.position.x, cameraCenter.position.y, cameraCornerBottomLeft.position.z);
-        }else if (cameraCenter.position.z > cameraCornerTopRight.position.z) {
-            cameraCenter.position = new Vector3(cameraCenter.position.x, cameraCenter.position.y, cameraCornerTopRight.position.z);
+        if (camPos.z < bottomLeft.position.z) {
+            cameraCenter.position = new Vector3(camPos.x, camPos.y, bottomLeft.position.z);
+        }else if (camPos.z > topRight.position.z) {
+            cameraCenter.position = new Vector3(camPos.x, camPos.y, topRight.position.z);
         }
     }
+    
+    
+
+    private int targetCart = -1;
+    private float snappedMoveTimer = 0;
+    public float snappedMovementLerp = 1f;
+    void ProcessMovementSnapped(Vector2 value, float delay) {
+        var carts = Train.s.carts;
+
+        cameraCenter.position = Vector3.Lerp(cameraCenter.position, carts[targetCart].position, snappedMovementLerp*Time.deltaTime); 
+
+        if (snappedMoveTimer <= 0) {
+            if (value.x < -0.1f || value.y < -0.1f) {
+                targetCart += 1;
+                snappedMoveTimer = delay;
+                targetCart = Mathf.Clamp(targetCart, 0, carts.Count-1);
+            }else if (value.x > 0.1f || value.y > 0.1f) {
+                targetCart -= 1;
+                snappedMoveTimer = delay;
+                targetCart = Mathf.Clamp(targetCart, 0, carts.Count-1);
+            }
+        }
+
+        if (value.sqrMagnitude < 0.1f) {
+            snappedMoveTimer = 0;
+        }
+
+        snappedMoveTimer -= Time.deltaTime;
+    }
+
+    void SnapToNearestCart() {
+        var carts = Train.s.carts;
+        if (!snappedToTrainLastFrame) {
+            targetCart = -1;
+            var minDist = float.MaxValue;
+            
+            for (int i = 0; i < carts.Count; i++) {
+                var dist = Vector3.Distance(cameraCenter.position, carts[i].position);
+
+                if (dist < minDist) {
+                    targetCart = i;
+                    minDist = dist;
+                }
+            }
+        }
+    }
+    
+    
 
     public void FlipCamera(InputAction.CallbackContext info) {
         isRight = !isRight;
@@ -203,5 +323,49 @@ public class CameraController : MonoBehaviour {
     
     public void ToggleCameraEdgeMove() {
         canEdgeMove = !canEdgeMove;
+    }
+
+    [Header("Direct Control Settings")] 
+    public bool directControlActive = false;
+    public Transform directControlTransform;
+    private Vector2 rotTarget;
+    public float mouseSensitivity = 1f;
+    public float gamepadSensitivity = 1f;
+    private bool rotLerping = true;
+
+    public void ProcessDirectControl(Vector2 stickInput) {
+        var realInput = stickInput*gamepadSensitivity + Mouse.current.delta.ReadValue() * mouseSensitivity;
+        realInput *= Time.deltaTime;
+
+        rotTarget += realInput;
+
+        Quaternion xQuaternion = Quaternion.AngleAxis (rotTarget.x, Vector3.up);
+        Quaternion yQuaternion = Quaternion.AngleAxis (rotTarget.y, -Vector3.right);
+        
+        var targetPos = directControlTransform.position;
+        var targetRot = directControlTransform.rotation * xQuaternion * yQuaternion;
+        cameraLerpDummy.transform.position = Vector3.Lerp(cameraLerpDummy.transform.position, targetPos, posLerpSpeed * Time.deltaTime);
+
+        if (rotLerping) {
+            cameraLerpDummy.transform.rotation = Quaternion.Lerp(cameraLerpDummy.transform.rotation, targetRot, rotLerpSpeed * Time.deltaTime);
+            if (Quaternion.Angle(cameraLerpDummy.transform.rotation, targetRot) < 5) {
+                rotLerping = false;
+            }
+        } else {
+            cameraLerpDummy.transform.rotation = targetRot;
+        }
+    }
+    
+    public void ActivateDirectControl(Transform target) {
+        directControlTransform = target;
+        directControlActive = true;
+        rotTarget = Vector2.zero;
+        rotLerping = true;
+        Cursor.lockState = CursorLockMode.Locked;
+    }
+
+    public void DisableDirectControl() {
+        directControlActive = false;
+        Cursor.lockState = CursorLockMode.None;
     }
 }

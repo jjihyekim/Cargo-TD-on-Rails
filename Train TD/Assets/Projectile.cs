@@ -35,6 +35,8 @@ public class Projectile : MonoBehaviour {
     }
     public GunModule source;
 
+    public GenericCallback onHitCallback;
+
     
     public enum HitType {
         Bullet, Rocket, Mortar
@@ -348,7 +350,12 @@ public class Projectile : MonoBehaviour {
             }
 
             target.DealDamage(dmg);
-            Instantiate(LevelReferences.s.damageNumbersPrefab, LevelReferences.s.uiDisplayParent).GetComponent<MiniGUI_DamageNumber>().SetUp(target.GetGameObject().transform, (int)dmg);
+            Instantiate(LevelReferences.s.damageNumbersPrefab, LevelReferences.s.uiDisplayParent)
+                .GetComponent<MiniGUI_DamageNumber>()
+                .SetUp(target.GetGameObject().transform, (int)dmg, isPlayerBullet);
+            
+            
+            onHitCallback?.Invoke();
         }
     }
 }

@@ -41,7 +41,7 @@ public class SoundscapeController : MonoBehaviour {
     }
 
     void PlayClip(AudioClip clip, float volume = 1f) {
-        if (clip != null) {
+        if (clip != null && _source != null) {
             _source.PlayOneShot(clip, volume);
             MusicPlayer.s.TemporaryVolumeReduce(clip.length);
         } else {
@@ -71,6 +71,10 @@ public class SoundscapeController : MonoBehaviour {
         PlayClipWithRandomnessAndDelay(clip, moduleBuilt);
     }
 
+    public void PlayModuleSkillActivate(AudioClip clip) {
+        PlayClip(clip);
+    }
+
     public AudioClip[] moduleExplodeSounds;
     public void PlayModuleExplode() {
         PlayClipWithRandomnessAndDelay(moduleExplodeSounds[Random.Range(0, moduleExplodeSounds.Length)], moduleExplode);
@@ -81,18 +85,18 @@ public class SoundscapeController : MonoBehaviour {
     public AudioClip[] noMoreFuel;
     public AudioClip[] noMoreScrap;
 
-    public void PlayNoMoreResource(DataSaver.RunResources.Types type) {
+    public void PlayNoMoreResource(ResourceTypes type) {
         switch (type) {
-            case DataSaver.RunResources.Types.ammo:
+            case ResourceTypes.ammo:
                 PlayClip(noMoreAmmo[Random.Range(0, noMoreAmmo.Length)]);
                 break;
-            case DataSaver.RunResources.Types.fuel:
+            case ResourceTypes.fuel:
                 PlayClip(noMoreFuel[Random.Range(0, noMoreFuel.Length)]);
                 break;
-            case DataSaver.RunResources.Types.money:
+            case ResourceTypes.money:
                 Debug.LogError("Cannot have no moniez");
                 break;
-            case DataSaver.RunResources.Types.scraps:
+            case ResourceTypes.scraps:
                 PlayClip(noMoreScrap[Random.Range(0, noMoreScrap.Length)]);
                 break;
         }

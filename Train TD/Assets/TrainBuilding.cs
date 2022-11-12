@@ -16,10 +16,14 @@ public class TrainBuilding : MonoBehaviour {
 
     [ReadOnly] 
     public Slot mySlot;
-    [ReadOnly]
-    public int mySlotIndex { get; private set; }
 
-    [HideIf("occupiesEntireSlot")]
+    public int mySlotIndex {
+        get {
+            return rotationToIndex[myRotation];
+        }
+    }
+
+        [HideIf("occupiesEntireSlot")]
     public bool canPointSide;
     [HideIf("occupiesEntireSlot")]
     public bool canPointUp;
@@ -67,27 +71,7 @@ public class TrainBuilding : MonoBehaviour {
     public GameObject frontGfx;
     [ShowIf("occupiesEntireSlot")]
     public GameObject backGfx;
-
-
-    public List<TransformWithRotation> myUITargetTransforms = new List<TransformWithRotation>();
-
-    [Serializable]
-    public class TransformWithRotation {
-        public List<Rots> possibleRotations = new List<Rots>() { Rots.left, Rots.right, Rots.forward, Rots.backwards };
-        public Transform transform;
-    }
-
-    public Transform uiTargetTransform {
-        get {
-            for (int i = 0; i < myUITargetTransforms.Count; i++) {
-                if (myUITargetTransforms[i].possibleRotations.Contains(myRotation)) {
-                    return myUITargetTransforms[i].transform;
-                }
-            }
-
-            return transform;
-        }
-    }
+    
 
     private Dictionary<Rots, Rots> fourWayRotation = new Dictionary<Rots, Rots>() {
         {Rots.left, Rots.forward},
@@ -120,6 +104,10 @@ public class TrainBuilding : MonoBehaviour {
         { 3, Rots.right},
     };
 
+    public bool IsPointingSide() {
+        return myRotation == Rots.left || myRotation == Rots.right;
+    }
+
     public bool isBuilt = false;
     public bool autoSetUp = false;
     private void Start() {
@@ -136,6 +124,17 @@ public class TrainBuilding : MonoBehaviour {
         SetGfxBasedOnRotation();
         SetBuildingMode(!isBuilt);
         SetUpOutlines();
+    }
+
+    public Transform GetUITargetTransform(bool isBottom) {
+        if (!occupiesEntireSlot)
+            return mySlot.GetUITargetTransform(mySlotIndex, isBottom);
+        else
+            return mySlot.GetUITargetTransform(4, isBottom);
+    }
+
+    public Transform GetShootingTargetTransform() {
+        return transform;
     }
 
 
@@ -187,17 +186,20 @@ public class TrainBuilding : MonoBehaviour {
             mySlot.RemoveBuilding(this);
     }
 
-    public void CompleteBuilding(bool playSound = true) {
+    public void CompleteBuilding(bool playSound = true, bool playVoiceline = true) {
         isBuilt = true;
         SetGfxBasedOnRotation();
         SetBuildingMode(!isBuilt);
         if (playSound) {
             GetComponentInChildren<ConstructionSounds>().PlayConstructionSound();
-            if(moduleBuiltSound.Length > 0)
-                SoundscapeController.s.PlayModuleBuilt(moduleBuiltSound[Random.Range(0, moduleBuiltSound.Length)]);
+            
+            if (playVoiceline) {
+                if (moduleBuiltSound.Length > 0)
+                    SoundscapeController.s.PlayModuleBuilt(moduleBuiltSound[Random.Range(0, moduleBuiltSound.Length)]);
+            }
         }
     }
-    
+
     public int SetRotationBasedOnIndex(int index, bool isFrontSlot) {
         var rotTarget = indexToRotation[index];
         switch (rotTarget) {

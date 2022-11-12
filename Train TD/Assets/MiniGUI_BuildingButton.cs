@@ -19,6 +19,9 @@ public class MiniGUI_BuildingButton : MonoBehaviour {
 
 	public int currentlyBuild = 0;
 	public int maxCount = 0;
+
+	[Space] 
+	public GameObject armorPenetration;
 	public void StartBuilding() {
 		if(canBuild)
 			PlayerBuildingController.s.StartBuilding(myBuilding, UpdateBuildingCount);
@@ -40,14 +43,14 @@ public class MiniGUI_BuildingButton : MonoBehaviour {
 
 		amountText.text = $"{currentlyBuild}/{maxCount}";
 
-		canBuild = currentlyBuild < maxCount && MoneyController.s.scraps >= myBuilding.cost;
+		canBuild = currentlyBuild < maxCount && MoneyController.s.HasResource(ResourceTypes.scraps, myBuilding.cost);
 		myButton.interactable = canBuild;
 
 		return canBuild;
 	}
 
 	private void Update() {
-		canBuild = currentlyBuild < maxCount && MoneyController.s.scraps >= myBuilding.cost;
+		canBuild = currentlyBuild < maxCount && MoneyController.s.HasResource(ResourceTypes.scraps, myBuilding.cost);
 		myButton.interactable = canBuild;
 	}
 
@@ -121,6 +124,21 @@ public class MiniGUI_BuildingButton : MonoBehaviour {
 			costText.text = myBuilding.cost.ToString();
 			myButton = GetComponent<Button>();
 			icon.sprite = myBuilding.Icon;
+
+			var gunModule = myBuilding.GetComponent<GunModule>();
+
+			if (gunModule != null) {
+				armorPenetration.SetActive(gunModule.canPenetrateArmor);
+			} else {
+				armorPenetration.SetActive(false);
+			}
+
+			var tooltip = GetComponent<UITooltipDisplayer>();
+			var moduleTooltip = myBuilding.GetComponent<ClickableEntityInfo>();
+
+			if (tooltip != null && moduleTooltip != null) {
+				tooltip.myTooltip = moduleTooltip.GetTooltip();
+			}
 		}
 		
 		

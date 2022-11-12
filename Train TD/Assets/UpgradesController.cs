@@ -47,11 +47,11 @@ public class UpgradesController : MonoBehaviour {
 	void DrawShopOptions() {
 		shopOptionsParent.DeleteAllChildren();
 		
-		// must initialize supplies before shop modules so that they can set themselves up based on the save status
+		// must initialize shop modules before supplies so that things can be set up
+		var shopOptions = ModuleRewardsMaster.s.GetShopContent();
 		for (int i = 0; i < supplies.Length; i++) {
 			supplies[i].Setup();
 		}
-		var shopOptions = ModuleRewardsMaster.s.GetShopContent();
 
 
 		for (int i = 0; i < shopOptions.Length; i++) {
@@ -129,8 +129,8 @@ public class UpgradesController : MonoBehaviour {
 
 	public void BuyUpgrade(Upgrade toBuy) {
 		var mySave = DataSaver.s.GetCurrentSave();
-		if (!toBuy.isUnlocked && mySave.currentRun.myResources.money >= toBuy.shopCost) {
-			mySave.currentRun.myResources.money -= toBuy.shopCost;
+		if (!toBuy.isUnlocked && MoneyController.s.HasResource(ResourceTypes.money, toBuy.shopCost)) {
+			MoneyController.s.ModifyResource(ResourceTypes.money, -toBuy.shopCost);
 			GetUpgrade(toBuy);
 		}
 	}

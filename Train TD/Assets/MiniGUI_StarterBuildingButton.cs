@@ -40,18 +40,16 @@ public class MiniGUI_StarterBuildingButton : MonoBehaviour {
 		} else {
 			//count += 1;
 		}
-
-		canBuild = count > 0;
-		myButton.interactable = canBuild;
-
-		UpdateCountText();
 		
-		var resources = DataSaver.s.GetCurrentSave().currentRun.myResources;
+		if (isSuccess) {
+			MoneyController.s.ModifyResource(ResourceTypes.money, -cost);
+			DataSaver.s.SaveActiveGame();
+		}
+		
+		Update();
+		UpdateCountText();
 
-		resources.money -= cost;
-		DataSaver.s.SaveActiveGame();
-
-		return count > 0 && resources.money >= cost;
+		return canBuild;
 	}
 
 	void AttachBuildingToButton(TrainBuilding building) {
@@ -91,7 +89,7 @@ public class MiniGUI_StarterBuildingButton : MonoBehaviour {
 	private void Update() {
 		var currentSave = DataSaver.s.GetCurrentSave();
 		if (currentSave.isInARun) {
-			canBuild = DataSaver.s.GetCurrentSave().currentRun.myResources.money >= cost && count > 0;
+			canBuild = MoneyController.s.HasResource(ResourceTypes.money, cost) && count > 0;
 			costText.text = cost.ToString();
 			rewardText.text = $"+{reward}";
 			myButton.interactable = canBuild;
@@ -101,7 +99,7 @@ public class MiniGUI_StarterBuildingButton : MonoBehaviour {
 
 	public void ReturnCargo(TrainBuilding source) {
 		count += 1;
-		DataSaver.s.GetCurrentSave().currentRun.myResources.money += cost;
+		MoneyController.s.ModifyResource(ResourceTypes.money, cost);
 		
 		myBuildings.Remove(source);
 		

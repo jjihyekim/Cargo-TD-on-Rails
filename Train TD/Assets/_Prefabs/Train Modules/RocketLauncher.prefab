@@ -680,6 +680,7 @@ GameObject:
   - component: {fileID: -5413692381133718793}
   - component: {fileID: 1513791444851784707}
   - component: {fileID: -2279841472330544923}
+  - component: {fileID: 2021261769006623840}
   m_Layer: 0
   m_Name: RocketLauncher
   m_TagString: Untagged
@@ -771,7 +772,7 @@ MonoBehaviour:
   fireDelay: 3
   fireBarrageCount: 1
   fireBarrageDelay: 0.5
-  projectileDamage: 40
+  projectileDamage: 50
   rotateSpeed: 10
   gunActive: 1
   CanShoot: 0
@@ -781,9 +782,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   canPenetrateArmor: 1
-  ammoUsePerShot: 3
-  scrapUsePerShot: 0
-  fuelUsePerShot: 3
+  fuelUsePerShot: 1
   steamUsePerShot: 0
 --- !u!114 &7641972898590985362
 MonoBehaviour:
@@ -870,6 +869,9 @@ MonoBehaviour:
   cost: -50
   cooldown: -1
   curCooldown: 0
+  soundEffect: []
+  myTooltip:
+    text: 
   isCombatMode: 1
 --- !u!114 &7605554476854228898
 MonoBehaviour:
@@ -884,10 +886,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   curAmmo: 0
-  maxAmmo: 100
-  ammoPerShot: 5
-  isUnlocked: 1
-  unlockingUpgrade: {fileID: 11400000, guid: ff0b64170da4a224883a5aa5c9ff6f66, type: 2}
+  maxAmmo: 30
+  ammoPerShot: 3
 --- !u!114 &-5925618615010043299
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -907,6 +907,9 @@ MonoBehaviour:
   cost: 50
   cooldown: 60
   curCooldown: 0
+  soundEffect: []
+  myTooltip:
+    text: Launch a rocket salvo. Make sure to have enough ammo!
   actionTime: 2
   initialDelay: 2
   endDelay: 2
@@ -932,6 +935,9 @@ MonoBehaviour:
   cost: 25
   cooldown: -1
   curCooldown: 0
+  soundEffect: []
+  myTooltip:
+    text: Repair this module over time.
 --- !u!114 &1513791444851784707
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -945,7 +951,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   tooltip:
-    text: Rockets go BOOM! Needs both fuel and ammo to work.
+    text: Rockets go BOOM! Needs both fuel and ammo to work. Penetrates armor.
   info: Rocket Launcher
 --- !u!114 &-2279841472330544923
 MonoBehaviour:
@@ -966,6 +972,32 @@ MonoBehaviour:
   cost: 10
   cooldown: 1
   curCooldown: 0
+  soundEffect: []
+  myTooltip:
+    text: Move this module to another slot instantly.
+--- !u!114 &2021261769006623840
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2876656872020492522}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c33a412f8442bd34aa1db59cc3bad577, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  isUnlocked: 1
+  unlockingUpgrade: {fileID: 0}
+  actionName: Reload
+  myType: 2
+  cost: 40
+  cooldown: 5
+  curCooldown: 0
+  soundEffect:
+  - {fileID: 8300000, guid: 9158afb6966d445db9caf1dccf7acbcc, type: 3}
+  myTooltip:
+    text: 
 --- !u!1 &2983896549083203264
 GameObject:
   m_ObjectHideFlags: 0

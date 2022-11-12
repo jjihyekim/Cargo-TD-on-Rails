@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 public class MiniGUI_DamageNumber : MonoBehaviour {
     public TMP_Text dmgText;
@@ -13,8 +14,34 @@ public class MiniGUI_DamageNumber : MonoBehaviour {
     public float fadeOutEndTime = 2f;
     private Vector3 target;
     private Transform targetWithOffset;
-    public void SetUp(Transform _target, int damage) {
-        dmgText.text = "-" + damage;
+
+
+    public int bigThreshold = 10;
+    
+    public string[] playerIsAttackedSmall;
+    public string[] playerIsAttackedBig;
+
+    public string[] enemyIsAttackedSmall;
+    public string[] enemyIsAttackedBig;
+    public void SetUp(Transform _target, int damage, bool isPlayer) {
+        //dmgText.text = "-" + damage;
+
+        if (isPlayer)
+        {
+            if (damage < bigThreshold) {
+                dmgText.text = enemyIsAttackedSmall[Random.Range(0, enemyIsAttackedSmall.Length)];
+            } else {
+                dmgText.text = enemyIsAttackedBig[Random.Range(0, enemyIsAttackedBig.Length)];
+            }
+        } else {
+            if (damage < bigThreshold) {
+                dmgText.text = playerIsAttackedSmall[Random.Range(0, playerIsAttackedSmall.Length)];
+            } else {
+                dmgText.text = playerIsAttackedBig[Random.Range(0, playerIsAttackedBig.Length)];
+            }
+        }
+
+
         canvasGroup = GetComponent<CanvasGroup>();
         target = _target.position;
 

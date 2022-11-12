@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Sirenix.OdinInspector;
 using UnityEngine;
 using UnityEngine.UI;
 using Random = UnityEngine.Random;
@@ -78,6 +79,7 @@ public class HexGrid : MonoBehaviour {
 	}
 
 	public int gridCount = 3;
+	[Button]
 	void CreateGrids() {
 		for (int i = 0; i < gridCount; i++) {
 			var hex = new GameObject("yeet");
@@ -102,6 +104,7 @@ public class HexGrid : MonoBehaviour {
 		hexParents.Clear();
 	}
 	
+	[Button]
 	void ClearGridsEditor() {
 		var count = hexParents.Count;
 		for (int i =  count-1; i >= 0; i--) {
@@ -120,6 +123,8 @@ public class HexGrid : MonoBehaviour {
 
 		foreach (var parent in hexParents) {
 			//parent.GetComponent<Rigidbody>().MovePosition(parent.position + Vector3.back * GlobalReferences.s.speed * Time.deltaTime);
+			
+			// correct one
 			parent.transform.position += Vector3.back * delta;
 		}
 
@@ -135,9 +140,4 @@ public class HexGrid : MonoBehaviour {
 
 		lastRealDistance = SpeedController.s.currentDistance;
 	}
-
-#if UNITY_EDITOR
-	[MethodButton("CreateGrids", "ClearGridsEditor")]
-	[SerializeField] private bool editorFoldout;
-#endif
 }

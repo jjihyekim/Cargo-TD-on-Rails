@@ -5,6 +5,7 @@ using Dreamteck.Splines.Primitives;
 using TMPro;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.UI;
 
 public class TooltipsMaster : MonoBehaviour {
 
@@ -58,7 +59,27 @@ public class TooltipsMaster : MonoBehaviour {
 
     public void ShowTooltip(Tooltip tooltip) {
         tooltipText.text = AddBreaks(tooltip.text);
+        
+        // yeet it off screen before our calculation
+        UIRect.transform.position = new Vector3(-1000, -1000, 0);
+        
         tooltipWindow.SetActive(true);
+
+        // fix the auto size fitting
+        Invoke(nameof(OneFrameLater), 0.01f);
+    }
+
+    void OneFrameLater() {
+        Canvas.ForceUpdateCanvases();  
+        tooltipText.transform.parent.GetComponent<VerticalLayoutGroup>().enabled = false;
+        tooltipText.transform.parent.GetComponent<VerticalLayoutGroup>().enabled = true;
+        
+        
+        Invoke(nameof(AnotherFrameLater), 0.01f);
+    }
+
+    void AnotherFrameLater() {
+        // then put it back where it should be
         isTooltipActive = true;
         Update();
     }
@@ -74,14 +95,14 @@ public class TooltipsMaster : MonoBehaviour {
             screenPoint = OverlayCamsReference.s.uiCam.ScreenToViewportPoint(screenPoint);
             // restrict to screen:
             //now you can set the position of the ui element
-            var halfWidthLimit = (CanvasRect.rect.width - (UIRect.rect.width*2 + edgeGive)) / 2f;
-            var halfHeightLimit = (CanvasRect.rect.height - (UIRect.rect.height*2 + edgeGive)) / 2f;
+            var halfWidthLimit = (CanvasRect.rect.width - (UIRect.rect.width + edgeGive)) / 2f;
+            var halfHeightLimit = (CanvasRect.rect.height - (UIRect.rect.height + edgeGive)) / 2f;
             halfWidthLimit /= CanvasRect.rect.width;
             halfHeightLimit /= CanvasRect.rect.height;
-            screenPoint.x = Mathf.Clamp(screenPoint.x - 0.5f,
-                -halfWidthLimit,
-                halfWidthLimit
-            ) + 0.5f;
+            screenPoint.x = Mathf.Clamp(screenPoint.x ,
+                0,
+                halfWidthLimit*2
+            ) ;
             screenPoint.y = Mathf.Clamp(screenPoint.y - 0.5f,
                 -halfHeightLimit,
                 halfHeightLimit

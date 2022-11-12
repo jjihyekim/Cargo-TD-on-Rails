@@ -9,8 +9,7 @@ public abstract class UnlockableEffect : MonoBehaviour {
     [HideIf("isUnlocked")]
     public Upgrade unlockingUpgrade;
 
-
-
+    
     protected virtual void _Start() { }
     void  Start()
     {

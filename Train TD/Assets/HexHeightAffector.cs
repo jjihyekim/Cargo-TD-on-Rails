@@ -5,7 +5,6 @@ using Sirenix.OdinInspector;
 using UnityEngine;
 
 
-[ExecuteInEditMode]
 public class HexHeightAffector : MonoBehaviour
 {
     [PropertyRange(0,1)]

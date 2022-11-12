@@ -15,14 +15,36 @@ public class MoneyController : MonoBehaviour {
     public ScrapBoxScript myScraps;
     public ScrapBoxScript myAmmo;
 
+    
     public float scraps { get; private set; }
     public int maxScraps = 200;
     public float ammo { get; private set; }
     public int maxAmmo = 100;
+
+    public float money {
+        get {
+            return DataSaver.s.GetCurrentSave().currentRun.myResources.money;
+        }
+    }
+
+    public float fuel {
+        get {
+            if(SceneLoader.s.isLevelInProgress)
+                return SpeedController.s.fuel;
+            else {
+                return DataSaver.s.GetCurrentSave().currentRun.myResources.fuel;
+            }
+        }
+    }
+
+    public float maxFuel {
+        get {
+            return SpeedController.s.maxFuel;
+        }
+    }
     
     public float scrapPerSecond = 1f;
     public float ammoPerSecond = 0f;
-    
 
     public void UpdateBasedOnLevelData() {
         var resources = DataSaver.s.GetCurrentSave().currentRun.myResources;
@@ -61,6 +83,9 @@ public class MoneyController : MonoBehaviour {
     }
 
     void ModifyScraps(float amount) {
+        if (scraps + amount > maxScraps || scraps + amount < 0) {
+            return;
+        }
         if (SceneLoader.s.isLevelInProgress) {
             scraps += amount;
             scraps = Mathf.Clamp(scraps, 0, maxScraps);
@@ -69,50 +94,73 @@ public class MoneyController : MonoBehaviour {
             var currentRunMyResources = DataSaver.s.GetCurrentSave().currentRun.myResources;
             currentRunMyResources.scraps += (int)amount;
             currentRunMyResources.scraps = Mathf.Clamp(currentRunMyResources.scraps, 0, currentRunMyResources.maxScraps);
+            scraps = currentRunMyResources.scraps;
+        }
+        
+        if (scraps <= 0) {
+            SoundscapeController.s.PlayNoMoreResource(ResourceTypes.scraps);
         }
     }
 
     void ModifyAmmo(float amount) {
+        if (ammo + amount > maxAmmo || ammo + amount < 0) {
+            return;
+        }
         if (SceneLoader.s.isLevelInProgress) {
             ammo += amount;
-            ammo = Mathf.Clamp(ammo, 0, maxScraps);
             myAmmo.SetScrap(ammo);
         } else {
             var currentRunMyResources = DataSaver.s.GetCurrentSave().currentRun.myResources;
             currentRunMyResources.ammo += (int)amount;
             currentRunMyResources.ammo = Mathf.Clamp(currentRunMyResources.ammo, 0, currentRunMyResources.maxAmmo);
+            ammo = currentRunMyResources.ammo;
         }
-    }
-
-
-    public void SubtractScraps(float amount) {
-        if (amount > 0) {
-            ModifyScraps(-amount);
-        }
-
-        if (scraps <= 0) {
-            SoundscapeController.s.PlayNoMoreResource(DataSaver.RunResources.Types.scraps);
-        }
-    }
-
-    public void AddScraps(float amount) {
-        if (amount > 0) {
-            ModifyScraps(amount);
-        }
-    }
-    
-    public void SubtractAmmo(float amount) {
-        if (amount > 0) {
-            ModifyAmmo(-amount);
-        }
+        
         if (ammo <= 0) {
-            SoundscapeController.s.PlayNoMoreResource(DataSaver.RunResources.Types.ammo);
+            SoundscapeController.s.PlayNoMoreResource(ResourceTypes.ammo);
         }
     }
 
-    public void AddAmmo(float amount) {
-        if (amount > 0) {
-            ModifyAmmo(amount);
+    public bool HasResource(ResourceTypes type, float amount) {
+        switch (type) {
+            case ResourceTypes.scraps:
+                return scraps >= amount;
+            case ResourceTypes.ammo:
+                return ammo >= amount;
+            case ResourceTypes.fuel:
+                return SpeedController.s.fuel >= amount;
+            case ResourceTypes.money:
+                var currentRunMyResources = DataSaver.s.GetCurrentSave().currentRun.myResources;
+                return currentRunMyResources.money >= amount;
+            default:
+                return false;
         }
+    }
+
+    public void ModifyResource(ResourceTypes type, float amount) {
+        switch (type) {
+            case ResourceTypes.scraps:
+                ModifyScraps(amount);
+                break;
+            case ResourceTypes.ammo:
+                ModifyAmmo(amount);
+                break;
+            case ResourceTypes.fuel:
+                SpeedController.s.ModifyFuel(amount);
+                break;
+            case ResourceTypes.money:
+                var currentRunMyResources = DataSaver.s.GetCurrentSave().currentRun.myResources;
+                currentRunMyResources.money += (int)amount;
+                break;
+        }
+        if(!SceneLoader.s.isLevelInProgress)
+            DataSaver.s.SaveActiveGame();
+    }
+
+    public void ApplyStorageAmounts(int _maxScraps, int _maxAmmo) {
+        maxScraps = _maxScraps;
+        myScraps.SetMaxScrap(maxScraps);
+        maxAmmo = _maxAmmo;
+        myAmmo.SetMaxScrap(maxAmmo);
     }
 }

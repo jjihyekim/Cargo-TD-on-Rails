@@ -392,6 +392,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6504039142590542889}
   - component: {fileID: 1336096833899344944}
+  - component: {fileID: -5830999255577445623}
   m_Layer: 5
   m_Name: IndividualAction
   m_TagString: Untagged
@@ -440,6 +441,26 @@ MonoBehaviour:
   icon: {fileID: 5369584468581833446}
   moneyCost: {fileID: 21300000, guid: ff5e5540cca528e44b47c96bb34dcc4b, type: 3}
   scrapCost: {fileID: 21300000, guid: 35c3c7bac743bec42b741ea85cbc6a03, type: 3}
+  ammoCost: {fileID: 21300000, guid: 332e935882e9cbd40baeeeefa0bca040, type: 3}
+  fuelCost: {fileID: 21300000, guid: a136425fe96dcc04bb3b44f7acbae855, type: 3}
+  regularCostColor: {r: 0, g: 0, b: 0, a: 1}
+  cantAffordColor: {r: 1, g: 0, b: 0, a: 1}
+--- !u!114 &-5830999255577445623
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3123895299770368060}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bdcee4c1407ad384fb315781e1889bf9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  myTooltip:
+    text: 
+  curTimer: 0
+  showingTooltip: 0
 --- !u!1 &3970483646763583382
 GameObject:
   m_ObjectHideFlags: 0

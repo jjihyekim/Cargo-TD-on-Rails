@@ -15,12 +15,26 @@ public class ModuleRewardsMaster : MonoBehaviour {
     public TrainModuleHolder[] GetShopContent() {
         var currentRun = DataSaver.s.GetCurrentSave().currentRun;
         if (!currentRun.shopInitialized) {
-            currentRun.currentShopModules = GenerateModules(Random.Range(2, 3 + 1));
-            currentRun.shopInitialized = true;
-            DataSaver.s.SaveActiveGame();
+            InitializeShop(currentRun);
         } 
         
         return currentRun.currentShopModules;
+    }
+
+    private void InitializeShop(DataSaver.RunState currentRun) {
+        currentRun.currentShopModules = GenerateModules(Random.Range(2, 3 + 1));
+
+        var playerStar = currentRun.map.GetPlayerStar();
+        currentRun.currentShopPrices = new List<SupplyPrice>();
+        
+        for (int i = 0; i < playerStar.city.prices.Length; i++) {
+            var priceIndex = playerStar.city.prices[i].Copy();
+            priceIndex.basePrice = (int)(priceIndex.basePrice * (1 + Random.Range(-priceIndex.variance, priceIndex.variance)));
+            currentRun.currentShopPrices.Add(priceIndex);
+        }
+
+        currentRun.shopInitialized = true;
+        DataSaver.s.SaveActiveGame();
     }
 
     public void ShopModuleBought(TrainModuleHolder holder) {

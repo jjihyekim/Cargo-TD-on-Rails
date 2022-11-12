@@ -59,18 +59,22 @@ public class EnemySwarmMaker : MonoBehaviour
 
     public void EnemyDeath() {
         activeEnemies -= 1;
-        
-        if(!EnemyHealth.winSelfDestruct)
-            SoundscapeController.s.PlayEnemyDie(enemyDieSounds[Random.Range(0,enemyDieSounds.Length)]);
+
+        if (!EnemyHealth.winSelfDestruct) {
+            if(enemyDieSounds.Length > 0)
+                SoundscapeController.s.PlayEnemyDie(enemyDieSounds[Random.Range(0,enemyDieSounds.Length)]);
+        }
 
         if (activeEnemies == 0) {
             Destroy(GetComponentInParent<EnemyWave>().gameObject);
             Destroy(gameObject);
         }
     }
-    
+
     public void PlayEnemyEnterSound() {
-        SoundscapeController.s.PlayEnemyEnter(enemyEnterSounds[Random.Range(0,enemyEnterSounds.Length)]);
+        if (enemyEnterSounds.Length > 0) {
+            SoundscapeController.s.PlayEnemyEnter(enemyEnterSounds[Random.Range(0, enemyEnterSounds.Length)]);
+        }
     }
 }
 

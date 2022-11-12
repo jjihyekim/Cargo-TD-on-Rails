@@ -198,7 +198,7 @@ public class PlayerBuildingController : MonoBehaviour {
                     // This means we are doing building in menu
                     canBuildMore = finishBuildingCallback.Invoke(true);
                 } else {
-                    canBuildMore = MoneyController.s.scraps >= tempBuilding.cost*2;
+                    canBuildMore = MoneyController.s.HasResource(ResourceTypes.scraps, tempBuilding.cost*2);
                 }
 
                 var newBuilding = tempBuilding;
@@ -211,11 +211,11 @@ public class PlayerBuildingController : MonoBehaviour {
                 
                 activeSlot.AddBuilding(newBuilding, activeIndex);
                 newBuilding.transform.position = activeSlot.transform.position;
-                newBuilding.CompleteBuilding(nextBuildSayVoiceline);
+                newBuilding.CompleteBuilding(true, nextBuildSayVoiceline);
                 returnFinishedBuilding?.Invoke(newBuilding);
                 
                 if(!nextBuildIsFree)
-                    MoneyController.s.SubtractScraps(newBuilding.cost);
+                    MoneyController.s.ModifyResource(ResourceTypes.scraps, -newBuilding.cost);
                 nextBuildIsFree = false;
                 
                 if (!SceneLoader.s.isLevelInProgress) {

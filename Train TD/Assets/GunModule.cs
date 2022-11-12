@@ -32,6 +32,7 @@ public class GunModule : MonoBehaviour, IComponentWithTarget, IActiveDuringComba
 
     public bool gunActive = true;
     public bool CanShoot = false;
+    public bool hasAmmo = true;
 
     public bool isPlayer = false;
 
@@ -41,33 +42,36 @@ public class GunModule : MonoBehaviour, IComponentWithTarget, IActiveDuringComba
 
     public bool canPenetrateArmor = false;
 
-    public float ammoUsePerShot = 0;
-    public float scrapUsePerShot = 0;
+    /*public float ammoUsePerShot = 0;
+    public float scrapUsePerShot = 0;*/
     public float fuelUsePerShot = 0;
     public float steamUsePerShot = 0;
     
     private void Update() {
-        if (target != null) {
-            // Look at target
-            LookAtLocation(target.position);
+        if (gunActive) {
+            if (target != null) {
+                // Look at target
+                LookAtLocation(target.position);
 
-            if (rotateTransforms.Length == 0) {
-                CanShoot = true;
+                if (rotateTransforms.Length == 0) {
+                    CanShoot = true;
+                }
+            } else {
+
+                // look at center of targeting area
+                LookAtLocation(GetRangeOrigin().position + GetRangeOrigin().forward * 5);
             }
-        } else {
-            
-            // look at center of targeting area
-            LookAtLocation(GetRangeOrigin().position + GetRangeOrigin().forward*5);
         }
     }
 
-    private void LookAtLocation(Vector3 location) {
+    public void LookAtLocation(Vector3 location) {
         for (int i = 0; i < rotateTransforms.Length; i++) {
             var rotateTransform = rotateTransforms[i].transform;
             var lookAxis = location - rotateTransform.position;
             if (mortarRotation)
                 lookAxis.y = 0;
             var lookRotation = Quaternion.LookRotation(lookAxis, Vector3.up);
+            //print(lookRotation);
             rotateTransform.rotation = Quaternion.Lerp(rotateTransform.rotation, lookRotation, rotateSpeed * Time.deltaTime);
             if (Quaternion.Angle(rotateTransform.rotation, lookRotation) < 5) {
                 CanShoot = true;
@@ -103,19 +107,20 @@ public class GunModule : MonoBehaviour, IComponentWithTarget, IActiveDuringComba
     IEnumerator ShootCycle() {
         while (true) {
             yield return new WaitForSeconds(fireDelay * GetAttackSpeedMultiplier());
+            while (!CanShoot || !hasAmmo) {
+                yield return null;
+            }
             if (isShooting) {
                 StartCoroutine(ShootBarrage());
+            } else {
+                break;
             }
         }
     }
 
-    IEnumerator ShootBarrage() {
+    IEnumerator ShootBarrage(bool isFree = false, GenericCallback shotCallback = null, GenericCallback onHitCallback = null) {
         for (int i = 0; i < fireBarrageCount; i++) {
-            while (!CanShoot) {
-                yield return null;
-            }
-
-            if (AreThereEnoughMaterialsToShoot()) {
+            if (AreThereEnoughMaterialsToShoot() || isFree) {
                 var barrelEnd = GetShootTransform().transform;
                 var position = barrelEnd.position;
                 var rotation = barrelEnd.rotation;
@@ -130,27 +135,36 @@ public class GunModule : MonoBehaviour, IComponentWithTarget, IActiveDuringComba
                 projectile.isPlayerBullet = isPlayer;
                 projectile.source = this;
 
+                projectile.onHitCallback = onHitCallback;
+
                 if(myCart != null)
                     LogShotData(projectileDamage*GetDamageMultiplier());
 
-                if (isPlayer) {
-                    MoneyController.s.SubtractAmmo(ammoUsePerShot);
-                    MoneyController.s.SubtractScraps(scrapUsePerShot);
-                    SpeedController.s.SubtractFuel(fuelUsePerShot);
+                if (isPlayer && !isFree) {
+                    /*MoneyController.s.SubtractAmmo(ammoUsePerShot);
+                    MoneyController.s.SubtractScraps(scrapUsePerShot);*/
+                    MoneyController.s.ModifyResource(ResourceTypes.fuel, -fuelUsePerShot);
                     SpeedController.s.UseSteam(steamUsePerShot);
                 }
+                
+                shotCallback?.Invoke();
             }
             yield return new WaitForSeconds(fireBarrageDelay);
         }
-        barrageShot?.Invoke();
+        
+        if(!isFree)
+            barrageShot?.Invoke();
+    }
+    public void ShootBarrageFree(GenericCallback shotCallback, GenericCallback onHitCallback) {
+        StartCoroutine(ShootBarrage(true, shotCallback, onHitCallback));
     }
 
     bool AreThereEnoughMaterialsToShoot() {
         var areThereEnough = true;
 
         // ReSharper disable once ConditionIsAlwaysTrueOrFalse
-        areThereEnough = areThereEnough && MoneyController.s.ammo >= ammoUsePerShot;
-        areThereEnough = areThereEnough && MoneyController.s.scraps >= scrapUsePerShot;
+        /*areThereEnough = areThereEnough && MoneyController.s.ammo >= ammoUsePerShot;
+        areThereEnough = areThereEnough && MoneyController.s.scraps >= scrapUsePerShot;*/
         areThereEnough = areThereEnough && SpeedController.s.fuel >= fuelUsePerShot;
         
         return areThereEnough;
@@ -206,7 +220,8 @@ public class GunModule : MonoBehaviour, IComponentWithTarget, IActiveDuringComba
 
     void StopShooting() {
         if (isShooting) {
-            StopCoroutine(ActiveShootCycle);
+            if(ActiveShootCycle != null)
+                StopCoroutine(ActiveShootCycle);
             ActiveShootCycle = null;
             isShooting = false;
         }
@@ -215,8 +230,7 @@ public class GunModule : MonoBehaviour, IComponentWithTarget, IActiveDuringComba
     void StartShooting() {
         if (gunActive) {
             if (!isShooting) {
-                if (ActiveShootCycle != null)
-                    StopCoroutine(ActiveShootCycle);
+                StopAllCoroutines();
 
                 ActiveShootCycle = ShootCycle();
                 StartCoroutine(ActiveShootCycle);

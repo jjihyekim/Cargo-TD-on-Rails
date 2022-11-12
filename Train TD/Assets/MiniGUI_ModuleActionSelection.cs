@@ -10,6 +10,7 @@ public class MiniGUI_ModuleActionSelection : MonoBehaviour {
 	public GameObject singleActionPrefab;
 	public GameObject singleInfoPrefab;
 	public Transform singleActionParent;
+	public GameObject empty;
 
 	private TrainBuilding myModule;
 	private EnemyHealth myEnemy;
@@ -23,22 +24,28 @@ public class MiniGUI_ModuleActionSelection : MonoBehaviour {
 
 		var myActions = myModule.GetComponents<ModuleAction>();
 
+		int n = 0;
 		for (int i = 0; i < myActions.Length; i++) {
 			if (myActions[i].isUnlocked && myActions[i].enabled) {
 				var button = Instantiate(singleActionPrefab, singleActionParent).GetComponent<MiniGUI_ModuleSingleAction>().SetUp(myActions[i]);
 				extraRects.Add(button.GetComponent<RectTransform>());
+				if (n == 3) {
+					var emptyGridSlot = Instantiate(empty, singleActionParent);
+					extraRects.Add(emptyGridSlot.GetComponent<RectTransform>());
+				}
+				n += 1;
 			}
 		}
 		
 		
-		var myInfo = myModule.GetComponents<IClickableInfo>();
+		var myInfo = myModule.GetComponentsInChildren<IClickableInfo>();
 		for (int i = 0; i < myInfo.Length; i++) {
 			var info = Instantiate(singleInfoPrefab, singleActionParent).GetComponent<MiniGUI_SingleInfo>().SetUp(myInfo[i]);
 			extraRects.Add(info.GetComponent<RectTransform>());
 		}
 
 
-		sourceTransform = myModule.uiTargetTransform;
+		sourceTransform = myModule.GetUITargetTransform(false);
 		
 		CanvasRect = transform.root.GetComponent<RectTransform>();
 		UIRect = GetComponent<RectTransform>();
@@ -52,7 +59,7 @@ public class MiniGUI_ModuleActionSelection : MonoBehaviour {
 		extraRects.Clear();
 		
 		myEnemy = enemyHealth;
-		var myInfo = myEnemy.GetComponents<IClickableInfo>();
+		var myInfo = myEnemy.GetComponentsInChildren<IClickableInfo>();
 		for (int i = 0; i < myInfo.Length; i++) {
 			var info = Instantiate(singleInfoPrefab, singleActionParent).GetComponent<MiniGUI_SingleInfo>().SetUp(myInfo[i]);
 			extraRects.Add(info.GetComponent<RectTransform>());

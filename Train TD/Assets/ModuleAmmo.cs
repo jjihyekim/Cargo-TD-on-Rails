@@ -3,41 +3,25 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ModuleAmmo : MonoBehaviour, IResupplyAble {
+public class ModuleAmmo : MonoBehaviour, IResupplyAble, IActiveDuringCombat, IActiveDuringShopping {
 
-    public int curAmmo = 0;
+    public float curAmmo { get; private set; }
     public int maxAmmo = 100;
-    public int ammoPerShot = 5;
+    public float ammoPerShot = 1;
 
     private GunModule myGunModule;
-    public bool isUnlocked = false;
-    public Upgrade unlockingUpgrade;
+
+    private bool listenerAdded = false;
     
-    private  void Start() {
-        this.enabled = false;
-        if (!isUnlocked) {
-            if (UpgradesController.s.unlockedUpgrades.Contains(unlockingUpgrade.upgradeUniqueName)) {
-                isUnlocked = true;
-            }
-        }
-
-        if (!isUnlocked) {
-            maxAmmo = 0;
-            this.enabled = false;
-            return;
-        }
-
-        myGunModule = GetComponent<GunModule>();
-        myGunModule.barrageShot.AddListener(UseAmmo);
-    }
 
     public bool ShowAmmoBar() {
         // add option to toggle all the ammo bars?
-        if (curAmmo != 0 && curAmmo != maxAmmo) {
+        return true;
+        /*if (curAmmo != 0 && curAmmo != maxAmmo) {
             return true;
         } else {
             return false;
-        }
+        }*/
     }
 
     public void UseAmmo() {
@@ -53,18 +37,41 @@ public class ModuleAmmo : MonoBehaviour, IResupplyAble {
     }
 
     void UpdateModuleState() {
-        myGunModule.CanShoot = curAmmo >= ammoPerShot;
+        myGunModule.hasAmmo = curAmmo >= ammoPerShot;
     }
 
     public int MissingSupplies() {
-        return curAmmo - maxAmmo;
+        return (int)curAmmo - maxAmmo;
     }
 
     public Transform GetResupplyEffectSpawnTransform() {
         return transform;
     }
 
-    public void SetAmmo(int ammo) {
+    public void SetAmmo(float ammo) {
         curAmmo = ammo;
+        myGunModule = GetComponent<GunModule>();
+        UpdateModuleState();
+    }
+
+    public void ActivateForCombat() {
+        this.enabled = true;
+        
+        myGunModule = GetComponent<GunModule>();
+        if (!listenerAdded) {
+            myGunModule.barrageShot.AddListener(UseAmmo);
+            listenerAdded = true;
+        }
+
+        UpdateModuleState();
+    }
+
+    public void ActivateForShopping() {
+        ActivateForCombat();
+    }
+
+    public void Disable() {
+        this.enabled = false;
+        myGunModule = GetComponent<GunModule>();
     }
 }

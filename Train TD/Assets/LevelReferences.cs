@@ -58,57 +58,45 @@ public class LevelReferences : MonoBehaviour {
 
 
     const int maxMoneyPileCount = 25;
-    public void SpawnScrapsAtLocation(int amount, Vector3 location) {
+    public List<GameObject> SpawnResourceAtLocation(ResourceTypes type, int amount, Vector3 location, bool autoCollect = true) {
+        if (amount == 0)
+            return null;
+        
         int count = Mathf.CeilToInt(amount / (float)maxMoneyPileCount);
+
+        GameObject prefab = null;
+
+        switch (type) {
+            case ResourceTypes.ammo:
+                prefab = ammoPile;
+                break;
+            case ResourceTypes.fuel:
+                prefab = fuelPile;
+                break;
+            case ResourceTypes.scraps:
+                prefab = scrapPile;
+                break;
+        }
+
+        var allPiles = new List<GameObject>();
 
         while(amount > 0) {
             var random = Random.insideUnitCircle * (count / 4f);
-            var pile = Instantiate(scrapPile, location + new Vector3(random.x, 0, random.y), Quaternion.identity);
+            var pile = Instantiate(prefab, location + new Vector3(random.x, 0, random.y), Quaternion.identity);
             var pileComp = pile.GetComponent<ScrapPile>();
             var targetAmount = maxMoneyPileCount;
             if (amount < maxMoneyPileCount)
                 targetAmount = amount;
-            pileComp.SetUp(targetAmount, ScrapPile.RewardType.scrap);
+            pileComp.SetUp(targetAmount, type);
             allScraps.Add(pileComp);
             amount -= maxMoneyPileCount;
             
-            pileComp.CollectPile();
+            if(autoCollect)
+                pileComp.CollectPile();
+            
+            allPiles.Add(pile);
         }
-    }
-    
-    public void SpawnFuelAtLocation(int amount, Vector3 location) {
-        int count = Mathf.CeilToInt(amount / (float)maxMoneyPileCount);
 
-        while(amount > 0) {
-            var random = Random.insideUnitCircle * (count / 4f);
-            var pile = Instantiate(fuelPile, location + new Vector3(random.x, 0, random.y), Quaternion.identity);
-            var pileComp = pile.GetComponent<ScrapPile>();
-            var targetAmount = maxMoneyPileCount;
-            if (amount < maxMoneyPileCount)
-                targetAmount = amount;
-            pileComp.SetUp(targetAmount, ScrapPile.RewardType.fuel);
-            allScraps.Add(pileComp);
-            amount -= maxMoneyPileCount;
-            
-            pileComp.CollectPile();
-        }
-    }
-    
-    public void SpawnAmmoAtLocation(int amount, Vector3 location) {
-        int count = Mathf.CeilToInt(amount / (float)maxMoneyPileCount);
-
-        while(amount > 0) {
-            var random = Random.insideUnitCircle * (count / 4f);
-            var pile = Instantiate(ammoPile, location + new Vector3(random.x, 0, random.y), Quaternion.identity);
-            var pileComp = pile.GetComponent<ScrapPile>();
-            var targetAmount = maxMoneyPileCount;
-            if (amount < maxMoneyPileCount)
-                targetAmount = amount;
-            pileComp.SetUp(targetAmount, ScrapPile.RewardType.ammo);
-            allScraps.Add(pileComp);
-            amount -= maxMoneyPileCount;
-            
-            pileComp.CollectPile();
-        }
+        return allPiles;
     }
 }

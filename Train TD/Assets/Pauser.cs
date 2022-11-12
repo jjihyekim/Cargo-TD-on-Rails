@@ -78,8 +78,7 @@ public class Pauser : MonoBehaviour {
 
                 { "buildingsBuild", ModuleHealth.buildingsBuild },
                 { "buildingsDestroyed", ModuleHealth.buildingsDestroyed },
-				
-                { "remainingMoney", MoneyController.s.scraps },
+                
                 { "enemiesLeftAlive", EnemyHealth.enemySpawned - EnemyHealth.enemyKilled},
                 { "emptyTrainSlots", Train.s.GetEmptySlotCount() },
             }

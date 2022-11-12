@@ -2473,6 +2473,10 @@ PrefabInstance:
       propertyPath: m_CastShadows
       value: 2
       objectReference: {fileID: 0}
+    - target: {fileID: 8427252365913977852, guid: 378f83311b9575446b955bdd763de7aa, type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: 346704b254b48574daf784076f157c39, type: 2}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 378f83311b9575446b955bdd763de7aa, type: 3}
 --- !u!4 &7367457266747556771 stripped
@@ -2490,18 +2494,6 @@ PrefabInstance:
     - target: {fileID: 7257746221505218707, guid: 378f83311b9575446b955bdd763de7aa, type: 3}
       propertyPath: m_RootOrder
       value: 7
-      objectReference: {fileID: 0}
-    - target: {fileID: 7257746221505218707, guid: 378f83311b9575446b955bdd763de7aa, type: 3}
-      propertyPath: m_LocalScale.x
-      value: 0.3
-      objectReference: {fileID: 0}
-    - target: {fileID: 7257746221505218707, guid: 378f83311b9575446b955bdd763de7aa, type: 3}
-      propertyPath: m_LocalScale.y
-      value: 0.3
-      objectReference: {fileID: 0}
-    - target: {fileID: 7257746221505218707, guid: 378f83311b9575446b955bdd763de7aa, type: 3}
-      propertyPath: m_LocalScale.z
-      value: 0.3
       objectReference: {fileID: 0}
     - target: {fileID: 7257746221505218707, guid: 378f83311b9575446b955bdd763de7aa, type: 3}
       propertyPath: m_LocalPosition.x
@@ -2548,9 +2540,9 @@ PrefabInstance:
       value: Building_Fortress_Castle_Wall_Straight_Medium_01 (6)
       objectReference: {fileID: 0}
     - target: {fileID: 8427252365913977852, guid: 378f83311b9575446b955bdd763de7aa, type: 3}
-      propertyPath: m_CastShadows
-      value: 2
-      objectReference: {fileID: 0}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: 346704b254b48574daf784076f157c39, type: 2}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 378f83311b9575446b955bdd763de7aa, type: 3}
 --- !u!4 &7456687237601107391 stripped
@@ -2568,18 +2560,6 @@ PrefabInstance:
     - target: {fileID: 7257746221505218707, guid: 378f83311b9575446b955bdd763de7aa, type: 3}
       propertyPath: m_RootOrder
       value: 10
-      objectReference: {fileID: 0}
-    - target: {fileID: 7257746221505218707, guid: 378f83311b9575446b955bdd763de7aa, type: 3}
-      propertyPath: m_LocalScale.x
-      value: 0.3
-      objectReference: {fileID: 0}
-    - target: {fileID: 7257746221505218707, guid: 378f83311b9575446b955bdd763de7aa, type: 3}
-      propertyPath: m_LocalScale.y
-      value: 0.3
-      objectReference: {fileID: 0}
-    - target: {fileID: 7257746221505218707, guid: 378f83311b9575446b955bdd763de7aa, type: 3}
-      propertyPath: m_LocalScale.z
-      value: 0.3
       objectReference: {fileID: 0}
     - target: {fileID: 7257746221505218707, guid: 378f83311b9575446b955bdd763de7aa, type: 3}
       propertyPath: m_LocalPosition.x
@@ -2626,9 +2606,9 @@ PrefabInstance:
       value: Building_Fortress_Castle_Wall_Straight_Medium_01 (9)
       objectReference: {fileID: 0}
     - target: {fileID: 8427252365913977852, guid: 378f83311b9575446b955bdd763de7aa, type: 3}
-      propertyPath: m_CastShadows
-      value: 2
-      objectReference: {fileID: 0}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: 346704b254b48574daf784076f157c39, type: 2}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 378f83311b9575446b955bdd763de7aa, type: 3}
 --- !u!4 &7064013435210673535 stripped
@@ -2646,18 +2626,6 @@ PrefabInstance:
     - target: {fileID: 7257746221505218707, guid: 378f83311b9575446b955bdd763de7aa, type: 3}
       propertyPath: m_RootOrder
       value: 3
-      objectReference: {fileID: 0}
-    - target: {fileID: 7257746221505218707, guid: 378f83311b9575446b955bdd763de7aa, type: 3}
-      propertyPath: m_LocalScale.x
-      value: 0.3
-      objectReference: {fileID: 0}
-    - target: {fileID: 7257746221505218707, guid: 378f83311b9575446b955bdd763de7aa, type: 3}
-      propertyPath: m_LocalScale.y
-      value: 0.3
-      objectReference: {fileID: 0}
-    - target: {fileID: 7257746221505218707, guid: 378f83311b9575446b955bdd763de7aa, type: 3}
-      propertyPath: m_LocalScale.z
-      value: 0.3
       objectReference: {fileID: 0}
     - target: {fileID: 7257746221505218707, guid: 378f83311b9575446b955bdd763de7aa, type: 3}
       propertyPath: m_LocalPosition.x
@@ -2704,9 +2672,9 @@ PrefabInstance:
       value: Building_Fortress_Castle_Wall_Straight_Medium_01 (2)
       objectReference: {fileID: 0}
     - target: {fileID: 8427252365913977852, guid: 378f83311b9575446b955bdd763de7aa, type: 3}
-      propertyPath: m_CastShadows
-      value: 2
-      objectReference: {fileID: 0}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: 346704b254b48574daf784076f157c39, type: 2}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 378f83311b9575446b955bdd763de7aa, type: 3}
 --- !u!4 &8634641398970028917 stripped
@@ -2724,18 +2692,6 @@ PrefabInstance:
     - target: {fileID: 7257746221505218707, guid: 378f83311b9575446b955bdd763de7aa, type: 3}
       propertyPath: m_RootOrder
       value: 2
-      objectReference: {fileID: 0}
-    - target: {fileID: 7257746221505218707, guid: 378f83311b9575446b955bdd763de7aa, type: 3}
-      propertyPath: m_LocalScale.x
-      value: 0.3
-      objectReference: {fileID: 0}
-    - target: {fileID: 7257746221505218707, guid: 378f83311b9575446b955bdd763de7aa, type: 3}
-      propertyPath: m_LocalScale.y
-      value: 0.3
-      objectReference: {fileID: 0}
-    - target: {fileID: 7257746221505218707, guid: 378f83311b9575446b955bdd763de7aa, type: 3}
-      propertyPath: m_LocalScale.z
-      value: 0.3
       objectReference: {fileID: 0}
     - target: {fileID: 7257746221505218707, guid: 378f83311b9575446b955bdd763de7aa, type: 3}
       propertyPath: m_LocalPosition.x
@@ -2782,9 +2738,9 @@ PrefabInstance:
       value: Building_Fortress_Castle_Wall_Straight_Medium_01 (1)
       objectReference: {fileID: 0}
     - target: {fileID: 8427252365913977852, guid: 378f83311b9575446b955bdd763de7aa, type: 3}
-      propertyPath: m_CastShadows
-      value: 2
-      objectReference: {fileID: 0}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: 346704b254b48574daf784076f157c39, type: 2}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 378f83311b9575446b955bdd763de7aa, type: 3}
 --- !u!4 &8081623934580419802 stripped
@@ -2863,6 +2819,10 @@ PrefabInstance:
       propertyPath: m_CastShadows
       value: 2
       objectReference: {fileID: 0}
+    - target: {fileID: 8427252365913977852, guid: 378f83311b9575446b955bdd763de7aa, type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: 346704b254b48574daf784076f157c39, type: 2}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 378f83311b9575446b955bdd763de7aa, type: 3}
 --- !u!4 &8357214246572429265 stripped
@@ -3003,6 +2963,10 @@ PrefabInstance:
       propertyPath: m_CastShadows
       value: 2
       objectReference: {fileID: 0}
+    - target: {fileID: 8427252365913977852, guid: 378f83311b9575446b955bdd763de7aa, type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: 346704b254b48574daf784076f157c39, type: 2}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 378f83311b9575446b955bdd763de7aa, type: 3}
 --- !u!4 &8882558123896544422 stripped
@@ -3081,6 +3045,10 @@ PrefabInstance:
       propertyPath: m_CastShadows
       value: 2
       objectReference: {fileID: 0}
+    - target: {fileID: 8427252365913977852, guid: 378f83311b9575446b955bdd763de7aa, type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: 346704b254b48574daf784076f157c39, type: 2}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 378f83311b9575446b955bdd763de7aa, type: 3}
 --- !u!4 &4903178557385346411 stripped
@@ -3159,6 +3127,10 @@ PrefabInstance:
       propertyPath: m_CastShadows
       value: 2
       objectReference: {fileID: 0}
+    - target: {fileID: 8427252365913977852, guid: 378f83311b9575446b955bdd763de7aa, type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: 346704b254b48574daf784076f157c39, type: 2}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 378f83311b9575446b955bdd763de7aa, type: 3}
 --- !u!4 &5833725549401890006 stripped
@@ -3299,6 +3271,10 @@ PrefabInstance:
       propertyPath: m_CastShadows
       value: 2
       objectReference: {fileID: 0}
+    - target: {fileID: 8427252365913977852, guid: 378f83311b9575446b955bdd763de7aa, type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: 346704b254b48574daf784076f157c39, type: 2}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 378f83311b9575446b955bdd763de7aa, type: 3}
 --- !u!4 &6540114871430072634 stripped
@@ -3377,6 +3353,10 @@ PrefabInstance:
       propertyPath: m_CastShadows
       value: 2
       objectReference: {fileID: 0}
+    - target: {fileID: 8427252365913977852, guid: 378f83311b9575446b955bdd763de7aa, type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: 346704b254b48574daf784076f157c39, type: 2}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 378f83311b9575446b955bdd763de7aa, type: 3}
 --- !u!4 &6566467113086620439 stripped
@@ -3517,6 +3497,10 @@ PrefabInstance:
       propertyPath: m_CastShadows
       value: 2
       objectReference: {fileID: 0}
+    - target: {fileID: 8427252365913977852, guid: 378f83311b9575446b955bdd763de7aa, type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: 346704b254b48574daf784076f157c39, type: 2}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 378f83311b9575446b955bdd763de7aa, type: 3}
 --- !u!4 &2843451413056134085 stripped
@@ -3598,18 +3582,6 @@ PrefabInstance:
       value: 9
       objectReference: {fileID: 0}
     - target: {fileID: 7257746221505218707, guid: 378f83311b9575446b955bdd763de7aa, type: 3}
-      propertyPath: m_LocalScale.x
-      value: 0.3
-      objectReference: {fileID: 0}
-    - target: {fileID: 7257746221505218707, guid: 378f83311b9575446b955bdd763de7aa, type: 3}
-      propertyPath: m_LocalScale.y
-      value: 0.3
-      objectReference: {fileID: 0}
-    - target: {fileID: 7257746221505218707, guid: 378f83311b9575446b955bdd763de7aa, type: 3}
-      propertyPath: m_LocalScale.z
-      value: 0.3
-      objectReference: {fileID: 0}
-    - target: {fileID: 7257746221505218707, guid: 378f83311b9575446b955bdd763de7aa, type: 3}
       propertyPath: m_LocalPosition.x
       value: -5.191
       objectReference: {fileID: 0}
@@ -3654,9 +3626,9 @@ PrefabInstance:
       value: Building_Fortress_Castle_Wall_Straight_Medium_01 (8)
       objectReference: {fileID: 0}
     - target: {fileID: 8427252365913977852, guid: 378f83311b9575446b955bdd763de7aa, type: 3}
-      propertyPath: m_CastShadows
-      value: 2
-      objectReference: {fileID: 0}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: 346704b254b48574daf784076f157c39, type: 2}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 378f83311b9575446b955bdd763de7aa, type: 3}
 --- !u!4 &2969583763317116917 stripped
@@ -3816,18 +3788,6 @@ PrefabInstance:
       value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 7257746221505218707, guid: 378f83311b9575446b955bdd763de7aa, type: 3}
-      propertyPath: m_LocalScale.x
-      value: 0.3
-      objectReference: {fileID: 0}
-    - target: {fileID: 7257746221505218707, guid: 378f83311b9575446b955bdd763de7aa, type: 3}
-      propertyPath: m_LocalScale.y
-      value: 0.3
-      objectReference: {fileID: 0}
-    - target: {fileID: 7257746221505218707, guid: 378f83311b9575446b955bdd763de7aa, type: 3}
-      propertyPath: m_LocalScale.z
-      value: 0.3
-      objectReference: {fileID: 0}
-    - target: {fileID: 7257746221505218707, guid: 378f83311b9575446b955bdd763de7aa, type: 3}
       propertyPath: m_LocalPosition.x
       value: 13.1
       objectReference: {fileID: 0}
@@ -3872,9 +3832,9 @@ PrefabInstance:
       value: Building_Fortress_Castle_Wall_Straight_Medium_01 (4)
       objectReference: {fileID: 0}
     - target: {fileID: 8427252365913977852, guid: 378f83311b9575446b955bdd763de7aa, type: 3}
-      propertyPath: m_CastShadows
-      value: 2
-      objectReference: {fileID: 0}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: 346704b254b48574daf784076f157c39, type: 2}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 378f83311b9575446b955bdd763de7aa, type: 3}
 --- !u!4 &452755595337199212 stripped
@@ -3892,18 +3852,6 @@ PrefabInstance:
     - target: {fileID: 53743146396522036, guid: 3e168dd004919dc4791f5232b34482a3, type: 3}
       propertyPath: m_RootOrder
       value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 53743146396522036, guid: 3e168dd004919dc4791f5232b34482a3, type: 3}
-      propertyPath: m_LocalScale.x
-      value: 0.3
-      objectReference: {fileID: 0}
-    - target: {fileID: 53743146396522036, guid: 3e168dd004919dc4791f5232b34482a3, type: 3}
-      propertyPath: m_LocalScale.y
-      value: 0.3
-      objectReference: {fileID: 0}
-    - target: {fileID: 53743146396522036, guid: 3e168dd004919dc4791f5232b34482a3, type: 3}
-      propertyPath: m_LocalScale.z
-      value: 0.3
       objectReference: {fileID: 0}
     - target: {fileID: 53743146396522036, guid: 3e168dd004919dc4791f5232b34482a3, type: 3}
       propertyPath: m_LocalPosition.x
@@ -3949,10 +3897,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: Building_Fortress_Castle_Wall_Opening_Medium_01
       objectReference: {fileID: 0}
-    - target: {fileID: 1222098137427766619, guid: 3e168dd004919dc4791f5232b34482a3, type: 3}
-      propertyPath: m_CastShadows
-      value: 2
-      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 3e168dd004919dc4791f5232b34482a3, type: 3}
 --- !u!4 &7993052644409977825 stripped
@@ -3970,18 +3914,6 @@ PrefabInstance:
     - target: {fileID: 7257746221505218707, guid: 378f83311b9575446b955bdd763de7aa, type: 3}
       propertyPath: m_RootOrder
       value: 8
-      objectReference: {fileID: 0}
-    - target: {fileID: 7257746221505218707, guid: 378f83311b9575446b955bdd763de7aa, type: 3}
-      propertyPath: m_LocalScale.x
-      value: 0.3
-      objectReference: {fileID: 0}
-    - target: {fileID: 7257746221505218707, guid: 378f83311b9575446b955bdd763de7aa, type: 3}
-      propertyPath: m_LocalScale.y
-      value: 0.3
-      objectReference: {fileID: 0}
-    - target: {fileID: 7257746221505218707, guid: 378f83311b9575446b955bdd763de7aa, type: 3}
-      propertyPath: m_LocalScale.z
-      value: 0.3
       objectReference: {fileID: 0}
     - target: {fileID: 7257746221505218707, guid: 378f83311b9575446b955bdd763de7aa, type: 3}
       propertyPath: m_LocalPosition.x
@@ -4028,9 +3960,9 @@ PrefabInstance:
       value: Building_Fortress_Castle_Wall_Straight_Medium_01 (7)
       objectReference: {fileID: 0}
     - target: {fileID: 8427252365913977852, guid: 378f83311b9575446b955bdd763de7aa, type: 3}
-      propertyPath: m_CastShadows
-      value: 2
-      objectReference: {fileID: 0}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: 346704b254b48574daf784076f157c39, type: 2}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 378f83311b9575446b955bdd763de7aa, type: 3}
 --- !u!4 &809872100408018394 stripped
@@ -4109,6 +4041,10 @@ PrefabInstance:
       propertyPath: m_CastShadows
       value: 2
       objectReference: {fileID: 0}
+    - target: {fileID: 8427252365913977852, guid: 378f83311b9575446b955bdd763de7aa, type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: 346704b254b48574daf784076f157c39, type: 2}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 378f83311b9575446b955bdd763de7aa, type: 3}
 --- !u!4 &1627654554975441820 stripped
@@ -4126,18 +4062,6 @@ PrefabInstance:
     - target: {fileID: 7257746221505218707, guid: 378f83311b9575446b955bdd763de7aa, type: 3}
       propertyPath: m_RootOrder
       value: 4
-      objectReference: {fileID: 0}
-    - target: {fileID: 7257746221505218707, guid: 378f83311b9575446b955bdd763de7aa, type: 3}
-      propertyPath: m_LocalScale.x
-      value: 0.3
-      objectReference: {fileID: 0}
-    - target: {fileID: 7257746221505218707, guid: 378f83311b9575446b955bdd763de7aa, type: 3}
-      propertyPath: m_LocalScale.y
-      value: 0.3
-      objectReference: {fileID: 0}
-    - target: {fileID: 7257746221505218707, guid: 378f83311b9575446b955bdd763de7aa, type: 3}
-      propertyPath: m_LocalScale.z
-      value: 0.3
       objectReference: {fileID: 0}
     - target: {fileID: 7257746221505218707, guid: 378f83311b9575446b955bdd763de7aa, type: 3}
       propertyPath: m_LocalPosition.x
@@ -4184,9 +4108,9 @@ PrefabInstance:
       value: Building_Fortress_Castle_Wall_Straight_Medium_01 (3)
       objectReference: {fileID: 0}
     - target: {fileID: 8427252365913977852, guid: 378f83311b9575446b955bdd763de7aa, type: 3}
-      propertyPath: m_CastShadows
-      value: 2
-      objectReference: {fileID: 0}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: 346704b254b48574daf784076f157c39, type: 2}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 378f83311b9575446b955bdd763de7aa, type: 3}
 --- !u!4 &1615360447305803220 stripped
@@ -4204,18 +4128,6 @@ PrefabInstance:
     - target: {fileID: 7257746221505218707, guid: 378f83311b9575446b955bdd763de7aa, type: 3}
       propertyPath: m_RootOrder
       value: 6
-      objectReference: {fileID: 0}
-    - target: {fileID: 7257746221505218707, guid: 378f83311b9575446b955bdd763de7aa, type: 3}
-      propertyPath: m_LocalScale.x
-      value: 0.3
-      objectReference: {fileID: 0}
-    - target: {fileID: 7257746221505218707, guid: 378f83311b9575446b955bdd763de7aa, type: 3}
-      propertyPath: m_LocalScale.y
-      value: 0.3
-      objectReference: {fileID: 0}
-    - target: {fileID: 7257746221505218707, guid: 378f83311b9575446b955bdd763de7aa, type: 3}
-      propertyPath: m_LocalScale.z
-      value: 0.3
       objectReference: {fileID: 0}
     - target: {fileID: 7257746221505218707, guid: 378f83311b9575446b955bdd763de7aa, type: 3}
       propertyPath: m_LocalPosition.x
@@ -4262,9 +4174,9 @@ PrefabInstance:
       value: Building_Fortress_Castle_Wall_Straight_Medium_01 (5)
       objectReference: {fileID: 0}
     - target: {fileID: 8427252365913977852, guid: 378f83311b9575446b955bdd763de7aa, type: 3}
-      propertyPath: m_CastShadows
-      value: 2
-      objectReference: {fileID: 0}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: 346704b254b48574daf784076f157c39, type: 2}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 378f83311b9575446b955bdd763de7aa, type: 3}
 --- !u!4 &1201700512702620800 stripped
@@ -4405,6 +4317,10 @@ PrefabInstance:
       propertyPath: m_CastShadows
       value: 2
       objectReference: {fileID: 0}
+    - target: {fileID: 8427252365913977852, guid: 378f83311b9575446b955bdd763de7aa, type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: 346704b254b48574daf784076f157c39, type: 2}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 378f83311b9575446b955bdd763de7aa, type: 3}
 --- !u!4 &2138533477661005377 stripped
@@ -4422,18 +4338,6 @@ PrefabInstance:
     - target: {fileID: 7257746221505218707, guid: 378f83311b9575446b955bdd763de7aa, type: 3}
       propertyPath: m_RootOrder
       value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 7257746221505218707, guid: 378f83311b9575446b955bdd763de7aa, type: 3}
-      propertyPath: m_LocalScale.x
-      value: 0.3
-      objectReference: {fileID: 0}
-    - target: {fileID: 7257746221505218707, guid: 378f83311b9575446b955bdd763de7aa, type: 3}
-      propertyPath: m_LocalScale.y
-      value: 0.3
-      objectReference: {fileID: 0}
-    - target: {fileID: 7257746221505218707, guid: 378f83311b9575446b955bdd763de7aa, type: 3}
-      propertyPath: m_LocalScale.z
-      value: 0.3
       objectReference: {fileID: 0}
     - target: {fileID: 7257746221505218707, guid: 378f83311b9575446b955bdd763de7aa, type: 3}
       propertyPath: m_LocalPosition.x
@@ -4480,9 +4384,9 @@ PrefabInstance:
       value: Building_Fortress_Castle_Wall_Straight_Medium_01
       objectReference: {fileID: 0}
     - target: {fileID: 8427252365913977852, guid: 378f83311b9575446b955bdd763de7aa, type: 3}
-      propertyPath: m_CastShadows
-      value: 2
-      objectReference: {fileID: 0}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: 346704b254b48574daf784076f157c39, type: 2}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 378f83311b9575446b955bdd763de7aa, type: 3}
 --- !u!4 &1908622054202907810 stripped

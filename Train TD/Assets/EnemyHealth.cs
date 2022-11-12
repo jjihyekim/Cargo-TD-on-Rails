@@ -56,13 +56,31 @@ public class EnemyHealth : MonoBehaviour, IHealth {
 	}
 
 
+	[Button]
 	void Die(bool giveRewards = true) {
 		enemyKilled += 1;
 		isAlive = false;
+
+		var extraRewards = GetComponentsInChildren<EnemyReward>();
+
+		for (int i = 0; i < extraRewards.Length; i++) {
+			switch (extraRewards[i].type) {
+				case ResourceTypes.ammo:
+					scrapReward += extraRewards[i].amount;
+					break;
+				case ResourceTypes.fuel:
+					fuelReward += extraRewards[i].amount;
+					break;
+				case ResourceTypes.scraps:
+					ammoReward += extraRewards[i].amount;
+					break;
+			}
+		}
+		
 		if (giveRewards) {
-			LevelReferences.s.SpawnScrapsAtLocation(scrapReward, aliveObject.transform.position);
-			LevelReferences.s.SpawnFuelAtLocation(fuelReward, aliveObject.transform.position + Vector3.forward/2f);
-			LevelReferences.s.SpawnAmmoAtLocation(ammoReward, aliveObject.transform.position + Vector3.left/2f);
+			LevelReferences.s.SpawnResourceAtLocation(ResourceTypes.scraps, scrapReward, aliveObject.transform.position);
+			LevelReferences.s.SpawnResourceAtLocation(ResourceTypes.fuel, fuelReward, aliveObject.transform.position + Vector3.forward/2f);
+			LevelReferences.s.SpawnResourceAtLocation(ResourceTypes.ammo, ammoReward, aliveObject.transform.position + Vector3.left/2f);
 		}
 
 		var pos = aliveObject.position;
@@ -139,11 +157,6 @@ public class EnemyHealth : MonoBehaviour, IHealth {
 			}
 		}
 	}
-
-#if UNITY_EDITOR
-	[MethodButton("Die")]
-	[SerializeField] private bool editorFoldout;
-#endif
 }
 
 

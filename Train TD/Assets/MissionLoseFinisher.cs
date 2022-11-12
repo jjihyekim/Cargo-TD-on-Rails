@@ -47,7 +47,7 @@ public class MissionLoseFinisher : MonoBehaviour {
                 {"character", myChar},
 				
                 { "remainingScraps", MoneyController.s.scraps },
-                { "remainingMoney", DataSaver.s.GetCurrentSave().currentRun.myResources.money },
+                { "remainingMoney", MoneyController.s.money },
                 
                 { "enemiesLeftAlive", EnemyHealth.enemySpawned - EnemyHealth.enemyKilled},
             }
@@ -59,6 +59,7 @@ public class MissionLoseFinisher : MonoBehaviour {
         
         PlayerBuildingController.s.LogCurrentLevelBuilds(false);
         MusicPlayer.s.Stop();
+        DirectControlMaster.s.DisableDirectControl();
     }
 
 

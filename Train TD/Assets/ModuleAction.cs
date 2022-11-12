@@ -4,11 +4,12 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
+using Random = UnityEngine.Random;
 
 public abstract class ModuleAction : UnlockableEffect {
 	public string actionName = "unknown Action";
 
-	public DataSaver.RunResources.Types myType = DataSaver.RunResources.Types.scraps;
+	public ResourceTypes myType = ResourceTypes.scraps;
 	
 	[Tooltip("put negative for earn money")]
 	public int cost = 25;
@@ -17,37 +18,34 @@ public abstract class ModuleAction : UnlockableEffect {
 
 	public float curCooldown = 0f;
 
-	[NonSerialized]
 	public bool canEngage = true; // Use this to lock engagement of actions, eg stop engine boosts while engine stop is in progress
+	public bool canAfford = true;
+	public bool isCooldownOver = true;
+
+	public AudioClip[] soundEffect;
+
+	public Tooltip myTooltip;
 
 	public void EngageAction() {
 		if (canEngage) {
 			if (curCooldown <= 0) {
 				if (cost > 0) {
-					if (SceneLoader.s.isLevelInProgress) {
-						if (MoneyController.s.scraps > cost) {
-							MoneyController.s.SubtractScraps(cost);
-							curCooldown = cooldown;
-							_EngageAction();
-						}
-					} else {
-						if (DataSaver.s.GetCurrentSave().currentRun.myResources.scraps > cost) {
-							DataSaver.s.GetCurrentSave().currentRun.myResources.AddResource(-cost, myType);
-							curCooldown = cooldown;
-							_EngageAction();
-							DataSaver.s.SaveActiveGame();
+					if (MoneyController.s.HasResource(myType, cost)) {
+						MoneyController.s.ModifyResource(myType, -cost);
+						curCooldown = cooldown;
+						_EngageAction();
+
+						if (soundEffect.Length > 0) {
+							SoundscapeController.s.PlayModuleSkillActivate(soundEffect[Random.Range(0, soundEffect.Length)]);
 						}
 					}
 				} else {
-					if (SceneLoader.s.isLevelInProgress) {
-						MoneyController.s.AddScraps(-cost);
-						curCooldown = cooldown;
-						_EngageAction();
-					} else {
-						DataSaver.s.GetCurrentSave().currentRun.myResources.AddResource(-cost, myType);
-						curCooldown = cooldown;
-						_EngageAction();
-						DataSaver.s.SaveActiveGame();
+					MoneyController.s.ModifyResource(myType, -cost);
+					curCooldown = cooldown;
+					_EngageAction();
+					
+					if (soundEffect.Length > 0) {
+						SoundscapeController.s.PlayModuleSkillActivate(soundEffect[Random.Range(0, soundEffect.Length)]);
 					}
 				}
 			}
@@ -56,33 +54,17 @@ public abstract class ModuleAction : UnlockableEffect {
 
 	public void RefundAction() {
 		var cost = -this.cost;
-		
+
 		if (cost > 0) {
-			if (SceneLoader.s.isLevelInProgress) {
-				if (MoneyController.s.scraps > cost) {
-					MoneyController.s.SubtractScraps(cost);
-					curCooldown = cooldown;
-					_EngageAction();
-				}
-			} else {
-				if (DataSaver.s.GetCurrentSave().currentRun.myResources.scraps > cost) {
-					DataSaver.s.GetCurrentSave().currentRun.myResources.AddResource(-cost, myType);
-					curCooldown = cooldown;
-					_EngageAction();
-					DataSaver.s.SaveActiveGame();
-				}
+			if (MoneyController.s.HasResource(myType, cost)) {
+				MoneyController.s.ModifyResource(myType, -cost);
+				curCooldown = cooldown;
+				_EngageAction();
 			}
 		} else {
-			if (SceneLoader.s.isLevelInProgress) {
-				MoneyController.s.AddScraps(-cost);
-				curCooldown = cooldown;
-				_EngageAction();
-			} else {
-				DataSaver.s.GetCurrentSave().currentRun.myResources.AddResource(-cost, myType);
-				curCooldown = cooldown;
-				_EngageAction();
-				DataSaver.s.SaveActiveGame();
-			}
+			MoneyController.s.ModifyResource(myType, -cost);
+			curCooldown = cooldown;
+			_EngageAction();
 		}
 	}
 
@@ -95,6 +77,13 @@ public abstract class ModuleAction : UnlockableEffect {
 			if (curCooldown < 0)
 				curCooldown = 0;
 		}
+
+		isCooldownOver = curCooldown <= 0;
+
+		if (cost > 0) {
+			canAfford = MoneyController.s.HasResource(myType, cost);
+		}
+		
 		_Update();
 	}
 }

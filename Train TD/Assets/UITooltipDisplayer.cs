@@ -6,13 +6,13 @@ using UnityEngine.InputSystem;
 
 public class UITooltipDisplayer : MonoBehaviour {
     public Tooltip myTooltip;
-    public RectTransform targetRect;
+    //public RectTransform targetRect;
 
     public float curTimer = 0;
 
     public bool showingTooltip = false;
     private void Update() {
-        if (myTooltip != null) {
+        if (myTooltip != null && myTooltip.text.Length > 0) {
             Vector2 mousePos = Mouse.current.position.ReadValue();
             if (RectTransformUtility.RectangleContainsScreenPoint(GetComponent<RectTransform>(), mousePos, OverlayCamsReference.s.uiCam)) {
                 curTimer += Time.deltaTime;

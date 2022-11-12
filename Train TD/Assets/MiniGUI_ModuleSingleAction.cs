@@ -16,11 +16,15 @@ public class MiniGUI_ModuleSingleAction : MonoBehaviour {
     public Slider curCooldown;
     public Button myButton;
     
-    
     public Image icon;
 	
     public Sprite moneyCost;
     public Sprite scrapCost;
+    public Sprite ammoCost;
+    public Sprite fuelCost;
+    
+    public Color regularCostColor = Color.black;
+    public Color cantAffordColor = Color.red;
 
     public MiniGUI_ModuleSingleAction SetUp(ModuleAction myAction) {
         this.myAction = myAction;
@@ -35,11 +39,17 @@ public class MiniGUI_ModuleSingleAction : MonoBehaviour {
         }
 
         switch (myAction.myType) {
-            case DataSaver.RunResources.Types.scraps:
+            case ResourceTypes.scraps:
                 icon.sprite = scrapCost;
                 break;
-            case DataSaver.RunResources.Types.money:
+            case ResourceTypes.money:
                 icon.sprite = moneyCost;
+                break;
+            case ResourceTypes.ammo:
+                icon.sprite = ammoCost;
+                break;
+            case ResourceTypes.fuel:
+                icon.sprite = fuelCost;
                 break;
             default:
                 Debug.LogError($"Action type {myAction.myType} not implemented");
@@ -55,6 +65,9 @@ public class MiniGUI_ModuleSingleAction : MonoBehaviour {
             myButton.interactable = true;
         }
 
+        var tooltip = myAction.myTooltip;
+        GetComponent<UITooltipDisplayer>().myTooltip = tooltip;
+
         return this;
     }
 
@@ -62,14 +75,23 @@ public class MiniGUI_ModuleSingleAction : MonoBehaviour {
     private void Update() {
         if (myAction.cooldown > 0) {
             curCooldown.value = 1f - (myAction.curCooldown / myAction.cooldown);
-            
-            myButton.interactable = myAction.curCooldown <= 0;
         }
 
         if (myAction.cost > 0) {
             cost.text = myAction.cost.ToString();
         } else {
             cost.text = $"+{-myAction.cost}";
+        }
+        
+        
+        myButton.interactable = myAction.canEngage && myAction.canAfford && myAction.isCooldownOver;
+
+        curCooldown.gameObject.SetActive(myAction.canEngage && myAction.canAfford);
+
+        if (myAction.canAfford) {
+            cost.color = regularCostColor;
+        } else {
+            cost.color = cantAffordColor;
         }
     }
 

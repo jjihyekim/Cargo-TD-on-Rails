@@ -18,14 +18,16 @@ public class MiniGUI_StarInfoPanel : MonoBehaviour {
     private StarState currentStar;
 
     public bool isTravel;
-    public void Initialize(StarState star, LevelData connectionLevel) {
+
+    public GenericCallback hideCallback;
+    public void Initialize(StarState star, LevelData connectionLevel, GenericCallback _hideCallback = null) {
         StopAllCoroutines();
         currentStar = star;
         starName.text = currentStar.starName;
 
         bossDetected.SetActive(star.isBoss);
 
-        if (!star.isBoss) {
+        if (!star.isBoss && connectionLevel != null) {
             var isEncounter = connectionLevel.isEncounter;
             encounterDetected.SetActive(isEncounter);
             shipDetected.SetActive(!isEncounter);
@@ -35,6 +37,8 @@ public class MiniGUI_StarInfoPanel : MonoBehaviour {
         }
 
         gameObject.SetActive(true);
+
+        hideCallback = _hideCallback;
     }
     
     public void Initialize(StarState sourceStar, StarState targetStar, LevelData connectionLevel) {
@@ -90,5 +94,6 @@ public class MiniGUI_StarInfoPanel : MonoBehaviour {
 
     public void Hide() {
         gameObject.SetActive(false);
+        hideCallback?.Invoke();
     }
 }

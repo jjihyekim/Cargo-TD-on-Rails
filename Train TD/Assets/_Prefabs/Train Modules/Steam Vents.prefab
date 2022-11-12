@@ -275,11 +275,11 @@ GameObject:
   - component: {fileID: 4987274482128882662}
   - component: {fileID: 5187701212064737548}
   - component: {fileID: -5567612607224715663}
-  - component: {fileID: 4689215919536455629}
   - component: {fileID: -2809547468729876337}
   - component: {fileID: -3899644368452891966}
   - component: {fileID: 5669329643004112856}
   - component: {fileID: -4281058612176710721}
+  - component: {fileID: 4504833357965912728}
   m_Layer: 0
   m_Name: Steam Vents
   m_TagString: Untagged
@@ -337,11 +337,6 @@ MonoBehaviour:
   topGfx: {fileID: 6329249715763517730}
   frontGfx: {fileID: 0}
   backGfx: {fileID: 0}
-  myUITargetTransforms:
-  - possibleRotations: 0000000001000000
-    transform: {fileID: 7161388625536572706}
-  - possibleRotations: 0200000003000000
-    transform: {fileID: 7245608951228961668}
   isBuilt: 0
   autoSetUp: 0
   _outlines: []
@@ -375,16 +370,15 @@ MonoBehaviour:
   rotateSpeed: 10
   gunActive: 1
   CanShoot: 0
+  hasAmmo: 1
   isPlayer: 1
   rangeOrigin: {fileID: 0}
   barrageShot:
     m_PersistentCalls:
       m_Calls: []
   canPenetrateArmor: 0
-  ammoUsePerShot: 0
-  scrapUsePerShot: 0
   fuelUsePerShot: 0
-  steamUsePerShot: 1
+  steamUsePerShot: 0.25
 --- !u!114 &7371494607064308679
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -402,7 +396,7 @@ MonoBehaviour:
   myOverride:
     isOverride: 1
     rotations: 0200000003000000
-    rotationSpanOverride: 120
+    rotationSpanOverride: 90
   myPossibleTargets: 00000000
 --- !u!114 &5592445795315755096
 MonoBehaviour:
@@ -470,6 +464,12 @@ MonoBehaviour:
   cost: -25
   cooldown: -1
   curCooldown: 0
+  canEngage: 1
+  canAfford: 1
+  isCooldownOver: 1
+  soundEffect: []
+  myTooltip:
+    text: 
   isCombatMode: 1
 --- !u!114 &-5567612607224715663
 MonoBehaviour:
@@ -490,27 +490,16 @@ MonoBehaviour:
   cost: 25
   cooldown: 60
   curCooldown: 0
+  canEngage: 1
+  canAfford: 1
+  isCooldownOver: 1
+  soundEffect: []
+  myTooltip:
+    text: 
   actionTime: 8
   initialDelay: 1
   endDelay: 2
   boost: 5
---- !u!114 &4689215919536455629
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3146471024428373951}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ffd4c45972e0fc54a84560b4d5de93b9, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  curAmmo: 0
-  maxAmmo: 100
-  ammoPerShot: 5
-  isUnlocked: 0
-  unlockingUpgrade: {fileID: 11400000, guid: 70b5cd6404493994d8b364c6ddb95b10, type: 2}
 --- !u!114 &-2809547468729876337
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -530,6 +519,12 @@ MonoBehaviour:
   cost: 25
   cooldown: -1
   curCooldown: 0
+  canEngage: 1
+  canAfford: 1
+  isCooldownOver: 1
+  soundEffect: []
+  myTooltip:
+    text: Repair this module over time.
 --- !u!114 &-3899644368452891966
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -578,6 +573,41 @@ MonoBehaviour:
   cost: 10
   cooldown: 1
   curCooldown: 0
+  canEngage: 1
+  canAfford: 1
+  isCooldownOver: 1
+  soundEffect: []
+  myTooltip:
+    text: Move this module to another slot instantly.
+  freeInStation: 0
+--- !u!114 &4504833357965912728
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3146471024428373951}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8f88ead1c80db9e4984329978c418b9e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  isUnlocked: 1
+  unlockingUpgrade: {fileID: 0}
+  actionName: Assume Direct Control
+  myType: 1
+  cost: 0
+  cooldown: 5
+  curCooldown: 0
+  canEngage: 1
+  canAfford: 1
+  isCooldownOver: 1
+  soundEffect:
+  - {fileID: 8300000, guid: 7a62ba64a520e914d9d311eface499d5, type: 3}
+  myTooltip:
+    text: Control this weapon manually. During this the weapon won't use any ammo!
+  directControlTransformSide: {fileID: 2001210304354990905}
+  directControlTransformTop: {fileID: 1376645147883931102}
 --- !u!1 &3469176668768950665
 GameObject:
   m_ObjectHideFlags: 0
@@ -853,6 +883,7 @@ Transform:
   - {fileID: 3433463975809730509}
   - {fileID: 7135073031330819134}
   - {fileID: 7245608951228961668}
+  - {fileID: 1376645147883931102}
   m_Father: {fileID: 3248300930352555991}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -870,6 +901,36 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   activeGfx: {fileID: 7776442071500318264}
   hologramGfx: {fileID: 2661009350785310071}
+--- !u!1 &6575754731501138201
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1376645147883931102}
+  m_Layer: 0
+  m_Name: Direct Control Top
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1376645147883931102
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6575754731501138201}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0.345, z: 0.056}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 7044172329879874496}
+  m_RootOrder: 4
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &6804081974085914229
 GameObject:
   m_ObjectHideFlags: 0
@@ -965,6 +1026,36 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 1, y: 1, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!1 &6989772867069774732
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2001210304354990905}
+  m_Layer: 0
+  m_Name: Direct Control Side
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &2001210304354990905
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6989772867069774732}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: -0.003, z: 0.231}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 5891583664425259778}
+  m_RootOrder: 4
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &8793443569306674401
 GameObject:
   m_ObjectHideFlags: 0
@@ -981,7 +1072,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &5891583664425259778
 Transform:
   m_ObjectHideFlags: 0
@@ -997,6 +1088,7 @@ Transform:
   - {fileID: 6156380201183467145}
   - {fileID: 5900020399321395338}
   - {fileID: 7161388625536572706}
+  - {fileID: 2001210304354990905}
   m_Father: {fileID: 3248300930352555991}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -1387,6 +1479,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Hologram
       objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: fb581d765bbbc1141a4f74f5e8577ad0, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 6468675729011076612, guid: fb581d765bbbc1141a4f74f5e8577ad0, type: 3}
       propertyPath: m_LocalScale.x
       value: 0.8
@@ -1548,16 +1644,6 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 1d1d11020ea56d146843b720ba5c90bb, type: 3}
---- !u!4 &7732790356907241669 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 899157318495988652, guid: 1d1d11020ea56d146843b720ba5c90bb, type: 3}
-  m_PrefabInstance: {fileID: 7433772883469458281}
-  m_PrefabAsset: {fileID: 0}
---- !u!1 &7776442071500318264 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: 1d1d11020ea56d146843b720ba5c90bb, type: 3}
-  m_PrefabInstance: {fileID: 7433772883469458281}
-  m_PrefabAsset: {fileID: 0}
 --- !u!4 &6962750224022224002 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 1d1d11020ea56d146843b720ba5c90bb, type: 3}
@@ -1566,5 +1652,15 @@ Transform:
 --- !u!4 &4534926090967561581 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 6468675729011076612, guid: 1d1d11020ea56d146843b720ba5c90bb, type: 3}
+  m_PrefabInstance: {fileID: 7433772883469458281}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &7732790356907241669 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 899157318495988652, guid: 1d1d11020ea56d146843b720ba5c90bb, type: 3}
+  m_PrefabInstance: {fileID: 7433772883469458281}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &7776442071500318264 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: 1d1d11020ea56d146843b720ba5c90bb, type: 3}
   m_PrefabInstance: {fileID: 7433772883469458281}
   m_PrefabAsset: {fileID: 0}

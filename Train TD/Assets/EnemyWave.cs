@@ -14,6 +14,7 @@ public class EnemyWave : MonoBehaviour, IShowOnDistanceRadar, ISpeedForEngineSou
                 
     public bool isWaveMoving = false;
     public float wavePosition = -1;
+    public bool isLeft;
 
     private LineRenderer lineRenderer;
     
@@ -21,22 +22,28 @@ public class EnemyWave : MonoBehaviour, IShowOnDistanceRadar, ISpeedForEngineSou
     public Material safeMaterial;
 
     public float myXOffset = 0;
+    public float targetXOffset = 0;
 
     private void Start() {
         lineRenderer = GetComponentInChildren<LineRenderer>();
     }
 
-    public void SetUp(EnemyIdentifier data, float position, bool isMoving, bool isLeft) {
+    public void SetUp(EnemyIdentifier data, float position, bool isMoving, bool _isLeft) {
         myEnemy = data;
         mySpeed = DataHolder.s.GetEnemy(myEnemy.enemyUniqueName).GetComponent<EnemySwarmMaker>().speed;
         wavePosition = position;
         isWaveMoving = isMoving;
-        SpawnEnemy();
 
-        myXOffset = Random.Range(0.7f, 3.2f);
-        if (isLeft)
-            myXOffset = -myXOffset;
+        if (isMoving) {
+            currentSpeed = mySpeed;
+        }
         
+        isLeft = _isLeft;
+        SpawnEnemy();
+        
+        SetTargetPosition();
+        myXOffset = targetXOffset;
+
         DistanceAndEnemyRadarController.s.RegisterUnit(this);
     }
 
@@ -83,8 +90,7 @@ public class EnemyWave : MonoBehaviour, IShowOnDistanceRadar, ISpeedForEngineSou
             targetDistChangeTimer -= Time.deltaTime;
             if (targetDistChangeTimer <= 0) {
                 targetDistChangeTimer = Random.Range(2f, 15f);
-                var trainLength = Train.s.GetTrainLength();
-                targetDistanceOffset = Random.Range(-trainLength, trainLength);
+                SetTargetPosition();
             }
 
 
@@ -93,13 +99,25 @@ public class EnemyWave : MonoBehaviour, IShowOnDistanceRadar, ISpeedForEngineSou
             } else {
                 DestroyRouteDisplay();
             }
-        } else {
             
+            
+            myXOffset = Mathf.MoveTowards(myXOffset, targetXOffset, 0.1f * Time.deltaTime * currentSpeed);
+            
+        } else if(SceneLoader.s.isLevelFinished()) {
             transform.position = Vector3.forward * (wavePosition - playerPos + currentDistanceOffset - 0.2f) + Vector3.left * myXOffset;
             wavePosition += currentSpeed * Time.deltaTime;
             currentSpeed = Mathf.MoveTowards(currentSpeed, targetSpeed, speedChangeDelta * Time.deltaTime);
             targetSpeed = mySpeed;
         }
+    }
+
+    private void SetTargetPosition() {
+        var trainLength = Train.s.GetTrainLength();
+        targetDistanceOffset = Random.Range(-trainLength, trainLength);
+
+        targetXOffset = Random.Range(0.7f, 3.2f);
+        if (isLeft)
+            targetXOffset = -targetXOffset;
     }
 
     void SpawnEnemy() {

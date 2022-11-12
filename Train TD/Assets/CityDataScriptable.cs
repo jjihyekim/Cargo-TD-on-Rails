@@ -6,6 +6,7 @@ using UnityEngine;
 [CreateAssetMenu]
 public class CityDataScriptable : ScriptableObject {
 	public Sprite sprite;
+	public GameObject worldMapCastle;
 	public CityData cityData;
 }
 
@@ -23,7 +24,7 @@ public class CityData {
 
 [Serializable]
 public class SupplyPrice {
-	public DataSaver.RunResources.Types type;
+	public ResourceTypes type;
 	public int basePrice = 25;
 	public float variance = 0.2f;
 	public float priceIncrease = 1.2f;

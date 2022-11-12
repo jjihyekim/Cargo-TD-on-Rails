@@ -34,7 +34,7 @@ public class MiniGUI_HealthBar : MonoBehaviour{
         ammoSlider.gameObject.SetActive(isAmmoBar);
 
         if (moduleHealth.GetComponent<TrainBuilding>()) {
-            GetComponent<UIElementFollowWorldTarget>().SetUp(moduleHealth.GetComponent<TrainBuilding>().uiTargetTransform);
+            GetComponent<UIElementFollowWorldTarget>().SetUp(moduleHealth.GetComponent<TrainBuilding>().GetUITargetTransform(true));
         } else {
             GetComponent<UIElementFollowWorldTarget>().SetUp(moduleHealth.GetComponent<Cart>().uiTargetTransform);
         }
