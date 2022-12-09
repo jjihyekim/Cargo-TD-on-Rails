@@ -40,7 +40,8 @@ public abstract class ModuleAction : UnlockableEffect {
 						}
 					}
 				} else {
-					MoneyController.s.ModifyResource(myType, -cost);
+					//MoneyController.s.ModifyResource(myType, -cost);
+					LevelReferences.s.SpawnResourceAtLocation(myType, -cost, transform.position);
 					curCooldown = cooldown;
 					_EngageAction();
 					

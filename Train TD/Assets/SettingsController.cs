@@ -30,6 +30,11 @@ public class SettingsController : MonoBehaviour {
         SceneLoader.s.BackToStarterMenuHardLoad();
     }
     
+    public void ResetRunAndReplayTutorial() {
+        PlayerPrefs.SetInt("finishedTutorial", 0);
+        ResetRun();
+    }
+    
 }
 
 public interface IInitRequired {

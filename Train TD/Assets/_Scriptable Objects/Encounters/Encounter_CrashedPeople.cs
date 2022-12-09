@@ -52,9 +52,9 @@ public class Encounter_CrashedPeople : RandomEncounter
 		switch (option) {
 			case 0:
 				if (isFuelAsk) {
-					DataSaver.s.GetCurrentSave().currentRun.myResources.AddResource(-amountAsk,ResourceTypes.fuel);
+					MoneyController.s.ModifyResource(ResourceTypes.fuel, -amountAsk);
 				} else {
-					DataSaver.s.GetCurrentSave().currentRun.myResources.AddResource(-amountAsk,ResourceTypes.scraps);
+					MoneyController.s.ModifyResource(ResourceTypes.scraps, -amountAsk);
 				}
 				
 				if (Random.value < helpSuccessChance) {

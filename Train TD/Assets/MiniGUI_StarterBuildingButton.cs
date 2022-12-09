@@ -13,14 +13,14 @@ public class MiniGUI_StarterBuildingButton : MonoBehaviour {
 	public Image myIcon;
 	private Button myButton;
 
-	public int cost;
-	public int reward;
+	//public int cost;
+	//public int reward;
 
 	public TMP_Text cargoNameText;
 	public TMP_Text costText;
 	public TMP_Text rewardText;
 
-	public int count = 3;
+	//public int count = 3;
 
 	private bool canBuild = true;
 
@@ -29,25 +29,25 @@ public class MiniGUI_StarterBuildingButton : MonoBehaviour {
 	public void StartBuilding() {
 		if (canBuild) {
 			PlayerBuildingController.s.StartBuilding(myBuilding, UpdateBuildingCount, AttachBuildingToButton, true);
-			UpdateCountText();
+			//UpdateCountText();
 		}
 	}
 
 
 	bool UpdateBuildingCount(bool isSuccess) {
-		if (isSuccess) {
+		/*if (isSuccess) {
 			count -= 1;
 		} else {
 			//count += 1;
-		}
+		}*/
 		
-		if (isSuccess) {
+		/*if (isSuccess) {
 			MoneyController.s.ModifyResource(ResourceTypes.money, -cost);
 			DataSaver.s.SaveActiveGame();
-		}
+		}*/
 		
 		Update();
-		UpdateCountText();
+		//UpdateCountText();
 
 		return canBuild;
 	}
@@ -56,27 +56,27 @@ public class MiniGUI_StarterBuildingButton : MonoBehaviour {
 		building.GetComponent<ReturnCargoAction>().myButton = this;
 		building.GetComponent<ReturnCargoAction>().enabled = true;
 
-		building.GetComponent<CargoModule>().moneyCost = cost;
-		building.GetComponent<CargoModule>().moneyReward = reward;
+		/*building.GetComponent<CargoModule>().moneyCost = cost;
+		building.GetComponent<CargoModule>().moneyReward = reward;*/
 
 		myBuildings.Add(building);
 
-		DataSaver.s.GetCurrentSave().currentRun.myTrain = Train.s.GetTrainState();
-		DataSaver.s.SaveActiveGame();
+		Train.s.SaveTrainState();
 	}
 
-	public void SetUp(TrainBuilding building, int _count, int _cost, int _reward) {
-		count = _count;
+	public void SetUp(TrainBuilding building/*, int _count, int _cost, int _reward*/) {
+		//count = _count;
 		myBuilding = building;
 		myIcon.sprite = myBuilding.Icon;
 		cargoNameText.text = myBuilding.displayName;
-		cost = _cost;
-		reward = _reward;
+		//cost = _cost;
+		//reward = _reward;
+		rewardText.text = $"+{building.GetComponent<CargoModule>().moneyReward}";
 		UpdateCountText();
 	}
 
 	public void UpdateCountText() {
-		countText.text = count + "x";
+		//countText.text = count + "x";
 	}
 
 	private CargoModule mod;
@@ -89,24 +89,23 @@ public class MiniGUI_StarterBuildingButton : MonoBehaviour {
 	private void Update() {
 		var currentSave = DataSaver.s.GetCurrentSave();
 		if (currentSave.isInARun) {
-			canBuild = MoneyController.s.HasResource(ResourceTypes.money, cost) && count > 0;
+			/*canBuild = MoneyController.s.HasResource(ResourceTypes.money, cost) && count > 0;
 			costText.text = cost.ToString();
-			rewardText.text = $"+{reward}";
+			rewardText.text = $"+{reward}";*/
 			myButton.interactable = canBuild;
 			UpdateCountText();
 		}
 	}
 
 	public void ReturnCargo(TrainBuilding source) {
-		count += 1;
-		MoneyController.s.ModifyResource(ResourceTypes.money, cost);
+		/*count += 1;
+		MoneyController.s.ModifyResource(ResourceTypes.money, cost);*/
 		
 		myBuildings.Remove(source);
 		
 		Destroy(source.gameObject);
 
-		DataSaver.s.GetCurrentSave().currentRun.myTrain = Train.s.GetTrainState();
-		DataSaver.s.SaveActiveGame();
+		Train.s.SaveTrainState();
 	}
 
 	public void SellAllCargo() {

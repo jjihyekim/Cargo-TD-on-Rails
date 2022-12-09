@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using Sirenix.OdinInspector;
+using UnityEngine;
 using Random = UnityEngine.Random;
 
 public class Encounter_CompleteWithReward : RandomEncounter {
@@ -28,10 +29,16 @@ public class Encounter_CompleteWithReward : RandomEncounter {
         var reward = myPossibleRewards[Random.Range(0, myPossibleRewards.Length)];
 
         reward.GainReward();
+
+        if (takeDamage > 0) {
+            throw new NotImplementedException();
+        }
+        
         return null;
     }
-}
 
+    public int takeDamage = 0;
+}
 
 
 [Serializable]
@@ -40,11 +47,17 @@ public class RandomResourceReward {
     public int amount = 50;
     public float randomPercent = 0.1f;
 
+    public TrainBuilding building;
+
     public void RandomizeReward() {
         amount = (int)(amount * (1+ Random.Range(-randomPercent, randomPercent)));
     }
+
     public void GainReward() {
-        DataSaver.s.GetCurrentSave().currentRun.myResources.AddResource((int)amount, myType);
-        DataSaver.s.SaveActiveGame();
+        if (building != null) {
+            throw new NotImplementedException();
+        } else {
+            MoneyController.s.ModifyResource(myType, amount);
+        }
     }
 }

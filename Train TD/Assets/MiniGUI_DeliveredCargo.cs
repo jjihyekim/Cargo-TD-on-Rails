@@ -12,7 +12,11 @@ public class MiniGUI_DeliveredCargo : MonoBehaviour {
     public int SetUp(CargoModule data) {
         myCargo = data;
         icon.sprite = myCargo.GetComponent<TrainBuilding>().Icon;
-        cargoMoney.text = myCargo.moneyReward.ToString();
-        return myCargo.moneyReward;
+        
+        var reward = myCargo.GetReward();
+        
+        cargoMoney.text = reward.ToString();
+
+        return reward;
     }
 }

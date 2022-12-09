@@ -56,6 +56,7 @@ public class CameraController : MonoBehaviour {
     public float snapZoomCutoff = 2f;
 
     public bool isSnappedToTrain = false;
+    public float minSnapDistance = 2f;
 
     public bool canEdgeMove = false;
 
@@ -117,16 +118,17 @@ public class CameraController : MonoBehaviour {
     private Vector2 mousePosLastFrame;
     private void ProcessMiddleMouseRotation(float click, Vector2 mousePos) {
         if (click > 0.5f) {
-            var delta = mousePos.x-mousePosLastFrame.x;
-            if (!isRight)
-                delta = -delta;
+            var delta = mousePosLastFrame.x-mousePos.x;
+            /*if (!isRight)
+                delta = -delta;*/
             rotationAngleTarget += delta * middleMoveSpeed * Time.deltaTime;
-            
+
+            isRight = rotationAngleTarget > 0;
 
             rotationAngleTarget = Mathf.Clamp(rotationAngleTarget, minAngle, maxAngle);
         } else {
-            if (Mathf.Abs(rotationAngleTarget - rotationAngle) < snapToDefaultAngleDistance) {
-                rotationAngleTarget = Mathf.MoveTowards(rotationAngleTarget, rotationAngle, 10 * Time.deltaTime);
+            if (Mathf.Abs(Mathf.Abs(rotationAngleTarget) - rotationAngle) < snapToDefaultAngleDistance) {
+                rotationAngleTarget = Mathf.MoveTowards(rotationAngleTarget, isRight? rotationAngle : -rotationAngle, 10 * Time.deltaTime);
             }
         }
 
@@ -134,7 +136,8 @@ public class CameraController : MonoBehaviour {
     }
 
     private void LerpCameraTarget() {
-        var centerRotTarget = Quaternion.Euler(0, isRight ? -rotationAngleTarget : rotationAngleTarget, 0);
+        //var centerRotTarget = Quaternion.Euler(0, isRight ? -rotationAngleTarget : rotationAngleTarget, 0);
+        var centerRotTarget = Quaternion.Euler(0, -rotationAngleTarget, 0);
 
         cameraCenter.transform.rotation = Quaternion.Lerp(cameraCenter.transform.rotation, centerRotTarget, rotLerpSpeed * Time.deltaTime);
 
@@ -167,10 +170,10 @@ public class CameraController : MonoBehaviour {
         } else {
             if (currentZoom >= snapZoomCutoff) {
                 if (!isSnappedToTrain) {
-                    SnapToNearestCart();
+                    if (SnapToNearestCart()) {
+                        isSnappedToTrain = true;
+                    }
                 }
-
-                isSnappedToTrain = true;
             } else {
                 isSnappedToTrain = false;
             }
@@ -227,12 +230,20 @@ public class CameraController : MonoBehaviour {
         mapZoom = 0;
     }
 
+    public void SetMapPos(Vector3 position) {
+        position.y = 0;
+        mapPos = position;
+    }
+
     public void EnterMapMode() {
         isSnappedToMap = true;
         regularPos = cameraCenter.position;
         cameraCenter.position = mapPos;
         regularZoom = currentZoom;
         currentZoom = mapZoom;
+        if (!isRight) {
+            FlipCamera(new InputAction.CallbackContext());
+        }
     }
 
     public void ExitMapMode() {
@@ -241,6 +252,9 @@ public class CameraController : MonoBehaviour {
         cameraCenter.position = regularPos;
         mapZoom = currentZoom;
         currentZoom = regularZoom;
+        if (!isRight) {
+            FlipCamera(new InputAction.CallbackContext());
+        }
     }
 
     void ProcessMovementInput(Vector2 value, float multiplier) {
@@ -297,12 +311,12 @@ public class CameraController : MonoBehaviour {
         snappedMoveTimer -= Time.deltaTime;
     }
 
-    void SnapToNearestCart() {
+    bool SnapToNearestCart() {
         var carts = Train.s.carts;
+        var minDist = float.MaxValue;
         if (!snappedToTrainLastFrame) {
             targetCart = -1;
-            var minDist = float.MaxValue;
-            
+
             for (int i = 0; i < carts.Count; i++) {
                 var dist = Vector3.Distance(cameraCenter.position, carts[i].position);
 
@@ -312,12 +326,15 @@ public class CameraController : MonoBehaviour {
                 }
             }
         }
+
+        return minDist < minSnapDistance;
     }
-    
-    
+
+
 
     public void FlipCamera(InputAction.CallbackContext info) {
         isRight = !isRight;
+        rotationAngleTarget = isRight? rotationAngle : -rotationAngle;
     }
 
     

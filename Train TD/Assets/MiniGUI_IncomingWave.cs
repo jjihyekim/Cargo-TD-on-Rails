@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 using UnityStandardAssets.Utility;
 
 public class MiniGUI_IncomingWave : MonoBehaviour {
@@ -14,10 +15,12 @@ public class MiniGUI_IncomingWave : MonoBehaviour {
 
     public EnemyWave myWave;
 
-    public TMP_Text text;
-
     public float distance;
 
+    public Image mainImage;
+    public Image gunImage;
+    public TMP_Text countText;
+    public TMP_Text distanceText;
     
     public void SetUp(EnemyWave enemyWave) {
         myWave = enemyWave;
@@ -28,6 +31,16 @@ public class MiniGUI_IncomingWave : MonoBehaviour {
         ParentRect = transform.parent.GetComponent<RectTransform>();
         mainCam = LevelReferences.s.mainCam;
         //counter = myWave.myData.headsUpTime;
+
+        mainImage.sprite = enemyWave.GetMainSprite();
+        var gunSprite = enemyWave.GetGunSprite();
+        if (gunSprite != null) {
+            gunImage.sprite = gunSprite;
+        } else {
+            gunImage.enabled = false;
+        }
+
+        countText.text = (myWave.myEnemy.enemyCount != -1) ? "x" + myWave.myEnemy.enemyCount.ToString() : "x1";
         Update();
     }
 
@@ -35,7 +48,7 @@ public class MiniGUI_IncomingWave : MonoBehaviour {
     private void Update() {
         distance = myWave.distance;
         SetPosition();
-        SetText();
+        UpdatePositionText();
     }
 
     private void LateUpdate() {
@@ -99,8 +112,9 @@ public class MiniGUI_IncomingWave : MonoBehaviour {
         UIRect.anchoredPosition = adjustedPosition;
     }
 
-    void SetText() {
-        text.text = myWave.myEnemy.enemyUniqueName+ ((myWave.myEnemy.enemyCount != -1) ?  " " + myWave.myEnemy.enemyCount.ToString() : "") + "\n" + distance.ToString("F1");
+    void UpdatePositionText() {
+        //text.text = myWave.myEnemy.enemyUniqueName+ ((myWave.myEnemy.enemyCount != -1) ?  " " + myWave.myEnemy.enemyCount.ToString() : "") + "\n" + distance.ToString("F1");
+        distanceText.text = distance.ToString("F0") + "m";
     }
 
 

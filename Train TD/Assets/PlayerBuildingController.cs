@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.Analytics;
+using UnityEngine.Events;
 using UnityEngine.InputSystem;
 
 public class PlayerBuildingController : MonoBehaviour { 
@@ -34,6 +35,9 @@ public class PlayerBuildingController : MonoBehaviour {
     GetTheFinishedBuilding returnFinishedBuilding;
     public bool nextBuildIsFree = false;
     public bool nextBuildSayVoiceline = true;
+
+    public UnityEvent startBuildingEvent = new UnityEvent();
+    public UnityEvent completeBuildingEvent = new UnityEvent();
 
     private void Start() {
         StopBuilding();
@@ -218,10 +222,7 @@ public class PlayerBuildingController : MonoBehaviour {
                     MoneyController.s.ModifyResource(ResourceTypes.scraps, -newBuilding.cost);
                 nextBuildIsFree = false;
                 
-                if (!SceneLoader.s.isLevelInProgress) {
-                    DataSaver.s.GetCurrentSave().currentRun.myTrain = Train.s.GetTrainState();
-                    DataSaver.s.SaveActiveGame();
-                }
+                Train.s.SaveTrainState();
 
                 LogData(currentlyMultiBuilding, newBuilding);
 
@@ -239,6 +240,8 @@ public class PlayerBuildingController : MonoBehaviour {
                 
                 PlayerModuleSelector.s.playerBuildingDisableOverride = false;
                 PlayerModuleSelector.s.playerBuildingSkipOneTimeOverride = true;
+                
+                completeBuildingEvent?.Invoke();
             }
         }
     }
@@ -387,6 +390,7 @@ public class PlayerBuildingController : MonoBehaviour {
         nextBuildSayVoiceline = sayVoiceline;
 
         Debug.Log($"Starting building: {building.displayName}");
+        startBuildingEvent?.Invoke();
     }
 
 

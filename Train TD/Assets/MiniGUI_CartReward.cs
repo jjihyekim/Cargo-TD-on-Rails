@@ -7,9 +7,11 @@ public class MiniGUI_CartReward : MonoBehaviour
 {
     public TMP_Text amount;
     public int cartCount;
+    private int rewardIndex;
 	
-    public void SetUpReward(int _cartCount) {
+    public void SetUpReward(int _cartCount, int _rewardIndex) {
         cartCount = _cartCount;
+        rewardIndex = _rewardIndex;
         amount.text = $"Get {cartCount} carts";
     }
 
@@ -18,6 +20,8 @@ public class MiniGUI_CartReward : MonoBehaviour
         DataSaver.s.GetCurrentSave().currentRun.myTrain.myCarts.Add(new DataSaver.TrainState.CartState());
         Train.s.DrawTrain(DataSaver.s.GetCurrentSave().currentRun.myTrain);
         DataSaver.s.SaveActiveGame();
+        
+        MissionWinFinisher.s.ClearRewardWithIndex(rewardIndex);
         Destroy(gameObject);
     }
 }

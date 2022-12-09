@@ -167,7 +167,7 @@ public class UpgradesController : MonoBehaviour {
 		
 		eligibleRewards.Shuffle();
 
-		var count = 2;
+		var count = 3;
 		
 		var results = new Upgrade[count];
 		eligibleRewards.CopyTo(0, results, 0, count);

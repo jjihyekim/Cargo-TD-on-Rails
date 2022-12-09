@@ -6,9 +6,9 @@ using UnityEngine;
 
 
 public abstract class RandomEncounter : MonoBehaviour {
-	public string encounterUniqueName = "unset";
-
 	public string encounterTitleName = "unset title";
+
+	public Sprite encounterImage;
 
 	[Multiline(10)] 
 	public string richEncounterText = "please choose";
@@ -26,9 +26,5 @@ public abstract class RandomEncounter : MonoBehaviour {
 
 	// return null to show that encounter is over
 	public abstract RandomEncounter OptionPicked(int option);
-
-	public bool hasEncounterCamPos = false;
-	[ShowIf("hasEncounterCamPos")] 
-	public Transform encounterCamPos;
 }
 

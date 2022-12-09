@@ -20,6 +20,7 @@ public class ScrapPieceScript : MonoBehaviour {
 
 	public void DestroySelf() {
 		var part = Instantiate(poofOnDestroy, transform.position, Quaternion.identity).GetComponentInChildren<ParticleSystem>();
+		part.transform.parent.SetParent(transform.parent);
 		var main = part.main;
 		main.startColor = GetComponent<SpriteRenderer>().color;
 		Destroy(gameObject);

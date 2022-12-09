@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Sirenix.OdinInspector;
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.UI;
 
 public class ModuleHealth : MonoBehaviour, IHealth, IActiveDuringCombat, IActiveDuringShopping {
@@ -40,6 +41,9 @@ public class ModuleHealth : MonoBehaviour, IHealth, IActiveDuringCombat, IActive
         buildingsBuild += 1;
     }
 
+    [NonSerialized]
+    public UnityEvent dieEvent = new UnityEvent();
+    
     public void Die() {
         isDead = true;
         Instantiate(explodePrefab, transform.position, transform.rotation);
@@ -47,6 +51,11 @@ public class ModuleHealth : MonoBehaviour, IHealth, IActiveDuringCombat, IActive
         Destroy(healthBar.gameObject);
         
         buildingsDestroyed += 1;
+        
+        // in case of death give some of the cost back
+        LevelReferences.s.SpawnResourceAtLocation(ResourceTypes.scraps, GetComponent<TrainBuilding>().cost * 0.25f, transform.position);
+        
+        dieEvent?.Invoke();
         
         Destroy(gameObject);
     }

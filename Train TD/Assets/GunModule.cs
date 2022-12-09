@@ -5,6 +5,8 @@ using UnityEngine;
 using UnityEngine.Events;
 
 public class GunModule : MonoBehaviour, IComponentWithTarget, IActiveDuringCombat {
+
+    public Sprite gunSprite;
     [System.Serializable]
     public class TransformWithActivation {
         public Transform transform;
@@ -143,7 +145,9 @@ public class GunModule : MonoBehaviour, IComponentWithTarget, IActiveDuringComba
                 if (isPlayer && !isFree) {
                     /*MoneyController.s.SubtractAmmo(ammoUsePerShot);
                     MoneyController.s.SubtractScraps(scrapUsePerShot);*/
-                    MoneyController.s.ModifyResource(ResourceTypes.fuel, -fuelUsePerShot);
+                    if (fuelUsePerShot > 0) {
+                        MoneyController.s.ModifyResource(ResourceTypes.fuel, -fuelUsePerShot);
+                    }
                     SpeedController.s.UseSteam(steamUsePerShot);
                 }
                 
@@ -165,7 +169,7 @@ public class GunModule : MonoBehaviour, IComponentWithTarget, IActiveDuringComba
         // ReSharper disable once ConditionIsAlwaysTrueOrFalse
         /*areThereEnough = areThereEnough && MoneyController.s.ammo >= ammoUsePerShot;
         areThereEnough = areThereEnough && MoneyController.s.scraps >= scrapUsePerShot;*/
-        areThereEnough = areThereEnough && SpeedController.s.fuel >= fuelUsePerShot;
+        areThereEnough = areThereEnough && MoneyController.s.HasResource(ResourceTypes.fuel, fuelUsePerShot);
         
         return areThereEnough;
     }

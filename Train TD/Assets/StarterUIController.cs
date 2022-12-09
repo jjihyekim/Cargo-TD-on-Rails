@@ -31,6 +31,11 @@ public class StarterUIController : MonoBehaviour {
 	
 	public bool levelSelected = false;
 	public int selectedLevelIndex = -1;
+
+
+
+	public Button mapOpenButton;
+	public GameObject mapDisabledDuringBattleOverlay;
 	
 	public void BackToProfileSelection() {
 		starterUI.SetActive(false);
@@ -47,6 +52,7 @@ public class StarterUIController : MonoBehaviour {
 			
 			if (DataSaver.s.GetCurrentSave().currentRun.unclaimedRewards.Count > 0) {
 				StartLevel(false);
+				starterUI.SetActive(false);
 				MissionWinFinisher.s.ShowUnclaimedRewards();
 			} else {
 				OnEnteredStarterUI?.Invoke();
@@ -62,6 +68,9 @@ public class StarterUIController : MonoBehaviour {
 		if (levelSelected) {
 			var playerStar = DataSaver.s.GetCurrentSave().currentRun.map.GetPlayerStar();
 			starterUI.SetActive(false);
+
+			mapOpenButton.interactable = false;
+			mapDisabledDuringBattleOverlay.SetActive(true);
 
 			if (!playerStar.outgoingConnectionLevels[selectedLevelIndex].isEncounter) {
 				ClearStaticTrackers();
@@ -96,27 +105,6 @@ public class StarterUIController : MonoBehaviour {
 	public void SelectLevelAndStart(StarState targetStar) {
 		SelectLevel(targetStar);
 		StartLevel();
-		/*var playerStar = DataSaver.s.GetCurrentSave().currentRun.map.GetPlayerStar();
-
-		for (int i = 0; i < playerStar.outgoingConnections.Count; i++) {
-			if (playerStar.outgoingConnections[i] == targetStar.starName) {
-				selectedLevelIndex = i;
-				break;
-			}
-		}
-
-		if (selectedLevelIndex == -1) {
-			Debug.LogError($"Illegal star target: {targetStar.starName}");
-			return;
-		}
-
-		if (!playerStar.outgoingConnectionLevels[selectedLevelIndex].isEncounter) {
-			SelectLevel(data);
-			StartLevel();
-		} else {
-			starterUI.SetActive(false);
-			EncounterController.s.EngageEncounter(data);
-		}*/
 	}
 
 	public void SelectLevel(StarState targetStar) {
@@ -138,6 +126,28 @@ public class StarterUIController : MonoBehaviour {
 		missionDistance.text = "Mission Length: " + playerStar.outgoingConnectionLevels[selectedLevelIndex].missionDistance;
 		levelSelected = true;
 		OnLevelChanged?.Invoke();
+	}
+
+	public void SelectLevelAndStart(LevelData data) {
+		SceneLoader.s.SetCurrentLevel(data);
+		missionDistance.text = "Mission Length: " + data.missionDistance;
+		levelSelected = true;
+		OnLevelChanged?.Invoke();
+
+		starterUI.SetActive(false);
+
+		ClearStaticTrackers();
+
+		gameUI.SetActive(true);
+		SceneLoader.s.StartLevel();
+		Train.s.LevelStateChanged();
+
+		OnLevelStarted?.Invoke();
+
+		RangeVisualizer.SetAllRangeVisualiserState(true);
+
+		SoundscapeController.s.PlayMissionStartSound();
+		MusicPlayer.s.SwapMusicTracksAndPlay(true);
 	}
 
 

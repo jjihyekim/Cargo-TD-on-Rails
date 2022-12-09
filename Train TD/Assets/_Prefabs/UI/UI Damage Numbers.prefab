@@ -199,6 +199,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   avoidOverlaps: 0
   sourceTransform: {fileID: 0}
+  UIRect: {fileID: 0}
 --- !u!114 &4621411346247944345
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -225,6 +226,8 @@ MonoBehaviour:
   - OUCH
   - AAAA
   - OOOF
+  enemyIsAttackedArmorProtected:
+  - ding
   enemyIsAttackedSmall:
   - pew
   - pew

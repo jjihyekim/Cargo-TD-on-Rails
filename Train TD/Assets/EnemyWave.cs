@@ -24,6 +24,14 @@ public class EnemyWave : MonoBehaviour, IShowOnDistanceRadar, ISpeedForEngineSou
     public float myXOffset = 0;
     public float targetXOffset = 0;
 
+    public Sprite GetMainSprite() {
+        return DataHolder.s.GetEnemy(myEnemy.enemyUniqueName).GetComponent<EnemySwarmMaker>().enemyIcon;
+    }
+
+    public Sprite GetGunSprite() {
+        return DataHolder.s.GetEnemy(myEnemy.enemyUniqueName).GetComponent<EnemySwarmMaker>().GetGunSprite();
+    }
+    
     private void Start() {
         lineRenderer = GetComponentInChildren<LineRenderer>();
     }

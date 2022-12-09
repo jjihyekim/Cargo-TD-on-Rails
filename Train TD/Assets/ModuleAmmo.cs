@@ -64,14 +64,26 @@ public class ModuleAmmo : MonoBehaviour, IResupplyAble, IActiveDuringCombat, IAc
         }
 
         UpdateModuleState();
+        GetComponent<ModuleHealth>().dieEvent.AddListener(GiveBackStoredAmmo);
+        GetComponent<SellAction>()?.sellEvent.AddListener(GiveBackStoredAmmo);
     }
 
     public void ActivateForShopping() {
         ActivateForCombat();
+        GetComponent<ModuleHealth>().dieEvent.AddListener(GiveBackStoredAmmo);
+        GetComponent<SellAction>()?.sellEvent.AddListener(GiveBackStoredAmmo);
     }
+
 
     public void Disable() {
         this.enabled = false;
         myGunModule = GetComponent<GunModule>();
+        GetComponent<ModuleHealth>().dieEvent.RemoveListener(GiveBackStoredAmmo);
+        GetComponent<SellAction>()?.sellEvent.RemoveListener(GiveBackStoredAmmo);
+    }
+    
+    
+    void GiveBackStoredAmmo() {
+        GetComponent<ReloadAction>().GiveBackCurrentStoredAmmo();
     }
 }

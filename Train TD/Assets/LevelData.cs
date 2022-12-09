@@ -8,8 +8,6 @@ using UnityEngine;
 [Serializable]
 public class LevelData {
 	public string levelName = "unset";
-
-	public Sprite specialIcon;
 	
 	public bool isEncounter = false;
 

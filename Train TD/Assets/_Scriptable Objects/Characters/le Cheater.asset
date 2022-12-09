@@ -37,172 +37,135 @@ MonoBehaviour:
       amount: 5
     - moduleUniqueName: steamvents
       amount: 5
+    - moduleUniqueName: laser
+      amount: 5
     starterTrain:
       myCarts:
       - buildingStates:
         - uniqueName: Engine
           health: -1
           ammo: -1
-          cargoCost: -1
-          cargoReward: -1
         - uniqueName: 
           health: -1
           ammo: -1
-          cargoCost: -1
-          cargoReward: -1
         - uniqueName: 
           health: -1
           ammo: -1
-          cargoCost: -1
-          cargoReward: -1
         - uniqueName: 
           health: -1
           ammo: -1
-          cargoCost: -1
-          cargoReward: -1
         - uniqueName: Engine
           health: -1
           ammo: -1
-          cargoCost: -1
-          cargoReward: -1
         - uniqueName: 
           health: -1
           ammo: -1
-          cargoCost: -1
-          cargoReward: -1
         - uniqueName: 
           health: -1
           ammo: -1
-          cargoCost: -1
-          cargoReward: -1
         - uniqueName: 
           health: -1
           ammo: -1
-          cargoCost: -1
-          cargoReward: -1
+      - buildingStates:
+        - uniqueName: AVR
+          health: -1
+          ammo: -1
+        - uniqueName: 
+          health: -1
+          ammo: -1
+        - uniqueName: cannon
+          health: -1
+          ammo: -1
+        - uniqueName: cannon
+          health: -1
+          ammo: -1
+        - uniqueName: ammoCargo
+          health: -1
+          ammo: -1
+        - uniqueName: 
+          health: -1
+          ammo: -1
+        - uniqueName: 
+          health: -1
+          ammo: -1
+        - uniqueName: 
+          health: -1
+          ammo: -1
+      - buildingStates:
+        - uniqueName: foodcargo
+          health: -1
+          ammo: -1
+        - uniqueName: 
+          health: -1
+          ammo: -1
+        - uniqueName: 
+          health: -1
+          ammo: -1
+        - uniqueName: 
+          health: -1
+          ammo: -1
+        - uniqueName: 
+          health: -1
+          ammo: -1
+        - uniqueName: pneumatic
+          health: -1
+          ammo: -1
+        - uniqueName: flamethrower
+          health: -1
+          ammo: -1
+        - uniqueName: flamethrower
+          health: -1
+          ammo: -1
       - buildingStates:
         - uniqueName: 
           health: -1
           ammo: -1
-          cargoCost: -1
-          cargoReward: -1
         - uniqueName: 
           health: -1
           ammo: -1
-          cargoCost: -1
-          cargoReward: -1
+        - uniqueName: gatling
+          health: -1
+          ammo: -1
+        - uniqueName: gatling
+          health: -1
+          ammo: -1
+        - uniqueName: fuelCargo
+          health: -1
+          ammo: -1
         - uniqueName: 
           health: -1
           ammo: -1
-          cargoCost: -1
-          cargoReward: -1
         - uniqueName: 
           health: -1
           ammo: -1
-          cargoCost: -1
-          cargoReward: -1
         - uniqueName: 
           health: -1
           ammo: -1
-          cargoCost: -1
-          cargoReward: -1
-        - uniqueName: 
-          health: -1
-          ammo: -1
-          cargoCost: -1
-          cargoReward: -1
-        - uniqueName: 
-          health: -1
-          ammo: -1
-          cargoCost: -1
-          cargoReward: -1
-        - uniqueName: 
-          health: -1
-          ammo: -1
-          cargoCost: -1
-          cargoReward: -1
       - buildingStates:
+        - uniqueName: Rocket
+          health: -1
+          ammo: -1
         - uniqueName: 
           health: -1
           ammo: -1
-          cargoCost: -1
-          cargoReward: -1
         - uniqueName: 
           health: -1
           ammo: -1
-          cargoCost: -1
-          cargoReward: -1
         - uniqueName: 
           health: -1
           ammo: -1
-          cargoCost: -1
-          cargoReward: -1
+        - uniqueName: roborepair
+          health: -1
+          ammo: -1
         - uniqueName: 
           health: -1
           ammo: -1
-          cargoCost: -1
-          cargoReward: -1
-        - uniqueName: 
+        - uniqueName: steamvents
           health: -1
           ammo: -1
-          cargoCost: -1
-          cargoReward: -1
-        - uniqueName: 
+        - uniqueName: steamvents
           health: -1
           ammo: -1
-          cargoCost: -1
-          cargoReward: -1
-        - uniqueName: 
-          health: -1
-          ammo: -1
-          cargoCost: -1
-          cargoReward: -1
-        - uniqueName: 
-          health: -1
-          ammo: -1
-          cargoCost: -1
-          cargoReward: -1
-      - buildingStates:
-        - uniqueName: 
-          health: -1
-          ammo: -1
-          cargoCost: -1
-          cargoReward: -1
-        - uniqueName: 
-          health: -1
-          ammo: -1
-          cargoCost: -1
-          cargoReward: -1
-        - uniqueName: 
-          health: -1
-          ammo: -1
-          cargoCost: -1
-          cargoReward: -1
-        - uniqueName: 
-          health: -1
-          ammo: -1
-          cargoCost: -1
-          cargoReward: -1
-        - uniqueName: 
-          health: -1
-          ammo: -1
-          cargoCost: -1
-          cargoReward: -1
-        - uniqueName: 
-          health: -1
-          ammo: -1
-          cargoCost: -1
-          cargoReward: -1
-        - uniqueName: 
-          health: -1
-          ammo: -1
-          cargoCost: -1
-          cargoReward: -1
-        - uniqueName: 
-          health: -1
-          ammo: -1
-          cargoCost: -1
-          cargoReward: -1
     starterResources:
       money: 2000
       scraps: 200

@@ -83,18 +83,22 @@ public class MoneyController : MonoBehaviour {
     }
 
     void ModifyScraps(float amount) {
-        if (scraps + amount > maxScraps || scraps + amount < 0) {
-            return;
-        }
         if (SceneLoader.s.isLevelInProgress) {
-            scraps += amount;
-            scraps = Mathf.Clamp(scraps, 0, maxScraps);
+            if (scraps <= maxScraps) {
+                scraps += amount;
+                scraps = Mathf.Clamp(scraps, 0, maxScraps);
+            } else {
+                scraps += amount;
+            }
+
             myScraps.SetScrap(scraps);
         } else {
             var currentRunMyResources = DataSaver.s.GetCurrentSave().currentRun.myResources;
-            currentRunMyResources.scraps += (int)amount;
-            currentRunMyResources.scraps = Mathf.Clamp(currentRunMyResources.scraps, 0, currentRunMyResources.maxScraps);
-            scraps = currentRunMyResources.scraps;
+            if (currentRunMyResources.scraps <= currentRunMyResources.maxScraps) {
+                currentRunMyResources.scraps += (int)amount;
+                currentRunMyResources.scraps = Mathf.Clamp(currentRunMyResources.scraps, 0, currentRunMyResources.maxScraps);
+                scraps = currentRunMyResources.scraps;
+            }
         }
         
         if (scraps <= 0) {
@@ -103,16 +107,22 @@ public class MoneyController : MonoBehaviour {
     }
 
     void ModifyAmmo(float amount) {
-        if (ammo + amount > maxAmmo || ammo + amount < 0) {
-            return;
-        }
         if (SceneLoader.s.isLevelInProgress) {
-            ammo += amount;
+            if (ammo <= maxAmmo) {
+                ammo += amount;
+                ammo = Mathf.Clamp(ammo, 0, maxAmmo);
+            }else {
+                ammo += amount;
+            }
+            
             myAmmo.SetScrap(ammo);
         } else {
             var currentRunMyResources = DataSaver.s.GetCurrentSave().currentRun.myResources;
-            currentRunMyResources.ammo += (int)amount;
-            currentRunMyResources.ammo = Mathf.Clamp(currentRunMyResources.ammo, 0, currentRunMyResources.maxAmmo);
+            if (currentRunMyResources.ammo <= currentRunMyResources.maxAmmo) {
+                currentRunMyResources.ammo += (int)amount;
+                currentRunMyResources.ammo = Mathf.Clamp(currentRunMyResources.ammo, 0, currentRunMyResources.maxAmmo);
+            }
+
             ammo = currentRunMyResources.ammo;
         }
         
@@ -138,23 +148,26 @@ public class MoneyController : MonoBehaviour {
     }
 
     public void ModifyResource(ResourceTypes type, float amount) {
-        switch (type) {
-            case ResourceTypes.scraps:
-                ModifyScraps(amount);
-                break;
-            case ResourceTypes.ammo:
-                ModifyAmmo(amount);
-                break;
-            case ResourceTypes.fuel:
-                SpeedController.s.ModifyFuel(amount);
-                break;
-            case ResourceTypes.money:
-                var currentRunMyResources = DataSaver.s.GetCurrentSave().currentRun.myResources;
-                currentRunMyResources.money += (int)amount;
-                break;
+        if (amount != 0) {
+            switch (type) {
+                case ResourceTypes.scraps:
+                    ModifyScraps(amount);
+                    break;
+                case ResourceTypes.ammo:
+                    ModifyAmmo(amount);
+                    break;
+                case ResourceTypes.fuel:
+                    SpeedController.s.ModifyFuel(amount);
+                    break;
+                case ResourceTypes.money:
+                    var currentRunMyResources = DataSaver.s.GetCurrentSave().currentRun.myResources;
+                    currentRunMyResources.money += (int)amount;
+                    break;
+            }
+
+            if (!SceneLoader.s.isLevelInProgress)
+                DataSaver.s.SaveActiveGame();
         }
-        if(!SceneLoader.s.isLevelInProgress)
-            DataSaver.s.SaveActiveGame();
     }
 
     public void ApplyStorageAmounts(int _maxScraps, int _maxAmmo) {

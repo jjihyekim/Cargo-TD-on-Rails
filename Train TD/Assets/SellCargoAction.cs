@@ -12,7 +12,8 @@ public class SellCargoAction : ModuleAction, IActiveDuringShopping
    public void ActivateForShopping() {
       this.enabled = true;
       var cargo = GetComponent<CargoModule>();
-      this.cost = -cargo.moneyCost;
+      this.cost = 0;
+      //this.cost = -cargo.moneyCost;
    }
 
    public void Disable() {

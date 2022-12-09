@@ -20,20 +20,22 @@ public class CityData {
 	public SupplyPrice[] prices;
 
 	public bool canBuyCart = false;
+
+	public int rewardAmount = 50;
 }
 
 [Serializable]
 public class SupplyPrice {
 	public ResourceTypes type;
 	public int basePrice = 25;
-	public float variance = 0.2f;
+	//public float variance = 0.2f;
 	public float priceIncrease = 1.2f;
 
 	public SupplyPrice Copy() {
 		var copy = new SupplyPrice() {
 			type = type,
 			basePrice = basePrice,
-			variance = variance,
+			//variance = variance,
 			priceIncrease = priceIncrease
 		};
 		return copy;

@@ -33,7 +33,6 @@ public class Pauser : MonoBehaviour {
 
     private void TogglePause(InputAction.CallbackContext obj) {
         TogglePause();
-        
     }
 
     void TogglePause() {

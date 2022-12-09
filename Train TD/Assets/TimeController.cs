@@ -10,13 +10,14 @@ public class TimeController : MonoBehaviour {
 
     private void Awake() {
         s = this;
+        PausedEvent = new UnityEvent<bool>();
     }
 
 
     public float currentTimeScale = 1f;
     public bool isPaused = false;
 
-    public UnityEvent<bool> PausedEvent = new UnityEvent<bool>();
+    public static UnityEvent<bool> PausedEvent = new UnityEvent<bool>();
 
     public void Pause() {
         isPaused = true;

@@ -17,35 +17,30 @@ public class SetUpBuyCargo : MonoBehaviour {
 
     public GameObject noCargoAvailableBecauseEncounter;
 
-    private void Start(){
+    private void Start() {
+        /*StarterUIController.s.OnLevelChanged.AddListener(SetUpCargos);
+        StarterUIController.s.OnEnteredStarterUI.AddListener(SetUpCargos);*/
         SetUpCargos();
     }
 
-    private void OnEnable() {
-        StarterUIController.s.OnLevelChanged.AddListener(SetUpCargos);
-        StarterUIController.s.OnEnteredStarterUI.AddListener(SetUpCargos);
-    }
-
-    private void OnDisable() {
-        StarterUIController.s.OnLevelChanged.RemoveListener(SetUpCargos);
-    }
-
     void SetUpCargos() {
-        ClearPreviousCargo();
+        //ClearPreviousCargo();
         
-        if (StarterUIController.s.levelSelected) {
+        
+        var playerStar = DataSaver.s.GetCurrentSave().currentRun.map.GetPlayerStar();
+        var button = Instantiate(cargoSellButtonPrefab, cargoParent).GetComponent<MiniGUI_StarterBuildingButton>();
+        var cargo = GetCargoWithType(playerStar.city.cargosSold[Random.Range(0, playerStar.city.cargosSold.Length)]);
+
+        button.SetUp(cargo.GetComponent<TrainBuilding>()/*, 20, data.cost, data.reward*/);
+        
+        /*if (StarterUIController.s.levelSelected) {
             var playerStar = DataSaver.s.GetCurrentSave().currentRun.map.GetPlayerStar();
             var targetLevel = StarterUIController.s.selectedLevelIndex;
 
-            /*for (int i = 0; i < playerStar.outgoingConnectionCargoData[targetLevel].Count; i++) {
-                var data = playerStar.outgoingConnectionCargoData[i];
-                var button = Instantiate(cargoSellButtonPrefab, cargoParent).GetComponent<MiniGUI_StarterBuildingButton>();
-                var cargo = GetCargoWithType(playerStar.city.cargosSold[Random.Range(0, playerStar.city.cargosSold.Length)]);
-
-                button.SetUp(cargo.GetComponent<TrainBuilding>(), 3, data.cost, data.reward);
-            }*/
-
-
+            if (targetLevel == -1) {
+                return; // this means we are starting the tutorial level
+            }
+            
             if (!playerStar.outgoingConnectionLevels[targetLevel].isEncounter) {
                 var data = playerStar.outgoingConnectionCargoData[targetLevel];
                 var button = Instantiate(cargoSellButtonPrefab, cargoParent).GetComponent<MiniGUI_StarterBuildingButton>();
@@ -55,10 +50,10 @@ public class SetUpBuyCargo : MonoBehaviour {
             } else {
                 Instantiate(noCargoAvailableBecauseEncounter, cargoParent);
             }
-        }
+        }*/
     }
 
-    public void ClearPreviousCargo() {
+    /*public void ClearPreviousCargo() {
         var buttons = cargoParent.GetComponentsInChildren<MiniGUI_StarterBuildingButton>();
 
         for (int i = 0; i < buttons.Length; i++) {
@@ -107,7 +102,7 @@ public class SetUpBuyCargo : MonoBehaviour {
             DataSaver.s.GetCurrentSave().currentRun.myTrain = trainState;
             DataSaver.s.SaveActiveGame();
         }
-    }
+    }*/
 
     GameObject GetCargoWithType(CargoModule.CargoTypes type) {
         for (int i = 0; i < cargoBuildings.Length; i++) {

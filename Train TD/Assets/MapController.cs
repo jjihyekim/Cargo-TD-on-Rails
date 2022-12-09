@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Sirenix.OdinInspector;
+using TMPro;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
@@ -40,17 +41,20 @@ public class MapController : MonoBehaviour {
     public CityDataScriptable[] remainingCities;
     public CityDataScriptable[] bossCities;
 
-    public CargoPrices[] cargoTiers = new CargoPrices[2];
+    //public CargoPrices[] cargoTiers = new CargoPrices[2];
     
     public MenuToggle mapUI;
 
     public float encounterChance = 0.5f;
 
+    public static bool ApplyStarMap = true;
+
     private void Start() {
 	    //GenerateStarMap();
 	    targetStarInfoScreen.Hide();
 	    selectedStarInfoScreen.Hide();
-	    ApplyStarMapFromSave();
+	    if(ApplyStarMap)
+			ApplyStarMapFromSave();
     }
 
 
@@ -71,12 +75,18 @@ public class MapController : MonoBehaviour {
 	    DataSaver.s.GetCurrentSave().currentRun.map = starMapState;
 	    Debug.Log($"Star map instantiation complete");
 
-	    ApplyStarMapFromSave(true);
+	    //ApplyStarMapFromSave(true);
     }
+    
 
     public void ApplyStarMapFromSave(bool force = false) {
+	    /*if(DataSaver.s.GetCurrentSave().isInARun || force)
+			SpawnStarsAndConnections(DataSaver.s.GetCurrentSave().currentRun.map);*/
+	    
+	    //WORLDMAP
 	    if(DataSaver.s.GetCurrentSave().isInARun || force)
-			SpawnStarsAndConnections(DataSaver.s.GetCurrentSave().currentRun.map);
+			WorldMapCreator.s.GenerateWorldMap();
+	    
 	    //targetStarInfoScreen.Hide();
     }
 
@@ -124,6 +134,7 @@ public class MapController : MonoBehaviour {
 	readonly string[] suffixes = new []{"ford", "hill", "ville", "wood", "burg", "bridge", "ton"};
 	private HashSet<string> givenStarNames = new HashSet<string>();
 
+	public float cityRewardVariance = 0.1f;
     private StarState CreateStarState(int starChunk) {
 
 	    var count = 0;
@@ -167,6 +178,8 @@ public class MapController : MonoBehaviour {
 	    
 	    info.rewardCart = 1;
 
+	    info.rewardMoney = (int)(city.rewardAmount * (1 + Random.Range(-cityRewardVariance, cityRewardVariance)));
+
 	    info.starChunk = starChunk;
 	    
 	    return info;
@@ -192,7 +205,7 @@ public class MapController : MonoBehaviour {
 	    starState.isShop = true;
     }
 
-    private void SpawnStarsAndConnections(StarMapState starMapState) {
+    /*private void SpawnStarsAndConnections(StarMapState starMapState) {
 	    parent.DeleteAllChildren();
 	    connectorsParent.DeleteAllChildren();
 
@@ -234,7 +247,7 @@ public class MapController : MonoBehaviour {
 			    }
 		    }
 	    }
-    }
+    }*/
 
     MiniGUI_Star GetStarFromStarName(MiniGUI_Star[] stars, string starName) {
 	    for (int i = 0; i < stars.Length; i++) {
@@ -287,7 +300,7 @@ public class MapController : MonoBehaviour {
     //public StarState playerStar => StateMaster.s.currentState.starMapState.GetPlayerStar();
     public StarState playerStar => DataSaver.s.GetCurrentSave().currentRun.map.GetPlayerStar();
 	private StarState targetStar;
-    public void ShowStarInfo(StarState star, GenericCallback callback = null) {
+    public void ShowStarInfo(StarState star, BoolReturnCallback callback = null) {
 	    targetStar = star;
 	    
 	    var _playerStar = DataSaver.s.GetCurrentSave().currentRun.map.GetPlayerStar();
@@ -307,6 +320,8 @@ public class MapController : MonoBehaviour {
 
     public void SelectStar() {
 	    targetStarInfoScreenBudget.Hide(); //WORLDMAP
+	    WorldMapCreator.s.ReturnToRegularMap(); //WORLDMAP
+	    
 	    //targetStarInfoScreen.Hide();
 	    
 	    mapUI.HideMenu();
@@ -322,31 +337,51 @@ public class MapController : MonoBehaviour {
 	    selectedStarInfoScreen.Initialize(_playerStar, targetStar, level);
 	    
 	    StarterUIController.s.SelectLevel(targetStar);
-	    WorldMapCreator.s.ReturnToRegularMap(); //WORLDMAP
+	    AskForCargo(false);
     }
 
+    public TMP_Text travelButtonText;
+    public bool isAskingCargo = false;
     public void StartTravelingToStar() {
-	    travelToStarWaiting = true;
-	    StarterUIController.s.StartLevel();
+	    if (isAskingCargo || Train.s.GetCargoCount() > 0 ) {
+		    travelToStarWaiting = true;
+		    StarterUIController.s.StartLevel();
+		    AskForCargo(false);
+	    } else {
+		    AskForCargo(true);
+	    }
     }
+
+    public void AskForCargo(bool state) {
+	    isAskingCargo = state;
+	    if (isAskingCargo) {
+		    travelButtonText.text = "Are you sure you want to leave without cargo?";
+	    } else {
+		    travelButtonText.text = "Travel";
+	    }
+	    //Invoke(nameof(DeActivateAskForCargo), 1f);
+    }
+
+    /*void DeActivateAskForCargo() {
+	    AskForCargo(false);
+    }*/
 
 
     public bool travelToStarWaiting = false;
     public void FinishTravelingToStar() {
 	    if (travelToStarWaiting) {
-		    var _playerStar = DataSaver.s.GetCurrentSave().currentRun.map.GetPlayerStar();
 		    RemovePlayerFromStar();
-		    LevelData level = null;
-		    for (int i = 0; i < _playerStar.outgoingConnections.Count; i++) {
-			    if (_playerStar.outgoingConnections[i] == targetStar.starName) {
-				    level = _playerStar.outgoingConnectionLevels[i];
-			    }
-		    }
 
 		    PutPlayerInStar(targetStar);
 
 		    ApplyStarMapFromSave();
 	    }
+    }
+
+    public void DebugTravelToSelectStar() {
+	    travelToStarWaiting = true;
+
+	    FinishTravelingToStar();
     }
 
     public void RemovePlayerFromStar() {
@@ -551,7 +586,7 @@ public class MapController : MonoBehaviour {
 	    var rollEncounter = Random.value < encounterChance;
 	    LevelData level;
 	    if (rollEncounter && a.starChunk >= 2) {
-		    var encounterName = DataHolder.s.encounters[Random.Range(0, DataHolder.s.encounters.Length)].encounterUniqueName;
+		    var encounterName = DataHolder.s.encounters[Random.Range(0, DataHolder.s.encounters.Length)].gameObject.name;
 		    level = new LevelData() { levelName = encounterName, isEncounter = true };
 	    }else{
 		    if (a.starChunk < 2) {
@@ -564,7 +599,7 @@ public class MapController : MonoBehaviour {
 	    a.outgoingConnectionLevels.Add(level);
 
 
-	    var cargoType = cargoTiers[Random.Range(0, cargoTiers.Length)];
+	    /*var cargoType = cargoTiers[Random.Range(0, cargoTiers.Length)];
 	    
 	    var cargoCost = cargoType.cost * (1f+Random.Range(-cargoType.costVariance, +cargoType.costVariance));
 	    var cargoReward = cargoType.reward * (1f+Random.Range(-cargoType.rewardVariance, +cargoType.rewardVariance));
@@ -574,7 +609,7 @@ public class MapController : MonoBehaviour {
 		    cargoReward *= 2f;
 	    }
 	    var cargoData = new CargoDeliverMissionData() { cost = (int)cargoCost, reward = (int)cargoReward };
-	    a.outgoingConnectionCargoData.Add(cargoData);
+	    a.outgoingConnectionCargoData.Add(cargoData);*/
     }
 
     class MapChunk {
@@ -640,10 +675,11 @@ public class StarState {
 	public int starChunk = -1;
 	public CityData city;
 	public int rewardCart = 0;
+	public int rewardMoney = 0;
 
 	public List<string> outgoingConnections = new List<string>();
 	public List<LevelData> outgoingConnectionLevels = new List<LevelData>();
-	public List<CargoDeliverMissionData> outgoingConnectionCargoData = new List<CargoDeliverMissionData>();
+	//public List<CargoDeliverMissionData> outgoingConnectionCargoData = new List<CargoDeliverMissionData>();
 	//public List<CargoDeliverMissionData> cargoData = new List<CargoDeliverMissionData>();
 
 	public StarState(string _starName) {
@@ -657,10 +693,10 @@ public class CargoDeliverMissionData {
 	public int reward = 150;
 }
 
-[Serializable]
+/*[Serializable]
 public class CargoPrices {
 	public int cost = 50;
 	public float costVariance = 0.2f;
 	public int reward = 150;
 	public float rewardVariance = 0.2f;
-}
+}*/

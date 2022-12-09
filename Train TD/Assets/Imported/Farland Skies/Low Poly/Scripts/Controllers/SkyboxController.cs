@@ -493,6 +493,7 @@ namespace Borodar.FarlandSkies.LowPoly
 
         protected void OnValidate()
         {
+        if (!isActiveAndEnabled) return;
             UpdateSkyboxProperties();
         }
 

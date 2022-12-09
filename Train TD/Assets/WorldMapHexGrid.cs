@@ -14,7 +14,6 @@ public class WorldMapHexGrid : MonoBehaviour {
 
 	public GameObject grassHex;
 	public GameObject mountainHex;
-	public GameObject trainRailsHex;
 
 	public List<Transform> hexParents = new List<Transform>();
 
@@ -74,6 +73,49 @@ public class WorldMapHexGrid : MonoBehaviour {
 		}
 	}
 
+	public void CreateGridsOverAFewFrames(GenericCallback callback) {
+		StartCoroutine(_CreateGridsOverAFewFrames(callback));
+	}
+
+	private List<Vector3> positions = new List<Vector3>();
+	IEnumerator _CreateGridsOverAFewFrames(GenericCallback callback) {
+		var pauseInterval = 1000;
+		var n = 0;
+		
+		for (int i = 0; i < gridCount; i++) {
+			var hexParent = new GameObject("yeet");
+			hexParent.gameObject.name = "Hex Chunk";
+			hexParents.Add(hexParent.transform);
+			/*var rigid= hex.AddComponent<Rigidbody>();
+			rigid.useGravity = false;
+			rigid.isKinematic = true;*/
+			hexParent.transform.SetParent(this.transform);
+			hexParent.transform.localRotation = Quaternion.identity;
+
+			var hexChunk = hexParent.AddComponent<HexChunk>();
+			hexChunk.myCells = new HexCell[gridSize.x, gridSize.y];
+			for (int x = - (gridSize.x/2); x < gridSize.x/2; x++) {
+				for (int z = - (gridSize.y/2); z < gridSize.y/2; z++) {
+				
+					var hex = Instantiate(grassHex, hexParent.transform);
+					hexChunk.AddCell(hex.GetComponent<HexCell>(), x+(gridSize.x/2),z+(gridSize.y/2));
+					
+					n++;
+					
+					if (n % pauseInterval == 0) {
+						yield return null;
+					}
+				}
+			}
+			UpdateGrid(hexParent.transform);
+			
+			hexParent.transform.position = Vector3.forward * i * (gridOffset) + transform.position;
+		}
+
+		yield return null;
+		callback?.Invoke();
+	}
+
 	public void ClearGrids() {
 		var count = hexParents.Count;
 		for (int i =  count-1; i >= 0; i--) {
@@ -102,61 +144,110 @@ public class WorldMapHexGrid : MonoBehaviour {
 
 	public float mountainThreshold = 1.37f;
 	public bool refreshHeightAdjustment = true;
-	[Button]
-	
-	public delegate void Callback();
-	public void ApplyHeights(Callback myCallback) {
-		StartCoroutine(ApplyHeightsOverAFewFrames(myCallback));
+	public GenericCallback myCallback;
+	[Button] 
+	public void ApplyHeights(GenericCallback _myCallback) {
+		StartCoroutine(ApplyHeightsOverAFewFrames());
+		//ApplyHeightsOverAFewFrames();
+		myCallback = _myCallback;
 	}
 
-	IEnumerator ApplyHeightsOverAFewFrames(Callback myCallback ) {
+	public Color regularColor= Color.green;
+	public Color crystalColor = Color.magenta;
+
+	public float colorLerpStartZ;
+	public float colorLerpEndZ;
+
+	struct AffectorStuff {
+		public Vector3 posNoY;
+		public float posY;
+		public float pinDistance;
+		public float pinWeight;
+		public AnimationCurve pinDropOff;
+		public float randomness;
+	}
+	IEnumerator ApplyHeightsOverAFewFrames( ) {
 		cells = GetComponentsInChildren<HexCell>();
 		var heightAffectors = GetComponentsInChildren<HexHeightAffector>();
 		heightAffectors.Reverse();
-		refreshHeightAdjustment = true;
+
+		var n = heightAffectors.Length;
+		
+		// pre-process and put into array heightAffectorStuff
+		var affectorStuff = new AffectorStuff[heightAffectors.Length];
+		for (int i = 0; i < heightAffectors.Length; i++) {
+			var affector = heightAffectors[i];
+			var affectorPos = affector.transform.position;
+			var posNoY = affectorPos;
+			posNoY.y = 0;
+			affectorStuff[i] = new AffectorStuff() {
+				posNoY = posNoY,
+				posY = affectorPos.y,
+				pinDistance = affector.pinDistance,
+				pinWeight = affector.pinWeight,
+				pinDropOff = affector.pinDropOff,
+				randomness = affector.randomness,
+			};
+		}
+		
+		//refreshHeightAdjustment = true;
 
 		// we assume there is only one chunk
 		var hexChunk = hexParents[0].GetComponent<HexChunk>();
-		var pauseInterval = cells.Length / 10;
+		var pauseInterval = cells.Length / 5;
 		for (int i = 0; i < cells.Length; i++) {
 			var currentCell = cells[i];
 			var y = 0f;
+			
+			
+			var currentCellTransform = currentCell.transform;
 
 			for (int j = 0; j < heightAffectors.Length; j++) {
-				var affector = heightAffectors[j];
-				var cellPosNoY = currentCell.transform.position;
+				/*var affector = heightAffectors[j];
 				var affectorPos = affector.transform.position;
 				var affectorPosNoY = affectorPos;
+				affectorPosNoY.y = 0;*/
+				var affector = affectorStuff[j];
+				var cellPosNoY = currentCellTransform.position;
 				cellPosNoY.y = 0;
-				affectorPosNoY.y = 0;
-				var distance = Vector3.Distance(cellPosNoY, affectorPosNoY);
+				var distance = Vector3.Distance(cellPosNoY, affector.posNoY);
 				var percent = distance / affector.pinDistance;
 				percent = Mathf.Clamp(percent,0, 1);
 				var falloff = affector.pinDropOff.Evaluate(percent);
 				var weighted = falloff * affector.pinWeight;
-				var heightAdjustment = weighted * affectorPos.y;
-				var withRandom = heightAdjustment;
-				if (refreshHeightAdjustment) {
+				var heightAdjustment = weighted * affector.posY;
+				//var withRandom = heightAdjustment;
+				var withRandom = heightAdjustment * Random.Range(1 - affector.randomness, 1 + affector.randomness);
+				/*if (refreshHeightAdjustment) {
 					withRandom = heightAdjustment * Random.Range(1 - affector.randomness, 1 + affector.randomness);
 					currentCell.randomHeightAdjustment = withRandom - heightAdjustment;
 				} else {
 					withRandom += currentCell.randomHeightAdjustment;
-				}
+				}*/
 
 				y += withRandom;
 			}
 
-			var currentCellTransform = currentCell.transform;
-			var pos = currentCellTransform.localPosition;
-			pos.y = y;
+			var finalPos = currentCellTransform.localPosition;
+			finalPos.y = y;
 			//print(y);
-			currentCellTransform.localPosition = pos;
+			currentCellTransform.localPosition = finalPos;
+			
+			/*var lerp = (currentCell.transform.position.z - colorLerpStartZ)/(colorLerpEndZ - colorLerpStartZ);
+			lerp = Mathf.Clamp01(lerp);
+			var propBlock = new MaterialPropertyBlock();
+			var renderer = currentCell.GetComponentInChildren<Renderer>();
+			renderer.GetPropertyBlock(propBlock);
+			propBlock.SetColor("_Color", Color.Lerp(regularColor, crystalColor, lerp));
+			renderer.SetPropertyBlock(propBlock);*/
+			
 
-			if (currentCell.transform.localPosition.y > mountainThreshold) {
+			if (finalPos.y > mountainThreshold) {
 				if (currentCell.myType != HexCell.HexType.mountain) {
 					var hex = Instantiate(mountainHex, hexParents[0]);
-					hex.transform.position = currentCell.transform.position;
-					hex.transform.localScale = Vector3.one*gridScale;
+					var hexTransform = hex.transform;
+					hexTransform.localPosition = finalPos;
+					hexTransform.localScale = Vector3.one*gridScale;
 					hexChunk.AddCell(hex.GetComponent<HexCell>(), currentCell.coordinates.x, currentCell.coordinates.y);
 					Destroy(currentCell.gameObject);
 					currentCell = hex.GetComponent<HexCell>();
@@ -164,26 +255,42 @@ public class WorldMapHexGrid : MonoBehaviour {
 			} else {
 				if (currentCell.myType != HexCell.HexType.grass) {
 					var hex = Instantiate(grassHex, hexParents[0]);
-					hex.transform.position = currentCell.transform.position;
-					hex.transform.localScale = Vector3.one*gridScale;
+					var hexTransform = hex.transform;
+					hexTransform.localPosition = finalPos;
+					hexTransform.localScale = Vector3.one*gridScale;
 					hexChunk.AddCell(hex.GetComponent<HexCell>(), currentCell.coordinates.x, currentCell.coordinates.y);
 					Destroy(currentCell.gameObject);
 					currentCell = hex.GetComponent<HexCell>();
 				}
 			}
 
-			currentCell.gameObject.isStatic = true;
-
+			//currentCell.gameObject.isStatic = true;
+			
 			if (i % pauseInterval == 0) {
 				yield return null;
 			}
 		}
 		
-		refreshHeightAdjustment = false;
+		//refreshHeightAdjustment = false;
 
 		yield return null;
+		//Invoke(nameof(CallbackAfterOneFrame), 0.01f);
+		//Debug.Break();
 		myCallback?.Invoke();
+		//doCallback = true;
 	}
+
+	/*public bool doCallback = false;
+	private void Update() {
+		if (doCallback) {
+			myCallback?.Invoke();
+			doCallback = false;
+		}
+	}*/
+
+	/*void CallbackAfterOneFrame() {
+		myCallback?.Invoke();
+	}*/
 
 
 	public float railStartGap = 0.2f;
@@ -203,6 +310,7 @@ public class WorldMapHexGrid : MonoBehaviour {
 		
 		for (int i = 0; i < railAffectors.Length; i++) {
 			var affector = railAffectors[i];
+			var trainRailsHex = affector.myPrefab;
 			/*var hexCoordStart = hexChunk.GetCellCoords(affector.startPos);
 			var hexCoordEnd = hexChunk.GetCellCoords(affector.endPos);
 			var targetCells = HexMetrics.cube_linedraw(hexCoordStart, hexCoordEnd);*/
@@ -238,60 +346,21 @@ public class WorldMapHexGrid : MonoBehaviour {
 					//Debug.Log(newHit.point);
 					//Debug.Log(newHit.collider.gameObject.name);
 				}
+
+				if (j == (dist + 1) / 2) {
+					affector.transform.position = Vector3.Lerp(lastRayResult, newRayResult, 0.5f);
+				}
 				
 				var rail = Instantiate(trainRailsHex, otherObjectsParent);
 				
 				rail.transform.position = Vector3.Lerp(lastRayResult, newRayResult, 0.5f);
-				rail.transform.rotation = Quaternion.LookRotation(lastRayResult - newRayResult);
+				var lookVector = lastRayResult - newRayResult;
+				if(lookVector.sqrMagnitude > 0)
+					rail.transform.rotation = Quaternion.LookRotation(lastRayResult - newRayResult);
 				rail.transform.localScale = Vector3.one*gridScale;
 
 				lastRayResult = newRayResult;
 			}
-
-
-
-
-			/*
-			 
-			var targets = LineDraw(affector.startPos, affector.endPos, segmentLength);
-			 var lastRailPos2 = affector.startPos;
-			var lastRailPos1 = affector.startPos;
-			GameObject lastRail1 = null;
-			for (int j = 0; j < targets.Count; j++) {
-				var rail = Instantiate(trainRailsHex, otherObjectsParent);
-
-				var cell = hexChunk.GetCell(targets[j]);
-
-				var pos = targets[j];
-				pos.y = cell.transform.position.y;
-
-				rail.transform.position = pos;
-				rail.transform.localScale = Vector3.one*gridScale;
-				
-				var rotationForLastRail = Quaternion.LookRotation(lastRailPos2 - pos);
-				if (lastRail1 != null) {
-					lastRail1.transform.rotation = rotationForLastRail;
-					lastRail1.transform.position = Vector3.Lerp(lastRailPos2, pos, 0.5f);
-				}
-
-				lastRailPos2 = lastRailPos1;
-				lastRailPos1 = pos;
-				lastRail1 = rail;
-			}
-
-			var rotForLastRail = Quaternion.LookRotation(lastRailPos2 - affector.endPos);
-			if(lastRail1 != null)
-				lastRail1.transform.rotation = rotForLastRail;*/
-
-
-			/*for (int j = 0; j < targetCells.Count; j++) {
-				var cell = hexChunk.GetCell(targetCells[j].x, targetCells[j].y);
-
-				var rail = Instantiate(trainRailsHex, otherObjectsParent);
-				rail.transform.position = cell.transform.position;
-				rail.transform.localScale = Vector3.one*gridScale;
-				rail.transform.rotation = rotation;
-			}*/
 		}
 	}
 
@@ -309,5 +378,128 @@ public class WorldMapHexGrid : MonoBehaviour {
 		}
 
 		return results;
+	}
+
+	public void MeshCombine() {
+		//StartCoroutine(MeshCombineOverFrames());
+		SwitchToGPUInstancing();
+	}
+	public struct InstancingBatch {
+		public List<Matrix4x4> positions;
+		public Material material;
+		public Mesh mesh;
+	}
+
+	public List<InstancingBatch> batches;
+
+	public Material grass;
+	public Material dirt;
+	public Material mountain;
+
+	public Mesh top;
+	public Mesh bottom;
+
+	public bool isGPUInstancing = false;
+
+	private void Update() {
+		if (isGPUInstancing) {
+			for (int i = 0; i < batches.Count; i++) {
+				var batch = batches[i];
+				Graphics.DrawMeshInstanced(batch.mesh, 0, batch.material, batch.positions);
+			}
+		}
+	}
+
+	void SwitchToGPUInstancing() {
+		Debug.Log("Gpu Instancing Map Terrain");
+
+		var allRenderers = hexParents[0].GetComponentsInChildren<MeshRenderer>();
+
+		var tempBatches = new List<InstancingBatch>();
+		tempBatches.Add(new InstancingBatch() {
+			positions = new List<Matrix4x4>(),
+			material = grass,
+			mesh = top
+		});
+		
+		tempBatches.Add(new InstancingBatch() {
+			positions = new List<Matrix4x4>(),
+			material = dirt,
+			mesh = bottom
+		});
+		
+		tempBatches.Add( new InstancingBatch() {
+			positions = new List<Matrix4x4>(),
+			material = mountain,
+			mesh = top
+		});
+		
+		tempBatches.Add( new InstancingBatch() {
+			positions = new List<Matrix4x4>(),
+			material = mountain,
+			mesh = bottom
+		});
+
+		var scale = Vector3.one * gridScale;
+		var grassSub = grass.name.Substring(0, 3);
+		var dirtSub = dirt.name.Substring(0, 3);
+		var topSub = top.name.Substring(0, 3);
+
+		for (int i = 0; i < allRenderers.Length; i++) {
+			var rend = allRenderers[i];
+			if (rend.material.name.StartsWith(grassSub)) {
+				tempBatches[0].positions.Add(Matrix4x4.TRS(rend.transform.position, Quaternion.identity, scale));
+				
+			}else if (rend.material.name.StartsWith(dirtSub)) {
+				tempBatches[1].positions.Add(Matrix4x4.TRS(rend.transform.position, Quaternion.identity, scale));
+				
+			} else { // mountain
+				if (rend.GetComponent<MeshFilter>().mesh.name.StartsWith(topSub)) {
+					tempBatches[2].positions.Add(Matrix4x4.TRS(rend.transform.position, Quaternion.identity, scale));
+					
+				} else {
+					tempBatches[3].positions.Add(Matrix4x4.TRS(rend.transform.position, Quaternion.identity, scale));
+					
+				}
+			}
+		}
+
+		batches = new List<InstancingBatch>();
+		for (int i = 0; i < 4; i++) {
+			var splitBatch = tempBatches[i];
+			var posLength = splitBatch.positions.Count;
+			for (int j = 0; j < splitBatch.positions.Count; j+=1023) {
+				var newBatch = new InstancingBatch() {
+					material = splitBatch.material,
+					mesh = splitBatch.mesh,
+					positions = new List<Matrix4x4>(splitBatch.positions.GetRange(j, Mathf.Min(1023, posLength-j)))
+				};
+				batches.Add(newBatch);
+			}
+		}
+		
+		Destroy(hexParents[0].gameObject);
+
+		isGPUInstancing = true;
+	}
+
+	IEnumerator MeshCombineOverFrames() {
+		var target = hexParents[0].gameObject;
+		Debug.Log("combining meshes");
+		//var newMesh = PlaytimeMeshCombiner.CombineMeshes(hexParents[0].gameObject);
+
+		yield return null;
+		
+		yield return
+			PlaytimeMeshCombiner.MeshCombineAlternative(
+				target,
+				transform,
+				target.GetComponentsInChildren<MeshFilter>(),
+				target.GetComponentsInChildren<MeshRenderer>()
+			);
+		Debug.Log("meshes combined");
+		
+		Destroy(hexParents[0].gameObject);
+		//newMeshes.transform.SetParent(transform);
 	}
 }

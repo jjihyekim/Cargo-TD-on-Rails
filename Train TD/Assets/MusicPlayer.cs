@@ -49,8 +49,8 @@ public class MusicPlayer : MonoBehaviour {
 
 	public void Stop() {
 		isPlaying = false;
-		source.Stop();
 		isPaused = false;
+		source.Stop();
 	}
 
 	public void Pause() {
@@ -84,6 +84,7 @@ public class MusicPlayer : MonoBehaviour {
 
 	public void PlayNextTrack() {
 		isPlaying = true;
+		isPaused = false;
 		CancelInvoke();
 		curTrackClip = currentTracks[clipOrder[curTrack]];
 		source.clip = curTrackClip;
@@ -94,7 +95,6 @@ public class MusicPlayer : MonoBehaviour {
 			CreateRandomClipOrder();
 		}
 		Invoke(nameof(PlayNextTrack), curTrackClip.length);
-		isPaused = false;
 	}
 
 	public void PlayPrevTrack() {
@@ -120,7 +120,7 @@ public class MusicPlayer : MonoBehaviour {
 		}
 
 		if (changeMade) {
-			Stop();
+			//Stop();
 			CreateRandomClipOrder();
 			PlayNextTrack();
 		}
@@ -131,7 +131,7 @@ public class MusicPlayer : MonoBehaviour {
 			trackNameAndTime = $"{curTrackClip.name} - {curTrackTime:0}/{curTrackClip.length:0}";
 			curTrackTime += Time.deltaTime;
 
-			if (TimeController.s != null) {
+			if (TimeController.s != null && SceneLoader.s.isLevelInProgress) {
 				if (TimeController.s.isPaused && !isPaused) {
 					PauseUnPauseOnGamePause(TimeController.s.isPaused);
 				} else if(!TimeController.s.isPaused && isPaused) {

@@ -8,7 +8,7 @@ public class CargoModule : MonoBehaviour, IActiveDuringCombat, IActiveDuringShop
     public int cargoSize = 1;
 
     public int moneyReward = 100;
-    public int moneyCost = 50;
+    //public int moneyCost = 50;
     
     public enum CargoTypes {
         ammo, fuel, food
@@ -31,5 +31,10 @@ public class CargoModule : MonoBehaviour, IActiveDuringCombat, IActiveDuringShop
     public void CargoSold() {
         GetComponentInParent<Slot>().RemoveBuilding(GetComponent<TrainBuilding>());
         Destroy(gameObject);
+    }
+
+    public int GetReward() {
+        var health = GetComponent<ModuleHealth>().GetHealthPercent();
+        return (int)(health * moneyReward);
     }
 }

@@ -67,6 +67,14 @@ public class SpeedController : MonoBehaviour, IShowOnDistanceRadar {
         maxSteam = engines.Count*100;
         steam = maxSteam/2f;
         mySteamShower.SetMaxScrap(maxSteam);
+
+        LevelReferences.s.speed = 0;
+        targetSpeed = 0;
+    }
+
+    public void IncreaseMissionEndDistance(float amount) {
+        missionDistance += amount;
+        endTrainStation.startPos = Vector3.forward * missionDistance;
     }
 
     private void Start() {
@@ -97,6 +105,8 @@ public class SpeedController : MonoBehaviour, IShowOnDistanceRadar {
 
     public float fuelUseMultiplier = 1f;
     public SpeedometerScript mySpeedometer;
+    public SpeedometerScript mySteamSpeedometer;
+    public SpeedometerScript myEngineSpeedometer;
 
     public float steamPer100EnginePower = 1;
     public float steamUsePercentage = 0.15f;
@@ -140,10 +150,11 @@ public class SpeedController : MonoBehaviour, IShowOnDistanceRadar {
             steam = Mathf.Clamp(steam, 0, maxSteam);
 
             var pressurePower = steamUsePerSecond * steamUseToEnginePowerConversion;
-            
+            var stabilizedPressurePower = steamGenerationPerSecond * steamUseToEnginePowerConversion; // used for the engine power speedometer
 
             var minSpeed = 0.5f / Train.s.carts.Count;
-            targetSpeed = 2 * (pressurePower / (Mathf.Sqrt(trainWeight)*17)) + minSpeed;
+            targetSpeed = speedMultiplier* (2 * (pressurePower / (Mathf.Sqrt(trainWeight)*17)) + minSpeed);
+            var stabilizedSpeed = speedMultiplier* (2 * (stabilizedPressurePower / (Mathf.Sqrt(trainWeight)*17)) + minSpeed); // used for the engine power speedometer
             var acceleration = 0.2f - (trainWeight/2000f);
             acceleration = Mathf.Clamp(acceleration, 0.01f, 0.35f);
             if (targetSpeed > LevelReferences.s.speed) {
@@ -153,10 +164,12 @@ public class SpeedController : MonoBehaviour, IShowOnDistanceRadar {
 
 
             
-            LevelReferences.s.speed = Mathf.MoveTowards(LevelReferences.s.speed, targetSpeed*speedMultiplier, acceleration * Time.deltaTime);
+            LevelReferences.s.speed = Mathf.MoveTowards(LevelReferences.s.speed, targetSpeed, acceleration * Time.deltaTime);
 
             trainSpeedText.text = $"{LevelReferences.s.speed:F1}";
             mySpeedometer.SetSpeed(LevelReferences.s.speed);
+            mySteamSpeedometer.SetSpeed(targetSpeed);
+            myEngineSpeedometer.SetSpeed(stabilizedSpeed); // used for the engine power speedometer
             enginePowerText.text = enginePower.ToString("F0");
             
             myFuelShower.SetScrap(fuel);
@@ -198,16 +211,15 @@ public class SpeedController : MonoBehaviour, IShowOnDistanceRadar {
             fuelUse *= 1.2f;
         }else if(enginePowerPlayerControl > 1f) {
             fuelUse *= 1.1f;
-        }else if (enginePowerPlayerControl <= 0.5f) {
+        }/*else if (enginePowerPlayerControl <= 0.5f) {
             fuelUse *= 0.8f;
-        }
+        }*/
 
         fuelUse *= engineCountMultiplier;
 
         fuelUseText.text = $"-{fuelUse:F2}/s";
         fuel -= fuelUse * Time.deltaTime;
-        fuel = Mathf.Clamp(fuel, 0, maxFuel);
-
+        
         if (fuel <= 0) {
             enginePowerPlayerControl = 0;
             
@@ -228,6 +240,8 @@ public class SpeedController : MonoBehaviour, IShowOnDistanceRadar {
                 playedNoFuelSound = false;
             }
         }
+
+        fuel = Mathf.Clamp(fuel, 0, maxFuel);
     }
 
 
@@ -262,15 +276,21 @@ public class SpeedController : MonoBehaviour, IShowOnDistanceRadar {
 
 
     public void ModifyFuel(float amount) {
-        if (fuel + amount > maxFuel || fuel + amount < 0) {
-            return;
-        }
         if (SceneLoader.s.isLevelInProgress) {
-            fuel += amount;
+            if (fuel <= maxFuel) {
+                fuel += amount;
+                fuel = Mathf.Clamp(fuel, 0, maxFuel);
+            } else {
+                fuel += amount;
+            }
+            
         } else {
             var currentRunMyResources = DataSaver.s.GetCurrentSave().currentRun.myResources;
-            currentRunMyResources.fuel += (int)amount;
-            currentRunMyResources.fuel = Mathf.Clamp(currentRunMyResources.fuel, 0, currentRunMyResources.maxFuel);
+            if (currentRunMyResources.fuel <= currentRunMyResources.maxFuel) {
+                currentRunMyResources.fuel += (int)amount;
+                currentRunMyResources.fuel = Mathf.Clamp(currentRunMyResources.fuel, 0, currentRunMyResources.maxFuel);
+            }
+
             fuel = currentRunMyResources.fuel;
         }
         

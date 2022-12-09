@@ -21,6 +21,8 @@ public class ModuleRewardsMaster : MonoBehaviour {
         return currentRun.currentShopModules;
     }
 
+    public float shopPriceVariance = 0.2f;
+    
     private void InitializeShop(DataSaver.RunState currentRun) {
         currentRun.currentShopModules = GenerateModules(Random.Range(2, 3 + 1));
 
@@ -29,7 +31,7 @@ public class ModuleRewardsMaster : MonoBehaviour {
         
         for (int i = 0; i < playerStar.city.prices.Length; i++) {
             var priceIndex = playerStar.city.prices[i].Copy();
-            priceIndex.basePrice = (int)(priceIndex.basePrice * (1 + Random.Range(-priceIndex.variance, priceIndex.variance)));
+            priceIndex.basePrice = (int)(priceIndex.basePrice * (1 + Random.Range(-shopPriceVariance, shopPriceVariance)));
             currentRun.currentShopPrices.Add(priceIndex);
         }
 
@@ -45,8 +47,10 @@ public class ModuleRewardsMaster : MonoBehaviour {
         DataSaver.s.SaveActiveGame();
     }
 
+    
+    // see UpgradesController.GetRandomLevelRewards
     public TrainModuleHolder[] GetRewardScreenContent() {
-        return GenerateModules(2);
+        return GenerateModules(3);
     }
 
 

@@ -24,7 +24,7 @@ public class DirectControlMaster : MonoBehaviour {
 	public InputActionProperty directControlShootAction;
 
 	[Space]
-	public GameObject directControlTrainBuilding;
+	public ModuleHealth directControlTrainBuilding;
 	public DirectControlAction directControlAction;
 	private GunModule myGun;
 	private TargetPicker myTargetPicker;
@@ -57,7 +57,7 @@ public class DirectControlMaster : MonoBehaviour {
 			CameraController.s.ActivateDirectControl(source.GetDirectControlTransform());
 			directControlAction = source;
 
-			directControlTrainBuilding = directControlAction.gameObject;
+			directControlTrainBuilding = directControlAction.GetComponent<ModuleHealth>();
 			myGun = directControlAction.GetComponent<GunModule>();
 			myTargetPicker = directControlAction.GetComponent<TargetPicker>();
 
@@ -71,7 +71,7 @@ public class DirectControlMaster : MonoBehaviour {
 			directControlInProgress = true;
 
 			PlayerModuleSelector.s.DeselectObject();
-			PlayerModuleSelector.s.enabled = false;
+			PlayerModuleSelector.s.DisableModuleSelecting();
 
 			onHitAlpha = 0;
 
@@ -83,13 +83,15 @@ public class DirectControlMaster : MonoBehaviour {
 		if (directControlInProgress) {
 			CameraController.s.DisableDirectControl();
 
-			myGun.ActivateGun();
-			myTargetPicker.enabled = true;
+			if (myGun != null) {
+				myGun.ActivateGun();
+				myTargetPicker.enabled = true;
+			}
 
 			DirectControlGameObject.SetActive(false);
 			directControlInProgress = false;
 
-			PlayerModuleSelector.s.enabled = true;
+			PlayerModuleSelector.s.EnableModuleSelecting();
 			
 			CameraShakeController.s.rotationalShake = false;
 		}
@@ -106,8 +108,11 @@ public class DirectControlMaster : MonoBehaviour {
 
 	private void Update() {
 		if (directControlInProgress) {
-			if (directControlTrainBuilding == null) // in case our module gets destroyed
+			if (directControlTrainBuilding == null || directControlTrainBuilding.isDead || myGun == null) {
+				// in case our module gets destroyed
 				DisableDirectControl(new InputAction.CallbackContext());
+				return;
+			}
 
 			var camTrans = MainCameraReference.s.cam.transform;
 			Ray ray = new Ray(camTrans.position, camTrans.forward);

@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Sirenix.OdinInspector;
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.Serialization;
 
 public class EnemyHealth : MonoBehaviour, IHealth {
@@ -24,7 +25,7 @@ public class EnemyHealth : MonoBehaviour, IHealth {
 
 	public Transform uiTransform;
 
-	public static bool winSelfDestruct = false;
+	public static UnityEvent<bool> winSelfDestruct = new UnityEvent<bool>();
 	
 	[ReadOnly]
 	public MiniGUI_HealthBar healthBar;
@@ -45,14 +46,12 @@ public class EnemyHealth : MonoBehaviour, IHealth {
 		enemySpawned += 1;
 	}
 
-	private void Update() {
-		/*if (SceneLoader.s.isLevelFinished()) {
-			if(isAlive)
-				Die(false);
-		}*/
-		
-		if(winSelfDestruct)
-			Die(false);
+	private void OnEnable() {
+		winSelfDestruct.AddListener(Die);
+	}
+
+	private void OnDisable() {
+		winSelfDestruct.RemoveListener(Die);
 	}
 
 
@@ -91,7 +90,8 @@ public class EnemyHealth : MonoBehaviour, IHealth {
 		
 		Instantiate(deathPrefab, pos, rot);
 		
-		GetComponentInParent<EnemySwarmMaker>().EnemyDeath();
+		if(giveRewards)
+			GetComponentInParent<EnemySwarmMaker>().EnemyDeath();
 
 		Destroy(gameObject);
 	}

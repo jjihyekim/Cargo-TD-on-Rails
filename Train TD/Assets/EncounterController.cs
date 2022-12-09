@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Xml;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -19,6 +20,8 @@ public class EncounterController : MonoBehaviour {
     public GameObject optionsPrefab;
 
     public RandomEncounter currentEncounter;
+
+    
     private void Awake() {
         s = this;
     }
@@ -52,8 +55,10 @@ public class EncounterController : MonoBehaviour {
         
         var train = Train.s.gameObject;
         camCont.enabled = false;
-        MainCameraReference.s.cam.transform.position = currentEncounter.encounterCamPos.position;
-        MainCameraReference.s.cam.transform.rotation = currentEncounter.encounterCamPos.rotation;
+
+        var encounterCamPos = currentEncounter.transform.GetChild(0);
+        MainCameraReference.s.cam.transform.position = encounterCamPos.position;
+        MainCameraReference.s.cam.transform.rotation = encounterCamPos.rotation;
 
         var pos = train.transform.position;
         

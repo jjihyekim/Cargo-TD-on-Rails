@@ -1,9 +1,11 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class ReloadAction : ModuleAction, IActiveDuringCombat, IActiveDuringShopping {
-	private int fullCost;
+	[NonSerialized]
+	public int fullCost;
 	private ModuleAmmo myMod;
 	protected override void _Start() {
 		fullCost = cost;
@@ -19,6 +21,13 @@ public class ReloadAction : ModuleAction, IActiveDuringCombat, IActiveDuringShop
 		cost = (int)( percent * fullCost);
 
 		canEngage = percent > 0.1f;
+	}
+
+	public void GiveBackCurrentStoredAmmo() {
+		var inversePercent = ((float)myMod.curAmmo / myMod.maxAmmo);
+		cost = (int)( inversePercent * fullCost);
+		
+		LevelReferences.s.SpawnResourceAtLocation(myType, cost, transform.position);
 	}
 
 	public void ActivateForCombat() {

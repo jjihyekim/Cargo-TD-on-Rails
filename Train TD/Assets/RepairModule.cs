@@ -21,12 +21,14 @@ public class RepairModule : MonoBehaviour, IActiveDuringCombat {
     }
 
     void Update() {
-        if (curRepairDelay <= 0) {
-            BreadthFirstRepairSearch();
-            SpeedController.s.UseSteam(steamUsePerRepair);
-            curRepairDelay = repairDelay;
-        } else {
-            curRepairDelay -= Time.deltaTime;
+        if (SceneLoader.s.isLevelInProgress) {
+            if (curRepairDelay <= 0) {
+                BreadthFirstRepairSearch();
+                SpeedController.s.UseSteam(steamUsePerRepair);
+                curRepairDelay = repairDelay;
+            } else {
+                curRepairDelay -= Time.deltaTime;
+            }
         }
     }
 

@@ -28,21 +28,24 @@ public class RepairAction : ModuleAction, IActiveDuringShopping, IActiveDuringCo
     }
 
     IEnumerator Repair() {
-        var repairAmount = _health.maxHealth * percentPerRepairDuringCombat * (0.1f);
+        var totalRepairTime = 10f;
+        var totalRepairCount = 5;
+        var repairAmount = _health.maxHealth * percentPerRepairDuringCombat * (1f/totalRepairCount);
         var count = 0;
-        while (_health.currentHealth < _health.maxHealth && count < 10) {
+        
+        while (_health.currentHealth < _health.maxHealth && count < totalRepairCount) {
             Instantiate(DataHolder.s.repairPrefab, transform.position, transform.rotation);
             _health.DealDamage(-(repairAmount));
             count += 1;
-            yield return new WaitForSeconds(1f);
+            yield return new WaitForSeconds(totalRepairTime/totalRepairCount);
         }
     }
 
     protected override void _Update() {
         var multiplier = 0.5f;
-        if (!SceneLoader.s.isLevelInProgress) {
+        /*if (!SceneLoader.s.isLevelInProgress) {
             multiplier = 0.25f; // it is cheaper to repair if you are not in combat
-        }
+        }*/
         
 
         var hpMissingPercent = 1-(_health.currentHealth / _health.maxHealth);
@@ -54,6 +57,8 @@ public class RepairAction : ModuleAction, IActiveDuringShopping, IActiveDuringCo
             } else {
                 actionName = $"Repair to full health";
             }
+        } else {
+            actionName = $"Repair to full health";
         }
 
         cost = Mathf.CeilToInt(_building.cost * hpMissingPercent * multiplier);

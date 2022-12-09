@@ -248,22 +248,51 @@ public class DataSaver {
 			return types.ToString();
 		}
 
+
+		public bool CanAdjustResource(int amount, ResourceTypes types) {
+			switch (types) {
+				case ResourceTypes.fuel:
+					if (amount > 0) {
+						return fuel + amount <= maxFuel;
+					} else {
+						return fuel >= amount;
+					}
+				case ResourceTypes.ammo:
+					if (amount > 0) {
+						return ammo + amount <= maxAmmo;
+					} else {
+						return ammo >= amount;
+					}
+				case ResourceTypes.money:
+					if (amount > 0) {
+						return true;
+					} else {
+						return money >= amount;
+					}
+				case ResourceTypes.scraps:
+					if (amount > 0) {
+						return scraps + amount <= maxScraps;
+					} else {
+						return scraps >= amount;
+					}
+				default:
+					return false;
+			}
+		}
+		
 		public void AddResource(int amount, ResourceTypes types) {
 			switch (types) {
 				case ResourceTypes.fuel:
 					fuel += amount;
-					fuel = Mathf.Clamp(fuel, 0, maxFuel);
 					break;
 				case ResourceTypes.ammo:
 					ammo += amount;
-					ammo = Mathf.Clamp(ammo, 0, maxAmmo);
 					break;
 				case ResourceTypes.money:
 					money += amount;
 					break;
 				case ResourceTypes.scraps:
 					scraps += amount;
-					scraps = Mathf.Clamp(scraps, 0, maxScraps);
 					break;
 			}
 		}
@@ -304,23 +333,24 @@ public class DataSaver {
 				[HideInInspector]
 				public int ammo = -1;
 				//[HideIf("hideExtraInfo")]
-				[HideInInspector]
+				/*[HideInInspector]
 				public int cargoCost = -1;
 				//[HideIf("hideExtraInfo")]
 				[HideInInspector]
-				public int cargoReward = -1;
+				public int cargoReward = -1;*/
 
 				public void EmptyState() {
 					uniqueName = "";
 					health = -1;
 					ammo = -1;
-					cargoCost = -1;
-					cargoReward = -1;
+					/*cargoCost = -1;
+					cargoReward = -1;*/
 				}
 				
 				private static IEnumerable GetAllModuleNames() {
 					var buildings = GameObject.FindObjectOfType<DataHolder>().buildings;
 					var buildingNames = new List<string>();
+					buildingNames.Add("");
 					for (int i = 0; i < buildings.Length; i++) {
 						buildingNames.Add(buildings[i].uniqueName);
 					}

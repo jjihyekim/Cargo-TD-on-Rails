@@ -33,11 +33,14 @@ public class CharacterSelector : MonoBehaviour {
     }
 
     public void SelectCharacter(CharacterData data) {
-        DataSaver.s.GetCurrentSave().currentRun = new DataSaver.RunState();
-        DataSaver.s.GetCurrentSave().currentRun.SetCharacter(data);
-        DataSaver.s.GetCurrentSave().isInARun = true;
-        MapController.s.GenerateStarMap();
-        DataSaver.s.SaveActiveGame();
-        SceneLoader.s.BackToStarterMenuHardLoad();
+        if (!SceneLoader.s.isLoading) {
+            DataSaver.s.GetCurrentSave().currentRun = new DataSaver.RunState();
+            DataSaver.s.GetCurrentSave().currentRun.SetCharacter(data);
+            DataSaver.s.GetCurrentSave().isInARun = true;
+            MapController.s.GenerateStarMap();
+            DataSaver.s.SaveActiveGame();
+            MusicPlayer.s.SwapMusicTracksAndPlay(false);
+            SceneLoader.s.BackToStarterMenuHardLoad();
+        }
     }
 }

@@ -16,12 +16,12 @@ public class RandomPrefabAtStart : MonoBehaviour {
     private const float spawnXLimit = 3.5f;
 
     private void Start() {
-        if (Math.Abs(transform.position.x) > spawnXLimit) {
+        //if (Math.Abs(transform.position.x) > spawnXLimit) {
             var count = Random.Range(spawnCount.x, spawnCount.y + 1);
             for (int i = 0; i < count; i++) {
                 SpawnPrefab();
             }
-        }
+        //}
     }
 
 

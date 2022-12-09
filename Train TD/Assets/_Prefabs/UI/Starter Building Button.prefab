@@ -461,7 +461,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 75, y: 75}
+  m_SizeDelta: {x: 130.27, y: 75}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &3275548464264151731
 CanvasRenderer:
@@ -516,12 +516,10 @@ MonoBehaviour:
   myBuilding: {fileID: 1944673793999917900, guid: fe303064230d8754b8cf128cb5e90af2, type: 3}
   countText: {fileID: 3275548465184685144}
   myIcon: {fileID: 518429306471061117}
-  cost: -1
-  reward: -1
   cargoNameText: {fileID: 3885382582324227724}
   costText: {fileID: 3493435741138663364}
   rewardText: {fileID: 4383690801488670727}
-  count: 3
+  myBuildings: []
 --- !u!114 &3275548464264151733
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -624,7 +622,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &3275548465184685147
 RectTransform:
   m_ObjectHideFlags: 0
@@ -1044,7 +1042,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -24.2, y: -12.4}
+  m_AnchoredPosition: {x: -26.21, y: -13.1}
   m_SizeDelta: {x: 55.8004, y: -48.2}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &5799562702270171549
@@ -1196,7 +1194,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &3037377924329907891
 RectTransform:
   m_ObjectHideFlags: 0

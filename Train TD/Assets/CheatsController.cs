@@ -19,17 +19,22 @@ public class CheatsController : MonoBehaviour
     }
 
     private void EngageCheat(InputAction.CallbackContext obj) {
+
         if (!SceneLoader.s.isLevelStarted()) {
-            if(SceneLoader.s.isProfileMenu())
-                ProfileSelectionMenu.s.StartGame();
-            
-            StarterUIController.s.QuickStart();
+            if (WorldMapCreator.s.worldMapOpen) {
+                MapController.s.DebugTravelToSelectStar();
+                
+            } else {
+                if (SceneLoader.s.isProfileMenu())
+                    ProfileSelectionMenu.s.StartGame();
 
-            //DataSaver.s.GetCurrentSave().currentRun.money += 10000;
+                StarterUIController.s.QuickStart();
 
-        } else if(!SceneLoader.s.isLevelFinished()) {
+                //DataSaver.s.GetCurrentSave().currentRun.money += 10000;
+            }
+        } else if (!SceneLoader.s.isLevelFinished()) {
             //MoneyController.s.AddScraps(1000);
-            
+
             MissionWinFinisher.s.MissionWon();
 
             /*var train = Train.s;
@@ -41,5 +46,6 @@ public class CheatsController : MonoBehaviour
         } else {
             MissionWinFinisher.s.DebugRedoRewards();
         }
+
     }
 }

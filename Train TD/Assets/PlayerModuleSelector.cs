@@ -16,7 +16,19 @@ public class PlayerModuleSelector : MonoBehaviour {
     public InputActionReference scroll;
 
     public MiniGUI_ModuleActionSelection activeActionSelection;
+    public bool isActionSelectionActive = false;
 
+
+    public bool canSelectModules = true;
+    public void EnableModuleSelecting() {
+        canSelectModules = true;
+    }
+
+    public void DisableModuleSelecting() {
+        canSelectModules = false;
+        DeselectObject();
+        CameraController.s.canZoom = true;
+    }
 
     private void Start() {
         DeselectObject();
@@ -47,14 +59,16 @@ public class PlayerModuleSelector : MonoBehaviour {
             return;
         }
 
-        if (!activeActionSelection.IsMouseOverMenu()) {
+        if (!activeActionSelection.IsMouseOverMenu()) { // we dont want to hide menu in case the player clicks on it
             // we dont want to hide menu in case the player clicks on it
             if (activeBuilding != null) {
                 activeActionSelection.gameObject.SetActive(true);
                 activeActionSelection.SetUp(activeBuilding);
+                isActionSelectionActive = true;
             } else if (activeEnemy != null) {
                 activeActionSelection.gameObject.SetActive(true);
                 activeActionSelection.SetUp(activeEnemy);
+                isActionSelectionActive = true;
             } else {
                 HideModuleActionSelector();
             }
@@ -63,21 +77,40 @@ public class PlayerModuleSelector : MonoBehaviour {
 
     public void HideModuleActionSelector() {
         activeActionSelection.gameObject.SetActive(false);
+        isActionSelectionActive = false;
     }
 
     public void ShowModuleActionSelector() {
         activeActionSelection.gameObject.SetActive(true);
+        isActionSelectionActive = true;
     }
 
-
+    
     private void Update() {
-        CastRayToSelectBuilding();
+        if (canSelectModules) {
+            //if (!isActionSelectionActive) {
+                CastRayToSelectBuilding();
+            //}
 
-        if (isMouseOverSelectedModule) {
-            CameraController.s.canZoom = false;
-            ProcessScroll(scroll.action.ReadValue<float>());
-        } else {
-            CameraController.s.canZoom = true;
+            if (isMouseOverSelectedModule) {
+                CameraController.s.canZoom = false;
+                ProcessScroll(scroll.action.ReadValue<float>());
+            } else {
+                CameraController.s.canZoom = true;
+            }
+
+            if (isActionSelectionActive) { // hide the menu if the cursor moves away from it
+                var mousePos = Mouse.current.position.ReadValue();
+                var rectPos = RectTransformUtility.WorldToScreenPoint(OverlayCamsReference.s.uiCam, activeActionSelection.transform.position);
+                
+                //print(Mathf.Abs(mousePos.x - rectPos.x));
+                if (Mathf.Abs(mousePos.x - rectPos.x) > 380) {
+                    HideModuleActionSelector();
+                }
+                if (Mathf.Abs(mousePos.y - rectPos.y) > 330) {
+                    HideModuleActionSelector();
+                }
+            }
         }
     }
     
@@ -149,14 +182,18 @@ public class PlayerModuleSelector : MonoBehaviour {
     void ProcessScroll(float value) {
         if (curScrollTime <= 0f) {
             if (activeSlot != null) {
+                var slotCount = activeSlot.myBuildings.Length;
+                
                 if (value > 0) {
                     //print((activeIndex+1) % 3);
+                    
                     var nextIndex = activeIndex;
-                    for (int i = 0; i < 2; i++) {
-                        nextIndex = (nextIndex + 1) % 3;
+                    for (int i = 0; i < slotCount-1; i++) {
+                        nextIndex = (nextIndex + 1) % slotCount;
                         if (activeSlot.myBuildings[nextIndex] != null) {
                             SelectObject(activeSlot, nextIndex);
                             activeActionSelection.SetUp(activeBuilding);
+                            break;
                         }
                     }
 
@@ -165,11 +202,12 @@ public class PlayerModuleSelector : MonoBehaviour {
 
                 if (value < 0) {
                     var nextIndex = activeIndex;
-                    for (int i = 0; i < 2; i++) {
-                        nextIndex = (nextIndex + 2) % 3; // +2 actually makes us go -1 because modulo 3
+                    for (int i = 0; i < slotCount-1; i++) {
+                        nextIndex = (nextIndex + (slotCount-1)) % slotCount; // +2 actually makes us go -1 because modulo 3
                         if (activeSlot.myBuildings[nextIndex] != null) {
                             SelectObject(activeSlot, nextIndex);
                             activeActionSelection.SetUp(activeBuilding);
+                            break;
                         }
                     }
 
@@ -209,16 +247,11 @@ public class PlayerModuleSelector : MonoBehaviour {
             activeBuilding = slot.myBuildings[index];
             if (activeBuilding == null) {
                 // if there is nothing in this slot then try other slots until we find one
-                if (slot.myBuildings[1] != null) {
-                    activeBuilding = slot.myBuildings[1];
-                    index = 1;
-                } else if (slot.myBuildings[0] != null) {
-                    activeBuilding = slot.myBuildings[0];
-                    index = 0;
-
-                } else if (slot.myBuildings[2] != null) {
-                    activeBuilding = slot.myBuildings[2];
-                    index = 2;
+                for (int i = 0; i < slot.myBuildings.Length; i++) {
+                    if (slot.myBuildings[i] != null) {
+                        activeBuilding = slot.myBuildings[i];
+                        activeIndex = i;
+                    }
                 }
             }
 

@@ -1,6 +1,8 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 
 public class SellAction : ModuleAction, IActiveDuringCombat, IActiveDuringShopping {
 
@@ -9,6 +11,8 @@ public class SellAction : ModuleAction, IActiveDuringCombat, IActiveDuringShoppi
 
 	public bool isCombatMode = true;
 
+	[NonSerialized]
+	public UnityEvent sellEvent = new UnityEvent();
 	protected override void _Start() {
 		_building = GetComponent<TrainBuilding>();
 		_health = GetComponent<ModuleHealth>();
@@ -20,15 +24,19 @@ public class SellAction : ModuleAction, IActiveDuringCombat, IActiveDuringShoppi
 
 	protected override void _EngageAction() {
 		Instantiate(DataHolder.s.sellPrefab, transform.position, transform.rotation);
+		sellEvent?.Invoke();
+		
+		Train.s.SaveTrainState();
 		Destroy(gameObject);
 	}
 
 	protected override void _Update() {
 		var hpPercent = _health.currentHealth / _health.maxHealth;
+		var moneyGivenPercent = (hpPercent * 0.5f) + 0.5f; // even at 0 hp give some of the cost back.
 		var multiplier = 0.5f;
 		if (!isCombatMode)
 			multiplier = 0.75f;
-		cost = (int)(-_building.cost * multiplier * hpPercent);
+		cost = (int)(-_building.cost * multiplier * moneyGivenPercent);
 	}
 	
 	public void ActivateForCombat() {

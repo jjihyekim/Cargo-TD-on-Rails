@@ -39,7 +39,7 @@ public class Projectile : MonoBehaviour {
 
     
     public enum HitType {
-        Bullet, Rocket, Mortar
+        Bullet, Rocket, Mortar, Laser
     }
 
     public HitType myHitType = HitType.Bullet;
@@ -48,6 +48,8 @@ public class Projectile : MonoBehaviour {
     private Vector3 mortarVelocity;
     public float mortarAimPredictTime = 1f;
     public float mortarVelocityMultiplier = 0.5f;
+
+    public LineRenderer myLine;
     private void Start() {
         Invoke("DestroySelf", lifetime);
 
@@ -96,48 +98,75 @@ public class Projectile : MonoBehaviour {
                 mortarVelocity = transform.forward.normalized * velocity;
                 mortarVelocity *= mortarVelocityMultiplier;
                 break;
+            
+            case HitType.Laser:
+                myLine = GetComponent<LineRenderer>();
+                break;
         }
         
     }
 
     void DestroySelf() {
-        Destroy(gameObject);
+        if (myHitType == HitType.Laser) {
+            DestroyFlying();
+        } else {
+            Destroy(gameObject);
+        }
+    }
+
+    private float offset;
+    private void Update() {
+        if (!isDead) {
+            if (myHitType == HitType.Laser) {
+                if (target != null) {
+                    myLine.SetPosition(0, source.barrelEndTransforms[0].transform.position);
+                    myLine.SetPosition(1, target.position);
+                } else {
+                    DestroySelf();
+                }
+                
+                myLine.material.SetTextureOffset("_MainTex", new Vector2(offset,0));
+                offset += 20 * Time.time;
+            }
+        }
     }
 
     void FixedUpdate() {
         if (!isDead) {
-            if (isTargetSeeking) {
+            if (myHitType != HitType.Laser) {
+                if (isTargetSeeking) {
+                    if (target != null) {
+                        var targetLook = Quaternion.LookRotation(target.position - transform.position);
+                        transform.rotation = Quaternion.RotateTowards(transform.rotation, targetLook, curSeekStrength * Time.fixedDeltaTime);
+                    } else {
+                        isTargetSeeking = false;
+                    }
+                }
+
+                if (myHitType == HitType.Rocket) {
+                    curSpeed = Mathf.MoveTowards(curSpeed, speed, acceleration * Time.fixedDeltaTime);
+                    curSeekStrength = Mathf.MoveTowards(curSeekStrength, seekStrength, seekAcceleration * Time.fixedDeltaTime);
+                }
+
                 if (target != null) {
-                    var targetLook = Quaternion.LookRotation(target.position - transform.position);
-                    transform.rotation = Quaternion.RotateTowards(transform.rotation, targetLook, curSeekStrength * Time.fixedDeltaTime);
-                } else {
-                    isTargetSeeking = false;
+                    if (Vector3.Distance(transform.position, target.position) < (curSpeed + 0.1f) * Time.fixedDeltaTime) {
+                        DestroyFlying();
+                    }
                 }
-            }
 
-            if (myHitType == HitType.Rocket) {
-                curSpeed = Mathf.MoveTowards(curSpeed, speed, acceleration * Time.fixedDeltaTime);
-                curSeekStrength = Mathf.MoveTowards(curSeekStrength, seekStrength, seekAcceleration * Time.fixedDeltaTime);
-            }
+                switch (myHitType) {
+                    case HitType.Bullet:
+                    case HitType.Rocket:
 
-            if (target != null) {
-                if (Vector3.Distance(transform.position, target.position) < (curSpeed+0.1f) * Time.fixedDeltaTime) {
-                    DestroyFlying();
+                        GetComponent<Rigidbody>().MovePosition(transform.position + transform.forward * curSpeed * Time.fixedDeltaTime);
+                        break;
+                    case HitType.Mortar:
+                        GetComponent<Rigidbody>().MovePosition(transform.position + mortarVelocity * Time.fixedDeltaTime);
+                        mortarVelocity += mortarGravity * Time.fixedDeltaTime;
+
+                        transform.rotation = Quaternion.LookRotation(mortarVelocity);
+                        break;
                 }
-            }
-
-            switch (myHitType) {
-                case HitType.Bullet:
-                case HitType.Rocket:
-                    
-                    GetComponent<Rigidbody>().MovePosition(transform.position + transform.forward * curSpeed * Time.fixedDeltaTime);
-                    break;
-                case HitType.Mortar:
-                    GetComponent<Rigidbody>().MovePosition(transform.position + mortarVelocity * Time.fixedDeltaTime);
-                    mortarVelocity += mortarGravity * Time.fixedDeltaTime;
-
-                    transform.rotation = Quaternion.LookRotation(mortarVelocity);
-                    break;
             }
         }
     }
@@ -167,6 +196,10 @@ public class Projectile : MonoBehaviour {
 
     private void DestroyFlying() {
         if (!isDead) {
+            if (target == null) {
+                SmartDestroySelf();
+                return;
+            }
             //print("destroyflying");
             GameObject hitPrefab = null;
             switch (myHitType) {
@@ -178,6 +211,9 @@ public class Projectile : MonoBehaviour {
                     break;
                 case HitType.Mortar:
                     hitPrefab = null;
+                    break;
+                case HitType.Laser:
+                    hitPrefab = LevelReferences.s.laserHitPrefab;
                     break;
             }
 
@@ -345,14 +381,16 @@ public class Projectile : MonoBehaviour {
     void DealDamage(IHealth target) {
         if (target != null) {
             var dmg = damage;
+            var armorProtected = false;
             if (target.HasArmor() && !canPenetrateArmor) {
                 dmg = damage/ 2;
+                armorProtected = true;
             }
 
             target.DealDamage(dmg);
             Instantiate(LevelReferences.s.damageNumbersPrefab, LevelReferences.s.uiDisplayParent)
                 .GetComponent<MiniGUI_DamageNumber>()
-                .SetUp(target.GetGameObject().transform, (int)dmg, isPlayerBullet);
+                .SetUp(target.GetGameObject().transform, (int)dmg, isPlayerBullet, armorProtected);
             
             
             onHitCallback?.Invoke();

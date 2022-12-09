@@ -56,6 +56,7 @@ public class ScrapPile : MonoBehaviour {
 
     public float speed = 0;
     public float acc = 0.5f;
+    //public float initialDelay = 0.5f;
     public Transform target;
     private void Update() {
         if (target == null) {

@@ -1130,7 +1130,6 @@ MonoBehaviour:
   topGfx: {fileID: 6329249715763517730}
   frontGfx: {fileID: 0}
   backGfx: {fileID: 0}
-  myUITargetTransforms: []
   isBuilt: 0
   autoSetUp: 0
   _outlines: []
@@ -1146,9 +1145,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b49180ea77ea07d40898da773b037d45, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  repairDelay: 2
-  repairAmount: 5
-  steamUsePerRepair: 5
+  repairDelay: 4
+  repairAmount: 10
+  steamUsePerRepair: 10
 --- !u!114 &5592445795315755096
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1215,6 +1214,9 @@ MonoBehaviour:
   cost: -25
   cooldown: -1
   curCooldown: 0
+  canEngage: 1
+  canAfford: 1
+  isCooldownOver: 1
   soundEffect: []
   myTooltip:
     text: 
@@ -1238,6 +1240,9 @@ MonoBehaviour:
   cost: 25
   cooldown: -1
   curCooldown: 0
+  canEngage: 1
+  canAfford: 1
+  isCooldownOver: 1
   soundEffect: []
   myTooltip:
     text: Repair this module over time.

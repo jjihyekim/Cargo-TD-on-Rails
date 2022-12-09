@@ -13,21 +13,19 @@ MonoBehaviour:
   m_Name: City Boss
   m_EditorClassIdentifier: 
   sprite: {fileID: 21300000, guid: bc7987d317353ec43b98b77a5a64635e, type: 3}
-  worldMapCastle: {fileID: 9061065519154908391, guid: 29730592b4fb34749b8a9b6acbfaefd7, type: 3}
+  worldMapCastle: {fileID: 4409367384440443829, guid: 8003c04568c02af4aa8b46ae34c145b1, type: 3}
   cityData:
     nameSuffix: Under Occupation
     cargosSold: 000000000100000002000000
     prices:
     - type: 0
       basePrice: 25
-      variance: 0.2
       priceIncrease: 1.2
     - type: 1
       basePrice: 25
-      variance: 0.2
       priceIncrease: 1.2
     - type: 2
       basePrice: 25
-      variance: 0.2
       priceIncrease: 1.2
     canBuyCart: 0
+    rewardAmount: 100

@@ -21,9 +21,15 @@ public class Train : MonoBehaviour {
 
     public bool trainWeightDirty = false;
     private int trainWeight = 0;
+    private int cargoCount = 0;
 
     public UnityEvent trainUpdatedThroughNonBuildingActions = new UnityEvent();
 
+    public int GetCargoCount() {
+        GetTrainWeight(); // so that it gets updated
+        return cargoCount;
+    }
+    
     public int GetTrainWeight() {
         if (!trainWeightDirty) {
             return trainWeight;
@@ -38,6 +44,9 @@ public class Train : MonoBehaviour {
             for (int i = 0; i < trainBuildingComponents.Length; i++) {
                 trainWeight += trainBuildingComponents[i].weight;
             }
+
+            var cargoComponents = GetComponentsInChildren<CargoModule>();
+            cargoCount = cargoComponents.Length;
 
             trainWeightDirty = false;
             return trainWeight;
@@ -106,6 +115,18 @@ public class Train : MonoBehaviour {
         trainUpdatedThroughNonBuildingActions?.Invoke();
     }
 
+
+    public void SaveTrainState(bool forceDuringLevel = false) {
+        if (!SceneLoader.s.isLevelInProgress) {
+            Invoke(nameof(OneFrameLater), 0.01f);
+        }
+    }
+
+    void OneFrameLater() { // because sometimes train doesnt get updated fast enough
+        DataSaver.s.GetCurrentSave().currentRun.myTrain = GetTrainState();
+        DataSaver.s.SaveActiveGame();
+    }
+    
     public DataSaver.TrainState GetTrainState() {
         var trainState = new DataSaver.TrainState();
 
@@ -136,14 +157,14 @@ public class Train : MonoBehaviour {
             buildingState.uniqueName = building.uniqueName;
             buildingState.health = building.GetCurrentHealth();
 
-            var cargo = building.GetComponent<CargoModule>();
+            /*var cargo = building.GetComponent<CargoModule>();
             if (cargo != null) {
-                buildingState.cargoCost = cargo.moneyCost;
+                //buildingState.cargoCost = cargo.moneyCost;
                 buildingState.cargoReward = cargo.moneyReward;
             } else {
                 buildingState.cargoCost = -1;
                 buildingState.cargoReward = -1;
-            }
+            }*/
 
             var ammo = building.GetComponent<ModuleAmmo>();
             
@@ -205,11 +226,11 @@ public class Train : MonoBehaviour {
             }
         }
 
-        if (buildingState.cargoCost >= 0) {
+        /*if (buildingState.cargoCost >= 0) {
             var cargo = newBuilding.GetComponent<CargoModule>();
-            cargo.moneyCost = buildingState.cargoCost;
+            //cargo.moneyCost = buildingState.cargoCost;
             cargo.moneyReward = buildingState.cargoReward;
-        }
+        }*/
 
         newBuilding.CompleteBuilding(false);
     }
@@ -283,12 +304,14 @@ public class Train : MonoBehaviour {
     private float curDistance = 0.1f;
     public float restoreDelay = 0.1f;
     private void Update() {
-        if (curDistance < 0) {
-            StartCoroutine(ShakeWave());
-            StartCoroutine(RestoreWave(restoreDelay));
-            curDistance += Random.Range(shakeDistance.x, shakeDistance.y);
-        } else {
-            curDistance -= LevelReferences.s.speed * Time.deltaTime;
+        if (SceneLoader.s.isLevelInProgress) {
+            if (curDistance < 0) {
+                StartCoroutine(ShakeWave());
+                StartCoroutine(RestoreWave(restoreDelay));
+                curDistance += Random.Range(shakeDistance.x, shakeDistance.y);
+            } else {
+                curDistance -= LevelReferences.s.speed * Time.deltaTime;
+            }
         }
     }
 
@@ -421,5 +444,9 @@ public class Train : MonoBehaviour {
 
     public float GetTrainLength() {
         return Train.s.carts.Count *DataHolder.s.cartLength;
+    }
+
+    public void ResetTrainPosition() {
+        transform.ResetTransformation();
     }
 }

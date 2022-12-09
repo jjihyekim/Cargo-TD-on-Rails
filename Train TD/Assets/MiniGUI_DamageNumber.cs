@@ -18,20 +18,31 @@ public class MiniGUI_DamageNumber : MonoBehaviour {
 
     public int bigThreshold = 10;
     
+    
+    
     public string[] playerIsAttackedSmall;
     public string[] playerIsAttackedBig;
+    
+    
+    public string[] enemyIsAttackedArmorProtected;
 
     public string[] enemyIsAttackedSmall;
     public string[] enemyIsAttackedBig;
-    public void SetUp(Transform _target, int damage, bool isPlayer) {
+    
+    public Color armorProtectedColor = Color.yellow;
+    public void SetUp(Transform _target, int damage, bool isPlayer, bool isArmorProtected) {
         //dmgText.text = "-" + damage;
 
         if (isPlayer)
         {
-            if (damage < bigThreshold) {
-                dmgText.text = enemyIsAttackedSmall[Random.Range(0, enemyIsAttackedSmall.Length)];
+            if (isArmorProtected) {
+                dmgText.text = enemyIsAttackedArmorProtected[Random.Range(0, enemyIsAttackedArmorProtected.Length)];
             } else {
-                dmgText.text = enemyIsAttackedBig[Random.Range(0, enemyIsAttackedBig.Length)];
+                if (damage < bigThreshold) {
+                    dmgText.text = enemyIsAttackedSmall[Random.Range(0, enemyIsAttackedSmall.Length)];
+                } else {
+                    dmgText.text = enemyIsAttackedBig[Random.Range(0, enemyIsAttackedBig.Length)];
+                }
             }
         } else {
             if (damage < bigThreshold) {
@@ -42,6 +53,10 @@ public class MiniGUI_DamageNumber : MonoBehaviour {
         }
 
 
+        if (isArmorProtected) {
+            dmgText.color = armorProtectedColor;
+        }
+        
         canvasGroup = GetComponent<CanvasGroup>();
         target = _target.position;
 

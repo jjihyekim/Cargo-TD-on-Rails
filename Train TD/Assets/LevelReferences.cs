@@ -25,6 +25,7 @@ public class LevelReferences : MonoBehaviour {
     public GameObject enemyRegularHitEffectPrefab;
     public GameObject enemyCantPenetrateHitEffectPrefab;
     public GameObject rocketExplosionEffectPrefab;
+    public GameObject laserHitPrefab;
     public GameObject mortarExplosionEffectPrefab;
     public GameObject mortarMiniHitPrefab;
     public GameObject waveDisplayPrefab;
@@ -58,9 +59,13 @@ public class LevelReferences : MonoBehaviour {
 
 
     const int maxMoneyPileCount = 25;
-    public List<GameObject> SpawnResourceAtLocation(ResourceTypes type, int amount, Vector3 location, bool autoCollect = true) {
+
+    public void SpawnResourceAtLocation(ResourceTypes type, float amount, Vector3 location) {
+        SpawnResourceAtLocation(type, Mathf.RoundToInt(amount), location);
+    }
+    public void SpawnResourceAtLocation(ResourceTypes type, int amount, Vector3 location) {
         if (amount == 0)
-            return null;
+            return;
         
         int count = Mathf.CeilToInt(amount / (float)maxMoneyPileCount);
 
@@ -78,25 +83,37 @@ public class LevelReferences : MonoBehaviour {
                 break;
         }
 
-        var allPiles = new List<GameObject>();
-
         while(amount > 0) {
-            var random = Random.insideUnitCircle * (count / 4f);
-            var pile = Instantiate(prefab, location + new Vector3(random.x, 0, random.y), Quaternion.identity);
+            //var random = Random.insideUnitCircle * (count / 4f);
+            var pile = Instantiate(prefab, location /*+ new Vector3(random.x, 0, random.y)*/, Quaternion.identity);
             var pileComp = pile.GetComponent<ScrapPile>();
             var targetAmount = maxMoneyPileCount;
             if (amount < maxMoneyPileCount)
                 targetAmount = amount;
             pileComp.SetUp(targetAmount, type);
-            allScraps.Add(pileComp);
             amount -= maxMoneyPileCount;
+
+            StartCoroutine(ThrowPile(pile));
+        }
+    }
+    
+    
+    public float throwHorizontalSpeed = 0.1f;
+    public float throwVerticalSpeed = 0.2f;
+    public float throwGravity = 9.81f;
+    IEnumerator ThrowPile(GameObject pile) {
+        var random = Random.insideUnitCircle.normalized;
+        var direction = new Vector3(random.x, 0, random.y);
+        var verticalSpeed = throwVerticalSpeed;
+
+        while (verticalSpeed > -throwVerticalSpeed) {
+            pile.transform.position += (direction * throwHorizontalSpeed + Vector3.up * verticalSpeed) * Time.deltaTime;
             
-            if(autoCollect)
-                pileComp.CollectPile();
-            
-            allPiles.Add(pile);
+
+            verticalSpeed -= throwGravity * Time.deltaTime;
+            yield return null;
         }
 
-        return allPiles;
+        pile.GetComponent<ScrapPile>().CollectPile();
     }
 }

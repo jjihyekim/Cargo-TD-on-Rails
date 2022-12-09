@@ -27,6 +27,10 @@ public class EnemyWavesController : MonoBehaviour {
 	    }
     }
 
+    public void SpawnEnemy(EnemyOnPathData data) {
+	    SpawnEnemy(data.enemyIdentifier, data.distanceOnPath, data.startMoving);
+    }
+
     public int maxConcurrentWaves = 6;
 
     void SpawnEnemy(EnemyIdentifier enemyIdentifier, float distance, bool startMoving) {

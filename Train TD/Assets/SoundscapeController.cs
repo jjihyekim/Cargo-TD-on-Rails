@@ -9,6 +9,7 @@ public class SoundscapeController : MonoBehaviour {
 
     private void Awake() {
         s = this;
+        _source = GetComponent<AudioSource>();
     }
 
     [Serializable]
@@ -29,15 +30,22 @@ public class SoundscapeController : MonoBehaviour {
 
     private AudioSource _source;
 
+    public List<DelayWithTimer> delayWithTimers = new List<DelayWithTimer>();
+
     private void Start() {
-        _source = GetComponent<AudioSource>();
+        delayWithTimers.Add(enemyEnter);
+        delayWithTimers.Add(enemyDie);
+        delayWithTimers.Add(moduleBuilt);
+        delayWithTimers.Add(moduleExplode);
+        delayWithTimers.Add(noMoreAmmoDelay);
+        delayWithTimers.Add(noMoreFuelDelay);
+        delayWithTimers.Add(noMoreScrapDelay);
     }
 
     void Update() {
-        enemyEnter.timer -= Time.deltaTime;
-        enemyDie.timer -= Time.deltaTime;
-        moduleBuilt.timer -= Time.deltaTime;
-        moduleExplode.timer -= Time.deltaTime;
+        for (int i = 0; i < delayWithTimers.Count; i++) {
+            delayWithTimers[i].timer -= Time.deltaTime;
+        }
     }
 
     void PlayClip(AudioClip clip, float volume = 1f) {
@@ -49,7 +57,7 @@ public class SoundscapeController : MonoBehaviour {
         }
     }
 
-    void PlayClipWithRandomnessAndDelay(AudioClip clip, DelayWithTimer timer) {
+    void PlayClipWithExtraOptions(AudioClip clip, DelayWithTimer timer) {
         if (timer.timer <= 0f) {
             timer.timer = timer.delay;
             if (Random.value < timer.playChance) {
@@ -60,15 +68,15 @@ public class SoundscapeController : MonoBehaviour {
     
 
     public void PlayEnemyEnter(AudioClip clip) {
-        PlayClipWithRandomnessAndDelay(clip, enemyEnter);
+        PlayClipWithExtraOptions(clip, enemyEnter);
     }
 
     public void PlayEnemyDie(AudioClip clip) {
-        PlayClipWithRandomnessAndDelay(clip, enemyDie);
+        PlayClipWithExtraOptions(clip, enemyDie);
     }
     
     public void PlayModuleBuilt(AudioClip clip) {
-        PlayClipWithRandomnessAndDelay(clip, moduleBuilt);
+        PlayClipWithExtraOptions(clip, moduleBuilt);
     }
 
     public void PlayModuleSkillActivate(AudioClip clip) {
@@ -77,27 +85,30 @@ public class SoundscapeController : MonoBehaviour {
 
     public AudioClip[] moduleExplodeSounds;
     public void PlayModuleExplode() {
-        PlayClipWithRandomnessAndDelay(moduleExplodeSounds[Random.Range(0, moduleExplodeSounds.Length)], moduleExplode);
+        PlayClipWithExtraOptions(moduleExplodeSounds[Random.Range(0, moduleExplodeSounds.Length)], moduleExplode);
     }
 
     [Space]
     public AudioClip[] noMoreAmmo;
+    public DelayWithTimer noMoreAmmoDelay;
     public AudioClip[] noMoreFuel;
+    public DelayWithTimer noMoreFuelDelay;
     public AudioClip[] noMoreScrap;
+    public DelayWithTimer noMoreScrapDelay;
 
     public void PlayNoMoreResource(ResourceTypes type) {
         switch (type) {
             case ResourceTypes.ammo:
-                PlayClip(noMoreAmmo[Random.Range(0, noMoreAmmo.Length)]);
+                PlayClipWithExtraOptions(noMoreAmmo[Random.Range(0, noMoreAmmo.Length)], noMoreAmmoDelay);
                 break;
             case ResourceTypes.fuel:
-                PlayClip(noMoreFuel[Random.Range(0, noMoreFuel.Length)]);
+                PlayClipWithExtraOptions(noMoreFuel[Random.Range(0, noMoreFuel.Length)], noMoreFuelDelay);
                 break;
             case ResourceTypes.money:
                 Debug.LogError("Cannot have no moniez");
                 break;
             case ResourceTypes.scraps:
-                PlayClip(noMoreScrap[Random.Range(0, noMoreScrap.Length)]);
+                PlayClipWithExtraOptions(noMoreScrap[Random.Range(0, noMoreScrap.Length)], noMoreScrapDelay);
                 break;
         }
     }

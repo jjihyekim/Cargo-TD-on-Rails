@@ -7,16 +7,18 @@ public class MiniGUI_ScrapsReward : MonoBehaviour {
 
 	public TMP_Text amount;
 	public int scraps;
+	private int rewardIndex;
 	
-	public void SetUpReward(int _scraps) {
+	public void SetUpReward(int _scraps, int _rewardIndex) {
 		scraps = _scraps;
+		rewardIndex = _rewardIndex;
 		amount.text = $"{scraps} Scraps";
 	}
 
 
 	public void GetRewards() {
-		DataSaver.s.GetCurrentSave().currentRun.myResources.scraps += scraps;
-		DataSaver.s.SaveActiveGame();
+		MissionWinFinisher.s.ClearRewardWithIndex(rewardIndex);
+		MoneyController.s.ModifyResource(ResourceTypes.scraps, scraps);
 		Destroy(gameObject);
 	}
 }

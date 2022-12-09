@@ -22,14 +22,9 @@ public class MoveModuleAction : ModuleAction, IActiveDuringCombat, IActiveDuring
             PlayerModuleSelector.s.ShowModuleActionSelector();
         }
         
-        Invoke(nameof(OneFrameAfter), 0.01f);
+        Train.s.SaveTrainState();
 
         return false;
-    }
-
-    void OneFrameAfter() {
-        DataSaver.s.GetCurrentSave().currentRun.myTrain = Train.s.GetTrainState();
-        DataSaver.s.SaveActiveGame();
     }
 
     void GetTheFinishedBuilding(TrainBuilding newBuilding) {

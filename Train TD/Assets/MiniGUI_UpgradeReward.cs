@@ -6,9 +6,11 @@ using UnityEngine;
 public class MiniGUI_UpgradeReward : MonoBehaviour
 {
     public Upgrade[] upgrades;
+    private int rewardIndex;
 	
-    public void SetUpReward(Upgrade[] _upgrades) {
+    public void SetUpReward(Upgrade[] _upgrades, int _rewardIndex) {
         upgrades = _upgrades;
+        rewardIndex = _rewardIndex;
     }
     
     public void GetRewards() {
@@ -16,6 +18,7 @@ public class MiniGUI_UpgradeReward : MonoBehaviour
     }
 
     public void RewardGotten() {
+        MissionWinFinisher.s.ClearRewardWithIndex(rewardIndex);
         Destroy(gameObject);
     }
 

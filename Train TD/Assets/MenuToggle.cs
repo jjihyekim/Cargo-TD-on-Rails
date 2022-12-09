@@ -86,3 +86,4 @@ public class MenuToggle : MonoBehaviour {
 
 
 public delegate void GenericCallback();
+public delegate bool BoolReturnCallback();

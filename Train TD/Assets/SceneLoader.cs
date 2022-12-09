@@ -100,21 +100,24 @@ public class SceneLoader : MonoBehaviour {
     
     public void BackToStarterMenuHardLoad() {
         _gameState = GameState.starterMenu;
-        LoadScene(mainScene);
+        LoadScene(mainScene, true);
     }
 
     public static float loadingProgress;
     public bool isLoading = false;
-    private void LoadScene(SceneReference sceneReference) {
-        if(!isLoading)
+    private void LoadScene(SceneReference sceneReference, bool isForced = false) {
+        if (!isLoading || isForced) {
+            StopAllCoroutines();
             StartCoroutine(StartLoad(sceneReference));
+        }
     }
 
+    public float currentFadeValue = 0f;
     IEnumerator StartLoad(SceneReference sceneReference) {
         isLoading = true;
         loadingProgress = 0;
         loadingScreen.SetActive(true);
-        yield return StartCoroutine(FadeLoadingScreen(0,1, 0.5f));
+        yield return StartCoroutine(FadeLoadingScreen(currentFadeValue,1, 0.5f));
 
         var operation = SceneManager.LoadSceneAsync(sceneReference.ScenePath, LoadSceneMode.Single);
         while (!operation.isDone)
@@ -135,7 +138,8 @@ public class SceneLoader : MonoBehaviour {
         while (time < duration)
         {
             canvasGroup.alpha = Mathf.Lerp(startValue, targetValue, time / duration);
-            time += Time.deltaTime;
+            currentFadeValue = canvasGroup.alpha;
+            time += Time.unscaledDeltaTime;
             yield return null;
         }
         canvasGroup.alpha = targetValue;

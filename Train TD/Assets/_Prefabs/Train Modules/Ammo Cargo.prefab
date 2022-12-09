@@ -140,7 +140,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 32eaa249dc256dc42ab329df245751ef, type: 2}
+  - {fileID: 2100000, guid: 6c19ddda3d6cc3e47b5aee61f7f7cfab, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -221,7 +221,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 32eaa249dc256dc42ab329df245751ef, type: 2}
+  - {fileID: 2100000, guid: 6c19ddda3d6cc3e47b5aee61f7f7cfab, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -422,6 +422,7 @@ GameObject:
   - component: {fileID: -5961050653454529255}
   - component: {fileID: -2543070092906998890}
   - component: {fileID: 1322582120578632451}
+  - component: {fileID: 2318959320066720034}
   m_Layer: 0
   m_Name: Ammo Cargo
   m_TagString: Untagged
@@ -477,7 +478,6 @@ MonoBehaviour:
   topGfx: {fileID: 0}
   frontGfx: {fileID: 0}
   backGfx: {fileID: 0}
-  myUITargetTransforms: []
   isBuilt: 0
   autoSetUp: 0
   _outlines: []
@@ -495,7 +495,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   cargoSize: 1
   moneyReward: 100
-  moneyCost: 50
   myCargoType: 0
 --- !u!114 &5592445795315755096
 MonoBehaviour:
@@ -575,6 +574,9 @@ MonoBehaviour:
   cost: 0
   cooldown: -1
   curCooldown: 0
+  canEngage: 1
+  canAfford: 1
+  isCooldownOver: 1
   soundEffect: []
   myTooltip:
     text: Return this cargo for its original price.
@@ -595,6 +597,32 @@ MonoBehaviour:
     text: Somebody in your target city needs this cargo. Seems like it is used to
       make ammo.
   info: Saltpeter Cargo
+--- !u!114 &2318959320066720034
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3146471024428373951}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 13e289961f2267c409ab49fee8f89874, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  isUnlocked: 1
+  unlockingUpgrade: {fileID: 0}
+  actionName: Get rid of cargo
+  myType: 1
+  cost: 0
+  cooldown: -1
+  curCooldown: 0
+  canEngage: 1
+  canAfford: 1
+  isCooldownOver: 1
+  soundEffect: []
+  myTooltip:
+    text: Cargo is slowing you down or need extra space? Just get rid of it! You
+      won't get any rewards though.
 --- !u!1 &3469176668768950665
 GameObject:
   m_ObjectHideFlags: 0
@@ -865,7 +893,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 32eaa249dc256dc42ab329df245751ef, type: 2}
+  - {fileID: 2100000, guid: 6c19ddda3d6cc3e47b5aee61f7f7cfab, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -981,7 +1009,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 32eaa249dc256dc42ab329df245751ef, type: 2}
+  - {fileID: 2100000, guid: 6c19ddda3d6cc3e47b5aee61f7f7cfab, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -1062,7 +1090,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 32eaa249dc256dc42ab329df245751ef, type: 2}
+  - {fileID: 2100000, guid: 6c19ddda3d6cc3e47b5aee61f7f7cfab, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0

@@ -38,37 +38,36 @@ public class ScrapBoxScript : MonoBehaviour
 	    //scaler = scaler.Remap(50, 400, 1.6f, 0.65f);
 	    //Debug.Log(scaler);
 	    scrapPerPiece = maxScrap / maxPieces;
+	    scrapPerPiece = Mathf.Clamp(scrapPerPiece, 5, float.MaxValue);
     }
     
 
     public void SetScrap(float amount) {
+	    uiText.text = $"{amount:F0}/{maxScrap:F0}";
 	    if(Mathf.Approximately( curScrap, amount))
 		    return;
 
-	    amount = Mathf.Clamp(amount, 0, maxScrap);
 	    targetScraps = amount;
-
-	    uiText.text = $"{targetScraps:F0}/{maxScrap:F0}";
     }
 
     public float randomDropMagnitude = 0.3f;
 
     public float timer = 0;
     private void Update() {
-	    var delta = Mathf.Abs(targetScraps - curScrap);
+	    var delta = targetScraps - curScrap;
 
-	    if (delta > scrapPerPiece*mininumChunkPercent) {
-		    if (targetScraps > curScrap) {
+	    if (Mathf.Abs(delta) > scrapPerPiece*mininumChunkPercent) {
+		    if (delta > 0) {
 			    if (timer <= 0) {
 				    timer = 0.1f;
-				    AddScrap(targetScraps - curScrap);
+				    AddScrap(delta);
 			    } else {
 				    timer -= Time.deltaTime;
 			    }
-		    } else if (targetScraps < curScrap) {
+		    } else if (delta < 0) {
 			    if (timer <= 0) {
 				    timer = 0.1f;
-				    RemoveScrap(curScrap - targetScraps);
+				    RemoveScrap(-delta);
 			    } else {
 				    timer -= Time.deltaTime;
 			    }

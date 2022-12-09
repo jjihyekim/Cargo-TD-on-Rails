@@ -17,7 +17,7 @@ public class EngineFireController : MonoBehaviour {
 
     public AudioClip[] speedSounds;
 
-    public GameObject soundPrefab;
+    //public GameObject soundPrefab;
 
     public static EngineFireController soundSource;
 
@@ -42,7 +42,7 @@ public class EngineFireController : MonoBehaviour {
 
     private float lastSpeed = 0;
     private float lastEnginePower = 100;
-    public float lastSpeedSound = 0;
+    public int lastSpeedTier = 0;
     //public float pitchRange = 0.2f;
     void Update()
     {
@@ -58,16 +58,16 @@ public class EngineFireController : MonoBehaviour {
 	    
 
 	    if (SceneLoader.s.isLevelInProgress) {
-		    var speed = 0;
+		    var speedTier = 0;
 		    if (LevelReferences.s.speed > slowSoundMaxSpeed)
-			    speed += 1;
+			    speedTier += 1;
 		    if (LevelReferences.s.speed > mediumSoundMaxSpeed)
-			    speed += 1;
+			    speedTier += 1;
 
-		    if (Mathf.Abs(LevelReferences.s.speed - lastSpeedSound) > 0.1f) {
+		    if (speedTier != lastSpeedTier) {
 			    StopAllCoroutines();
-			    StartCoroutine(ChangeSpeedSound(speedSounds[speed]));
-			    lastSpeedSound = speed;
+			    StartCoroutine(ChangeSpeedSound(speedSounds[speedTier]));
+			    lastSpeedTier = speedTier;
 		    }
 	    }
     }

@@ -17,7 +17,7 @@ public class WorldMapCreator : MonoBehaviour {
 	public TMP_Text mapText;
 	private void Start() {
 		// we want this one frame after so that mapgenerator gets a chance to generate the map if need be
-		Invoke(nameof(GenerateWorldMap), 0.01f);
+		//Invoke(nameof(GenerateWorldMap), 0.01f);
 	}
 
 	public bool worldMapOpen = false;
@@ -39,44 +39,87 @@ public class WorldMapCreator : MonoBehaviour {
 
 
 	private CastleWorldScript highlightedCastle;
+	public bool ignoreNextHide = false;
+
+	public RectTransform[] ignoredRects;
 	private void Update() {
 		if (Mouse.current.leftButton.wasPressedThisFrame) {
-			var ray = LevelReferences.s.mainCam.ScreenPointToRay(Mouse.current.position.ReadValue());
+			var mousePos = Mouse.current.position.ReadValue();
+			var ray = LevelReferences.s.mainCam.ScreenPointToRay(mousePos);
+
+			var cam = OverlayCamsReference.s.uiCam;
+			for (int i = 0; i < ignoredRects.Length; i++) {
+				if (ignoredRects[i].gameObject.activeInHierarchy) {
+					var insideRect = RectTransformUtility.RectangleContainsScreenPoint(ignoredRects[i], mousePos, cam);
+					if (insideRect) {
+						return; // we dont process the click if its inside one of the rects
+					}
+				}
+			}
 
 			if (Physics.Raycast(ray, out RaycastHit hit, 100, castleClickLayerMask)) {
 				var castle = hit.rigidbody.GetComponent<CastleWorldScript>();
 				if (castle != null) {
-					MapController.s.ShowStarInfo(castle.myStar, InfoScreenHidden);
+					MapController.s.ShowStarInfo(castle.myInfo, InfoScreenHidden);
 
 					if (highlightedCastle != null) {
-						highlightedCastle.GetComponent<Outline>().enabled = false;
+						highlightedCastle.SetHighlightState(false);
 					}
 
-					castle.GetComponent<Outline>().enabled = true;
+					castle.SetHighlightState(true);
 					highlightedCastle = castle;
+
+					ignoreNextHide = true;
+					Invoke(nameof(StopIgnoreNextHide),0.01f);
 				}
 			}
 		}
 	}
 
-	void InfoScreenHidden() {
-		if (highlightedCastle != null) {
-			highlightedCastle.GetComponent<Outline>().enabled = false;
-			highlightedCastle = null;
+	void StopIgnoreNextHide() {
+		ignoreNextHide = false;
+	}
+
+	bool InfoScreenHidden() {
+		if (!ignoreNextHide) {
+			if (highlightedCastle != null) {
+				highlightedCastle.SetHighlightState(false);
+				highlightedCastle = null;
+			}
+
+			return true;
+		} else {
+			return false;
 		}
 	}
 
+
+	public GameObject targetStarInfoScreenBudget;
 
 	void OpenWorldMap() {
 		CameraController.s.EnterMapMode();
 		mapText.text = "Train";
 		StarterUIController.s.SetStarterUIStatus(false);
+
+		Train.s.transform.position = playerTrainTargetTransform.transform.position;
+		Train.s.transform.localScale = playerTrainTargetTransform.transform.localScale;
+
+		MiniGUI_HealthBar.showHealthBars = false;
+		PlayerModuleSelector.s.DisableModuleSelecting();
+		worldMapOpen = true;
 	}
 
 	public void ReturnToRegularMap() {
 		CameraController.s.ExitMapMode();
 		mapText.text = "Map";
 		StarterUIController.s.SetStarterUIStatus(true);
+		
+		Train.s.ResetTrainPosition();
+		
+		MiniGUI_HealthBar.showHealthBars = true;
+		PlayerModuleSelector.s.EnableModuleSelecting();
+		worldMapOpen = false;
+		targetStarInfoScreenBudget.SetActive(false);
 	}
 
 	public void ResetMapPos() {
@@ -86,28 +129,29 @@ public class WorldMapCreator : MonoBehaviour {
 	private List<CastleWorldScript> castles;
 	[Button]
 	public void GenerateWorldMap() {
+		ResetMapPos();
 		objectsParent.DeleteAllChildren();
-		// we dont need to re-create these
 		hexGrid.ClearGrids();
-		hexGrid.CreateGrids();
 		castles = CreateCastles();
 		CreateRandomWeights(castles);
 		CreateRails(castles);
-		Invoke(nameof(OneFrameLater), 0.01f);
+		
+		hexGrid.CreateGridsOverAFewFrames(AfterGridWasMade);
 	}
 
-	void OneFrameLater() {
+	void AfterGridWasMade() {
 		hexGrid.ApplyHeights(OnceApplyHeightsIsDone);
 	}
 
 	void OnceApplyHeightsIsDone() {
 		hexGrid.ApplyRails();
 		RePositionCastles();
-		ResetMapPos();
 
 		for (int i = 0; i < castles.Count; i++) {
-			castles[i].GetComponent<Outline>().enabled = false;
+			castles[i].SetHighlightState(false);
 		}
+		
+		hexGrid.MeshCombine();
 	}
 
 	public LayerMask castleSnapGroundLayerMask;
@@ -127,6 +171,10 @@ public class WorldMapCreator : MonoBehaviour {
 	public float rightDistancePerChunk = 4;
 	public float upDownDistancePerCastle = 3;
 
+	public GameObject castlePrefab;
+
+	public Transform playerTrainTargetTransform;
+
 	List<CastleWorldScript> CreateCastles() {
 		var map = DataSaver.s.GetCurrentSave().currentRun.map;
 
@@ -141,7 +189,7 @@ public class WorldMapCreator : MonoBehaviour {
 			for (int j = 0; j < map.chunks[i].myStars.Count; j++) {
 				var myStar = map.chunks[i].myStars[j];
 
-				var castle = Instantiate(DataHolder.s.GetCityPrefab(myStar.city.nameSuffix), objectsParent);
+				var castle = Instantiate(castlePrefab, objectsParent);
 				castle.transform.localPosition = new Vector3(curDist, 0, curZOffset) +
 				                                 new Vector3(
 					                                 Random.Range(-castleRandomPosOffsets.x, castleRandomPosOffsets.x),
@@ -150,7 +198,12 @@ public class WorldMapCreator : MonoBehaviour {
 				                                 );
 
 				var script = castle.GetComponent<CastleWorldScript>();
-				script.myStar = myStar;
+				script.Initialize(myStar);
+				if (myStar.isPlayerHere) {
+					script.SetPlayerHere();
+					playerTrainTargetTransform = script.playerIndicator.transform;
+				}
+				
 				castles.Add(script);
 				curZOffset += upDownDistancePerCastle;
 			}
@@ -217,12 +270,23 @@ public class WorldMapCreator : MonoBehaviour {
 		for (int i = 0; i < castles.Count; i++) {
 			var a = castles[i];
 
-			for (int j = 0; j < a.myStar.outgoingConnections.Count; j++) {
-				var b = GetCastleWithName(castles, a.myStar.outgoingConnections[j]);
+			for (int j = 0; j < a.myInfo.outgoingConnections.Count; j++) {
+				var b = GetCastleWithName(castles, a.myInfo.outgoingConnections[j]);
 
-				var rail = Instantiate(railAffectorPrefab, objectsParent).GetComponent<HexRailAffector>();
-				rail.startPos = a.transform.position;
-				rail.endPos = b.transform.position;
+				var rail = Instantiate(railAffectorPrefab, objectsParent).GetComponent<RailWorldScript>();
+				rail.Initialize(a,b);
+				
+				if (a.myInfo.isPlayerHere) {
+					rail.SetHighlightState(true);
+					b.SetTravelable(true);
+					
+					CameraController.s.SetMapPos(a.transform.position);
+					
+				}else if (a.myInfo.previouslyVisited && b.myInfo.previouslyVisited) {
+					rail.SetPreviouslyVisited();
+				}
+
+				rail.SetEncounter(a.myInfo.outgoingConnectionLevels[j].isEncounter);
 			}
 		}
 	}
@@ -230,10 +294,11 @@ public class WorldMapCreator : MonoBehaviour {
 	CastleWorldScript GetCastleWithName(List<CastleWorldScript> castles, string starName) {
 
 		for (int i = 0; i < castles.Count; i++) {
-			if (castles[i].myStar.starName == starName)
+			if (castles[i].myInfo.starName == starName)
 				return castles[i];
 		}
 
 		return null;
 	}
+
 }

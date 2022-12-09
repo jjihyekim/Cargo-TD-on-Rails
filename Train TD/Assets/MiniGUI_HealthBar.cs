@@ -23,6 +23,8 @@ public class MiniGUI_HealthBar : MonoBehaviour{
 
     public bool isPlayer;
 
+    public static bool showHealthBars = true;
+
     
     public void SetUp(ModuleHealth moduleHealth, ModuleAmmo moduleAmmo) {
         isPlayer = true;
@@ -54,9 +56,14 @@ public class MiniGUI_HealthBar : MonoBehaviour{
     }
 
     private void Update() {
-        SetHealthBarValue();
-        if(isAmmoBar)
-            SetAmmoBarValue();
+        if (showHealthBars) {
+            SetHealthBarValue();
+            if (isAmmoBar)
+                SetAmmoBarValue();
+        } else {
+            slider.gameObject.SetActive(false);
+            ammoSlider.gameObject.SetActive(false);
+        }
     }
 
     void SetHealthBarValue() {

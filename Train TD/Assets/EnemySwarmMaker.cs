@@ -26,6 +26,16 @@ public class EnemySwarmMaker : MonoBehaviour
     public AudioClip[] enemyEnterSounds;
     public AudioClip[] enemyDieSounds;
 
+    public Sprite GetGunSprite() {
+        var gunModule = enemyPrefab.GetComponentInChildren<GunModule>();
+
+        if (gunModule != null) {
+            return gunModule.gunSprite;
+        } else {
+            return null;
+        }
+    }
+
     public void SetData(float data) {
         var totalCount = Mathf.RoundToInt(data);
 
@@ -57,10 +67,10 @@ public class EnemySwarmMaker : MonoBehaviour
         }
     }
 
-    public void EnemyDeath() {
+    public void EnemyDeath(bool playDeathSounds = true) {
         activeEnemies -= 1;
 
-        if (!EnemyHealth.winSelfDestruct) {
+        if (playDeathSounds) {
             if(enemyDieSounds.Length > 0)
                 SoundscapeController.s.PlayEnemyDie(enemyDieSounds[Random.Range(0,enemyDieSounds.Length)]);
         }

@@ -6,6 +6,8 @@ using UnityEditor;
 public class HexRailAffector : MonoBehaviour {
    public Vector3 startPos;
    public Vector3 endPos;
+
+   public GameObject myPrefab;
    
    private void OnDrawGizmos() {
       Gizmos.color = Color.blue;

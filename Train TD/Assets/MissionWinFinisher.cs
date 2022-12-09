@@ -38,12 +38,13 @@ public class MissionWinFinisher : MonoBehaviour {
 
 	private void Start() {
 		winUI.SetActive(false);
-		EnemyHealth.winSelfDestruct = false;
 	}
 
 	public void MissionWon(bool isShowingPrevRewards = false) {
 		SceneLoader.s.FinishLevel();
-		EnemyHealth.winSelfDestruct = true;
+		EnemyHealth.winSelfDestruct?.Invoke(false);
+		ShowAlert(false);
+		
 		
 		for (int i = 0; i < scriptsToDisable.Length; i++) {
 			scriptsToDisable[i].enabled = false;
@@ -121,11 +122,12 @@ public class MissionWinFinisher : MonoBehaviour {
 	void DelayedShowRewards() {
 		MissionWon(true);
 	}
+	
 
 	void GenerateMissionRewards() {
 		var mySave = DataSaver.s.GetCurrentSave();
 		
-		var rewardMoney = 0;
+		var rewardMoney = mySave.currentRun.map.GetPlayerStar().rewardMoney;
 		var allCargo = Train.s.GetComponentsInChildren<CargoModule>();
 		foreach (var cargo in allCargo) {
 			var cargoObj = Instantiate(cargoDeliveredPrefab, cargoDeliveredParent);
@@ -158,14 +160,16 @@ public class MissionWinFinisher : MonoBehaviour {
 			switch (cur[0]) {
 				case 's':
 					if (int.TryParse(cur.Substring(1), out var scrap)) {
-						Instantiate(scrapRewardPrefab, rewardsParent).GetComponent<MiniGUI_ScrapsReward>().SetUpReward(scrap);
+						Instantiate(scrapRewardPrefab, rewardsParent).GetComponent<MiniGUI_ScrapsReward>().SetUpReward(scrap, i);
+						unclaimedRewardCount += 1;
 					} else {
 						Debug.LogError($"Can't parse reward: {cur}");
 					}
 					break;
 				case 'm':
 					if (int.TryParse(cur.Substring(1), out var money)) {
-						Instantiate(moneyRewardPrefab, rewardsParent).GetComponent<MiniGUI_MoneyReward>().SetUpReward(money);
+						Instantiate(moneyRewardPrefab, rewardsParent).GetComponent<MiniGUI_MoneyReward>().SetUpReward(money, i);
+						unclaimedRewardCount += 1;
 					} else {
 						Debug.LogError($"Can't parse reward: {cur}");
 					}
@@ -177,16 +181,22 @@ public class MissionWinFinisher : MonoBehaviour {
 						upgradeRewards.Add(UpgradesController.s.GetUpgrade(upgradeNames[j]));
 					}
 					
-					Instantiate(upgradeRewardPrefab, rewardsParent).GetComponent<MiniGUI_UpgradeReward>().SetUpReward(upgradeRewards.ToArray());
+					Instantiate(upgradeRewardPrefab, rewardsParent).GetComponent<MiniGUI_UpgradeReward>().SetUpReward(upgradeRewards.ToArray(), i);
+					unclaimedRewardCount += 1;
 					
 					break;
 				case 'c':
 					if (int.TryParse(cur.Substring(1), out var cartCount)) {
-						Instantiate(cartRewardPrefab, rewardsParent).GetComponent<MiniGUI_CartReward>().SetUpReward(cartCount);
+						Instantiate(cartRewardPrefab, rewardsParent).GetComponent<MiniGUI_CartReward>().SetUpReward(cartCount, i);
+						unclaimedRewardCount += 1;
 					} else {
 						Debug.LogError($"Can't parse reward: {cur}");
 					}
 					
+					break;
+				
+				case 'r':
+					// Redeemed. Don't do anything.
 					break;
 				default:
 					Debug.LogError($"Unknown reward: {cur}");
@@ -195,8 +205,43 @@ public class MissionWinFinisher : MonoBehaviour {
 		}
 	}
 
+	public void ClearRewardWithIndex(int index) {
+		var mySave = DataSaver.s.GetCurrentSave();
+		mySave.currentRun.unclaimedRewards[index] = "redeemed";
+		unclaimedRewardCount -= 1;
+		ShowAlert( false);
+	}
+
+	/*public void UpdateUnclaimedRewards() {
+		var mySave = DataSaver.s.GetCurrentSave();
+		mySave.currentRun.unclaimedRewards = new List<string>();
+
+		var scrapsReward = rewardsParent.GetComponentInChildren<MiniGUI_ScrapsReward>();
+		if(scrapsReward != null)
+			mySave.currentRun.unclaimedRewards.Add($"s{scrapsReward.scraps}");
+		
+		
+		var moneyReward = rewardsParent.GetComponentInChildren<MiniGUI_MoneyReward>();
+		if(moneyReward != null)
+			mySave.currentRun.unclaimedRewards.Add($"m{moneyReward.money}");
+
+		var upgradeReward = rewardsParent.GetComponentInChildren<MiniGUI_UpgradeReward>();
+		if (upgradeReward != null) {
+			var upgradeRewards = upgradeReward.upgrades;
+			var upgradesString = string.Join(",", upgradeRewards.Select(u => u.upgradeUniqueName));
+			mySave.currentRun.unclaimedRewards.Add($"u{upgradesString}");
+		}
+
+
+		var cartReward = rewardsParent.GetComponentInChildren<MiniGUI_CartReward>();
+		if(cartReward != null)
+			mySave.currentRun.unclaimedRewards.Add($"c{cartReward.cartCount}");
+	}*/
+
 	void ClearOldRewards() {
+		unclaimedRewardCount = 0;
 		rewardsParent.DeleteAllChildren();
+		ShowAlert(false);
 	}
 
 	public void DebugRedoRewards() {
@@ -205,8 +250,27 @@ public class MissionWinFinisher : MonoBehaviour {
 	}
 
 
+	public TMP_Text continueButtonText;
+
+	public void ShowAlert(bool status) {
+		isShowingAlert = status;
+		if (isShowingAlert) {
+			continueButtonText.text = "Are you sure you want to skip rewards?";
+		} else {
+			continueButtonText.text = "Continue";
+		}
+	}
+
+	private int unclaimedRewardCount = 0;
+	public bool isShowingAlert = false;
 	public void ContinueToStarterMenu() {
-		EnemyHealth.winSelfDestruct = false;
+		if (!isShowingAlert) {
+			if (unclaimedRewardCount > 0) {
+				ShowAlert(true);
+				return;
+			}
+		}
+
 		ClearOldRewards();
 		DataSaver.s.GetCurrentSave().currentRun.unclaimedRewards = new List<string>();
 		DataSaver.s.GetCurrentSave().currentRun.shopInitialized = false;

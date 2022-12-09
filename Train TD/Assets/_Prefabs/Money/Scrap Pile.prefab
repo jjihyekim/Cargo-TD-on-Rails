@@ -48,7 +48,6 @@ MonoBehaviour:
   count: 10
   spreadMultiplier: 0.07
   sizeRange: {x: 0.05, y: 0.1}
-  editorFoldout: 1
 --- !u!114 &2610980839318213328
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5020,7 +5019,7 @@ MonoBehaviour:
   height: 0.5
   scrapAmount: 0
   isCollected: 0
-  myType: 2
-  speed: 0.2
+  myType: 1
+  speed: 0
   acc: 2
   target: {fileID: 0}

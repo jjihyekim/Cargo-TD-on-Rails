@@ -19,8 +19,8 @@ public class MiniGUI_StarInfoPanel : MonoBehaviour {
 
     public bool isTravel;
 
-    public GenericCallback hideCallback;
-    public void Initialize(StarState star, LevelData connectionLevel, GenericCallback _hideCallback = null) {
+    public BoolReturnCallback hideCallback;
+    public void Initialize(StarState star, LevelData connectionLevel, BoolReturnCallback _hideCallback = null) {
         StopAllCoroutines();
         currentStar = star;
         starName.text = currentStar.starName;
@@ -89,11 +89,17 @@ public class MiniGUI_StarInfoPanel : MonoBehaviour {
 
     public void CancelTravel() {
         Hide();
-        SetUpBuyCargo.s.ClearPreviousCargo();
+        //SetUpBuyCargo.s.ClearPreviousCargo();
     }
 
     public void Hide() {
-        gameObject.SetActive(false);
-        hideCallback?.Invoke();
+        if (hideCallback != null) {
+            if (hideCallback.Invoke()) {
+                gameObject.SetActive(false);
+            }
+        } else {
+            gameObject.SetActive(false);
+        }
+
     }
 }

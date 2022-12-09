@@ -27,6 +27,9 @@ public class DataHolder : MonoBehaviour {
 
     public GameObject repairPrefab;
     public GameObject sellPrefab;
+    //public GameObject trainModuleGenericExplodePrefab;
+
+    //public AudioClip[] sellSounds;
 
     
     [SerializeField]
@@ -56,7 +59,7 @@ public class DataHolder : MonoBehaviour {
 
     public GameObject GetEncounter(string encounterUniqueName) {
         for (int i = 0; i < encounters.Length; i++) {
-            if (PreProcess(encounters[i].encounterUniqueName) == PreProcess(encounterUniqueName)) {
+            if (PreProcess(encounters[i].gameObject.name) == PreProcess(encounterUniqueName)) {
                 return encounters[i].gameObject;
             }
         }
@@ -130,4 +133,6 @@ public class DataHolder : MonoBehaviour {
 public class EnemyHolder {
     public string uniqueName = "unset";
     public GameObject data;
+    public Sprite mainSprite;
+    public Sprite gunSprite;
 }
