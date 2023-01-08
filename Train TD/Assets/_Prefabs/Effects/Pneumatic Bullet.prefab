@@ -4858,7 +4858,7 @@ MonoBehaviour:
   hitForceMultiplier: 300
   lifetime: 2
   myOriginObject: {fileID: 0}
-  isTargetSeeking: 0
+  isTargetSeeking: 1
   seekStrength: 20
   isPlayerBullet: 0
   canPenetrateArmor: 0
@@ -4867,6 +4867,8 @@ MonoBehaviour:
   mortarGravity: {x: 0, y: -9.81, z: 0}
   mortarAimPredictTime: 1
   mortarVelocityMultiplier: 0.5
+  myLine: {fileID: 0}
+  isPhaseThrough: 0
   instantDestroy: {fileID: 8197792997850750831}
 --- !u!54 &4360051384763493055
 Rigidbody:

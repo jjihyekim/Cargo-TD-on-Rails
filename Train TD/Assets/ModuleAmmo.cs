@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Sirenix.OdinInspector;
 using UnityEngine;
 
 public class ModuleAmmo : MonoBehaviour, IResupplyAble, IActiveDuringCombat, IActiveDuringShopping {
@@ -85,5 +86,10 @@ public class ModuleAmmo : MonoBehaviour, IResupplyAble, IActiveDuringCombat, IAc
     
     void GiveBackStoredAmmo() {
         GetComponent<ReloadAction>().GiveBackCurrentStoredAmmo();
+    }
+
+    [Button]
+    public void FillAmmoDebug() {
+        Resupply(1000000);
     }
 }

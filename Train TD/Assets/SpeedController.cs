@@ -115,7 +115,6 @@ public class SpeedController : MonoBehaviour, IShowOnDistanceRadar {
     public float debugSteamGeneration;
     public float debugSteamUse;
 
-    public float excessPowerAccelerationBonus = 1f;
 
     public float trainWeightMultiplier = 0.8f;
     private void Update() {
@@ -155,11 +154,11 @@ public class SpeedController : MonoBehaviour, IShowOnDistanceRadar {
             var minSpeed = 0.5f / Train.s.carts.Count;
             targetSpeed = speedMultiplier* (2 * (pressurePower / (Mathf.Sqrt(trainWeight)*17)) + minSpeed);
             var stabilizedSpeed = speedMultiplier* (2 * (stabilizedPressurePower / (Mathf.Sqrt(trainWeight)*17)) + minSpeed); // used for the engine power speedometer
-            var acceleration = 0.2f - (trainWeight/2000f);
-            acceleration = Mathf.Clamp(acceleration, 0.01f, 0.35f);
+            var acceleration = 0.4f - ((float)trainWeight).Remap(0,2000,0,0.4f);
+            acceleration = Mathf.Clamp(acceleration, 0.1f, 0.4f);
             if (targetSpeed > LevelReferences.s.speed) {
                 var excessEnginePower = (pressurePower / trainWeight);
-                acceleration += excessEnginePower * excessPowerAccelerationBonus;
+                acceleration += excessEnginePower.Remap(0,0.5f,0,0.2f);
             }
 
 

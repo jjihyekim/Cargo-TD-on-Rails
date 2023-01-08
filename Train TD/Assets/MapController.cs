@@ -117,6 +117,7 @@ public class MapController : MonoBehaviour {
 
     void MakeBossStar(StarState starState, StarMapChunk leadingChunk) {
 	    starState.isBoss = true;
+	    starState.rewardCart = 1;
 	    //starState.level = bossLevels[Random.Range(0, bossLevels.Length)].myData;
 	    starState.city = bossCities[Random.Range(0, bossCities.Length)].cityData;
 
@@ -176,7 +177,9 @@ public class MapController : MonoBehaviour {
 		    info.rewardCart = 1;
 	    } */
 	    
-	    info.rewardCart = 1;
+	    // now we get a reward cart every level if the train is shorter than 8 and an extra one for boss levels.
+	    // setting this to 1 will give player a cart no matter their train length.
+	    //info.rewardCart = 1; 
 
 	    info.rewardMoney = (int)(city.rewardAmount * (1 + Random.Range(-cityRewardVariance, cityRewardVariance)));
 

@@ -10,7 +10,7 @@ public class RandomParticleTurnOnAndOff : MonoBehaviour {
     
     void Start()
     {
-        Invoke("TurnOn",Random.Range(0.2f,2f));
+        Invoke("TurnOn",Random.Range(0.2f,4f));
     }
 
     public void TurnOff() {

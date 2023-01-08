@@ -122,8 +122,9 @@ public class MissionWinFinisher : MonoBehaviour {
 	void DelayedShowRewards() {
 		MissionWon(true);
 	}
-	
 
+
+	public int maxTrainLengthForGettingCartReward = 8;
 	void GenerateMissionRewards() {
 		var mySave = DataSaver.s.GetCurrentSave();
 		
@@ -140,12 +141,18 @@ public class MissionWinFinisher : MonoBehaviour {
 		// mission rewards, must do after the stuff above
 		mySave.currentRun.unclaimedRewards.Add($"s{Random.Range(50,60)}");
 		mySave.currentRun.unclaimedRewards.Add($"m{rewardMoney}");
-		
-		var upgradeRewards = UpgradesController.s.GetRandomLevelRewards();
+
+		Upgrade[] upgradeRewards;
+		if (mySave.currentRun.map.GetPlayerStar().isBoss) {
+			upgradeRewards = UpgradesController.s.GetRandomBossRewards();
+		} else {
+			upgradeRewards = UpgradesController.s.GetRandomLevelRewards();
+		}
+
 		var upgradesString = string.Join(",", upgradeRewards.Select(u => u.upgradeUniqueName));
 		mySave.currentRun.unclaimedRewards.Add($"u{upgradesString}");
 		
-		if(mySave.currentRun.map.GetPlayerStar().rewardCart > 0)
+		if(mySave.currentRun.map.GetPlayerStar().rewardCart > 0 || Train.s.cartCount < maxTrainLengthForGettingCartReward)
 			mySave.currentRun.unclaimedRewards.Add($"c{mySave.currentRun.map.GetPlayerStar().rewardCart}");
 	}
 

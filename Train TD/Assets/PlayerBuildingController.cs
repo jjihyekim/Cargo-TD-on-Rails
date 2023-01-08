@@ -156,7 +156,7 @@ public class PlayerBuildingController : MonoBehaviour {
         }
         
         
-
+        //print(index);
         return index;
     }
 

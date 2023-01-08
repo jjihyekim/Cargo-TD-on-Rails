@@ -123,7 +123,7 @@ Transform:
   m_GameObject: {fileID: 3491606875149859529}
   m_LocalRotation: {x: -0, y: 0.7071068, z: -0, w: 0.7071068}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.10000001, y: 0.01, z: 0.009999999}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 4908573584345181804}
   m_RootOrder: 1
@@ -4956,7 +4956,7 @@ MonoBehaviour:
   hitForceMultiplier: 300
   lifetime: 2
   myOriginObject: {fileID: 0}
-  isTargetSeeking: 0
+  isTargetSeeking: 1
   seekStrength: 20
   isPlayerBullet: 0
   canPenetrateArmor: 0
@@ -4965,6 +4965,8 @@ MonoBehaviour:
   mortarGravity: {x: 0, y: -9.81, z: 0}
   mortarAimPredictTime: 1
   mortarVelocityMultiplier: 0.5
+  myLine: {fileID: 0}
+  isPhaseThrough: 0
   instantDestroy: {fileID: 8197792997850750831}
 --- !u!54 &4360051384763493055
 Rigidbody:

@@ -16,7 +16,12 @@ public class UpgradesController : MonoBehaviour {
 
 	public Transform UpgradesParent;
 	public List<Upgrade> allUpgrades = new List<Upgrade>();
+	
+	public List<Upgrade> tier1Upgrades = new List<Upgrade>();
+	public List<Upgrade> bossUpgrades = new List<Upgrade>();
 	public Upgrade selectedUpgrade;
+	
+	
 	
 	[ReadOnly]
 	public MiniGUI_UpgradeCompound[] myUpgradeCompounds;
@@ -151,29 +156,7 @@ public class UpgradesController : MonoBehaviour {
 	}
 
 	public Upgrade[] GetRandomLevelRewards() {
-		var eligibleRewards = new List<Upgrade>();
-
-		for (int i = 0; i < allUpgrades.Count; i++) {
-			if (!allUpgrades[i].isUnlocked) {
-				if (allUpgrades[i].parentUpgrade.upgradeUniqueName == allUpgrades[i].upgradeUniqueName || allUpgrades[i].parentUpgrade.isUnlocked) {
-					eligibleRewards.Add(allUpgrades[i]);
-				} 
-			} else {
-				if (allUpgrades[i].parentUpgrade == allUpgrades[i]) {
-					eligibleRewards.Add(allUpgrades[i]);
-				}
-			}
-		}
-		
-		eligibleRewards.Shuffle();
-
-		var count = 3;
-		
-		var results = new Upgrade[count];
-		eligibleRewards.CopyTo(0, results, 0, count);
-		
-
-
+		var results = GetUpgradesFromList(tier1Upgrades);
 		return results;
 	}
 
@@ -188,6 +171,31 @@ public class UpgradesController : MonoBehaviour {
 	}
 
 	public Upgrade[] GetRandomBossRewards() {
-		return GetRandomLevelRewards();
+		var results = GetUpgradesFromList(bossUpgrades);
+		return results;
+	}
+
+	private Upgrade[] GetUpgradesFromList(List<Upgrade> upgrades) {
+		var eligibleRewards = new List<Upgrade>();
+
+		for (int i = 0; i < upgrades.Count; i++) {
+			if (!upgrades[i].isUnlocked) {
+				if (upgrades[i].parentUpgrade.upgradeUniqueName == upgrades[i].upgradeUniqueName || upgrades[i].parentUpgrade.isUnlocked) {
+					eligibleRewards.Add(upgrades[i]);
+				}
+			} else {
+				if (upgrades[i].parentUpgrade == upgrades[i]) {
+					eligibleRewards.Add(upgrades[i]);
+				}
+			}
+		}
+
+		eligibleRewards.Shuffle();
+
+		var count = 3;
+
+		var results = new Upgrade[count];
+		eligibleRewards.CopyTo(0, results, 0, count);
+		return results;
 	}
 }

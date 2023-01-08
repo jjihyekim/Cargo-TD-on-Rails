@@ -20,7 +20,9 @@ public class SetUpBuyCargo : MonoBehaviour {
     private void Start() {
         /*StarterUIController.s.OnLevelChanged.AddListener(SetUpCargos);
         StarterUIController.s.OnEnteredStarterUI.AddListener(SetUpCargos);*/
-        SetUpCargos();
+        if (DataSaver.s.GetCurrentSave().isInARun) {
+            SetUpCargos();
+        }
     }
 
     void SetUpCargos() {

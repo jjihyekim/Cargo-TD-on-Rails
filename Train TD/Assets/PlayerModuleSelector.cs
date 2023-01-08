@@ -247,12 +247,20 @@ public class PlayerModuleSelector : MonoBehaviour {
             activeBuilding = slot.myBuildings[index];
             if (activeBuilding == null) {
                 // if there is nothing in this slot then try other slots until we find one
-                for (int i = 0; i < slot.myBuildings.Length; i++) {
+                /*for (int i = 0; i < slot.myBuildings.Length; i++) {
                     if (slot.myBuildings[i] != null) {
                         activeBuilding = slot.myBuildings[i];
                         activeIndex = i;
                     }
-                }
+                }*/
+                
+                // try forward/backward direction
+                if (index == 0)
+                    index = 1;
+                else if (index == 1)
+                    index = 0;
+                
+                activeBuilding = slot.myBuildings[index];
             }
 
             if (activeBuilding != null) {

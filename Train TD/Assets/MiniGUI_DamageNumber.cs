@@ -16,36 +16,46 @@ public class MiniGUI_DamageNumber : MonoBehaviour {
     private Transform targetWithOffset;
 
 
+    public int smallThreshold = 2;
     public int bigThreshold = 10;
+
+    public string[] burned;
     
-    
-    
+    public string[] playerIsAttackedTiny;
     public string[] playerIsAttackedSmall;
     public string[] playerIsAttackedBig;
     
     
     public string[] enemyIsAttackedArmorProtected;
 
+    public string[] enemyIsAttackedTiny;
     public string[] enemyIsAttackedSmall;
     public string[] enemyIsAttackedBig;
     
     public Color armorProtectedColor = Color.yellow;
-    public void SetUp(Transform _target, int damage, bool isPlayer, bool isArmorProtected) {
+    public void SetUp(Transform _target, int damage, bool isPlayer, bool isArmorProtected, bool isBurned) {
         //dmgText.text = "-" + damage;
 
-        if (isPlayer)
-        {
+        if (isBurned) {
+            dmgText.text = burned[Random.Range(0, burned.Length)];
+        }else
+
+        if (isPlayer) {
             if (isArmorProtected) {
                 dmgText.text = enemyIsAttackedArmorProtected[Random.Range(0, enemyIsAttackedArmorProtected.Length)];
             } else {
-                if (damage < bigThreshold) {
+                if (damage < smallThreshold) {
+                    dmgText.text = enemyIsAttackedTiny[Random.Range(0, enemyIsAttackedTiny.Length)];
+                } else if (damage < bigThreshold) {
                     dmgText.text = enemyIsAttackedSmall[Random.Range(0, enemyIsAttackedSmall.Length)];
                 } else {
                     dmgText.text = enemyIsAttackedBig[Random.Range(0, enemyIsAttackedBig.Length)];
                 }
             }
         } else {
-            if (damage < bigThreshold) {
+            if (damage < smallThreshold) {
+                dmgText.text = playerIsAttackedTiny[Random.Range(0, playerIsAttackedTiny.Length)];
+            } else if (damage < bigThreshold) {
                 dmgText.text = playerIsAttackedSmall[Random.Range(0, playerIsAttackedSmall.Length)];
             } else {
                 dmgText.text = playerIsAttackedBig[Random.Range(0, playerIsAttackedBig.Length)];

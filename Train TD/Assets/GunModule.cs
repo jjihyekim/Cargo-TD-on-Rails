@@ -1,8 +1,10 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Sirenix.OdinInspector;
 using UnityEngine;
 using UnityEngine.Events;
+using Random = UnityEngine.Random;
 
 public class GunModule : MonoBehaviour, IComponentWithTarget, IActiveDuringCombat {
 
@@ -25,7 +27,8 @@ public class GunModule : MonoBehaviour, IComponentWithTarget, IActiveDuringComba
 
 
     public bool mortarRotation = false;
-    public float fireDelay = 2f;
+    public float fireDelay = 2f; // dont use this
+    public float GetFireDelay() { return fireDelay * GetAttackSpeedMultiplier();}
     public int fireBarrageCount = 5;
     public float fireBarrageDelay = 0.1f;
     public float projectileDamage = 2f;
@@ -48,6 +51,20 @@ public class GunModule : MonoBehaviour, IComponentWithTarget, IActiveDuringComba
     public float scrapUsePerShot = 0;*/
     public float fuelUsePerShot = 0;
     public float steamUsePerShot = 0;
+
+    public bool needWarmUp = false;
+    private bool isWarmedUp = false;
+
+    [HideInInspector]
+    public UnityEvent startWarmUpEvent = new UnityEvent();
+    [HideInInspector]
+    public UnityEvent onBulletFiredEvent = new UnityEvent();
+    [HideInInspector]
+    public UnityEvent stopShootingEvent = new UnityEvent();
+
+    public bool gunShakeOnShoot = true;
+    private float gunShakeMagnitude = 0.004f;
+    private Vector3 gunShakeRotation = new Vector3(-2,0,0);
     
     private void Update() {
         if (gunActive) {
@@ -64,21 +81,30 @@ public class GunModule : MonoBehaviour, IComponentWithTarget, IActiveDuringComba
                 LookAtLocation(GetRangeOrigin().position + GetRangeOrigin().forward * 5);
             }
         }
+
+        if (isWarmedUp) {
+            stopShootingTimer -= Time.deltaTime;
+            if (stopShootingTimer <= 0) {
+                StopShootingFindingHelperThingy();
+            }
+        }
     }
 
     public void LookAtLocation(Vector3 location) {
-        for (int i = 0; i < rotateTransforms.Length; i++) {
-            var rotateTransform = rotateTransforms[i].transform;
-            var lookAxis = location - rotateTransform.position;
-            if (mortarRotation)
-                lookAxis.y = 0;
-            var lookRotation = Quaternion.LookRotation(lookAxis, Vector3.up);
-            //print(lookRotation);
-            rotateTransform.rotation = Quaternion.Lerp(rotateTransform.rotation, lookRotation, rotateSpeed * Time.deltaTime);
-            if (Quaternion.Angle(rotateTransform.rotation, lookRotation) < 5) {
-                CanShoot = true;
+        //if (!stopUpdateRotation) {
+            for (int i = 0; i < rotateTransforms.Length; i++) {
+                var rotateTransform = rotateTransforms[i].transform;
+                var lookAxis = location - rotateTransform.position;
+                if (mortarRotation)
+                    lookAxis.y = 0;
+                var lookRotation = Quaternion.LookRotation(lookAxis, Vector3.up);
+                //print(lookRotation);
+                rotateTransform.rotation = Quaternion.Lerp(rotateTransform.rotation, lookRotation, rotateSpeed * Time.deltaTime);
+                if (Quaternion.Angle(rotateTransform.rotation, lookRotation) < 5) {
+                    CanShoot = true;
+                }
             }
-        }
+        //}
     }
 
 
@@ -108,7 +134,7 @@ public class GunModule : MonoBehaviour, IComponentWithTarget, IActiveDuringComba
     private bool isShooting = false;
     IEnumerator ShootCycle() {
         while (true) {
-            yield return new WaitForSeconds(fireDelay * GetAttackSpeedMultiplier());
+            yield return new WaitForSeconds(GetFireDelay());
             while (!CanShoot || !hasAmmo) {
                 yield return null;
             }
@@ -120,7 +146,23 @@ public class GunModule : MonoBehaviour, IComponentWithTarget, IActiveDuringComba
         }
     }
 
+    private float stopShootingTimer = 0f;
+    void StopShootingFindingHelperThingy() {
+        stopShootingEvent?.Invoke();
+        isWarmedUp = false;
+    }
+    
     IEnumerator ShootBarrage(bool isFree = false, GenericCallback shotCallback = null, GenericCallback onHitCallback = null) {
+        stopShootingTimer = GetFireDelay()+0.05f;
+        if (!isWarmedUp) {
+            isWarmedUp = true;
+            startWarmUpEvent?.Invoke();
+            
+            if (needWarmUp) {
+                yield break;
+            }
+        }
+
         for (int i = 0; i < fireBarrageCount; i++) {
             if (AreThereEnoughMaterialsToShoot() || isFree) {
                 var barrelEnd = GetShootTransform().transform;
@@ -131,7 +173,7 @@ public class GunModule : MonoBehaviour, IComponentWithTarget, IActiveDuringComba
                 var projectile = bullet.GetComponent<Projectile>();
                 projectile.myOriginObject = this.gameObject;
                 projectile.damage = projectileDamage*GetDamageMultiplier();
-                projectile.isTargetSeeking = true;
+                //projectile.isTargetSeeking = true;
                 projectile.canPenetrateArmor = canPenetrateArmor;
                 
                 projectile.isPlayerBullet = isPlayer;
@@ -152,6 +194,9 @@ public class GunModule : MonoBehaviour, IComponentWithTarget, IActiveDuringComba
                 }
                 
                 shotCallback?.Invoke();
+                onBulletFiredEvent?.Invoke();
+                if(gunShakeOnShoot)
+                    StartCoroutine(ShakeGun());
             }
             yield return new WaitForSeconds(fireBarrageDelay);
         }
@@ -159,6 +204,49 @@ public class GunModule : MonoBehaviour, IComponentWithTarget, IActiveDuringComba
         if(!isFree)
             barrageShot?.Invoke();
     }
+
+    private bool stopUpdateRotation = false;
+
+    private bool realPositionsSet = false;
+    Vector3[] realPositions;
+    void RegisterRotateTransformRealPositions() {
+        realPositions = new Vector3[rotateTransforms.Length];
+        for (int i = 0; i < rotateTransforms.Length; i++) {
+            var rotateTransform = rotateTransforms[i].transform;
+            realPositions[i] = rotateTransform.localPosition;
+        }
+
+        realPositionsSet = true;
+    }
+    public IEnumerator ShakeGun() {
+        yield return null;
+        //stopUpdateRotation = true;
+        if (!realPositionsSet) {
+            RegisterRotateTransformRealPositions();
+        }
+        for (int i = 0; i < rotateTransforms.Length; i++) {
+            var rotateTransform = rotateTransforms[i].transform;
+            rotateTransform.localPosition = Random.insideUnitSphere * gunShakeMagnitude;
+            rotateTransform.Rotate(gunShakeRotation);
+        }
+
+        yield return null;
+        //stopUpdateRotation = false;
+        for (int i = 0; i < rotateTransforms.Length; i++) {
+            var rotateTransform = rotateTransforms[i].transform;
+            rotateTransform.localPosition= realPositions[i];
+        }
+    }
+
+    [Button]
+    public void ShootBarrageDebug() {
+        StartCoroutine(ShootBarrage(true));
+    }
+    [Button]
+    public void ShootBarrageContinuousDebug() {
+        StartCoroutine(ShootCycle());
+    }
+    
     public void ShootBarrageFree(GenericCallback shotCallback, GenericCallback onHitCallback) {
         StartCoroutine(ShootBarrage(true, shotCallback, onHitCallback));
     }

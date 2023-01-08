@@ -50,6 +50,9 @@ public class Projectile : MonoBehaviour {
     public float mortarVelocityMultiplier = 0.5f;
 
     public LineRenderer myLine;
+
+    public bool isPhaseThrough = false;
+    public bool isBurnDamage = false;
     private void Start() {
         Invoke("DestroySelf", lifetime);
 
@@ -99,22 +102,22 @@ public class Projectile : MonoBehaviour {
                 mortarVelocity *= mortarVelocityMultiplier;
                 break;
             
-            case HitType.Laser:
+            /*case HitType.Laser:
                 myLine = GetComponent<LineRenderer>();
-                break;
+                break;*/
         }
         
     }
 
     void DestroySelf() {
-        if (myHitType == HitType.Laser) {
+        /*if (myHitType == HitType.Laser) {
             DestroyFlying();
-        } else {
+        } else {*/
             Destroy(gameObject);
-        }
+        //}
     }
 
-    private float offset;
+    /*private float offset;
     private void Update() {
         if (!isDead) {
             if (myHitType == HitType.Laser) {
@@ -129,11 +132,11 @@ public class Projectile : MonoBehaviour {
                 offset += 20 * Time.time;
             }
         }
-    }
+    }*/
 
     void FixedUpdate() {
         if (!isDead) {
-            if (myHitType != HitType.Laser) {
+            //if (myHitType != HitType.Laser) {
                 if (isTargetSeeking) {
                     if (target != null) {
                         var targetLook = Quaternion.LookRotation(target.position - transform.position);
@@ -150,13 +153,16 @@ public class Projectile : MonoBehaviour {
 
                 if (target != null) {
                     if (Vector3.Distance(transform.position, target.position) < (curSpeed + 0.1f) * Time.fixedDeltaTime) {
-                        DestroyFlying();
+                        if (!isPhaseThrough) {
+                            DestroyFlying();
+                        }
                     }
                 }
 
                 switch (myHitType) {
                     case HitType.Bullet:
                     case HitType.Rocket:
+                    case HitType.Laser:
 
                         GetComponent<Rigidbody>().MovePosition(transform.position + transform.forward * curSpeed * Time.fixedDeltaTime);
                         break;
@@ -167,7 +173,7 @@ public class Projectile : MonoBehaviour {
                         transform.rotation = Quaternion.LookRotation(mortarVelocity);
                         break;
                 }
-            }
+            //}
         }
     }
 
@@ -263,6 +269,7 @@ public class Projectile : MonoBehaviour {
                 
                 switch (myHitType) {
                     case HitType.Bullet:
+                    case HitType.Laser:
                         ContactDamage(other);
                         break;
                     case HitType.Rocket:
@@ -277,7 +284,51 @@ public class Projectile : MonoBehaviour {
             }
         }
     }
-    
+
+    private void OnTriggerEnter(Collider other) {
+        if (!isDead) {
+            if (other.transform.root.gameObject != myOriginObject) {
+                var otherProjectile = other.transform.root.GetComponent<Projectile>();
+                if (otherProjectile != null) {
+                    if (otherProjectile.isPlayerBullet == isPlayerBullet) {
+                        // we don't want projectiles from the same faction collide with each other
+                        return;
+                    }
+                }
+
+                var train = other.transform.root.GetComponent<Train>();
+
+                if (train != null && isPlayerBullet) {
+                    // make player bullets dont hit the player
+                    return;
+                }
+
+                var enemy = other.transform.root.GetComponent<EnemyTypeData>();
+                
+                if (enemy != null && !isPlayerBullet) {
+                    // make enemy projectiles not hit the player projectiles
+                    return;
+                }
+                
+                PhaseDamage(other);
+
+                //SmartDestroySelf();
+            }
+        }
+    }
+
+    void PhaseDamage(Collider other) {
+        var health = other.gameObject.GetComponentInParent<IHealth>();
+
+        if (health != null) {
+            DealDamage(health);
+            
+            GameObject miniHitPrefab = LevelReferences.s.mortarMiniHitPrefab;
+            var closestPoint = health.GetMainCollider().ClosestPoint(transform.position);
+            Instantiate(miniHitPrefab, closestPoint, Quaternion.identity);
+        }
+    }
+
     private void MortarDamage() {
         GameObject hitPrefab = LevelReferences.s.mortarExplosionEffectPrefab;
         GameObject miniHitPrefab = LevelReferences.s.mortarMiniHitPrefab;
@@ -343,18 +394,23 @@ public class Projectile : MonoBehaviour {
             hitPrefab = LevelReferences.s.dirtBulletHitEffectPrefab;
             
         }else{
-            if (health is ModuleHealth) {
-                hitPrefab = LevelReferences.s.metalBulletHitEffectPrefab;
-
+            if (myHitType == HitType.Laser) {
+                hitPrefab = LevelReferences.s.laserHitPrefab;
             } else {
-                ApplyHitForceToObject(health);
+                if (health is ModuleHealth) {
+                    hitPrefab = LevelReferences.s.metalBulletHitEffectPrefab;
+
+                } else {
+                    ApplyHitForceToObject(health);
 
 
-                if (health.HasArmor() && !canPenetrateArmor) {
-                    // if enemy has armor and we cannot penetrate it, show it through an effect
-                    hitPrefab = LevelReferences.s.enemyCantPenetrateHitEffectPrefab;
-                } else { 
-                    hitPrefab = LevelReferences.s.enemyRegularHitEffectPrefab;}
+                    if (health.HasArmor() && !canPenetrateArmor) {
+                        // if enemy has armor and we cannot penetrate it, show it through an effect
+                        hitPrefab = LevelReferences.s.enemyCantPenetrateHitEffectPrefab;
+                    } else {
+                        hitPrefab = LevelReferences.s.enemyRegularHitEffectPrefab;
+                    }
+                }
             }
         }
 
@@ -387,12 +443,15 @@ public class Projectile : MonoBehaviour {
                 armorProtected = true;
             }
 
-            target.DealDamage(dmg);
-            Instantiate(LevelReferences.s.damageNumbersPrefab, LevelReferences.s.uiDisplayParent)
-                .GetComponent<MiniGUI_DamageNumber>()
-                .SetUp(target.GetGameObject().transform, (int)dmg, isPlayerBullet, armorProtected);
-            
-            
+            if (isBurnDamage) {
+                target.BurnDamage(dmg);
+            } else {
+                target.DealDamage(dmg);
+                Instantiate(LevelReferences.s.damageNumbersPrefab, LevelReferences.s.uiDisplayParent)
+                    .GetComponent<MiniGUI_DamageNumber>()
+                    .SetUp(target.GetGameObject().transform, (int)dmg, isPlayerBullet, armorProtected, isBurnDamage);
+            }
+
             onHitCallback?.Invoke();
         }
     }

@@ -351,7 +351,7 @@ public class TrainBuilding : MonoBehaviour {
             var renderers = GetComponentsInChildren<MeshRenderer>(true);
 
             foreach (var rend in renderers) {
-                if (rend.GetComponent<Outline>() == null) {
+                if (rend.GetComponent<Outline>() == null && !rend.gameObject.CompareTag("NoOutline")) {
                     var outline = rend.gameObject.AddComponent<Outline>();
                     outline.OutlineMode = Outline.Mode.OutlineAndSilhouette;
                     outline.OutlineWidth = 5;

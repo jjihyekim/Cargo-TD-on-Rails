@@ -62,7 +62,7 @@ public class DirectControlMaster : MonoBehaviour {
 			myTargetPicker = directControlAction.GetComponent<TargetPicker>();
 
 			myGun.DeactivateGun();
-			cooldown = myGun.fireDelay;
+			cooldown = myGun.GetFireDelay();
 			myTargetPicker.enabled = false;
 
 			curCooldown = 0;

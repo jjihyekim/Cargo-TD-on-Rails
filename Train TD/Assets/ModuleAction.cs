@@ -34,6 +34,9 @@ public abstract class ModuleAction : UnlockableEffect {
 						MoneyController.s.ModifyResource(myType, -cost);
 						curCooldown = cooldown;
 						_EngageAction();
+						
+						if (!SceneLoader.s.isLevelInProgress)
+							Train.s.SaveTrainState();
 
 						if (soundEffect.Length > 0) {
 							SoundscapeController.s.PlayModuleSkillActivate(soundEffect[Random.Range(0, soundEffect.Length)]);
@@ -44,6 +47,9 @@ public abstract class ModuleAction : UnlockableEffect {
 					LevelReferences.s.SpawnResourceAtLocation(myType, -cost, transform.position);
 					curCooldown = cooldown;
 					_EngageAction();
+					
+					if (!SceneLoader.s.isLevelInProgress)
+						Train.s.SaveTrainState();
 					
 					if (soundEffect.Length > 0) {
 						SoundscapeController.s.PlayModuleSkillActivate(soundEffect[Random.Range(0, soundEffect.Length)]);

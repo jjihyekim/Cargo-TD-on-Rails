@@ -21,7 +21,7 @@ public class ModuleRangeBoostAction : ModuleAction, IActiveDuringCombat {
 	void StopAction() {
 		GetComponent<TargetPicker>().range -= rangeBoost;
 		GetComponent<TargetPicker>().rotationSpan -= angleBoost;
-		GetComponent<GunModule>().fireDelay /= rotateSpeedBoost;
+		GetComponent<GunModule>().rotateSpeed /= rotateSpeedBoost;
 	}
 	
 	public void ActivateForCombat() {

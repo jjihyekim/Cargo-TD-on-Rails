@@ -40,6 +40,29 @@ public class EnemyHealth : MonoBehaviour, IHealth {
 		}
 	}
 
+
+	public float burnReduction = 0.5f;
+	public float currentBurn = 0;
+	public float burnSpeed = 0;
+	public void BurnDamage(float damage) {
+		burnSpeed += damage;
+	}
+	private void Update() {
+		if (currentBurn >= 1) {
+			Instantiate(LevelReferences.s.damageNumbersPrefab, LevelReferences.s.uiDisplayParent)
+				.GetComponent<MiniGUI_DamageNumber>()
+				.SetUp(GetGameObject().transform, (int)1, true, false, true);
+			DealDamage(1);
+
+			currentBurn = 0;
+		}
+
+		if (burnSpeed > 0.05f) {
+			currentBurn += burnSpeed * Time.deltaTime;
+		}
+		burnSpeed = Mathf.Lerp(burnSpeed,0,burnReduction*Time.deltaTime);
+	}
+
 	private void Start() {
 		healthBar = Instantiate(LevelReferences.s.partHealthPrefab, LevelReferences.s.uiDisplayParent).GetComponent<MiniGUI_HealthBar>();
 		healthBar.SetUp(this);
@@ -162,6 +185,7 @@ public class EnemyHealth : MonoBehaviour, IHealth {
 
 public interface IHealth {
 	public void DealDamage(float damage);
+	public void BurnDamage(float damage);
 	public bool IsPlayer();
 	public GameObject GetGameObject();
 	public Collider GetMainCollider();

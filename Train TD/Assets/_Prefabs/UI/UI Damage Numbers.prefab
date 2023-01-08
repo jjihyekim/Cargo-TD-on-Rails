@@ -216,7 +216,13 @@ MonoBehaviour:
   goUpSpeed: 1
   fadeOutStartTime: 0.5
   fadeOutEndTime: 1
+  smallThreshold: 2
   bigThreshold: 10
+  burned:
+  - burned
+  playerIsAttackedTiny:
+  - oopsie
+  - boop
   playerIsAttackedSmall:
   - ouch
   - oop
@@ -228,6 +234,10 @@ MonoBehaviour:
   - OOOF
   enemyIsAttackedArmorProtected:
   - ding
+  enemyIsAttackedTiny:
+  - ping
+  - ding
+  - poof
   enemyIsAttackedSmall:
   - pew
   - pew
@@ -236,3 +246,4 @@ MonoBehaviour:
   enemyIsAttackedBig:
   - BAM
   - BOOM
+  armorProtectedColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
