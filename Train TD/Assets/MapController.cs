@@ -385,6 +385,8 @@ public class MapController : MonoBehaviour {
 	    travelToStarWaiting = true;
 
 	    FinishTravelingToStar();
+	    WorldMapCreator.s.ToggleWorldMap();
+	    WorldMapCreator.s.ToggleWorldMap();
     }
 
     public void RemovePlayerFromStar() {

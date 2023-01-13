@@ -1,0 +1,58 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: db512ea5c3f84be49c44fcd62d024370, type: 3}
+  m_Name: Buggies and supplies
+  m_EditorClassIdentifier: 
+  myData:
+    levelName: Smol Starts
+    specialIcon: {fileID: 0}
+    isEncounter: 0
+    enemiesOnPath:
+    - enemyIdentifier:
+        enemyUniqueName: BuggyAVC
+        enemyCount: 3
+      distanceOnPath: 30
+      startMoving: 0
+    - enemyIdentifier:
+        enemyUniqueName: SupplierSafe
+        enemyCount: 2
+      distanceOnPath: 90
+      startMoving: 0
+    - enemyIdentifier:
+        enemyUniqueName: BuggyAVC
+        enemyCount: 6
+      distanceOnPath: 150
+      startMoving: 0
+    - enemyIdentifier:
+        enemyUniqueName: SupplierSafe
+        enemyCount: 2
+      distanceOnPath: 300
+      startMoving: 0
+    - enemyIdentifier:
+        enemyUniqueName: BuggyPneumatic
+        enemyCount: 6
+      distanceOnPath: 220
+      startMoving: 0
+    - enemyIdentifier:
+        enemyUniqueName: BuggyCannon
+        enemyCount: 6
+      distanceOnPath: 240
+      startMoving: 0
+    dynamicSpawnEnemies:
+    - enemyIdentifier:
+        enemyUniqueName: BuggyCannon
+        enemyCount: 2
+      distanceFromTrain: 30
+      firstSpawnTime: 30
+      spawnInterval: 15
+      increaseInNumberInterval: 4
+    missionDistance: 500

@@ -21,6 +21,8 @@ public class LevelDataLoader : MonoBehaviour {
     //     return Directory.GetFiles(GetLevelDataPath(), "*.json");
     // }
     
+    [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+    static void Init() { s = null; }
 
     private void Awake() {
         if (s == null) {

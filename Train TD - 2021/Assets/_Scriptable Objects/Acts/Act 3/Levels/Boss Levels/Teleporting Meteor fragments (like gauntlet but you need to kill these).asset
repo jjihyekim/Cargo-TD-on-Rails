@@ -1,0 +1,55 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: db512ea5c3f84be49c44fcd62d024370, type: 3}
+  m_Name: Teleporting Meteor fragments (like gauntlet but you need to kill these)
+  m_EditorClassIdentifier: 
+  myData:
+    levelName: Army
+    specialIcon: {fileID: 0}
+    isEncounter: 0
+    enemiesOnPath:
+    - enemyIdentifier:
+        enemyUniqueName: Army
+        enemyCount: 1
+      distanceOnPath: 30
+      startMoving: 0
+    - enemyIdentifier:
+        enemyUniqueName: Army
+        enemyCount: 1
+      distanceOnPath: 90
+      startMoving: 0
+    - enemyIdentifier:
+        enemyUniqueName: Army
+        enemyCount: 2
+      distanceOnPath: 150
+      startMoving: 0
+    - enemyIdentifier:
+        enemyUniqueName: Army
+        enemyCount: 5
+      distanceOnPath: 400
+      startMoving: 0
+    dynamicSpawnEnemies:
+    - enemyIdentifier:
+        enemyUniqueName: SupplierSafe
+        enemyCount: 1
+      distanceFromTrain: 30
+      firstSpawnTime: 30
+      spawnInterval: 30
+      increaseInNumberInterval: 2
+    - enemyIdentifier:
+        enemyUniqueName: Army
+        enemyCount: 1
+      distanceFromTrain: 30
+      firstSpawnTime: 240
+      spawnInterval: 45
+      increaseInNumberInterval: 4
+    missionDistance: 700

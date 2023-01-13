@@ -1,0 +1,22 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0358ee5c08e2e8e4e919da07010daa7c, type: 3}
+  m_Name: Pneumatic Gun 0 Unlock
+  m_EditorClassIdentifier: 
+  upgradeUniqueName: pneumaticUnlock
+  shopCost: 100
+  activationCost: 50
+  icon: {fileID: 21300000, guid: f7e74c06e8868bd4cbf0e69ff10241fd, type: 3}
+  upgradeName: Pneumatic Gun
+  upgradeDescription: -leave empty-
+  parentUpgrade: {fileID: 11400000}
+  module: {fileID: 1944673793999917900, guid: 94d57c6143665da4084100fd533410ca, type: 3}

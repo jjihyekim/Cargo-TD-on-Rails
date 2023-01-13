@@ -1,0 +1,22 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0358ee5c08e2e8e4e919da07010daa7c, type: 3}
+  m_Name: Storage Triple 0 Unlock
+  m_EditorClassIdentifier: 
+  upgradeUniqueName: storageTripleUnlock
+  shopCost: 100
+  activationCost: 50
+  icon: {fileID: 21300000, guid: a9aba5b990a2e704c95e832a4a39c735, type: 3}
+  upgradeName: Combined Storage
+  upgradeDescription: -leave empty-
+  parentUpgrade: {fileID: 11400000}
+  module: {fileID: 1944673793999917900, guid: 326a02377fc214b4497d74e4650644fd, type: 3}
