@@ -136,6 +136,4 @@ public class DataHolder : MonoBehaviour {
 public class EnemyHolder {
     public string uniqueName = "unset";
     public GameObject data;
-    public Sprite mainSprite;
-    public Sprite gunSprite;
 }

@@ -15,7 +15,7 @@ public class WorldMapHexGrid : MonoBehaviour {
 	public GameObject grassHex;
 	public GameObject mountainHex;
 
-	public HexChunk hexChunk;
+	private HexChunk hexChunk;
 
 	public Transform otherObjectsParent;
 

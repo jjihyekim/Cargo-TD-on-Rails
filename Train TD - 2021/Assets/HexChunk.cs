@@ -1,6 +1,10 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.Burst;
+using Unity.Collections;
 using UnityEngine;
+using Unity.Jobs;
 
 public class HexChunk : MonoBehaviour {
     //public HexCell[,] myCells;
@@ -104,22 +108,31 @@ public class HexChunk : MonoBehaviour {
 		    var splitBatch = tempBatches[i];
 		    var posLength = splitBatch.positions.Count;
 		    for (int j = 0; j < splitBatch.positions.Count; j+=1023) {
+			    var batchSize = Mathf.Min(1023, posLength - j);
 			    var newBatch = new InstancingBatch() {
 				    material = splitBatch.material,
 				    mesh = splitBatch.mesh,
-				    positions = new List<Matrix4x4>(splitBatch.positions.GetRange(j, Mathf.Min(1023, posLength-j))).ToArray(),
-				    positionsMoved = new List<Matrix4x4>(splitBatch.positions.GetRange(j, Mathf.Min(1023, posLength-j))).ToArray()
+				    localPositions = new NativeArray<Matrix4x4>(batchSize, Allocator.Persistent),
+				    worldPositions = new NativeArray<Matrix4x4>(batchSize, Allocator.Persistent)
 			    };
 
+			    var split = splitBatch.positions.GetRange(j, batchSize);
+			    for (int k = 0; k < batchSize; k++) {
+				    newBatch.localPositions[k] = split[k];
+			    }
 
-			    var propertyBlock = new MaterialPropertyBlock();
-			    var posOffsets = new Vector4[newBatch.positions.Length];
-			    for (int k = 0; k < newBatch.positions.Length; k++) {
-				    var pos = newBatch.positions[k].GetColumn(3);
+			    newBatch.initialized = true;
+			    newBatch.outputMatrix = new Matrix4x4[batchSize];
+
+
+			    /*var propertyBlock = new MaterialPropertyBlock();
+			    var posOffsets = new Vector4[newBatch.localPositions.Length];
+			    for (int k = 0; k < newBatch.localPositions.Length; k++) {
+				    var pos = newBatch.localPositions[k].GetColumn(3);
 				    posOffsets[k] = pos;
 			    }
 			    
-			    propertyBlock.SetVectorArray("WorldOffset", posOffsets);
+			    propertyBlock.SetVectorArray("WorldOffset", posOffsets);*/
 			    
 			    
 			    batches.Add(newBatch);
@@ -179,32 +192,96 @@ public class HexChunk : MonoBehaviour {
 	    public Mesh mesh;
     }
     public struct InstancingBatch {
-		public Matrix4x4[] positions;
-		public Matrix4x4[] positionsMoved;
-		public MaterialPropertyBlock propertyBlock;
+		public NativeArray<Matrix4x4> localPositions;
+		public NativeArray<Matrix4x4> worldPositions;
+		public Matrix4x4[] outputMatrix;
+		//public JobHandle localToWorldPosJob;
 		public Material material;
 		public Mesh mesh;
-	}
+		public bool initialized;
+    }
 
 	public List<InstancingBatch> batches;
 
 	public bool drawChunk = false;
 
+
+	private void OnDestroy() {
+		if (batches != null) {
+			for (int i = 0; i < batches.Count; i++) {
+				if (batches[i].initialized) {
+					//batches[i].localToWorldPosJob.Complete();
+					batches[i].localPositions.Dispose();
+					batches[i].worldPositions.Dispose();
+				}
+			}
+		}
+	}
+
 	private void Update() {
 		if (drawChunk) {
 			var translationMatrix = Matrix4x4.Translate(transform.position);
-			
+
 			for (int i = 0; i < batches.Count; i++) {
 				var batch = batches[i];
 
 				if (adjustPosition) {
-					for (int j = 0; j < batch.positions.Length; j++) {
-						batch.positionsMoved[j] = batch.positions[j] * translationMatrix;
-					}
-				}
+					/*var positionsMoved = batch.worldPositions;
+					var positions = batch.localPositions;
+					for (int j = 0; j < batch.localPositions.Length; j++) {
+						positionsMoved[j] = positions[j] * translationMatrix;
+					}*/
 
-				Graphics.DrawMeshInstanced(batch.mesh, 0, batch.material, batch.positionsMoved/*, batch.positions.Length ,batch.propertyBlock*/);
+
+					var worldPositions = batch.worldPositions;
+					var localPositions = batch.localPositions;
+
+					// Initialize the job data
+					var job = new LocalToWorldPositionJob() {
+						translationMatrix = translationMatrix,
+						localPositions = localPositions,
+						worldPositions = worldPositions
+					};
+					job.translationMatrix = translationMatrix;
+
+					// Schedule job to run immediately on main thread. 
+					job.Run(worldPositions.Length);
+					//batch.localToWorldPosJob = job.Schedule(worldPositions.Length, 64);
+				} //else {
+
+				batch.worldPositions.CopyTo(batch.outputMatrix);
+				Graphics.DrawMeshInstanced(batch.mesh, 0, batch.material, batch.outputMatrix);
+				//}
 			}
+		}
+	}
+	
+	/*private void LateUpdate()
+	{
+		if (drawChunk && adjustPosition) {
+			for (int i = 0; i < batches.Count; i++) {
+				var batch = batches[i];
+				batch.localToWorldPosJob.Complete();
+				
+				batch.worldPositions.CopyTo(batch.outputMatrix);
+				Graphics.DrawMeshInstanced(batch.mesh, 0, batch.material, batch.outputMatrix);
+			}
+		}
+	}*/
+	
+	
+	[BurstCompile(CompileSynchronously = true)]
+	struct LocalToWorldPositionJob : IJobFor
+	{
+		[ReadOnly]
+		public NativeArray<Matrix4x4> localPositions;
+		
+		public NativeArray<Matrix4x4> worldPositions;
+		
+		
+		public Matrix4x4 translationMatrix;
+		public void Execute(int i) {
+			worldPositions[i] = localPositions[i] * translationMatrix;
 		}
 	}
 }
