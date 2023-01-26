@@ -23,11 +23,12 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4128549612447956371}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.03, y: 0.0406, z: 0.1382}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: -0.29999998, y: 0.40600002, z: 1.382}
+  m_LocalScale: {x: 10, y: 10, z: 10}
+  m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 5356042904144773388}
+  m_Father: {fileID: 2999708825072218027}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &5358112284907921216
@@ -53,11 +54,12 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5358112284907921216}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.03, y: 0.0406, z: 0.1382}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0.29999998, y: 0.40600002, z: 1.382}
+  m_LocalScale: {x: 10, y: 10, z: 10}
+  m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 5356042904144773388}
+  m_Father: {fileID: 2999708825072218027}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &5358949083976555842
@@ -90,9 +92,8 @@ Transform:
   m_LocalRotation: {x: -0.000000014735866, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 5358112284907921217}
-  - {fileID: 2102522099335574682}
   - {fileID: 2999708825072218027}
   m_Father: {fileID: 0}
   m_RootOrder: 0
@@ -111,7 +112,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   gunSprite: {fileID: 21300000, guid: aba5e5016c4c6674eb61199621225374, type: 3}
   rotateTransforms:
-  - transform: {fileID: 5356042904144773388}
+  - transform: {fileID: 2999708825072218027}
   barrelEndTransforms:
   - transform: {fileID: 5358112284907921217}
   - transform: {fileID: 2102522099335574682}
@@ -120,10 +121,10 @@ MonoBehaviour:
   muzzleFlashPrefab: {fileID: 980176138545819842, guid: d13b04fe45d03c24fab8310c0c9450fb, type: 3}
   target: {fileID: 0}
   mortarRotation: 0
-  fireDelay: 0.25
-  fireBarrageCount: 1
-  fireBarrageDelay: 0.2
-  projectileDamage: 5
+  fireDelay: 0.5
+  fireBarrageCount: 5
+  fireBarrageDelay: 0.1
+  projectileDamage: 0.6
   rotateSpeed: 10
   gunActive: 1
   CanShoot: 0
@@ -136,6 +137,17 @@ MonoBehaviour:
   canPenetrateArmor: 0
   fuelUsePerShot: 0
   steamUsePerShot: 0
+  needWarmUp: 0
+  startWarmUpEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  onBulletFiredEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  stopShootingEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  gunShakeOnShoot: 0
 --- !u!114 &3423815582298746200
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -213,9 +225,12 @@ Transform:
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 0.1, y: 0.1, z: 0.1}
-  m_Children: []
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 5358112284907921217}
+  - {fileID: 2102522099335574682}
   m_Father: {fileID: 5356042904144773388}
-  m_RootOrder: 2
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!33 &6850143636379771639
 MeshFilter:
@@ -236,6 +251,7 @@ MeshRenderer:
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
+  m_StaticShadowCaster: 0
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
@@ -244,7 +260,7 @@ MeshRenderer:
   m_RenderingLayerMask: 4294967295
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 96356eb6efadc12409513c173e4861ca, type: 2}
+  - {fileID: 2100000, guid: f856c0992a066744e92a6cee6bf941cd, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0

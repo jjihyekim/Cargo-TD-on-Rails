@@ -22,17 +22,34 @@ public class SettingsController : MonoBehaviour {
 
     
     public void ResetRun() {
+        if (SceneLoader.s.isLevelInProgress) {
+            MissionWinFinisher.s.Cleanup();
+        }
+
         DataSaver.s.GetCurrentSave().currentRun = null;
         DataSaver.s.GetCurrentSave().isInARun = false;
         //DataSaver.s.GetCurrentSave().currentRun.SetCharacter( DataHolder.s.GetCharacter("Le Cheater"));
         //MapController.s.GenerateStarMap();
         DataSaver.s.SaveActiveGame();
-        SceneLoader.s.BackToStarterMenuHardLoad();
+        
+        MenuToggle.HideAllToggleMenus();
+        
+        if (FirstTimeTutorialController.s.tutorialEngaged) {
+            FirstTimeTutorialController.s.SkipTutorial();
+        } else {
+            SceneLoader.s.BackToStarterMenu();
+        }
     }
     
     public void ResetRunAndReplayTutorial() {
         PlayerPrefs.SetInt("finishedTutorial", 0);
-        ResetRun();
+        FirstTimeTutorialController.s.ReDoTutorial();
+        //ResetRun();
+    }
+
+    public void ClearCurrentSaveAndPlayerPrefs() {
+        PlayerPrefs.DeleteAll();
+        DataSaver.s.ClearCurrentSave();
     }
     
 }

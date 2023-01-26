@@ -222,9 +222,9 @@ public class DataSaver {
 				}
 			}
 
-			for (int i = 0; i < characterData.starterUpgrades.Length; i++) {
+			/*for (int i = 0; i < characterData.starterUpgrades.Length; i++) {
 				upgrades.Add(characterData.starterUpgrades[i].upgradeUniqueName);
-			}
+			}*/
 
 			for (int i = 0; i < characterData.starterModules.Length; i++) {
 				var mod = characterData.starterModules[i];

@@ -41,7 +41,7 @@ public class EnemyHealth : MonoBehaviour, IHealth {
 	}
 
 
-	public float burnReduction = 0.5f;
+	 float burnReduction = 0.5f;
 	public float currentBurn = 0;
 	public float burnSpeed = 0;
 	public void BurnDamage(float damage) {

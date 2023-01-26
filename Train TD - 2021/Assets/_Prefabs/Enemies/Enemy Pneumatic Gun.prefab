@@ -23,11 +23,12 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1091525479205976935}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.03, y: 0.0406, z: 0.1382}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: -0.29999998, y: 0.40600002, z: 1.382}
+  m_LocalScale: {x: 10, y: 10, z: 10}
+  m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 8951486969214945272}
+  m_Father: {fileID: 7681542338830949593}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &3302615954159813578
@@ -58,9 +59,12 @@ Transform:
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 0.1, y: 0.1, z: 0.1}
-  m_Children: []
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 8950266407032101301}
+  - {fileID: 3117552975138746990}
   m_Father: {fileID: 8951486969214945272}
-  m_RootOrder: 2
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!33 &7569462667543943517
 MeshFilter:
@@ -81,6 +85,7 @@ MeshRenderer:
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
+  m_StaticShadowCaster: 0
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
@@ -141,9 +146,8 @@ Transform:
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 8950266407032101301}
-  - {fileID: 3117552975138746990}
   - {fileID: 7681542338830949593}
   m_Father: {fileID: 0}
   m_RootOrder: 0
@@ -162,7 +166,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   gunSprite: {fileID: 21300000, guid: f7e74c06e8868bd4cbf0e69ff10241fd, type: 3}
   rotateTransforms:
-  - transform: {fileID: 8951486969214945272}
+  - transform: {fileID: 7681542338830949593}
   barrelEndTransforms:
   - transform: {fileID: 8950266407032101301}
   - transform: {fileID: 3117552975138746990}
@@ -174,7 +178,7 @@ MonoBehaviour:
   fireDelay: 2
   fireBarrageCount: 2
   fireBarrageDelay: 0.2
-  projectileDamage: 4
+  projectileDamage: 6
   rotateSpeed: 10
   gunActive: 1
   CanShoot: 0
@@ -187,6 +191,17 @@ MonoBehaviour:
   canPenetrateArmor: 0
   fuelUsePerShot: 0
   steamUsePerShot: 0
+  needWarmUp: 0
+  startWarmUpEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  onBulletFiredEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  stopShootingEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  gunShakeOnShoot: 0
 --- !u!114 &1868355569120209836
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -259,10 +274,11 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8950266407032101300}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.03, y: 0.0406, z: 0.1382}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0.29999998, y: 0.40600002, z: 1.382}
+  m_LocalScale: {x: 10, y: 10, z: 10}
+  m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 8951486969214945272}
+  m_Father: {fileID: 7681542338830949593}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}

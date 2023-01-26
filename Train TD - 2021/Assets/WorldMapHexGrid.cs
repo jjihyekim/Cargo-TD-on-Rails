@@ -12,7 +12,7 @@ public class WorldMapHexGrid : MonoBehaviour {
 
 	private HexCell[] cells;
 
-	public GameObject grassHex;
+	//public GameObject grassHex;
 	public GameObject mountainHex;
 
 	private HexChunk hexChunk;
@@ -28,17 +28,37 @@ public class WorldMapHexGrid : MonoBehaviour {
 	public float gridScale = 0.8f;
 
 	private int gridCount = 1;
+	
+	public Biome[] biomes;
+	
+	[Serializable]
+	public class Biome {
+		public GameObject groundPrefab;
+		public PrefabWithWeights[] sideDecor;
+	}
 
 	public void CreateGridsOverAFewFrames(GenericCallback callback) {
 		StartCoroutine(_CreateGridsOverAFewFrames(callback));
 	}
 
-	private List<Vector3> positions = new List<Vector3>();
-	
 	public GameObject hexChunkPrefab;
+
+	private Biome currentBiome;
+	public int biomeOverride = -1;
 	IEnumerator _CreateGridsOverAFewFrames(GenericCallback callback) {
 		var pauseInterval = 1000;
 		var n = 0;
+		if (biomeOverride < 0) {
+			var targetBiome = DataSaver.s.GetCurrentSave().currentRun.map.GetPlayerStar().biome;
+			if (targetBiome < 0 || targetBiome > biomes.Length) {
+				Debug.LogError($"Illegal biome {targetBiome}");
+				targetBiome = 0;
+			}
+
+			currentBiome = biomes[targetBiome];
+		} else {
+			currentBiome = biomes[biomeOverride];
+		}
 		
 		for (int i = 0; i < gridCount; i++) {
 			hexChunk = Instantiate(hexChunkPrefab, transform).GetComponent<HexChunk>();
@@ -47,7 +67,7 @@ public class WorldMapHexGrid : MonoBehaviour {
 			for (int x = - (gridSize.x/2); x < gridSize.x/2; x++) {
 				for (int z = - (gridSize.y/2); z < gridSize.y/2; z++) {
 				
-					var hex = Instantiate(grassHex, hexChunk.transform);
+					var hex = Instantiate(currentBiome.groundPrefab, hexChunk.transform);
 					var y = 0f;
 					var pos = HexCoordinates.HexToPosition(HexCoordinates.OrdinalToHex(new Vector2Int(x, z)), y);
 					hex.transform.localPosition = pos * gridScale + startOffset;
@@ -78,7 +98,7 @@ public class WorldMapHexGrid : MonoBehaviour {
 	
 
 	public float mountainThreshold = 1.37f;
-	public bool refreshHeightAdjustment = true;
+	//public bool refreshHeightAdjustment = true;
 	public GenericCallback myCallback;
 	[Button] 
 	public void ApplyHeights(GenericCallback _myCallback) {
@@ -86,12 +106,6 @@ public class WorldMapHexGrid : MonoBehaviour {
 		//ApplyHeightsOverAFewFrames();
 		myCallback = _myCallback;
 	}
-
-	public Color regularColor= Color.green;
-	public Color crystalColor = Color.magenta;
-
-	public float colorLerpStartZ;
-	public float colorLerpEndZ;
 
 	struct AffectorStuff {
 		public Vector3 posNoY;
@@ -189,7 +203,7 @@ public class WorldMapHexGrid : MonoBehaviour {
 				}
 			} else {
 				if (currentCell.myType != HexCell.HexType.grass) {
-					var hex = Instantiate(grassHex, hexChunk.transform);
+					var hex = Instantiate(currentBiome.groundPrefab, hexChunk.transform);
 					var hexTransform = hex.transform;
 					hexTransform.localPosition = finalPos;
 					hexTransform.localScale = Vector3.one*gridScale;
@@ -317,7 +331,64 @@ public class WorldMapHexGrid : MonoBehaviour {
 	}
 
 	public void MeshCombine() {
+		AddDetails();
 		hexChunk.FinalizeBatches();
 		hexChunk.adjustPosition = false;
+		
+		Invoke(nameof(MakeProbe),0.05f);
+	}
+	
+	void MakeProbe() {
+		GetComponentInChildren<ReflectionProbe>().RenderProbe();
+	}
+
+
+	public float decorSpread = 0.2f;
+	public float decorYAdjustment = 0;
+	void AddDetails() {
+		var sideDecorGuides = new GameObject[currentBiome.sideDecor.Length];
+		for (int i = 0; i < currentBiome.sideDecor.Length; i++) {
+			sideDecorGuides[i] = Instantiate(currentBiome.sideDecor[i].prefab, hexChunk.transform);
+		}
+
+
+		cells = GetComponentsInChildren<HexCell>();
+		for (int m = 0; m <cells.Length; m++) {
+			if(cells[m].myType == HexCell.HexType.mountain)
+				continue;
+
+			var pos = cells[m].transform.localPosition;
+			
+			// add decors
+			var decors = sideDecorGuides;
+			var decorCount = Random.Range(0, 2);
+
+			if (decors.Length == 0)
+				decorCount = 0;
+
+			for (int i = 0; i < decorCount; i++) {
+				var curDecorIndex = PrefabWithWeights.WeightedRandomRoll(currentBiome.sideDecor);
+				var curDecor = decors[curDecorIndex];
+				var randomOffset = Random.insideUnitCircle * decorSpread;
+				curDecor.transform.localPosition = pos + new Vector3(randomOffset.x, decorYAdjustment, randomOffset.y);
+				if (currentBiome.sideDecor[curDecorIndex].allRotation) {
+					curDecor.transform.rotation = Random.rotation;
+				} else {
+					curDecor.transform.rotation = Quaternion.Euler(0, Random.Range(0, 360), 0);
+				}
+				curDecor.transform.localScale = Vector3.one * gridScale;
+				hexChunk.AddCell(curDecor);
+			}
+		}
+
+		for (int i = 0; i < sideDecorGuides.Length; i++) {
+			Destroy(sideDecorGuides[i]);
+		}
+	}
+	
+	
+	[Button]
+	public void DebugGenerateWorldMap() {
+		WorldMapCreator.s.DebugGenerateWorldMap();
 	}
 }

@@ -25,6 +25,12 @@ public class EnemySwarmMaker : MonoBehaviour
     
     public AudioClip[] enemyEnterSounds;
     public AudioClip[] enemyDieSounds;
+    
+    
+    public bool isTeleporting = false;
+    public Vector2 teleportTiming = new Vector2(10, 30);
+
+    public bool isStealing = false;
 
     public Sprite GetGunSprite() {
         var gunModule = enemyPrefab.GetComponentInChildren<GunModule>();
@@ -36,8 +42,11 @@ public class EnemySwarmMaker : MonoBehaviour
         }
     }
 
-    public void SetData(float data) {
+    public float currentXSpread = 0;
+    public float xSpreadAdd = 0;
+    public float SetData(float data) {
         var totalCount = Mathf.RoundToInt(data);
+        currentXSpread = 0;
 
         if (totalCount == 1) {
             var buggy = Instantiate(enemyPrefab, transform);
@@ -58,13 +67,19 @@ public class EnemySwarmMaker : MonoBehaviour
                     var pos = new Vector3(Mathf.Sin(radians * i), 0, Mathf.Cos(radians * i));
 
                     var buggy = Instantiate(enemyPrefab, transform);
-                    buggy.transform.localPosition = pos * spread;
+                    var posWithSpread = pos * spread;
+                    buggy.transform.localPosition = posWithSpread;
+                    currentXSpread = Mathf.Max(currentXSpread, posWithSpread.x);
                     activeEnemies += 1;
                 }
 
                 n++;
             }
         }
+
+        currentXSpread += xSpreadAdd;
+
+        return currentXSpread;
     }
 
     public void EnemyDeath(bool playDeathSounds = true) {

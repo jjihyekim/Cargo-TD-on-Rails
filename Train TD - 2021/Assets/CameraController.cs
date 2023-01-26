@@ -56,6 +56,8 @@ public class CameraController : MonoBehaviour {
     public float snapZoomCutoff = 2f;
 
     public bool isSnappedToTrain = false;
+    public bool isSnappedToTransform = false;
+    public Transform snapTarget;
     public float minSnapDistance = 2f;
 
     public bool canEdgeMove = false;
@@ -98,7 +100,7 @@ public class CameraController : MonoBehaviour {
             if (canEdgeMove)
                 ProcessScreenCorners(mousePos);
 
-            if (!isSnappedToTrain)
+            if (!isSnappedToTransform)
                 ProcessMovementInput(moveAction.action.ReadValue<Vector2>(), wasdSpeed);
             else
                 ProcessMovementSnapped(moveAction.action.ReadValue<Vector2>(), snappedwasdDelay);
@@ -121,14 +123,14 @@ public class CameraController : MonoBehaviour {
             var delta = mousePosLastFrame.x-mousePos.x;
             /*if (!isRight)
                 delta = -delta;*/
-            rotationAngleTarget += delta * middleMoveSpeed * Time.deltaTime;
+            rotationAngleTarget += delta * middleMoveSpeed * Time.unscaledDeltaTime;
 
             isRight = rotationAngleTarget > 0;
 
             rotationAngleTarget = Mathf.Clamp(rotationAngleTarget, minAngle, maxAngle);
         } else {
             if (Mathf.Abs(Mathf.Abs(rotationAngleTarget) - rotationAngle) < snapToDefaultAngleDistance) {
-                rotationAngleTarget = Mathf.MoveTowards(rotationAngleTarget, isRight? rotationAngle : -rotationAngle, 10 * Time.deltaTime);
+                rotationAngleTarget = Mathf.MoveTowards(rotationAngleTarget, isRight? rotationAngle : -rotationAngle, 10 * Time.unscaledDeltaTime);
             }
         }
 
@@ -139,12 +141,12 @@ public class CameraController : MonoBehaviour {
         //var centerRotTarget = Quaternion.Euler(0, isRight ? -rotationAngleTarget : rotationAngleTarget, 0);
         var centerRotTarget = Quaternion.Euler(0, -rotationAngleTarget, 0);
 
-        cameraCenter.transform.rotation = Quaternion.Lerp(cameraCenter.transform.rotation, centerRotTarget, rotLerpSpeed * Time.deltaTime);
+        cameraCenter.transform.rotation = Quaternion.Lerp(cameraCenter.transform.rotation, centerRotTarget, rotLerpSpeed * Time.unscaledDeltaTime);
 
         var targetPos = cameraOffset.position + cameraOffset.forward * currentZoom;
         var targetRot = cameraOffset.rotation;
-        cameraLerpDummy.transform.position = Vector3.Lerp(cameraLerpDummy.transform.position, targetPos, posLerpSpeed * Time.deltaTime);
-        cameraLerpDummy.transform.rotation = Quaternion.Lerp(cameraLerpDummy.transform.rotation, targetRot, rotLerpSpeed * Time.deltaTime);
+        cameraLerpDummy.transform.position = Vector3.Lerp(cameraLerpDummy.transform.position, targetPos, posLerpSpeed * Time.unscaledDeltaTime);
+        cameraLerpDummy.transform.rotation = Quaternion.Lerp(cameraLerpDummy.transform.rotation, targetRot, rotLerpSpeed * Time.unscaledDeltaTime);
 
         // lerp affected real zoom
         realZoom = Vector3.Distance(cameraLerpDummy.transform.position, cameraOffset.position);
@@ -162,21 +164,7 @@ public class CameraController : MonoBehaviour {
         currentZoom = Mathf.Clamp(currentZoom, zoomLimit.x, zoomLimit.y);
         if (Mathf.Abs(value) > 0.1) {
             CancelInvoke(nameof(SnapZoom));
-            Invoke(nameof(SnapZoom),0.7f);
-        }
-
-        if (isSnappedToMap) {
-            isSnappedToTrain = false;
-        } else {
-            if (currentZoom >= snapZoomCutoff) {
-                if (!isSnappedToTrain) {
-                    if (SnapToNearestCart()) {
-                        isSnappedToTrain = true;
-                    }
-                }
-            } else {
-                isSnappedToTrain = false;
-            }
+            Invoke(nameof(SnapZoom), 0.7f);
         }
     }
 
@@ -262,7 +250,7 @@ public class CameraController : MonoBehaviour {
         
         var transformed = cameraOffsetFlat.TransformDirection(delta);
         
-        cameraCenter.position += transformed * multiplier * Time.deltaTime;
+        cameraCenter.position += transformed * multiplier * Time.unscaledDeltaTime;
 
         Transform topRight = isSnappedToMap ? mapCameraCornerTopRight : cameraCornerTopRight;
         Transform bottomLeft = isSnappedToMap ? mapCameraCornerBottomLeft : cameraCornerBottomLeft;
@@ -284,34 +272,118 @@ public class CameraController : MonoBehaviour {
     
     
 
-    private int targetCart = -1;
     private float snappedMoveTimer = 0;
     public float snappedMovementLerp = 1f;
     void ProcessMovementSnapped(Vector2 value, float delay) {
-        var carts = Train.s.carts;
+        if (snapTarget == null) {
+            UnSnap();
+            return;
+        }
+        
+        cameraCenter.position = Vector3.Lerp(cameraCenter.position, snapTarget.position + snapOffset, snappedMovementLerp*Time.unscaledDeltaTime);
 
-        cameraCenter.position = Vector3.Lerp(cameraCenter.position, carts[targetCart].position, snappedMovementLerp*Time.deltaTime); 
+        if (isSnappedToTrain) {
+            if (snappedMoveTimer <= 0) {
+                if (Mathf.Abs(value.x) > 0.1f) {
+                    var nextBuilding = GetNextBuildingInSameSlot(value.x > 0, snappedTrainBuilding.mySlot, snappedTrainBuilding.mySlotIndex);
+                    if (nextBuilding != null) {
+                        SnapToTrainModule(nextBuilding);
+                        PlayerModuleSelector.s.ActivateActionDisplayOnTrainBuilding(snappedTrainBuilding);
+                    }
+                    snappedMoveTimer = delay;
+                }
 
-        if (snappedMoveTimer <= 0) {
-            if (value.x < -0.1f || value.y < -0.1f) {
-                targetCart += 1;
-                snappedMoveTimer = delay;
-                targetCart = Mathf.Clamp(targetCart, 0, carts.Count-1);
-            }else if (value.x > 0.1f || value.y > 0.1f) {
-                targetCart -= 1;
-                snappedMoveTimer = delay;
-                targetCart = Mathf.Clamp(targetCart, 0, carts.Count-1);
+                if (Mathf.Abs(value.y) > 0.1f) {
+                    var nextBuilding = GetNextBuildingInTheNextSlot(value.y > 0, snappedTrainBuilding.mySlot, snappedTrainBuilding.mySlot.GetCart().index);
+                    
+                    if (nextBuilding != null) {
+                        SnapToTrainModule(nextBuilding);
+                        PlayerModuleSelector.s.ActivateActionDisplayOnTrainBuilding(snappedTrainBuilding);
+                    }
+                    
+                    snappedMoveTimer = delay;
+                }
+
             }
+        } else {
+            isSnappedToTransform = false;
         }
 
         if (value.sqrMagnitude < 0.1f) {
             snappedMoveTimer = 0;
         }
 
-        snappedMoveTimer -= Time.deltaTime;
+        snappedMoveTimer -= Time.unscaledDeltaTime;
     }
 
-    bool SnapToNearestCart() {
+    TrainBuilding GetNextBuildingInSameSlot(bool isForward, Slot activeSlot, int activeIndex) {
+        var slotCount = activeSlot.myBuildings.Length;
+        if (isForward) {
+            var nextIndex = activeIndex;
+            for (int i = 0; i < slotCount; i++) {
+                nextIndex = (nextIndex + 1) % slotCount;
+
+                var nextBuilding = activeSlot.myBuildings[nextIndex];
+                if (nextBuilding != null && nextBuilding != snappedTrainBuilding && nextBuilding.canSelect) {
+                    return activeSlot.myBuildings[nextIndex];
+                }
+            }
+        } else {
+            var nextIndex = activeIndex;
+            for (int i = 0; i < slotCount; i++) {
+                nextIndex = (nextIndex + (slotCount-1)) % slotCount; // +2 actually makes us go -1 because modulo 3
+
+                var nextBuilding = activeSlot.myBuildings[nextIndex];
+                if (nextBuilding != null && nextBuilding != snappedTrainBuilding && nextBuilding.canSelect) {
+                    return activeSlot.myBuildings[nextIndex];
+                }
+            }
+        }
+        
+        return null;
+    }
+    
+    TrainBuilding GetNextBuildingInTheNextSlot(bool isForward, Slot activeSlot, int slotIndex) {
+        var cartCount = Train.s.carts.Count;
+        if (isForward) {
+            var nextIndex = slotIndex;
+            for (int i = 0; i < cartCount; i++) {
+                
+                if (!activeSlot.isFrontSlot) {
+                    activeSlot = activeSlot.GetCart().frontSlot;
+                } else {
+                    nextIndex = (nextIndex + (cartCount-1)) % cartCount; // +2 actually makes us go -1 because modulo 3
+                    activeSlot = Train.s.carts[nextIndex].GetComponent<Cart>().backSlot;
+                }
+
+                var buildingInSlot = GetNextBuildingInSameSlot(true, activeSlot, -1);
+
+                if (buildingInSlot != null && buildingInSlot.canSelect) {
+                    return buildingInSlot;
+                }
+            }
+        } else {
+            var nextIndex = slotIndex;
+            for (int i = 0; i < cartCount; i++) {
+                
+                if (activeSlot.isFrontSlot) {
+                    activeSlot = activeSlot.GetCart().backSlot;
+                } else {
+                    nextIndex = (nextIndex + 1) % cartCount;
+                    activeSlot = Train.s.carts[nextIndex].GetComponent<Cart>().frontSlot;
+                }
+
+                var buildingInSlot = GetNextBuildingInSameSlot(true, activeSlot, -1);
+
+                if (buildingInSlot != null && buildingInSlot.canSelect) {
+                    return buildingInSlot;
+                }
+            }
+        }
+        return null;
+    }
+
+    /*public bool SnapToNearestCart() {
         var carts = Train.s.carts;
         var minDist = float.MaxValue;
         if (!snappedToTrainLastFrame) {
@@ -326,8 +398,36 @@ public class CameraController : MonoBehaviour {
                 }
             }
         }
-
+        
         return minDist < minSnapDistance;
+    }*/
+
+    public TrainBuilding snappedTrainBuilding;
+    public Vector3 snapOffset;
+    public void SnapToTrainModule(TrainBuilding module) {
+        if (module.myRotation == TrainBuilding.Rots.right && isRight) {
+            FlipCamera(new InputAction.CallbackContext());
+        }else if (module.myRotation == TrainBuilding.Rots.left && !isRight) {
+            FlipCamera(new InputAction.CallbackContext());
+        }
+
+        snappedTrainBuilding = module;
+        snapTarget = module.transform;
+        snapOffset = Vector3.down * 0.75f;
+        isSnappedToTransform = true;
+        isSnappedToTrain = true;
+    }
+
+    public void SnapToTransform(Transform target) {
+        snapTarget = target;
+        snapOffset = Vector3.down * 0.5f;
+        isSnappedToTransform = true;
+        isSnappedToTrain = false;
+    }
+
+    public void UnSnap() {
+        isSnappedToTransform = false;
+        isSnappedToTrain = false;
     }
 
 
@@ -352,7 +452,7 @@ public class CameraController : MonoBehaviour {
 
     public void ProcessDirectControl(Vector2 stickInput) {
         var realInput = stickInput*gamepadSensitivity + Mouse.current.delta.ReadValue() * mouseSensitivity;
-        realInput *= Time.deltaTime;
+        realInput *= Time.unscaledDeltaTime;
 
         rotTarget += realInput;
 
@@ -361,10 +461,10 @@ public class CameraController : MonoBehaviour {
         
         var targetPos = directControlTransform.position;
         var targetRot = directControlTransform.rotation * xQuaternion * yQuaternion;
-        cameraLerpDummy.transform.position = Vector3.Lerp(cameraLerpDummy.transform.position, targetPos, posLerpSpeed * Time.deltaTime);
+        cameraLerpDummy.transform.position = Vector3.Lerp(cameraLerpDummy.transform.position, targetPos, posLerpSpeed * Time.unscaledDeltaTime);
 
         if (rotLerping) {
-            cameraLerpDummy.transform.rotation = Quaternion.Lerp(cameraLerpDummy.transform.rotation, targetRot, rotLerpSpeed * Time.deltaTime);
+            cameraLerpDummy.transform.rotation = Quaternion.Lerp(cameraLerpDummy.transform.rotation, targetRot, rotLerpSpeed * Time.unscaledDeltaTime);
             if (Quaternion.Angle(cameraLerpDummy.transform.rotation, targetRot) < 5) {
                 rotLerping = false;
             }

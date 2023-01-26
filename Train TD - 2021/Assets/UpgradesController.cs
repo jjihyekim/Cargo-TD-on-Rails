@@ -145,7 +145,7 @@ public class UpgradesController : MonoBehaviour {
 	public void GetUpgrade(Upgrade toGet) {
 		var mySave = DataSaver.s.GetCurrentSave();
 		if (!toGet.isUnlocked) {
-			mySave.currentRun.upgrades.Add(toGet.upgradeUniqueName);
+			//mySave.currentRun.upgrades.Add(toGet.upgradeUniqueName);
 			
 			toGet.isUnlocked = true;
 			toGet.ApplyUpgradeEffects();
@@ -165,9 +165,20 @@ public class UpgradesController : MonoBehaviour {
 				results = GetUpgradesFromList(tier1Upgrades);
 				break;
 			case 2:
-				results = GetUpgradesFromList(tier2Upgrades);
+				if (Random.value > 0.5f) {
+					results = GetUpgradesFromList(tier2Upgrades);
+				} else {
+					results = GetUpgradesFromList(tier1Upgrades);
+				}
 				break;
 			case 3:
+				if (Random.value > 0.5f) {
+					results = GetUpgradesFromList(tier3Upgrades);
+				} else if(Random.value > 0.5f){
+					results = GetUpgradesFromList(tier2Upgrades);
+				} else {
+					results = GetUpgradesFromList(tier1Upgrades);
+				}
 				results = GetUpgradesFromList(tier3Upgrades);
 				break;
 			default:

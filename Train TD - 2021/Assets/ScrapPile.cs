@@ -39,6 +39,13 @@ public class ScrapPile : MonoBehaviour {
         PickTarget();
     }
 
+    private bool grantAwardToPlayer = true;
+    public void CollectPileWithTarget(Transform _target) {
+        isCollected = true;
+        target = _target;
+        grantAwardToPlayer = false;
+    }
+
     private void PickTarget() {
         var distance = float.MaxValue;
         for (int i = 0; i < LevelReferences.s.train.carts.Count; i++) {
@@ -62,7 +69,7 @@ public class ScrapPile : MonoBehaviour {
         if (target == null) {
             PickTarget();
             if (target == null) {
-                enabled = false;
+                Destroy(gameObject);
                 return;
                 
             }
@@ -73,7 +80,8 @@ public class ScrapPile : MonoBehaviour {
             speed += Time.deltaTime * acc;
             
             if (distance < 0.01f) {
-                MoneyController.s.ModifyResource(myType, scrapAmount);
+                if(grantAwardToPlayer)
+                    MoneyController.s.ModifyResource(myType, scrapAmount);
 
                 Destroy(gameObject);
             }

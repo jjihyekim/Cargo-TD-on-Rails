@@ -5,6 +5,7 @@ using UnityEngine;
 
 public class EngineModule : MonoBehaviour, IActiveDuringCombat, IActiveDuringShopping {
    public int enginePower = 100;
+   public bool isFreePower = false;
    private void OnEnable() {
       SpeedController.s.AddEngine(this);
    }

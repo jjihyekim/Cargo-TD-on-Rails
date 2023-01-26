@@ -9,8 +9,10 @@ using UnityEngine;
 public class LevelData {
 	[HideInInspector]
 	public string levelName = "unset";
-	
+
+	[HideInInspector]
 	public bool isEncounter = false;
+	public bool isBossLevel = false;
 
 	public EnemyOnPathData[] enemiesOnPath;
 	public EnemyDynamicSpawnData[] dynamicSpawnEnemies;

@@ -47,17 +47,19 @@ public class MoneyController : MonoBehaviour {
     public float ammoPerSecond = 0f;
 
     public void UpdateBasedOnLevelData() {
-        var resources = DataSaver.s.GetCurrentSave().currentRun.myResources;
-        
-        scraps = resources.scraps;
-        maxScraps = resources.maxScraps;
-        myScraps.SetMaxScrap(resources.maxScraps);
-        myScraps.SetScrap(scraps);
-        
-        ammo = resources.ammo;
-        maxAmmo = resources.maxAmmo;
-        myAmmo.SetMaxScrap(resources.maxAmmo);
-        myAmmo.SetScrap(resources.ammo);
+        if (DataSaver.s.GetCurrentSave().isInARun) {
+            var resources = DataSaver.s.GetCurrentSave().currentRun.myResources;
+
+            scraps = resources.scraps;
+            maxScraps = resources.maxScraps;
+            myScraps.SetMaxScrap(resources.maxScraps);
+            myScraps.SetScrap(scraps);
+
+            ammo = resources.ammo;
+            maxAmmo = resources.maxAmmo;
+            myAmmo.SetMaxScrap(resources.maxAmmo);
+            myAmmo.SetScrap(resources.ammo);
+        }
     }
 
 

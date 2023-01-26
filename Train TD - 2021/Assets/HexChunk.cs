@@ -5,6 +5,7 @@ using Unity.Burst;
 using Unity.Collections;
 using UnityEngine;
 using Unity.Jobs;
+using UnityEngine.Rendering;
 
 public class HexChunk : MonoBehaviour {
     //public HexCell[,] myCells;
@@ -99,6 +100,7 @@ public class HexChunk : MonoBehaviour {
         }
     }
 
+    public int batchSize = 1023; //max 1023
     public void FinalizeBatches() {
 	    print($"Got {tempBatches.Count} tempBatches to convert");
 	    batches = new List<InstancingBatch>();
@@ -107,22 +109,22 @@ public class HexChunk : MonoBehaviour {
 	    for (int i = 0; i < tempBatches.Count; i++) {
 		    var splitBatch = tempBatches[i];
 		    var posLength = splitBatch.positions.Count;
-		    for (int j = 0; j < splitBatch.positions.Count; j+=1023) {
-			    var batchSize = Mathf.Min(1023, posLength - j);
+		    for (int j = 0; j < splitBatch.positions.Count; j+=batchSize) {
+			    var curBatchSize = Mathf.Min(batchSize, posLength - j);
 			    var newBatch = new InstancingBatch() {
 				    material = splitBatch.material,
 				    mesh = splitBatch.mesh,
-				    localPositions = new NativeArray<Matrix4x4>(batchSize, Allocator.Persistent),
-				    worldPositions = new NativeArray<Matrix4x4>(batchSize, Allocator.Persistent)
+				    localPositions = new NativeArray<Matrix4x4>(curBatchSize, Allocator.Persistent),
+				    worldPositions = new NativeArray<Matrix4x4>(curBatchSize, Allocator.Persistent)
 			    };
 
-			    var split = splitBatch.positions.GetRange(j, batchSize);
-			    for (int k = 0; k < batchSize; k++) {
+			    var split = splitBatch.positions.GetRange(j, curBatchSize);
+			    for (int k = 0; k < curBatchSize; k++) {
 				    newBatch.localPositions[k] = split[k];
 			    }
 
 			    newBatch.initialized = true;
-			    newBatch.outputMatrix = new Matrix4x4[batchSize];
+			    newBatch.outputMatrix = new Matrix4x4[curBatchSize];
 
 
 			    /*var propertyBlock = new MaterialPropertyBlock();
@@ -247,11 +249,15 @@ public class HexChunk : MonoBehaviour {
 					// Schedule job to run immediately on main thread. 
 					job.Run(worldPositions.Length);
 					//batch.localToWorldPosJob = job.Schedule(worldPositions.Length, 64);
-				} //else {
-
-				batch.worldPositions.CopyTo(batch.outputMatrix);
-				Graphics.DrawMeshInstanced(batch.mesh, 0, batch.material, batch.outputMatrix);
-				//}
+					
+					batch.worldPositions.CopyTo(batch.outputMatrix);
+				} else {
+					batch.localPositions.CopyTo(batch.outputMatrix);
+				}
+				
+				Graphics.DrawMeshInstanced(batch.mesh, 0, batch.material, batch.outputMatrix, 
+					batch.outputMatrix.Length, null, ShadowCastingMode.On, true, // useless things that i need to pass just to be able to pass the layer var
+					13);
 			}
 		}
 	}

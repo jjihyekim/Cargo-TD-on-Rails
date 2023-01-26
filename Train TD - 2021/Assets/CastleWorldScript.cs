@@ -9,6 +9,7 @@ public class CastleWorldScript : MonoBehaviour {
     
     public Color travelableColor = Color.magenta;
     public Color playerHereColor = Color.cyan;
+    public Color defaultColor = Color.cyan;
 
     public Transform gfxParent;
     
@@ -29,6 +30,13 @@ public class CastleWorldScript : MonoBehaviour {
             outline.enabled = isOpen;
         }
     }
+
+    public void Refresh() {
+        playerIndicator.SetActive(false);
+        if(myInfo.isPlayerHere)
+            SetPlayerHere();
+        
+    }
     
     public void Initialize(StarState info) {
         myInfo = info;
@@ -40,6 +48,8 @@ public class CastleWorldScript : MonoBehaviour {
 
         /*if(myInfo.isPlayerHere)
             SetPlayerHere();*/
+        
+        Refresh();
     }
 
 

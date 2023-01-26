@@ -11,11 +11,17 @@ public class EncounterRequirement : MonoBehaviour
     public ResourceTypes myType;
     public int amount = 50;
     public bool randomizeAmount = true;
+    public bool randomizeALot = false;
     readonly float randomPercent = 0.1f;
+    readonly float randomALotPercent = 0.5f;
 
     public void RandomizeRequirement() {
         if (randomizeAmount) {
-            amount = (int)(amount * (1 + Random.Range(-randomPercent, randomPercent)));
+            if (randomizeALot) {
+                amount = (int)(amount * (1 + Random.Range(-randomALotPercent, randomALotPercent)));
+            } else {
+                amount = (int)(amount * (1 + Random.Range(-randomPercent, randomPercent)));
+            }
         }
     }
 

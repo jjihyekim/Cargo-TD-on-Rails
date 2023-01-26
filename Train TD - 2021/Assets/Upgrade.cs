@@ -29,7 +29,7 @@ public class Upgrade : ScriptableObject {
     public virtual void Initialize() {
         var mySave = DataSaver.s.GetCurrentSave();
 
-        if (parentUpgrade == this) {
+        /*if (parentUpgrade == this) {
             isUnlocked = true;
         } else {
 
@@ -38,15 +38,16 @@ public class Upgrade : ScriptableObject {
             if (index != -1) {
                 isUnlocked = true;
             }
-        }
+        }*/
+        isUnlocked = true;
 
         ApplyUpgradeEffects();
     }
 
-    void UnlockUpgrade() {
+    /*void UnlockUpgrade() {
         var mySave = DataSaver.s.GetCurrentSave();
         mySave.currentRun.upgrades.Add(upgradeUniqueName);
-    }
+    }*/
 
     public void ApplyUpgradeEffects() {
         _ApplyUniqueName();

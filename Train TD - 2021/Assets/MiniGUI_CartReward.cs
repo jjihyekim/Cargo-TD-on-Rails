@@ -18,7 +18,7 @@ public class MiniGUI_CartReward : MonoBehaviour
 
     public void GetRewards() {
         DataSaver.s.GetCurrentSave().currentRun.myTrain.myCarts.Add(new DataSaver.TrainState.CartState());
-        Train.s.DrawTrain(DataSaver.s.GetCurrentSave().currentRun.myTrain);
+        Train.s.DrawTrainBasedOnSaveData();
         DataSaver.s.SaveActiveGame();
         
         MissionWinFinisher.s.ClearRewardWithIndex(rewardIndex);

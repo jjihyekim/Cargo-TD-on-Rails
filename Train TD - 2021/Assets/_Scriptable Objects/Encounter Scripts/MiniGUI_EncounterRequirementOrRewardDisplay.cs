@@ -40,11 +40,26 @@ public class MiniGUI_EncounterRequirementOrRewardDisplay : MonoBehaviour {
 	public void SetUp(EncounterReward reward) {
 		tooltipOnHoverOver = GetComponent<TooltipOnHoverOver>();
 		
-		if (reward.damageTrain) {
+		if (reward.damageTrain > 0) {
 			image.sprite = reward.icon;
 			image.color = cannotMeetRequirementColor;
 			amount.text = "";
-			tooltipOnHoverOver.tooltip.text = "Your train will take some damage";
+			var damageAmountText = "some";
+			switch (reward.damageTrain) {
+				case 1:
+					damageAmountText = "a little";
+					break;
+				case 2:
+					damageAmountText = "some";
+					break;
+				case 3:
+					damageAmountText = "a lot of";
+					break;
+				case 4:
+					damageAmountText = "so much";
+					break;
+			}
+			tooltipOnHoverOver.tooltip.text = $"Your train will take {damageAmountText} damage";
 			return;
 		}
 		

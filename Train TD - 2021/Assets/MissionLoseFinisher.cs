@@ -44,7 +44,7 @@ public class MissionLoseFinisher : MonoBehaviour {
                 { "distance", Mathf.RoundToInt(SpeedController.s.currentDistance / 10) *10},
                 { "time", Mathf.RoundToInt(SpeedController.s.currentTime/10) * 10},
                 
-                {"character", myChar},
+                {"character", myChar.uniqueName},
 				
                 { "remainingScraps", MoneyController.s.scraps },
                 { "remainingMoney", MoneyController.s.money },
@@ -70,6 +70,7 @@ public class MissionLoseFinisher : MonoBehaviour {
 
 
     public void BackToMenu() {
+        loseUI.SetActive(false);
         SettingsController.s.ResetRun();
         MusicPlayer.s.SwapMusicTracksAndPlay(false);
         //SceneLoader.s.BackToStarterMenuHardLoad();

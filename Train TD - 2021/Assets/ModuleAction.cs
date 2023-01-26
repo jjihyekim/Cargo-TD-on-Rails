@@ -78,7 +78,7 @@ public abstract class ModuleAction : UnlockableEffect {
 	protected abstract void _EngageAction();
 	protected virtual void _Update(){}
 
-	private void Update() {
+	public void Update() {
 		if (curCooldown > 0) {
 			curCooldown -= Time.deltaTime;
 			if (curCooldown < 0)

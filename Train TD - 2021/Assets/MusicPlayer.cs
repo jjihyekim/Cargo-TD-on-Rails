@@ -68,6 +68,7 @@ public class MusicPlayer : MonoBehaviour {
 	}
 
 	void CreateRandomClipOrder() {
+		clipOrder.Clear();
 		for (int i = 0; i < currentTracks.Length; i++) {
 			clipOrder.Add(i);
 		}

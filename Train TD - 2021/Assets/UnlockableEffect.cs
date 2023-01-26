@@ -11,8 +11,9 @@ public abstract class UnlockableEffect : MonoBehaviour {
 
     
     protected virtual void _Start() { }
-    void  Start()
-    {
+    public void  Start() {
+        isUnlocked = true;
+        
         if (!isUnlocked) {
             if (UpgradesController.s.unlockedUpgrades.Contains(unlockingUpgrade.upgradeUniqueName)) {
                 isUnlocked = true;

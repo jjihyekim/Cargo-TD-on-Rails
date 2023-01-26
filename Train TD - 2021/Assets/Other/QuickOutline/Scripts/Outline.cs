@@ -53,26 +53,20 @@ public class Outline : MonoBehaviour {
     public List<Vector3> data;
   }
 
-  [SerializeField]
-  private Mode outlineMode;
+  [SerializeField] private Mode outlineMode;
 
-  [SerializeField]
-  private Color outlineColor = Color.white;
+  [SerializeField] private Color outlineColor = Color.white;
 
-  [SerializeField, Range(0f, 10f)]
-  private float outlineWidth = 2f;
+  [SerializeField, Range(0f, 10f)] private float outlineWidth = 2f;
 
   [Header("Optional")]
-
   [SerializeField, Tooltip("Precompute enabled: Per-vertex calculations are performed in the editor and serialized with the object. "
-  + "Precompute disabled: Per-vertex calculations are performed at runtime in Awake(). This may cause a pause for large meshes.")]
+                           + "Precompute disabled: Per-vertex calculations are performed at runtime in Awake(). This may cause a pause for large meshes.")]
   private bool precomputeOutline;
 
-  [SerializeField, HideInInspector]
-  private List<Mesh> bakeKeys = new List<Mesh>();
+  [SerializeField, HideInInspector] private List<Mesh> bakeKeys = new List<Mesh>();
 
-  [SerializeField, HideInInspector]
-  private List<ListVector3> bakeValues = new List<ListVector3>();
+  [SerializeField, HideInInspector] private List<ListVector3> bakeValues = new List<ListVector3>();
 
   private Renderer[] renderers;
   private Material outlineMaskMaterial;
@@ -81,9 +75,8 @@ public class Outline : MonoBehaviour {
   private bool needsUpdate;
 
   void Awake() {
-
     // Cache renderers
-    renderers = GetComponentsInChildren<Renderer>();
+    renderers = GetComponentsInChildren<MeshRenderer>();
 
     // Instantiate outline materials
     outlineMaskMaterial = Instantiate(Resources.Load<Material>(@"Materials/OutlineMask"));
@@ -101,7 +94,9 @@ public class Outline : MonoBehaviour {
 
   void OnEnable() {
     foreach (var renderer in renderers) {
-
+      if(renderer.CompareTag("NoOutline"))
+        continue;
+      
       // Append outline shaders
       var materials = renderer.sharedMaterials.ToList();
 
@@ -139,7 +134,9 @@ public class Outline : MonoBehaviour {
 
   void OnDisable() {
     foreach (var renderer in renderers) {
-
+      if(renderer.CompareTag("NoOutline"))
+        continue;
+      
       // Remove outline shaders
       var materials = renderer.sharedMaterials.ToList();
 
@@ -162,7 +159,9 @@ public class Outline : MonoBehaviour {
     // Generate smooth normals for each mesh
     var bakedMeshes = new HashSet<Mesh>();
 
-    foreach (var meshFilter in GetComponentsInChildren<MeshFilter>()) {
+    foreach (var meshFilter in GetComponentsInChildren<MeshFilter>(true)) {
+      if(meshFilter.CompareTag("NoOutline"))
+        continue;
 
       // Skip duplicates
       if (!bakedMeshes.Add(meshFilter.sharedMesh)) {
@@ -180,8 +179,10 @@ public class Outline : MonoBehaviour {
   void LoadSmoothNormals() {
 
     // Retrieve or generate smooth normals
-    foreach (var meshFilter in GetComponentsInChildren<MeshFilter>()) {
-
+    foreach (var meshFilter in GetComponentsInChildren<MeshFilter>(true)) {
+      if(meshFilter.CompareTag("NoOutline"))
+        continue;
+      
       // Skip if smooth normals have already been adopted
       if (!registeredMeshes.Add(meshFilter.sharedMesh)) {
         continue;
@@ -195,12 +196,12 @@ public class Outline : MonoBehaviour {
       meshFilter.sharedMesh.SetUVs(3, smoothNormals);
     }
 
-    // Clear UV3 on skinned mesh renderers
-    foreach (var skinnedMeshRenderer in GetComponentsInChildren<SkinnedMeshRenderer>()) {
+    /*// Clear UV3 on skinned mesh renderers
+    foreach (var skinnedMeshRenderer in GetComponentsInChildren<SkinnedMeshRenderer>(true)) {
       if (registeredMeshes.Add(skinnedMeshRenderer.sharedMesh)) {
         skinnedMeshRenderer.sharedMesh.uv4 = new Vector2[skinnedMeshRenderer.sharedMesh.vertexCount];
       }
-    }
+    }*/
   }
 
   List<Vector3> SmoothNormals(Mesh mesh) {

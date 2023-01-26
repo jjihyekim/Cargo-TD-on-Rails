@@ -49,7 +49,7 @@ public class SoundscapeController : MonoBehaviour {
     }
 
     void PlayClip(AudioClip clip, float volume = 1f) {
-        if (clip != null && _source != null) {
+        if (clip != null && _source != null && MusicPlayer.s != null) {
             _source.PlayOneShot(clip, volume);
             MusicPlayer.s.TemporaryVolumeReduce(clip.length);
         } else {

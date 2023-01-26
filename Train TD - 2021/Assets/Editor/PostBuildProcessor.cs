@@ -5,6 +5,7 @@ using UnityEditor.Build;
 using UnityEditor.Build.Reporting;
 using UnityEngine;
 
+/*
 public class PostBuildProcessor : IPostprocessBuildWithReport
 {
     public void OnPostprocessBuild(BuildReport report)
@@ -25,8 +26,9 @@ public class PostBuildProcessor : IPostprocessBuildWithReport
         for (int i = 0; i < allSavePaths.Length; i++) {
             var dest = Path.Combine(directoryName, Path.GetFileName(allSavePaths[i]));
             File.Copy(allSavePaths[i], dest);
-        }*/
+        }#1#
     }
 
     public int callbackOrder { get; }
 }
+*/

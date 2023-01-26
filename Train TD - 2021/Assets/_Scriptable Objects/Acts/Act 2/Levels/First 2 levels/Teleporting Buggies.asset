@@ -13,35 +13,35 @@ MonoBehaviour:
   m_Name: Teleporting Buggies
   m_EditorClassIdentifier: 
   myData:
-    levelName: Smol Starts
+    levelName: Teleporting Buggies
     isEncounter: 0
     enemiesOnPath:
     - enemyIdentifier:
-        enemyUniqueName: BuggyAVC
-        enemyCount: 1
+        enemyUniqueName: TeleportingBuggyAVC
+        enemyCount: 2
       distanceOnPath: 30
       startMoving: 0
     - enemyIdentifier:
-        enemyUniqueName: BuggyPneumatic
+        enemyUniqueName: TeleportingBuggyCannon
         enemyCount: 2
       distanceOnPath: 60
       startMoving: 0
     - enemyIdentifier:
-        enemyUniqueName: BuggyAVC
-        enemyCount: 3
+        enemyUniqueName: TeleportingBuggyAVC
+        enemyCount: 5
       distanceOnPath: 100
       startMoving: 0
     - enemyIdentifier:
-        enemyUniqueName: BuggyCannon
+        enemyUniqueName: TeleportingBuggyGatling
         enemyCount: 3
       distanceOnPath: 150
       startMoving: 0
     dynamicSpawnEnemies:
     - enemyIdentifier:
-        enemyUniqueName: BuggyAVC
+        enemyUniqueName: TeleportingBuggyGatling
         enemyCount: 1
-      distanceFromTrain: 30
+      distanceFromTrain: 35
       firstSpawnTime: 30
-      spawnInterval: 40
+      spawnInterval: 30
       increaseInNumberInterval: 3
     missionDistance: 350

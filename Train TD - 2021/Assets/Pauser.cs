@@ -84,6 +84,8 @@ public class Pauser : MonoBehaviour {
         );
         
         TimeController.s.UnPause();
-        SceneLoader.s.BackToStarterMenuHardLoad();
+        
+        SceneLoader.s.BackToStarterMenu();
+        SceneLoader.s.afterTransferCalls.Enqueue(()=> MissionWinFinisher.s.Cleanup());
     }
 }

@@ -68,6 +68,15 @@ public class DistanceAndEnemyRadarController : MonoBehaviour {
             lastDistance = distance;
         }
     }
+
+    public void ClearRadar() {
+        for (int i = 0; i < unitDisplays.Count; i++) {
+            Destroy(unitDisplays[i]);
+        }
+        
+        myUnits.Clear();
+        unitDisplays.Clear();
+    }
 }
 
 public interface IShowOnDistanceRadar {

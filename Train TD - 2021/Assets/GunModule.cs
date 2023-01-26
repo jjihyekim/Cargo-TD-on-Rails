@@ -122,11 +122,19 @@ public class GunModule : MonoBehaviour, IComponentWithTarget, IActiveDuringComba
     }
     
     float GetDamageMultiplier() {
+        var dmgMul = 1f;
+        
         if (myCart != null) {
-            return 1f * myCart.damageModifier;
-        } else {
-            return 1f;
+            dmgMul *= myCart.damageModifier;
         }
+
+        if (isPlayer) {
+            dmgMul *= LevelReferences.s.playerDamageBuff;
+        } else {
+            dmgMul *= LevelReferences.s.enemyDamageBuff;
+        }
+
+        return dmgMul;
     }
 
 
@@ -171,12 +179,12 @@ public class GunModule : MonoBehaviour, IComponentWithTarget, IActiveDuringComba
                 var bullet = Instantiate(bulletPrefab, position + barrelEnd.forward * projectileSpawnOffset, rotation);
                 var muzzleFlash = Instantiate(muzzleFlashPrefab, position, rotation);
                 var projectile = bullet.GetComponent<Projectile>();
-                projectile.myOriginObject = this.gameObject;
+                projectile.myOriginObject = this.transform.root.gameObject;
                 projectile.damage = projectileDamage*GetDamageMultiplier();
                 //projectile.isTargetSeeking = true;
                 projectile.canPenetrateArmor = canPenetrateArmor;
                 
-                projectile.isPlayerBullet = isPlayer;
+                projectile.SetIsPlayer(isPlayer);
                 projectile.source = this;
 
                 projectile.onHitCallback = onHitCallback;
@@ -349,7 +357,7 @@ public class GunModule : MonoBehaviour, IComponentWithTarget, IActiveDuringComba
     }
 
     public int GetDamage() {
-        return (int)projectileDamage;
+        return (int)(projectileDamage*GetDamageMultiplier());
     }
     
     public void ActivateForCombat() {

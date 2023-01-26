@@ -6,12 +6,15 @@ using UnityEngine.UI;
 using Random = UnityEngine.Random;
 
 public class HexGrid : MonoBehaviour {
+	public static HexGrid s;
+
+	private void Awake() {
+		s = this;
+	}
 
 	public int flatDistance = 4;
 	public float terrainRandomnessMagnitude = 1f;
 	public float terrainSlope = 1f;
-
-	public Color defaultColor = Color.white;
 
 	private HexCell[] cells;
 
@@ -20,24 +23,13 @@ public class HexGrid : MonoBehaviour {
 
 
 	public Biome[] biomes;
-
-
+	
 	[Serializable]
 	public class Biome {
 		public GameObject groundPrefab;
 		public PrefabWithWeights[] sideDecor;
-		public GameObject sun;
-		public GameObject skybox;
-	}
-	
-	[Serializable]
-	public class PrefabWithWeights {
-		[HorizontalGroup(LabelWidth = 50)]
-		public GameObject prefab;
-		[HorizontalGroup(LabelWidth = 20, Width = 100)]
-		public float weight = 1f;
-		[HorizontalGroup(LabelWidth = 20, Width = 80)]
-		public bool allRotation = false;
+		public Light sun;
+		public SkyboxParametersScriptable skybox;
 	}
 
 	public List<Transform> hexParents = new List<Transform>();
@@ -64,6 +56,9 @@ public class HexGrid : MonoBehaviour {
 		var hexChunk = hexParent.GetComponent<HexChunk>();
 		hexChunk.Initialize();
 
+		if (!DataSaver.s.GetCurrentSave().isInARun)
+			biomeOverride = 0;
+
 		Biome currentBiome;
 		if (biomeOverride < 0) {
 			var targetBiome = DataSaver.s.GetCurrentSave().currentRun.map.GetPlayerStar().biome;
@@ -78,12 +73,11 @@ public class HexGrid : MonoBehaviour {
 		}
 
 		for (int i = 0; i < biomes.Length; i++) {
-			biomes[i].sun.SetActive(false);
-			biomes[i].skybox.SetActive(false);
+			biomes[i].sun.gameObject.SetActive(false);
 		}
+
 		
-		currentBiome.sun.SetActive(true);
-		currentBiome.skybox.SetActive(true);
+		currentBiome.skybox.SetActiveSkybox(currentBiome.sun, null);
 
 		var guideObj = Instantiate(currentBiome.groundPrefab, hexParent);
 
@@ -125,7 +119,7 @@ public class HexGrid : MonoBehaviour {
 					decorCount = 0;
 
 				for (int i = 0; i < decorCount; i++) {
-					var curDecorIndex = WeightedRandomRoll(currentBiome.sideDecor);
+					var curDecorIndex = PrefabWithWeights.WeightedRandomRoll(currentBiome.sideDecor);
 					var curDecor = decors[curDecorIndex];
 					var randomOffset = Random.insideUnitCircle * decorSpread;
 					curDecor.transform.localPosition = pos + new Vector3(randomOffset.x, 0, randomOffset.y);
@@ -158,31 +152,6 @@ public class HexGrid : MonoBehaviour {
 		//UpdateGrid(hexParent);
 	}
 
-	int WeightedRandomRoll(PrefabWithWeights[] F) {
-		var totalFreq = 0f;
-		for (int i = 0; i < F.Length; i++) {
-			totalFreq += F[i].weight;
-		}
-		
-		var roll = Random.Range(0,totalFreq);
-		// Ex: we roll 0.68
-		//   #0 subtracts 0.25, leaving 0.43
-		//   #1 subtracts 0.4, leaving 0.03
-		//   #2 is a $$anonymous$$t
-		var index = -1;
-		for(int i=0; i<F.Length; i++) {
-			if (roll <= F[i].weight) {
-				index=i; break;
-			}
-			roll -= F[i].weight;
-		}
-		// just in case we manage to roll 0.0001 past the $$anonymous$$ghest:
-		if(index==-1) 
-			index=F.Length-1;
-
-		return index;
-	}
-	
 	/*public void UpdateGrid(Transform hexParent) {
 		var hexChunk = hexParent.gameObject.GetComponent<HexChunk>();
 		hexChunk.ClearForeign();
@@ -211,9 +180,14 @@ public class HexGrid : MonoBehaviour {
 		biomeOverride = biome;
 		RefreshGrid();
 	}
-	void RefreshGrid() {
+	public void RefreshGrid() {
 		ClearGrids();
 		CreateChunks();
+		Invoke(nameof(MakeProbe), 0.01f);
+	}
+
+	void MakeProbe() {
+		transform.parent.GetComponentInChildren<ReflectionProbe>().RenderProbe();
 	}
 
 	public int gridCount = 3;
@@ -258,7 +232,7 @@ public class HexGrid : MonoBehaviour {
 			parent.transform.position += Vector3.back * delta;
 		}
 
-		if (distance > gridOffset) {
+		while (distance > gridOffset) {
 			distance -= gridOffset;
 			var lastHex = hexParents[0];
 			hexParents.RemoveAt(0);
@@ -267,7 +241,53 @@ public class HexGrid : MonoBehaviour {
 			lastHex.position = hexParents[hexParents.Count - 1].transform.position + Vector3.forward * gridOffset;
 			hexParents.Add(lastHex);
 		}
+		while (distance < 1) {
+			distance += gridOffset;
+			var lastHex = hexParents[hexParents.Count-1];
+			hexParents.RemoveAt(hexParents.Count-1);
+			lastHex.GetComponent<HexChunk>().ClearForeign();
+			//UpdateGrid(lastHex);
+			lastHex.position = hexParents[0].transform.position - Vector3.forward * gridOffset;
+			hexParents.Insert(0, lastHex);
+		}
 
 		lastRealDistance = SpeedController.s.currentDistance;
+	}
+}
+
+
+[Serializable]
+public class PrefabWithWeights {
+	[HorizontalGroup(LabelWidth = 50)]
+	public GameObject prefab;
+	[HorizontalGroup(LabelWidth = 20, Width = 100)]
+	public float weight = 1f;
+	[HorizontalGroup(LabelWidth = 20, Width = 80)]
+	public bool allRotation = false;
+	
+	
+	public static int WeightedRandomRoll(PrefabWithWeights[] F) {
+		var totalFreq = 0f;
+		for (int i = 0; i < F.Length; i++) {
+			totalFreq += F[i].weight;
+		}
+		
+		var roll = Random.Range(0,totalFreq);
+		// Ex: we roll 0.68
+		//   #0 subtracts 0.25, leaving 0.43
+		//   #1 subtracts 0.4, leaving 0.03
+		//   #2 is a $$anonymous$$t
+		var index = -1;
+		for(int i=0; i<F.Length; i++) {
+			if (roll <= F[i].weight) {
+				index=i; break;
+			}
+			roll -= F[i].weight;
+		}
+		// just in case we manage to roll 0.0001 past the $$anonymous$$ghest:
+		if(index==-1) 
+			index=F.Length-1;
+
+		return index;
 	}
 }

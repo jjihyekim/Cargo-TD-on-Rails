@@ -38,6 +38,8 @@ public class RangeVisualizer : MonoBehaviour {
     }
 
     void Start() {
+        targetingRenderer.gameObject.SetActive(false);
+        
         targeter = targetPicker.GetComponent<IComponentWithTarget>();
         trainBuilding = GetComponentInParent<TrainBuilding>();
         targetingRenderer.positionCount = 2;
@@ -50,10 +52,11 @@ public class RangeVisualizer : MonoBehaviour {
     }
 
 
+    private List<Vector3> points = new List<Vector3>();
     void DrawRangeEdge() {
         if (rangeEdgeRenderer.enabled) {
             var range = targetPicker.range;
-            var points = new List<Vector3>();
+            points.Clear();
             if (targeter != null) {
                 var origin = targeter.GetRangeOrigin();
                 if (origin != null) {

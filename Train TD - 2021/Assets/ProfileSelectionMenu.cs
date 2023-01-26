@@ -50,7 +50,7 @@ public class ProfileSelectionMenu : MonoBehaviour {
         }
     }
 
-    private void OpenProfileMenu() {
+    public void OpenProfileMenu() {
         for (int i = 0; i < monoToDisableInProfileMenu.Length; i++) {
             monoToDisableInProfileMenu[i].enabled = false;
         }
@@ -74,12 +74,19 @@ public class ProfileSelectionMenu : MonoBehaviour {
         
         if(drawDebugTrainInstead)
             Train.s.DrawTrain(debugTrain);
-        else
-            Train.s.DrawTrain(profileScreenTrain);
+        else {
+            if(!Train.s.isTrainDrawn)
+                Train.s.DrawTrain(profileScreenTrain);
+        }
         RangeVisualizer.SetAllRangeVisualiserState(false);
     }
 
     public void StartGame() {
+        SceneLoader.s.BackToStarterMenu();
+        SceneLoader.s.afterTransferCalls.Enqueue(() => DoTransfer());
+    }
+
+    void DoTransfer() {
         profileCameraSwithcer.Disengage();
         ProfileUI.SetActive(false);
 
@@ -98,16 +105,11 @@ public class ProfileSelectionMenu : MonoBehaviour {
         for (int i = 0; i < monoToDisableAfterProfileMenu.Length; i++) {
             monoToDisableAfterProfileMenu[i].enabled = false;
         }
-        
-        
-        SceneLoader.s.SetToStarterMenu();
-        RangeVisualizer.SetAllRangeVisualiserState(false);
-        StarterUIController.s.OpenStarterUI();
     }
 
     public void SaveChanged() {
         SceneLoader.s.autoOpenProfiles = true;
-        SceneLoader.s.OpenProfileScreen();
+        SceneLoader.s.OpenProfileScreen(true);
         //currentProfile.SetStats(DataSaver.s.GetCurrentSave());
     }
 

@@ -21,9 +21,17 @@ public class EnemyWave : MonoBehaviour, IShowOnDistanceRadar, ISpeedForEngineSou
     public Material deadlyMaterial;
     public Material safeMaterial;
 
+    public float waveSpawnXSpread = 0;
     public float myXOffset = 0;
     public float targetXOffset = 0;
 
+
+    private bool isTeleporting = false;
+    private Vector2 teleportTiming = Vector2.zero;
+
+    public bool isStealing = false;
+    public bool isLeaving = false;
+    
     public Sprite GetMainSprite() {
         return DataHolder.s.GetEnemy(myEnemy.enemyUniqueName).GetComponent<EnemySwarmMaker>().enemyIcon;
     }
@@ -38,7 +46,15 @@ public class EnemyWave : MonoBehaviour, IShowOnDistanceRadar, ISpeedForEngineSou
 
     public void SetUp(EnemyIdentifier data, float position, bool isMoving, bool _isLeft) {
         myEnemy = data;
-        mySpeed = DataHolder.s.GetEnemy(myEnemy.enemyUniqueName).GetComponent<EnemySwarmMaker>().speed;
+        var en = DataHolder.s.GetEnemy(myEnemy.enemyUniqueName);
+        var mySwarm = en.GetComponent<EnemySwarmMaker>();
+        if (mySwarm == null) {
+            Debug.LogError($"Enemy is missing swarm maker {en.gameObject.name} {data.enemyUniqueName}");
+        }
+        mySpeed = mySwarm.speed;
+        isTeleporting = mySwarm.isTeleporting;
+        teleportTiming = mySwarm.teleportTiming;
+        isStealing = mySwarm.isStealing;
         wavePosition = position;
         isWaveMoving = isMoving;
 
@@ -53,6 +69,8 @@ public class EnemyWave : MonoBehaviour, IShowOnDistanceRadar, ISpeedForEngineSou
         myXOffset = targetXOffset;
 
         DistanceAndEnemyRadarController.s.RegisterUnit(this);
+
+        teleportTimer = 0;
     }
 
     private void OnDestroy() {
@@ -69,11 +87,13 @@ public class EnemyWave : MonoBehaviour, IShowOnDistanceRadar, ISpeedForEngineSou
     public float targetDistanceOffset;
     public float currentDistanceOffset;
     public float targetDistChangeTimer;
+    public float teleportTimer;
+
+    private bool instantLerp = false;
     public void UpdateBasedOnDistance(float playerPos) {
         if (SceneLoader.s.isLevelInProgress) {
             distance = Mathf.Abs(playerPos - wavePosition);
-
-
+            
             if (!isWaveMoving) {
                 if (distance < 10)
                     isWaveMoving = true;
@@ -82,33 +102,67 @@ public class EnemyWave : MonoBehaviour, IShowOnDistanceRadar, ISpeedForEngineSou
             targetSpeed = Mathf.Min(mySpeed, Mathf.Max(distance, LevelReferences.s.speed) + 0.2f);
 
             if (isWaveMoving) {
-                if (playerPos < wavePosition) {
-                    targetSpeed = Mathf.FloorToInt(LevelReferences.s.speed - 1);
+                if (playerPos < wavePosition && !isLeaving) {
+                    targetSpeed = Mathf.Min(mySpeed,Mathf.FloorToInt(LevelReferences.s.speed - 1));
                 }
-
 
                 currentSpeed = Mathf.MoveTowards(currentSpeed, targetSpeed, speedChangeDelta * Time.deltaTime);
 
                 wavePosition += currentSpeed * Time.deltaTime;
             }
 
-            transform.position = Vector3.forward * (wavePosition - playerPos + currentDistanceOffset - 0.2f) + Vector3.left * myXOffset;
-            currentDistanceOffset = Mathf.MoveTowards(currentDistanceOffset, targetDistanceOffset, currentSpeed / 2f * Time.deltaTime);
+            var targetPos = Vector3.forward * (wavePosition - playerPos + currentDistanceOffset - 0.2f) + Vector3.left * myXOffset;
+            transform.position = Vector3.Lerp(transform.position,targetPos, 20*Time.deltaTime);
+            if (instantLerp) {
+                transform.position = targetPos;
+                instantLerp = false;
+            }
+            var effectiveSpeed = currentSpeed - slowAmount;
+            slowAmount -= slowDecay * Time.deltaTime;
+            slowAmount = Mathf.Clamp(slowAmount, 0, float.MaxValue);
+            if (slowAmount <= 0) {
+                ToggleSlowedEffect(false);
+            }
+            
+            currentDistanceOffset = Mathf.MoveTowards(currentDistanceOffset, targetDistanceOffset, effectiveSpeed / 2f * Time.deltaTime);
 
             targetDistChangeTimer -= Time.deltaTime;
-            if (targetDistChangeTimer <= 0) {
+            if (targetDistChangeTimer <= 0 && !isLeaving) {
                 targetDistChangeTimer = Random.Range(2f, 15f);
+                if (isStealing) {
+                    targetDistChangeTimer = Random.Range(15f, 25f);
+                }
                 SetTargetPosition();
             }
+            
+            if (isTeleporting) {
+                teleportTimer -= Time.deltaTime;
+                if (teleportTimer <= 0 && distance < 10) {
+                    teleportTimer = Random.Range(teleportTiming.x, teleportTiming.y);
+                    Teleport();
+                }
+                
+                if (distance > 30 && teleportTimer <= 0 && distance < 40) {
+                    teleportTimer = Random.Range(teleportTiming.y * 0.9f, teleportTiming.y * 1.1f);
+                    Teleport();
+                }
+            }
 
+            var showRouteDisplay = distance > 10 && distance < 60;
+            if (waveDisplay != null && !showRouteDisplay) {
+                PlayEnemyEnterSound();
+            }
 
-            if (distance > 10 && distance < 60) {
+            if (showRouteDisplay) {
                 CreateRouteDisplay();
             } else {
                 DestroyRouteDisplay();
             }
             
-            
+            if (distance > 100 && isLeaving) {
+                Destroy(gameObject);
+            }
+
             myXOffset = Mathf.MoveTowards(myXOffset, targetXOffset, 0.1f * Time.deltaTime * currentSpeed);
             
         } else if(SceneLoader.s.isLevelFinished()) {
@@ -116,28 +170,99 @@ public class EnemyWave : MonoBehaviour, IShowOnDistanceRadar, ISpeedForEngineSou
             wavePosition += currentSpeed * Time.deltaTime;
             currentSpeed = Mathf.MoveTowards(currentSpeed, targetSpeed, speedChangeDelta * Time.deltaTime);
             targetSpeed = mySpeed;
+            DestroyRouteDisplay();
+        }
+    }
+
+    private List<GameObject> teleportEffects = new List<GameObject>();
+    public void Teleport() {
+        targetDistChangeTimer = Random.Range(4f, 15f);
+        var cars = GetComponentsInChildren<Rigidbody>();
+        for (int i = 0; i < cars.Length; i++) {
+            var target = cars[i].transform;
+            var effect = Instantiate(LevelReferences.s.teleportStartEffect, target.transform.position,Quaternion.identity);
+            effect.transform.SetParent(target);
+            teleportEffects.Add(effect);
+        }
+        
+        Invoke(nameof(FinishTeleport), LevelReferences.s.teleportTime);
+    }
+
+    void FinishTeleport() {
+        for (int i = 0; i < teleportEffects.Count; i++) {
+            if (teleportEffects[i] != null) {
+                teleportEffects[i].transform.SetParent(null);
+            }
+        }
+
+        teleportEffects.Clear();
+
+        currentSpeed = LevelReferences.s.speed;
+        isLeft = !isLeft;
+        SetTargetPosition();
+        myXOffset = targetXOffset;
+        currentDistanceOffset = targetDistanceOffset;
+        wavePosition = SpeedController.s.currentDistance;
+        instantLerp = true;
+        
+        var cars = GetComponentsInChildren<Rigidbody>();
+        for (int i = 0; i < cars.Length; i++) {
+            var target = cars[i].transform;
+            Instantiate(LevelReferences.s.teleportCompleteEffect, target.transform.position, Quaternion.identity).transform.SetParent(target);
         }
     }
 
     private void SetTargetPosition() {
-        var trainLength = Train.s.GetTrainLength();
-        targetDistanceOffset = Random.Range(-trainLength, trainLength);
+        if (!isStealing) {
+            var trainLength = Train.s.GetTrainLength();
+            var halfLength = (trainLength / 2f) + DataHolder.s.cartLength;
+            targetDistanceOffset = Random.Range(-halfLength, halfLength);
 
-        targetXOffset = Random.Range(0.7f, 3.2f);
+            targetXOffset = Random.Range(0.7f+waveSpawnXSpread, 3.2f-waveSpawnXSpread);
+            if (isLeft)
+                targetXOffset = -targetXOffset;
+        } else {
+            SetTargetPositionStealing();
+        }
+    }
+
+    private ModuleStorage lastCargo;
+    void SetTargetPositionStealing() {
+        var cargos = Train.s.GetComponentsInChildren<ModuleStorage>();
+
+        ModuleStorage randomCargo = null;
+        for (int i = 0; i < 10; i++) {
+            randomCargo = cargos[Random.Range(0, cargos.Length)];
+
+            if(lastCargo == null)
+                break;
+            if (Vector3.Distance(randomCargo.transform.position, lastCargo.transform.position) > 0.01f) {
+                break;
+            }
+        }
+
+        if (randomCargo == null) {
+            return;
+        }
+
+        targetDistanceOffset = randomCargo.transform.position.z + Random.Range(-0.5f, 0.5f); // this works because the Train is at perfectly 0
+
+        targetXOffset = Random.Range(0.55f, 0.9f);
+        
+        GetComponentInChildren<StealerHarpoonModule>().SetTarget(randomCargo); // we are assuming stealers come in packs of 1
+        
         if (isLeft)
             targetXOffset = -targetXOffset;
     }
-
     void SpawnEnemy() {
         drawnEnemies = Instantiate(DataHolder.s.GetEnemy(myEnemy.enemyUniqueName), transform).GetComponent<EnemySwarmMaker>();
         drawnEnemies.transform.ResetTransformation();
-        drawnEnemies.SetData(myEnemy.enemyCount);
+        waveSpawnXSpread = drawnEnemies.SetData(myEnemy.enemyCount);
     }
 
     void DestroyRouteDisplay() {
         if (waveDisplay != null) {
             Destroy(waveDisplay.gameObject);
-            PlayEnemyEnterSound();
             //lineRenderer.enabled = false;
         }
     }
@@ -228,5 +353,59 @@ public class EnemyWave : MonoBehaviour, IShowOnDistanceRadar, ISpeedForEngineSou
 
     public float GetSpeed() {
         return currentSpeed;
+    }
+    
+    
+    public float slowAmount;
+    public float slowDecay = 0.1f;
+    public void AddSlow(float amount) {
+        slowAmount += amount;
+        ToggleSlowedEffect(true);
+    }
+    
+    public List<GameObject> activeSlowedEffects = new List<GameObject>();
+    private bool isSlowedOn = false;
+    void ToggleSlowedEffect(bool isOn) {
+        if (isOn && !isSlowedOn) {
+            var enemies = GetComponentsInChildren<EnemyHealth>();
+            for (int i = 0; i < enemies.Length; i++) {
+                var effect = Instantiate(LevelReferences.s.currentlySlowedEffect, enemies[i].transform.position, Quaternion.identity);
+                effect.transform.SetParent(enemies[i].transform);
+                activeSlowedEffects.Add(effect);
+            }
+
+            isSlowedOn = true;
+        }
+
+        if (!isOn && isSlowedOn) {
+            for (int i = 0; i < activeSlowedEffects.Count; i++) {
+                SmartDestroy(activeSlowedEffects[i].gameObject);
+            }
+            
+            activeSlowedEffects.Clear();
+            isSlowedOn = false;
+        }
+    }
+
+    void SmartDestroy(GameObject target) {
+        var particles = GetComponentsInChildren<ParticleSystem>();
+
+        foreach (var particle in particles) {
+            particle.transform.SetParent(null);
+            particle.Stop();
+            Destroy(particle.gameObject, 1f);
+        }
+            
+        Destroy(target);
+    }
+
+    public void Leave() {
+        isLeaving = true;
+        isStealing = false;
+        isTeleporting = false;
+        isWaveMoving = true;
+        
+        SetTargetPosition();
+        targetDistanceOffset = SpeedController.s.missionDistance;
     }
 }

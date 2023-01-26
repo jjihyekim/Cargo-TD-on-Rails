@@ -121,8 +121,10 @@ public class Slot : MonoBehaviour/*, IPointerEnterHandler, IPointerExitHandler*/
 		myBuildings[slot].transform.localPosition = Vector3.zero;
 		
 		GetComponentInParent<Cart>().SlotsAreUpdated();
-		if (GetComponentInParent<Train>())
+		if (GetComponentInParent<Train>()) {
 			GetComponentInParent<Train>().trainWeightDirty = true;
+			Train.s.trainUpdated?.Invoke();
+		}
 	}
 
 	public void RemoveBuilding(TrainBuilding building) {
@@ -139,7 +141,12 @@ public class Slot : MonoBehaviour/*, IPointerEnterHandler, IPointerExitHandler*/
 		var train = GetComponentInParent<Train>();
 		if (train != null) {
 			train.trainWeightDirty = true;
+			Train.s.trainUpdated?.Invoke();
 			train.trainUpdatedThroughNonBuildingActions?.Invoke();
 		}
+	}
+
+	public Cart GetCart() {
+		return GetComponentInParent<Cart>();
 	}
 }

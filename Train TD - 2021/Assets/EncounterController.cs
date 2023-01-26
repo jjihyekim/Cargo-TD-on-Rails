@@ -38,18 +38,21 @@ public class EncounterController : MonoBehaviour {
     public void EngageEncounter(LevelData data) {
         EngageEncounter(data.levelName);
     }
-    
+
+    public GameObject encounterObj;
     public void EngageEncounter(string encounterName) {
-        currentEncounter = Instantiate(DataHolder.s.GetEncounter(encounterName), Vector3.zero, Quaternion.identity).GetComponent<EncounterTitle>();
+        encounterObj = Instantiate(DataHolder.s.GetEncounter(encounterName), Vector3.zero, Quaternion.identity);
+        currentEncounter = encounterObj.GetComponent<EncounterTitle>();
         currentNode = currentEncounter.initialNode;
-        StartCoroutine(EncounterAnimation());
+        StartCoroutine(EncounterStartAnimation());
     }
 
     public GameObject fadeUI;
     public Image fadeOverlay;
     public float fadeDurations = 0.5f;
 
-    IEnumerator EncounterAnimation() {
+    private float a;
+    IEnumerator EncounterStartAnimation() {
         fadeUI.SetActive(true);
         StartCoroutine(FadeOverlay(0, 1, fadeDurations));
         
@@ -77,7 +80,7 @@ public class EncounterController : MonoBehaviour {
         float timer = 3f;
         
         float v = 2*dist/timer;
-        float a = v/timer;
+        a = v/timer;
 
 
         pos.z = -dist + (train.transform.position - Train.s.trainFront.position).z;
@@ -148,7 +151,8 @@ public class EncounterController : MonoBehaviour {
     public void MoveToNewNode(EncounterNode node) {
         if (node == null) {
             encounterTextUI.SetActive(false);
-            Invoke(nameof(EncounterComplete),0.5f);
+            Invoke(nameof(EncounterComplete), fadeDurations);
+            StartCoroutine(EncounterEndAnimation());
             return;
         }
 
@@ -171,6 +175,43 @@ public class EncounterController : MonoBehaviour {
         DataSaver.s.GetCurrentSave().currentRun.shopInitialized = false;
         MapController.s.FinishTravelingToStar();
         DataSaver.s.SaveActiveGame();
-        SceneLoader.s.BackToStarterMenuHardLoad();
+        SceneLoader.s.BackToStarterMenu();
+        SceneLoader.s.afterTransferCalls.Enqueue(() => DoComplete());
+    }
+    
+    
+    IEnumerator EncounterEndAnimation() {
+        var train = Train.s.gameObject;
+        camCont.enabled = false;
+
+        var pos = train.transform.position;
+        
+        
+        float timer = fadeDurations + SceneLoader.s.fadeTime;
+        
+        float v = 0;
+
+        while (timer > 0f) {
+            pos.z += v * Time.deltaTime;
+            v += a * Time.deltaTime;
+            train.transform.position = pos;
+
+            timer -= Time.deltaTime;
+            yield return null;
+        }
+
+        train.transform.position = Vector3.zero;
+        camCont.enabled = true;
+    }
+
+    void DoComplete() {
+        if (encounterObj != null) {
+            Destroy(encounterObj);
+        }
+        
+        for (int i = 0; i < stuffToDisableDuringEncounter.Length; i++) {
+            if(stuffToDisableDuringEncounter[i] != null)
+                stuffToDisableDuringEncounter[i].SetActive(true);
+        }
     }
 }

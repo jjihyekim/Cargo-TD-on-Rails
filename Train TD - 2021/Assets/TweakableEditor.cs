@@ -43,6 +43,6 @@ public class TweakableEditor : MonoBehaviour {
 	}
 
 	void Reload() {
-		SceneLoader.s.BackToStarterMenuHardLoad();
+		SceneLoader.s.BackToStarterMenu();
 	}
 }

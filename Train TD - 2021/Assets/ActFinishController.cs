@@ -39,10 +39,22 @@ public class ActFinishController : MonoBehaviour {
             return;
         }
         
+        SceneLoader.s.BackToStarterMenu(true);
+        SceneLoader.s.afterTransferCalls.Enqueue(() => FinishTransfer());
+    }
+
+    void FinishTransfer() {
         DataSaver.s.GetCurrentSave().currentRun.currentAct += 1;
         MapController.s.GenerateStarMap();
+        WorldMapCreator.s.GenerateWorldMap();
+        HexGrid.s.RefreshGrid();
+
         DataSaver.s.SaveActiveGame();
         MusicPlayer.s.SwapMusicTracksAndPlay(false);
-        SceneLoader.s.BackToStarterMenuHardLoad();
+        MissionWinFinisher.s.Cleanup();
+        
+        act1WinUI.SetActive(false);
+        act2WinUI.SetActive(false);
+        act3WinUI.SetActive(false);
     }
 }

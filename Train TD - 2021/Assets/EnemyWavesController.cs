@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Sirenix.OdinInspector;
 using UnityEngine;
 using UnityStandardAssets.Utility;
 using Random = UnityEngine.Random;
@@ -17,7 +18,17 @@ public class EnemyWavesController : MonoBehaviour {
 	public List<EnemyWave> waves = new List<EnemyWave>();
 
 	public bool enemiesInitialized = false;
+
+	[NonSerialized]
+	public bool debugNoRegularSpawns = false;
     public void UpdateBasedOnLevelData() {
+	    Cleanup();
+	    if(debugNoRegularSpawns)
+		    return;
+	    
+	    if(!DataSaver.s.GetCurrentSave().isInARun || SceneLoader.s.currentLevel == null || SceneLoader.s.currentLevel.isEncounter)
+		    return;
+	    
 	    enemiesInitialized = !SceneLoader.s.currentLevel.isEncounter;
 	    if (enemiesInitialized) {
 		    var enemiesOnPath = SceneLoader.s.currentLevel.enemiesOnPath;
@@ -27,6 +38,12 @@ public class EnemyWavesController : MonoBehaviour {
 	    }
     }
 
+
+    
+    public void DebugEnemySpawn(EnemyIdentifier debugEnemy, int distance) {
+	    SpawnEnemy(debugEnemy, SpeedController.s.currentDistance + distance, false);
+    }
+
     public void SpawnEnemy(EnemyOnPathData data) {
 	    SpawnEnemy(data.enemyIdentifier, data.distanceOnPath, data.startMoving);
     }
@@ -34,7 +51,8 @@ public class EnemyWavesController : MonoBehaviour {
     public int maxConcurrentWaves = 6;
 
     void SpawnEnemy(EnemyIdentifier enemyIdentifier, float distance, bool startMoving) {
-	    var wave = Instantiate(enemyWavePrefab, Vector3.forward*distance, Quaternion.identity).GetComponent<EnemyWave>();
+	    var playerDistance = SpeedController.s.currentDistance;
+	    var wave = Instantiate(enemyWavePrefab, Vector3.forward*(distance-playerDistance), Quaternion.identity).GetComponent<EnemyWave>();
 	    wave.transform.SetParent(transform);
 	    wave.SetUp(enemyIdentifier, distance, startMoving, Random.value > 0.5f);
 	    waves.Add(wave);
@@ -50,7 +68,10 @@ public class EnemyWavesController : MonoBehaviour {
 			    waves[i].UpdateBasedOnDistance(playerDistance);
 		    }
 
-
+		    
+		    if(debugNoRegularSpawns)
+			    return;
+		    
 		    if (waves.Count < maxConcurrentWaves) {
 			    for (int i = 0; i < SceneLoader.s.currentLevel.dynamicSpawnEnemies.Length; i++) {
 				    var enemy = SceneLoader.s.currentLevel.dynamicSpawnEnemies[i];
@@ -60,7 +81,7 @@ public class EnemyWavesController : MonoBehaviour {
 						    enemy.curTime = 0;
 
 						    enemy.curIncreaseInNumberCount += 1;
-						    if (enemy.curIncreaseInNumberCount >= enemy.increaseInNumberInterval) {
+						    if (enemy.increaseInNumberInterval >= 0  && enemy.curIncreaseInNumberCount >= enemy.increaseInNumberInterval) {
 							    enemy.enemyIdentifier.enemyCount += 1;
 							    enemy.curIncreaseInNumberCount = 0;
 						    }
@@ -87,5 +108,10 @@ public class EnemyWavesController : MonoBehaviour {
 
     public void RemoveWave(EnemyWave toRemove) {
 	    waves.Remove(toRemove);
+    }
+
+    public void Cleanup() {
+	    transform.DeleteAllChildren();
+	    enemiesInitialized = false;
     }
 }

@@ -242,7 +242,10 @@ namespace Borodar.FarlandSkies.LowPoly
 
         // Stars
 
-        public bool StarsEnabled => _starsEnabled;
+        public bool StarsEnabled {
+            get => _starsEnabled;
+            set => _starsEnabled = value;
+        }
 
         public Color StarsTint
         {
@@ -285,8 +288,10 @@ namespace Borodar.FarlandSkies.LowPoly
         }
 
         // Sun
-
-        public bool SunEnabled => _sunEnabled;
+        public bool SunEnabled {
+            get => _sunEnabled;
+            set => _sunEnabled = value;
+        }
 
         public Light SunLight
         {
@@ -351,8 +356,11 @@ namespace Borodar.FarlandSkies.LowPoly
         }
 
         // Moon
-
-        public bool MoonEnabled => _moonEnabled;
+        public bool MoonEnabled {
+            get => _moonEnabled;
+            set => _moonEnabled = value;
+        }
+        
 
         public Texture2D MoonTexture
         {
@@ -417,8 +425,10 @@ namespace Borodar.FarlandSkies.LowPoly
         }
 
         // Clouds
-
-        public bool CloudsEnabled => _cloudsEnabled;
+        public bool CloudsEnabled {
+            get => _cloudsEnabled;
+            set => _cloudsEnabled = value;
+        }
 
         public Cubemap CloudsCubemap
         {
@@ -521,7 +531,7 @@ namespace Borodar.FarlandSkies.LowPoly
         // Helpers
         //---------------------------------------------------------------------
 
-        private void UpdateSkyboxProperties()
+        public void UpdateSkyboxProperties()
         {
             if (SkyboxMaterial == null)
             {
@@ -573,6 +583,9 @@ namespace Borodar.FarlandSkies.LowPoly
                 }                    
 
                 if (_sunFlareComponent) _sunFlareComponent.enabled = _sunFlare;
+                
+                SkyboxMaterial.SetMatrix(SUN_MATRIX, _sunLight.transform.worldToLocalMatrix);
+                if (_sunFlare && _sunFlareComponent) _sunFlareComponent.brightness = _sunTint.a * _sunFlareBrightness;
             }
             else
             {
@@ -601,6 +614,9 @@ namespace Borodar.FarlandSkies.LowPoly
                 }
 
                 if (_moonFlareComponent) _moonFlareComponent.enabled = _moonFlare;
+                
+                SkyboxMaterial.SetMatrix(MOON_MATRIX, _moonLight.transform.worldToLocalMatrix);
+                if (_moonFlare && _moonFlareComponent) _moonFlareComponent.brightness = _moonTint.a * _moonFlareBrightness;
             }
             else
             {
@@ -630,6 +646,8 @@ namespace Borodar.FarlandSkies.LowPoly
             // Update skybox
 
             RenderSettings.skybox = SkyboxMaterial;
+            
+            if (_adjustFogColor) RenderSettings.fogColor = MiddleColor;
         }
     }
 }

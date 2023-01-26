@@ -21,7 +21,14 @@ public class ModuleHealth : MonoBehaviour, IHealth, IActiveDuringCombat, IActive
     
     public static int buildingsBuild;
     public static int buildingsDestroyed;
+
+    public bool damageNearCartsOnDeath = false;
+    public bool selfDamage = false;
+    [ShowIf("selfDamage")] 
+    private float selfDamageTimer;
+    public int[] selfDamageAmounts = new[] { 20, 10 };
     
+    [Button]
     public void DealDamage(float damage) {
         if (!isDead) {
             currentHealth -= damage;
@@ -35,10 +42,142 @@ public class ModuleHealth : MonoBehaviour, IHealth, IActiveDuringCombat, IActive
         }
     }
 
-    public float burnReduction = 0.5f;
+    [ShowIf("damageNearCartsOnDeath")]
+    public int[] explosionDamages = new[] { 100, 50, 25 };
+    void DamageNearCartsOnDeath() {
+        var myModule = GetComponent<TrainBuilding>();
+
+        var forwardWave = myModule.mySlot;
+        for (int i = 0; i < 3; i++) {
+            forwardWave = GetNextSlot(true, forwardWave);
+            if(forwardWave == null)
+                break;
+            
+            GameObject prefab;
+            switch (i) {
+                case 0:
+                    prefab = LevelReferences.s.bigDamagePrefab;
+                    break;
+                case 1:
+                    prefab = LevelReferences.s.mediumDamagePrefab;
+                    break;
+                case 2:
+                    prefab = LevelReferences.s.smallDamagePrefab;
+                    break;
+                default:
+                    prefab = LevelReferences.s.smallDamagePrefab;
+                    break;
+            }
+            DealDamageToSlot(forwardWave, prefab, explosionDamages[i]);
+        }
+        
+        var backwardsWave = myModule.mySlot;
+        for (int i = 0; i < 3; i++) {
+            backwardsWave = GetNextSlot(false, backwardsWave);
+            if(backwardsWave == null)
+                break;
+            
+            GameObject prefab;
+            switch (i) {
+                case 0:
+                    prefab = LevelReferences.s.bigDamagePrefab;
+                    break;
+                case 1:
+                    prefab = LevelReferences.s.mediumDamagePrefab;
+                    break;
+                case 2:
+                    prefab = LevelReferences.s.smallDamagePrefab;
+                    break;
+                default:
+                    prefab = LevelReferences.s.smallDamagePrefab;
+                    break;
+            }
+            DealDamageToSlot(backwardsWave, prefab, explosionDamages[i]);
+        }
+
+
+        var range = 1.8f;
+        var allEnemies = EnemyWavesController.s.GetComponentsInChildren<EnemyHealth>();
+
+        for (int i = 0; i < allEnemies.Length; i++) {
+            var enemy = allEnemies[i];
+            var distance = Vector3.Distance(enemy.transform.position, transform.position);
+            if (distance < range) {
+                distance = Mathf.Clamp(distance, range/3, range);
+                var damage = distance.Remap(range/3, range, 100, 25);
+
+                GameObject prefab = LevelReferences.s.smallDamagePrefab;
+                if (damage > 80) {
+                    prefab = LevelReferences.s.bigDamagePrefab;
+                }else if (damage > 50) {
+                    prefab = LevelReferences.s.mediumDamagePrefab;
+                }
+
+                var point = enemy.GetMainCollider().ClosestPoint(transform.position);
+
+                Instantiate(prefab, point, Quaternion.identity);
+                enemy.DealDamage(damage);
+
+            }
+        }
+    }
+
+    Slot GetNextSlot(bool isForward, Slot slot) {
+        if (isForward) {
+            if (slot.isFrontSlot) {
+                var nextCart = slot.GetCart().index - 1;
+                if (nextCart > 0) {
+                    return Train.s.carts[nextCart].GetComponent<Cart>().backSlot;
+                } else {
+                    return null;
+                }
+            } else {
+                return slot.GetCart().frontSlot;
+            }
+        } else {
+            if (!slot.isFrontSlot) {
+                var nextCart = slot.GetCart().index + 1;
+                if (nextCart < Train.s.carts.Count) {
+                    return Train.s.carts[nextCart].GetComponent<Cart>().frontSlot;
+                } else {
+                    return null;
+                }
+            } else {
+                return slot.GetCart().backSlot;
+            }
+        }
+    }
+
+    void DealDamageToSlot(Slot slot, GameObject prefab, int damage) {
+        if(slot == null)
+            return;
+        
+        var buildings = slot.myBuildings;
+        for (int i = 0; i < buildings.Length; i++) {
+            if (buildings[i] != null) {
+                var hp = buildings[i].GetComponent<ModuleHealth>();
+                if (hp != null) {
+                    hp.DealDamage(damage);
+                    Instantiate(prefab, hp.transform.position, Quaternion.identity);
+                }
+                
+                if(buildings[i].occupiesEntireSlot) // skip the entire rest of the slot.
+                    return;
+                if (i == 0) {//skip the other top slot
+                    i++;
+                }
+            }
+        }
+    }
+
+    public bool burnResistant = false;
+    float burnReduction = 0.5f;
     public float currentBurn = 0;
     public float burnSpeed = 0;
     public void BurnDamage(float damage) {
+        if (burnResistant)
+            damage /= 2;
+        
         burnSpeed += damage;
     }
     private void Update() {
@@ -54,8 +193,31 @@ public class ModuleHealth : MonoBehaviour, IHealth, IActiveDuringCombat, IActive
         if (burnSpeed > 0.05f) {
             currentBurn += burnSpeed * Time.deltaTime;
         }
-
+        
         burnSpeed = Mathf.Lerp(burnSpeed,0,burnReduction*Time.deltaTime);
+
+
+        if (SceneLoader.s.isLevelInProgress) {
+            if (selfDamage) {
+                selfDamageTimer -= Time.deltaTime;
+                if (selfDamageTimer <= 0) {
+                    selfDamageTimer = 10;
+
+                    SelfDamage();
+                }
+            }
+        }
+    }
+
+    void SelfDamage() {
+        var myModule = GetComponent<TrainBuilding>();
+        
+        DealDamage(selfDamageAmounts[0]);
+        var prefab = LevelReferences.s.smallDamagePrefab;
+        Instantiate(prefab, transform.position, Quaternion.identity);
+        
+        DealDamageToSlot(GetNextSlot(true, myModule.mySlot), prefab, selfDamageAmounts[1]);
+        DealDamageToSlot(GetNextSlot(false, myModule.mySlot), prefab, selfDamageAmounts[1]);
     }
     
     private void Start() {
@@ -67,7 +229,12 @@ public class ModuleHealth : MonoBehaviour, IHealth, IActiveDuringCombat, IActive
     [NonSerialized]
     public UnityEvent dieEvent = new UnityEvent();
     
+    [Button]
     public void Die() {
+        if (damageNearCartsOnDeath) {
+            DamageNearCartsOnDeath();
+        }
+        
         isDead = true;
         Instantiate(explodePrefab, transform.position, transform.rotation);
         SoundscapeController.s.PlayModuleExplode();

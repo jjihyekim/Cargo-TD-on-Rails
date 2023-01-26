@@ -13,35 +13,35 @@ MonoBehaviour:
   m_Name: Buggies and slowers
   m_EditorClassIdentifier: 
   myData:
-    levelName: Smol Starts
+    levelName: Buggies and slowers
     isEncounter: 0
     enemiesOnPath:
     - enemyIdentifier:
-        enemyUniqueName: Biker
-        enemyCount: 2
+        enemyUniqueName: BuggyCannon
+        enemyCount: 3
       distanceOnPath: 30
       startMoving: 0
     - enemyIdentifier:
-        enemyUniqueName: Biker
-        enemyCount: 3
-      distanceOnPath: 60
+        enemyUniqueName: Slower
+        enemyCount: 1
+      distanceOnPath: 40
       startMoving: 0
     - enemyIdentifier:
-        enemyUniqueName: Biker
+        enemyUniqueName: BuggyCannon
         enemyCount: 6
       distanceOnPath: 100
       startMoving: 0
     - enemyIdentifier:
-        enemyUniqueName: BuggyCannon
-        enemyCount: 3
+        enemyUniqueName: Slower
+        enemyCount: 2
       distanceOnPath: 150
       startMoving: 0
     dynamicSpawnEnemies:
     - enemyIdentifier:
-        enemyUniqueName: Biker
+        enemyUniqueName: BuggyAVC
         enemyCount: 2
       distanceFromTrain: 30
       firstSpawnTime: 30
-      spawnInterval: 40
-      increaseInNumberInterval: 2
+      spawnInterval: 30
+      increaseInNumberInterval: 1
     missionDistance: 350

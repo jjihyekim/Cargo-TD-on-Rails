@@ -24,7 +24,9 @@ public class Train : MonoBehaviour {
     private int cargoCount = 0;
 
     public UnityEvent trainUpdatedThroughNonBuildingActions = new UnityEvent();
+    public UnityEvent trainUpdated = new UnityEvent();
 
+    public bool isTrainDrawn = false;
     public int GetCargoCount() {
         GetTrainWeight(); // so that it gets updated
         return cargoCount;
@@ -74,9 +76,15 @@ public class Train : MonoBehaviour {
         LevelReferences.s.train = this;
     }
 
+    public void DrawTrainBasedOnSaveData() {
+        DrawTrain(DataSaver.s.GetCurrentSave().currentRun.myTrain);
+    }
+
     public void DrawTrain(DataSaver.TrainState trainState) {
         StopAllCoroutines();
+        suppressRedraw = true;
         transform.DeleteAllChildren();
+        suppressRedraw = false;
         trainWeightDirty = true;
 
         carts = new List<Transform>();
@@ -113,6 +121,9 @@ public class Train : MonoBehaviour {
         AddBuildingsToTrain(trainState);
         ReCalculateStorageAmounts();
         trainUpdatedThroughNonBuildingActions?.Invoke();
+        trainUpdated?.Invoke();
+
+        isTrainDrawn = true;
     }
 
 
@@ -274,20 +285,27 @@ public class Train : MonoBehaviour {
         cartDefPositions.Reverse();
     }
 
+    private bool suppressRedraw = false;
     public void CartDestroyed(Cart cart) {
+        if(suppressRedraw)
+            return;
+
         var index = carts.IndexOf(cart.transform);
 
         if (index > -1) {
             var state = GetTrainState();
             state.myCarts.RemoveAt(index);
             DrawTrain(state);
+        } else {
+            Debug.Log($"Cart with illegal index {index} {cart} {cart.gameObject.name}");
         }
         
         if(carts.Count <= 0 && SceneLoader.s.isLevelInProgress)
             MissionLoseFinisher.s.MissionLost();
         
         
-        trainUpdatedThroughNonBuildingActions?.Invoke();
+        // draw train already calls this
+        //trainUpdatedThroughNonBuildingActions?.Invoke();
     }
 
     public UnityEvent onLevelStateChanged = new UnityEvent();
@@ -303,8 +321,10 @@ public class Train : MonoBehaviour {
 
     private float curDistance = 0.1f;
     public float restoreDelay = 0.1f;
+
+    public bool doShake = true;
     private void Update() {
-        if (SceneLoader.s.isLevelInProgress) {
+        if (SceneLoader.s.isLevelInProgress && doShake) {
             if (curDistance < 0) {
                 StartCoroutine(ShakeWave());
                 StartCoroutine(RestoreWave(restoreDelay));
@@ -313,6 +333,41 @@ public class Train : MonoBehaviour {
                 curDistance -= LevelReferences.s.speed * Time.deltaTime;
             }
         }
+    }
+
+    public void StopShake() {
+        StopAllCoroutines();
+        for (int i = 0; i < carts.Count; i++) {
+            carts[i].localPosition = cartDefPositions[i];
+        }
+
+        doShake = false;
+    }
+
+    public void RestartShake() {
+        Invoke(nameof(_RestartShake), 0.01f); // one frame later so that any transform changes have been applied
+    }
+
+    public void SwapCarts(Cart cart1, Cart cart2) {
+        StopShake();
+
+        (cart1.transform.position, cart2.transform.position) = (cart2.transform.position, cart1.transform.position);
+
+        var cart1Index = carts.IndexOf(cart1.transform);
+        var cart2Index = carts.IndexOf(cart2.transform);
+
+        carts[cart1Index] = cart2.transform;
+        carts[cart2Index] = cart1.transform;
+
+        RestartShake();
+    }
+
+    void _RestartShake() {
+        for (int i = 0; i < carts.Count; i++) {
+            cartDefPositions[i] =  carts[i].localPosition;
+        }
+
+        doShake = true;
     }
 
 
@@ -448,5 +503,9 @@ public class Train : MonoBehaviour {
 
     public void ResetTrainPosition() {
         transform.ResetTransformation();
+    }
+
+    public void TrainUpdated() {
+        trainUpdated?.Invoke();
     }
 }

@@ -16,8 +16,8 @@ public class CharacterData {
     [TextArea]
     public string description;
 
-    [Tooltip("No need to include unlock upgrades anymore")]
-    public Upgrade[] starterUpgrades;
+    /*[Tooltip("No need to include unlock upgrades anymore")]
+    public Upgrade[] starterUpgrades;*/
     [Tooltip("You should include anything that is already on the train if you want player to be able to rebuild it")]
     public TrainModuleHolder[] starterModules;
     public DataSaver.TrainState starterTrain;

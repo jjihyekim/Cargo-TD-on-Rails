@@ -20,36 +20,44 @@ public class MapController : MonoBehaviour {
     public int maxStarCount = 18;
 
     public int currentAct;
+    
     public ActData[] acts;
 
     [Serializable]
     public class ActData {
+	    [Title("Act data")]
 	    public LevelDataScriptable[] firstLevels;
 	    public LevelDataScriptable[] remainingLevels;
 	    public LevelDataScriptable[] bossLevels;
+	    
+	    [Space]
 
 	    public CityDataScriptable[] firstCities;
 	    public CityDataScriptable[] remainingCities;
 	    public CityDataScriptable[] bossCities;
+
+	    [Space] 
+	    public EncounterTitle[] encounters;
     }
 
     public MenuToggle mapUI;
 
     public float encounterChance = 0.5f;
 
-    public static bool ApplyStarMap = true;
+    //public static bool ApplyStarMap = true;
 
     private void Start() {
 	    //GenerateStarMap();
 	    targetStarInfoScreen.Hide();
 	    selectedStarInfoScreen.Hide();
-	    if(ApplyStarMap)
-			ApplyStarMapFromSave();
+	    /*if(ApplyStarMap)
+			ApplyStarMapFromSave();*/
     }
 
 
     [Button]
     public void GenerateStarMap() {
+	    Cleanup();
 	    var myMap = new List<MapChunk>();
 
 	    currentAct = DataSaver.s.GetCurrentSave().currentRun.currentAct - 1;
@@ -75,16 +83,16 @@ public class MapController : MonoBehaviour {
     }
     
 
-    public void ApplyStarMapFromSave(bool force = false) {
+    /*public void ApplyStarMapFromSave(bool force = false) {
 	    /*if(DataSaver.s.GetCurrentSave().isInARun || force)
-			SpawnStarsAndConnections(DataSaver.s.GetCurrentSave().currentRun.map);*/
+			SpawnStarsAndConnections(DataSaver.s.GetCurrentSave().currentRun.map);#1#
 	    
 	    //WORLDMAP
 	    if(DataSaver.s.GetCurrentSave().isInARun || force)
 			WorldMapCreator.s.GenerateWorldMap();
 	    
 	    //targetStarInfoScreen.Hide();
-    }
+    }*/
 
     private StarMapState GenerateStarMapStateFromMap(List<MapChunk> myMap) {
 	    
@@ -125,7 +133,7 @@ public class MapController : MonoBehaviour {
 	    for (int i = 0; i < leadingChunk.myStars.Count; i++) {
 		    var levels = leadingChunk.myStars[i].outgoingConnectionLevels;
 		    for (int j = 0; j < levels.Count; j++) {
-			    levels[j] = bossLevelPick;
+			    levels[j] = bossLevelPick.levelName;
 		    }
 	    }
     }
@@ -317,7 +325,7 @@ public class MapController : MonoBehaviour {
 	    LevelData level = null;
 	    for (int i = 0; i < _playerStar.outgoingConnections.Count; i++) {
 		    if (_playerStar.outgoingConnections[i] == targetStar.starName) {
-			    level = _playerStar.outgoingConnectionLevels[i];
+			    level = DataHolder.s.GetLevel(_playerStar.outgoingConnectionLevels[i]);
 		    }
 	    }
 	    
@@ -340,7 +348,7 @@ public class MapController : MonoBehaviour {
 	    LevelData level = null;
 	    for (int i = 0; i < _playerStar.outgoingConnections.Count; i++) {
 		    if (_playerStar.outgoingConnections[i] == targetStar.starName) {
-			    level = _playerStar.outgoingConnectionLevels[i];
+			    level = DataHolder.s.GetLevel(_playerStar.outgoingConnectionLevels[i]);
 		    }
 	    }
 	    
@@ -384,8 +392,10 @@ public class MapController : MonoBehaviour {
 
 		    PutPlayerInStar(targetStar);
 
-		    ApplyStarMapFromSave();
+		    //ApplyStarMapFromSave();
 	    }
+	    
+	    Cleanup();
     }
 
     public void DebugTravelToSelectStar() {
@@ -403,6 +413,12 @@ public class MapController : MonoBehaviour {
     public void PutPlayerInStar(StarState starState) {
 	    starState.isPlayerHere = true;
 	    starState.previouslyVisited = true;
+    }
+
+    public void DeselectStar() {
+	    targetStarInfoScreen.Hide();
+	    selectedStarInfoScreen.Hide();
+	    targetStarInfoScreenBudget.Hide();
     }
 
 
@@ -599,17 +615,18 @@ public class MapController : MonoBehaviour {
 	    var rollEncounter = Random.value < encounterChance;
 	    LevelData level;
 	    if (rollEncounter && a.starChunk >= 2) {
-		    var encounterName = DataHolder.s.encounters[Random.Range(0, DataHolder.s.encounters.Length)].gameObject.name;
-		    level = new LevelData() { levelName = encounterName, isEncounter = true };
+		    var encounterName = actData.encounters[Random.Range(0, actData.encounters.Length)].gameObject.name;
+		    a.outgoingConnectionLevels.Add("e_" + encounterName);
 	    }else{
 		    if (a.starChunk < 2) {
 			    level = actData.firstLevels[Random.Range(0, actData.firstLevels.Length)].GetData().Copy();
 		    } else {
 			    level = actData.remainingLevels[Random.Range(0, actData.remainingLevels.Length)].GetData().Copy();
 		    }
+		    
+		    a.outgoingConnectionLevels.Add(level.levelName);
 	    }
 
-	    a.outgoingConnectionLevels.Add(level);
 
 
 	    /*var cargoType = cargoTiers[Random.Range(0, cargoTiers.Length)];
@@ -631,6 +648,10 @@ public class MapController : MonoBehaviour {
 	    public static bool isLegalNeighbor(int a, int b) {
 		    return Mathf.Abs(a - b) <= 1;
 	    }
+    }
+
+    public void Cleanup() {
+	    DeselectStar();
     }
 }
 
@@ -693,7 +714,7 @@ public class StarState {
 	public int biome = 0;
 
 	public List<string> outgoingConnections = new List<string>();
-	public List<LevelData> outgoingConnectionLevels = new List<LevelData>();
+	public List<string> outgoingConnectionLevels = new List<string>();
 	//public List<CargoDeliverMissionData> outgoingConnectionCargoData = new List<CargoDeliverMissionData>();
 	//public List<CargoDeliverMissionData> cargoData = new List<CargoDeliverMissionData>();
 

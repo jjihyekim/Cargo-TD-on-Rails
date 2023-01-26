@@ -11,10 +11,6 @@ GameObject:
   - component: {fileID: 8062815419133752083}
   - component: {fileID: 2564196614986914865}
   - component: {fileID: 1972341754613287155}
-  - component: {fileID: 3937334202046092841}
-  - component: {fileID: 7537373476423323149}
-  - component: {fileID: 7952874635432910820}
-  - component: {fileID: 9050842817432485262}
   m_Layer: 14
   m_Name: Gfx
   m_TagString: Untagged
@@ -32,9 +28,12 @@ Transform:
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 0.1, y: 0.1, z: 0.1}
-  m_Children: []
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 4408772733913466967}
+  - {fileID: 5978435266795672714}
   m_Father: {fileID: 8721917312497420284}
-  m_RootOrder: 2
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!33 &2564196614986914865
 MeshFilter:
@@ -55,6 +54,7 @@ MeshRenderer:
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
+  m_StaticShadowCaster: 0
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
@@ -85,92 +85,6 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!114 &3937334202046092841
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5784884676736434709}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 77a00eae84002064bb32ca6cc299f785, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  gunSprite: {fileID: 0}
-  rotateTransforms:
-  - transform: {fileID: 8062815419133752083}
-  barrelEndTransforms:
-  - transform: {fileID: 4408772733913466967}
-  - transform: {fileID: 5978435266795672714}
-  projectileSpawnOffset: 0.2
-  bulletPrefab: {fileID: 7110668419382630654, guid: 38d2797b60af6b3449dea991dc05d6f3, type: 3}
-  muzzleFlashPrefab: {fileID: 9155879028066676231, guid: 20718e1ecbf4a0a48851a1815d4ceeaa, type: 3}
-  target: {fileID: 0}
-  mortarRotation: 0
-  fireDelay: 3
-  fireBarrageCount: 1
-  fireBarrageDelay: 0.2
-  projectileDamage: 35
-  rotateSpeed: 1
-  gunActive: 1
-  CanShoot: 0
-  hasAmmo: 1
-  isPlayer: 0
-  rangeOrigin: {fileID: 0}
-  barrageShot:
-    m_PersistentCalls:
-      m_Calls: []
-  canPenetrateArmor: 0
-  fuelUsePerShot: 0
-  steamUsePerShot: 0
---- !u!114 &7537373476423323149
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5784884676736434709}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 526befd34cf41534caf067b5a62ca473, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  rotationSpan: 360
-  range: 7
-  myOverride:
-    isOverride: 0
-    rotations: 
-    rotationSpanOverride: 0
-  myPossibleTargets: 01000000
---- !u!114 &7952874635432910820
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5784884676736434709}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5d599bb9011d1e5468e9aa253af0bce9, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  type: 0
-  amount: 5
---- !u!114 &9050842817432485262
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5784884676736434709}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5d599bb9011d1e5468e9aa253af0bce9, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  type: 2
-  amount: 5
 --- !u!1 &6232411244599263829
 GameObject:
   m_ObjectHideFlags: 0
@@ -195,10 +109,11 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6232411244599263829}
   m_LocalRotation: {x: -0.00000002676765, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.098100014, z: 0.116}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalPosition: {x: 0, y: 0.9810001, z: 1.16}
+  m_LocalScale: {x: 10, y: 10, z: 10}
+  m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 8721917312497420284}
+  m_Father: {fileID: 8062815419133752083}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &7303509481848495673
@@ -225,10 +140,11 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7303509481848495673}
   m_LocalRotation: {x: -0.00000002676765, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.06309999, z: 0.116}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalPosition: {x: 0, y: 0.63099986, z: 1.16}
+  m_LocalScale: {x: 10, y: 10, z: 10}
+  m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 8721917312497420284}
+  m_Father: {fileID: 8062815419133752083}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &8718989495804000850
@@ -262,9 +178,8 @@ Transform:
   m_LocalRotation: {x: 0.000000021855694, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 4408772733913466967}
-  - {fileID: 5978435266795672714}
   - {fileID: 8062815419133752083}
   m_Father: {fileID: 0}
   m_RootOrder: 0
@@ -283,11 +198,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   gunSprite: {fileID: 21300000, guid: fec227fc5b9ef8848bc5c349d122d353, type: 3}
   rotateTransforms:
-  - transform: {fileID: 8721917312497420284}
+  - transform: {fileID: 8062815419133752083}
   barrelEndTransforms:
   - transform: {fileID: 4408772733913466967}
   - transform: {fileID: 5978435266795672714}
-  projectileSpawnOffset: 0.2
+  projectileSpawnOffset: 0
   bulletPrefab: {fileID: 7110668419382630654, guid: 38d2797b60af6b3449dea991dc05d6f3, type: 3}
   muzzleFlashPrefab: {fileID: 9155879028066676231, guid: 20718e1ecbf4a0a48851a1815d4ceeaa, type: 3}
   target: {fileID: 0}
@@ -308,6 +223,17 @@ MonoBehaviour:
   canPenetrateArmor: 0
   fuelUsePerShot: 0
   steamUsePerShot: 0
+  needWarmUp: 0
+  startWarmUpEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  onBulletFiredEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  stopShootingEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  gunShakeOnShoot: 0
 --- !u!114 &7024955397989702114
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -33,22 +33,32 @@ public class StarterUIController : MonoBehaviour {
 	public int selectedLevelIndex = -1;
 
 
-
 	public Button mapOpenButton;
 	public GameObject mapDisabledDuringBattleOverlay;
 	
 	public void BackToProfileSelection() {
 		starterUI.SetActive(false);
+		if (SceneLoader.s.isLevelInProgress) {
+			MissionWinFinisher.s.Cleanup();
+			FirstTimeTutorialController.s.SkipTutorial();
+		}
 		SceneLoader.s.OpenProfileScreen();
 		MusicPlayer.s.SwapMusicTracksAndPlay(false);
 	}
 
 	public void OpenStarterUI() {
-		starterUI.SetActive(true);
-		CharacterSelector.s.CheckAndShowCharSelectionScreen();
+		if(SceneLoader.s.isLevelInProgress)
+			return;
 		
+		starterUI.SetActive(true);
+		RangeVisualizer.SetAllRangeVisualiserState(false);
+		CharacterSelector.s.CheckAndShowCharSelectionScreen();
+
 		if (DataSaver.s.GetCurrentSave().isInARun) {
-			Train.s.DrawTrain(DataSaver.s.GetCurrentSave().currentRun.myTrain);
+			Train.s.DrawTrainBasedOnSaveData();
+
+			mapOpenButton.interactable = true;
+			mapDisabledDuringBattleOverlay.SetActive(false);
 			
 			if (DataSaver.s.GetCurrentSave().currentRun.unclaimedRewards.Count > 0) {
 				StartLevel(false);
@@ -58,6 +68,9 @@ public class StarterUIController : MonoBehaviour {
 				OnEnteredStarterUI?.Invoke();
 			}
 		} 
+		
+		
+		OnLevelChanged?.Invoke();
 	}
 
 	public void SetStarterUIStatus(bool status) {
@@ -66,13 +79,13 @@ public class StarterUIController : MonoBehaviour {
 
 	public void StartLevel(bool legitStart = true) {
 		if (levelSelected) {
-			var playerStar = DataSaver.s.GetCurrentSave().currentRun.map.GetPlayerStar();
+			var currentLevel = SceneLoader.s.currentLevel;
 			starterUI.SetActive(false);
 
 			mapOpenButton.interactable = false;
 			mapDisabledDuringBattleOverlay.SetActive(true);
 
-			if (!playerStar.outgoingConnectionLevels[selectedLevelIndex].isEncounter) {
+			if (!currentLevel.isEncounter) {
 				ClearStaticTrackers();
 
 				gameUI.SetActive(true);
@@ -86,10 +99,13 @@ public class StarterUIController : MonoBehaviour {
 
 					SoundscapeController.s.PlayMissionStartSound();
 					MusicPlayer.s.SwapMusicTracksAndPlay(true);
+					
+					if(currentLevel.isBossLevel)
+						MiniGUI_BossNameUI.s.ShowBossName(currentLevel.levelName);
 				}
 			} else {
 				SceneLoader.s.FinishLevel();
-				EncounterController.s.EngageEncounter(playerStar.outgoingConnectionLevels[selectedLevelIndex]);
+				EncounterController.s.EngageEncounter(currentLevel);
 			}
 		}
 	}
@@ -132,14 +148,15 @@ public class StarterUIController : MonoBehaviour {
 			Debug.LogError($"Illegal star target: {targetStar.starName}");
 			return;
 		}
-		
-		SceneLoader.s.SetCurrentLevel(playerStar.outgoingConnectionLevels[selectedLevelIndex]);
-		missionDistance.text = "Mission Length: " + playerStar.outgoingConnectionLevels[selectedLevelIndex].missionDistance;
+
+		var level = DataHolder.s.GetLevel(playerStar.outgoingConnectionLevels[selectedLevelIndex]);
+		SceneLoader.s.SetCurrentLevel(level);
+		missionDistance.text = "Mission Length: " + level.missionDistance;
 		levelSelected = true;
 		OnLevelChanged?.Invoke();
 	}
 
-	public void SelectLevelAndStart(LevelData data) {
+	public void SelectLevelAndStart_StarterUIStartOnly(LevelData data) {
 		SceneLoader.s.SetCurrentLevel(data);
 		missionDistance.text = "Mission Length: " + data.missionDistance;
 		levelSelected = true;
@@ -159,6 +176,8 @@ public class StarterUIController : MonoBehaviour {
 
 		SoundscapeController.s.PlayMissionStartSound();
 		MusicPlayer.s.SwapMusicTracksAndPlay(true);
+		
+		StartLevel();
 	}
 
 

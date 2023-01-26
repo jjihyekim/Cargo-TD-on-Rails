@@ -15,9 +15,6 @@ MonoBehaviour:
   myCharacter:
     uniqueName: Le Cheater
     description: For when you wanna test out all the guns.
-    starterUpgrades:
-    - {fileID: 11400000, guid: bb9a07f134773024ebcbc669ebedfeeb, type: 2}
-    - {fileID: 11400000, guid: 3139769320654044683ab5c56c1efbb1, type: 2}
     starterModules:
     - moduleUniqueName: AVR
       amount: 5
@@ -38,6 +35,16 @@ MonoBehaviour:
     - moduleUniqueName: steamvents
       amount: 5
     - moduleUniqueName: laser
+      amount: 5
+    - moduleUniqueName: ammoStorage
+      amount: 5
+    - moduleUniqueName: tripleStorage
+      amount: 5
+    - moduleUniqueName: fuelStorage
+      amount: 5
+    - moduleUniqueName: scrapStorage
+      amount: 5
+    - moduleUniqueName: nuclearEngine
       amount: 5
     starterTrain:
       myCarts:
@@ -116,6 +123,56 @@ MonoBehaviour:
         - uniqueName: 
           health: -1
           ammo: -2
+      - buildingStates:
+        - uniqueName: 
+          health: -1
+          ammo: -1
+        - uniqueName: 
+          health: -1
+          ammo: -1
+        - uniqueName: 
+          health: -1
+          ammo: -1
+        - uniqueName: 
+          health: -1
+          ammo: -1
+        - uniqueName: 
+          health: -1
+          ammo: -1
+        - uniqueName: 
+          health: -1
+          ammo: -1
+        - uniqueName: 
+          health: -1
+          ammo: -1
+        - uniqueName: 
+          health: -1
+          ammo: -1
+      - buildingStates:
+        - uniqueName: 
+          health: -1
+          ammo: -1
+        - uniqueName: 
+          health: -1
+          ammo: -1
+        - uniqueName: 
+          health: -1
+          ammo: -1
+        - uniqueName: 
+          health: -1
+          ammo: -1
+        - uniqueName: 
+          health: -1
+          ammo: -1
+        - uniqueName: 
+          health: -1
+          ammo: -1
+        - uniqueName: 
+          health: -1
+          ammo: -1
+        - uniqueName: 
+          health: -1
+          ammo: -1
     starterResources:
       money: 2000
       scraps: 200

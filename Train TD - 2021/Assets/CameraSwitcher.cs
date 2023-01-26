@@ -24,11 +24,13 @@ public class CameraSwitcher : MonoBehaviour {
 
 	public void Engage() {
 		_targets = GetComponentsInChildren<CameraTarget>();
+		availableIndexes.Clear();
 		PickTargetAndSwitch();
 		isEngaged = true;
 	}
 	
 	public void Disengage() {
+		CancelInvoke();
 		isEngaged = false;
 	}
 
@@ -41,12 +43,13 @@ public class CameraSwitcher : MonoBehaviour {
 				availableIndexes.Add(i);
 			}
 
-			if (current != -1)
-				availableIndexes.Remove(current);
+			/*if (current != -1)
+				availableIndexes.Remove(current);*/
 		}
 
-		current = availableIndexes[Random.Range(0, availableIndexes.Count)];
-		availableIndexes.Remove(current);
+		current = availableIndexes[(current+1) % availableIndexes.Count];
+		//availableIndexes.Remove(current);
+		
 		curTarget = _targets[current].transform;
 		Invoke("PickTargetAndSwitch", switchTime);
 	}

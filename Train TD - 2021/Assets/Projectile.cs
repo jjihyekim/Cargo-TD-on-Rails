@@ -53,6 +53,7 @@ public class Projectile : MonoBehaviour {
 
     public bool isPhaseThrough = false;
     public bool isBurnDamage = false;
+    public bool isSlowDamage = false;
     private void Start() {
         Invoke("DestroySelf", lifetime);
 
@@ -105,6 +106,22 @@ public class Projectile : MonoBehaviour {
             case HitType.Laser:
                 HitScan();
                 break;
+        }
+    }
+
+    public void SetIsPlayer(bool isPlayer) {
+        isPlayerBullet = isPlayer;
+
+        var layer = gameObject.layer;
+        if (isPlayer) {
+            layer = LevelReferences.s.playerBulletLayer.LayerIndex;
+        } else {
+            layer = LevelReferences.s.enemyBulletLayer.LayerIndex;
+        }
+
+        var children = GetComponentsInChildren<Transform>(includeInactive: true);
+        foreach (var child in children) {
+            child.gameObject.layer = layer;
         }
     }
 
@@ -434,6 +451,9 @@ public class Projectile : MonoBehaviour {
         if (rigidbody == null) {
             rigidbody = collider.GetComponentInParent<Rigidbody>();
         }
+        
+        if(rigidbody == null)
+            return;
 
         var force = collider.transform.position - transform.position;
         force = force.normalized * damage * hitForceMultiplier;
@@ -450,6 +470,14 @@ public class Projectile : MonoBehaviour {
                 dmg = damage/ 2;
                 armorProtected = true;
             }
+
+            if (isSlowDamage) {
+                if (target.IsPlayer()) {
+                    SpeedController.s.AddSlow(damage);
+                } else {
+                    target.GetGameObject().GetComponentInParent<EnemyWave>().AddSlow(damage);
+                }
+            } else 
 
             if (isBurnDamage) {
                 target.BurnDamage(dmg);

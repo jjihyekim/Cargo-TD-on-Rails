@@ -142,6 +142,14 @@ public class DirectControlMaster : MonoBehaviour {
 			onHitAlpha -= onHitAlphaDecay * Time.deltaTime;
 			onHitAlpha = Mathf.Clamp01(onHitAlpha);
 		}
+
+		curOnHitDecayTime -= Time.deltaTime;
+		if (curOnHitDecayTime <= 0) {
+			if (currentOnHit > 0)
+				currentOnHit -= 1;
+
+			curOnHitDecayTime = onHitSoundDecayTime;
+		}
 	}
 
 	void OnShoot() {
@@ -169,10 +177,11 @@ public class DirectControlMaster : MonoBehaviour {
 		//}
 	}
 
-	public float hitPitch = 0.8f;
-	public float hitPitchRandomness = 0.1f;
-	public float onHitSoundDecayTime = 0.1f;
-	public int maxOnHitSimultaneously = 5;
+	float hitPitch = 0.8f;
+	float hitPitchRandomness = 0.1f;
+	float onHitSoundDecayTime = 0.1f;
+	private float curOnHitDecayTime = 0;
+	int maxOnHitSimultaneously = 10;
 	private int currentOnHit = 0;
 
 	void OnHit() {
@@ -181,11 +190,6 @@ public class DirectControlMaster : MonoBehaviour {
 			hitAud.pitch = hitPitch + Random.Range(-hitPitchRandomness, hitPitchRandomness);
 			hitAud.PlayOneShot(hitAud.clip);
 			currentOnHit += 1;
-			Invoke(nameof(OnHitDecay), onHitSoundDecayTime);
 		}
-	}
-
-	void OnHitDecay() {
-		currentOnHit -= 1;
 	}
 }

@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 
 public class Cart : MonoBehaviour {
     public Transform center;
@@ -23,6 +24,8 @@ public class Cart : MonoBehaviour {
     public Slot backSlot;
 
     public Transform uiTargetTransform;
+
+    public BoxCollider myCollider;
 
     private void Start() {
         SlotsAreUpdated();
@@ -67,9 +70,13 @@ public class Cart : MonoBehaviour {
 
         if (isThereAnyBuildingOnCart) {
             GetComponent<PossibleTarget>().enabled = false;
+            myCollider.enabled = false;
         } else {
             GetComponent<PossibleTarget>().enabled = true;
+            myCollider.enabled = true;
         }
+        
+        Train.s.TrainUpdated();
     }
 
     private void OnDestroy() {

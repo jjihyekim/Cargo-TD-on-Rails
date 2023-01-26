@@ -61,23 +61,48 @@ public class PlayerModuleSelector : MonoBehaviour {
 
         if (!activeActionSelection.IsMouseOverMenu()) { // we dont want to hide menu in case the player clicks on it
             // we dont want to hide menu in case the player clicks on it
+            if (isActionSelectionActive) {
+                HideModuleActionSelector();
+                return;
+            }
+            
             if (activeBuilding != null) {
                 activeActionSelection.gameObject.SetActive(true);
                 activeActionSelection.SetUp(activeBuilding);
                 isActionSelectionActive = true;
+                
+                if(PlayerPrefs.GetInt("SnapToPlayer", 1) == 1)
+                    CameraController.s.SnapToTrainModule(activeBuilding);
+                
             } else if (activeEnemy != null) {
                 activeActionSelection.gameObject.SetActive(true);
                 activeActionSelection.SetUp(activeEnemy);
                 isActionSelectionActive = true;
+                
+                if(PlayerPrefs.GetInt("SnapToEnemies", 1) == 1)
+                    CameraController.s.SnapToTransform(activeEnemy.transform);
             } else {
                 HideModuleActionSelector();
             }
         }
     }
 
+    public void ActivateActionDisplayOnTrainBuilding(TrainBuilding building) {
+        if (activeBuilding != null) {
+            SelectBuilding(activeBuilding, false);
+        }
+        activeBuilding = building;
+        activeActionSelection.SetUp(activeBuilding);
+        SelectBuilding(building, true);
+
+        timerForNotCheckingForCursorMove = 0.5f;
+    }
+
     public void HideModuleActionSelector() {
         activeActionSelection.gameObject.SetActive(false);
         isActionSelectionActive = false;
+        
+        CameraController.s.UnSnap();
     }
 
     public void ShowModuleActionSelector() {
@@ -85,21 +110,22 @@ public class PlayerModuleSelector : MonoBehaviour {
         isActionSelectionActive = true;
     }
 
-    
+    public float timerForNotCheckingForCursorMove;
     private void Update() {
-        if (canSelectModules) {
-            //if (!isActionSelectionActive) {
+        if (canSelectModules ) {
+            if (!isActionSelectionActive) {
                 CastRayToSelectBuilding();
-            //}
+            }
 
-            if (isMouseOverSelectedModule) {
+            // Scroll to select different gun
+            /*if (isMouseOverSelectedModule) {
                 CameraController.s.canZoom = false;
                 ProcessScroll(scroll.action.ReadValue<float>());
             } else {
                 CameraController.s.canZoom = true;
-            }
+            }*/
 
-            if (isActionSelectionActive) { // hide the menu if the cursor moves away from it
+            if (isActionSelectionActive && timerForNotCheckingForCursorMove <= 0) { // hide the menu if the cursor moves away from it
                 var mousePos = Mouse.current.position.ReadValue();
                 var rectPos = RectTransformUtility.WorldToScreenPoint(OverlayCamsReference.s.uiCam, activeActionSelection.transform.position);
                 
@@ -110,6 +136,8 @@ public class PlayerModuleSelector : MonoBehaviour {
                 if (Mathf.Abs(mousePos.y - rectPos.y) > 330) {
                     HideModuleActionSelector();
                 }
+            } else {
+                timerForNotCheckingForCursorMove -= Time.deltaTime;
             }
         }
     }
@@ -168,6 +196,7 @@ public class PlayerModuleSelector : MonoBehaviour {
 
                 lastRaycastIndex = index;
             } else if (enemy != null) {
+                DeselectObject();
                 SelectEnemy(enemy);
             } else {
                 DeselectObject();
@@ -234,6 +263,7 @@ public class PlayerModuleSelector : MonoBehaviour {
             activeEnemy.SetHighlightState(false);
             activeEnemy = null;
         }
+        
     }
 
     void SelectObject(Slot slot, int index) {
@@ -296,7 +326,7 @@ public class PlayerModuleSelector : MonoBehaviour {
             if (enemyHealth != null) {
                 enemyHealth.SetHighlightState(true);
                 activeEnemy = enemyHealth;
-            } 
+            }
         }
     }
 }

@@ -6,6 +6,7 @@ using UnityEngine.InputSystem;
 using UnityEngine.UI;
 
 public class FirstTimeTutorialController : MonoBehaviour {
+    public static FirstTimeTutorialController s;
 
     public LevelDataScriptable tutorialLevel;
     public CharacterDataScriptable tutorialCharacter;
@@ -14,14 +15,20 @@ public class FirstTimeTutorialController : MonoBehaviour {
 
     public Button mapButton;
     private void Awake() {
+        s = this;
         tutorialUI.SetActive(false);
         if (PlayerPrefs.GetInt("finishedTutorial", 0) == 0) {
             DisableIfOpenedGuideBefore.shouldDisableBecauseOfTutorial = true;
-            MapController.ApplyStarMap = false;
             Invoke(nameof(EngageFirstTimeTutorial),0.01f);
         } else {
             this.enabled = false;
         }
+    }
+
+    public void ReDoTutorial() {
+        DisableIfOpenedGuideBefore.shouldDisableBecauseOfTutorial = true;
+        DataSaver.s.GetCurrentSave().isInARun = false;
+        EngageFirstTimeTutorial();
     }
 
     public void EngageFirstTimeTutorial() {
@@ -29,21 +36,31 @@ public class FirstTimeTutorialController : MonoBehaviour {
             DataSaver.s.GetCurrentSave().currentRun = new DataSaver.RunState();
             DataSaver.s.GetCurrentSave().currentRun.SetCharacter(tutorialCharacter.myCharacter);
             DataSaver.s.GetCurrentSave().isInARun = true;
+            UpgradesController.s.callWhenUpgradesOrModuleAmountsChanged?.Invoke();
 
             MapController.s.GenerateStarMap();
+            WorldMapCreator.s.GenerateWorldMap();
+            HexGrid.s.RefreshGrid();
+            
             DataSaver.s.SaveActiveGame();
-            SceneLoader.s.BackToStarterMenuHardLoad();
+            SceneLoader.s.BackToStarterMenu(true);
+            
+            SceneLoader.s.ForceReloadScene();
             return;
         }
 
         if(SceneLoader.s.isProfileMenu())
             ProfileSelectionMenu.s.StartGame();
+        
+        SceneLoader.s.afterTransferCalls.Enqueue(() => DoStartTutorial());
+    }
 
-        StarterUIController.s.SelectLevelAndStart(tutorialLevel.GetData());
+    void DoStartTutorial() {
+        StarterUIController.s.OpenStarterUI();
+        StarterUIController.s.SelectLevelAndStart_StarterUIStartOnly(tutorialLevel.GetData() );
         tutorialEngaged = true;
 
         mapButton.interactable = false;
-
         StartCoroutine(TutorialProcess());
     }
 
@@ -254,6 +271,7 @@ public class FirstTimeTutorialController : MonoBehaviour {
 
     void FillEmptyTrainSlotsWithDummy() {
         var slots = Train.s.GetComponentsInChildren<Slot>();
+        DummyTrainModule.canSelect = false;
         for (int i = 0; i < slots.Length; i++) {
             for (int j = 0; j < slots[i].myBuildings.Length; j++) {
                 if (slots[i].myBuildings[j] == null) {
@@ -385,17 +403,17 @@ public class FirstTimeTutorialController : MonoBehaviour {
         mapButton.interactable = true;
         PlayerPrefs.SetInt("finishedTutorial", 1);
         DisableIfOpenedGuideBefore.shouldDisableBecauseOfTutorial = false;
-        MapController.ApplyStarMap = true;
-        CharacterSelector.s.SelectCharacter(defaultStartCharacter.myCharacter);
+        CharacterSelector.s.SelectCharacterInstant(defaultStartCharacter.myCharacter);
         MusicPlayer.s.SwapMusicTracksAndPlay(false);
+
+        tutorialEngaged = false;
+        SceneLoader.s.ForceReloadScene();
     }
     
     public void SkipTutorial (){
-        mapButton.interactable = true;
-        PlayerPrefs.SetInt("finishedTutorial", 1);
-        DisableIfOpenedGuideBefore.shouldDisableBecauseOfTutorial = false;
-        MapController.ApplyStarMap = true;
-        SettingsController.s.ResetRun();
-        MusicPlayer.s.SwapMusicTracksAndPlay(false);
+        if (tutorialEngaged) {
+            StopAllCoroutines();
+            TutorialComplete();
+        }
     }
 }

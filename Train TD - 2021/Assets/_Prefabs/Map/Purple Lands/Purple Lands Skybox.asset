@@ -1,0 +1,46 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a398de59e35531a4fa744adfd070fbb9, type: 3}
+  m_Name: Purple Lands Skybox
+  m_EditorClassIdentifier: 
+  SkyboxMaterial: {fileID: 2100000, guid: 4d0e0ffc7a6c1bf44b435e0b23260f8c, type: 2}
+  _topColor: {r: 0.16550769, g: 0.31596932, b: 0.48900002, a: 1}
+  _middleColor: {r: 0.36830768, g: 0.4380923, b: 0.504, a: 1}
+  _bottomColor: {r: 0.8721447, g: 0, b: 1, a: 1}
+  _topExponent: 1
+  _bottomExponent: 1
+  _starsEnabled: 0
+  _starsCubemap: {fileID: 0}
+  _starsTint: {r: 1, g: 1, b: 1, a: 1}
+  _starsExtinction: 2
+  _starsTwinklingSpeed: 10
+  _sunEnabled: 1
+  _sunTexture: {fileID: 2800000, guid: eb1e18ae3dbe9f348a7bc0d71a5cc811, type: 3}
+  _sunTint: {r: 0.7019608, g: 0.34509805, b: 0.6090811, a: 1}
+  _sunSize: 0.32
+  _sunHalo: 0.865
+  _sunFlare: 1
+  _sunFlareBrightness: 0.3
+  _moonEnabled: 0
+  _moonTexture: {fileID: 0}
+  _moonTint: {r: 0.491, g: 0.53774476, b: 1, a: 1}
+  _moonSize: 0.75
+  _moonHalo: 1
+  _moonFlare: 1
+  _moonFlareBrightness: 0.3
+  _cloudsEnabled: 1
+  _cloudsCubemap: {fileID: 8900000, guid: bfa1267ef40a77540ac2cfde9297f199, type: 3}
+  _cloudsTint: {r: 0.38803348, g: 0.379936, b: 0.496, a: 1}
+  _cloudsHeight: 0
+  _cloudsRotation: 0
+  _exposure: 1
+  _adjustFogColor: 1

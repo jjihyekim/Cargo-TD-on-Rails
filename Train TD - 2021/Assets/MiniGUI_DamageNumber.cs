@@ -38,6 +38,7 @@ public class MiniGUI_DamageNumber : MonoBehaviour {
 
         if (isBurned) {
             dmgText.text = burned[Random.Range(0, burned.Length)];
+            fadeOutStartTime /= 2;
         }else
 
         if (isPlayer) {

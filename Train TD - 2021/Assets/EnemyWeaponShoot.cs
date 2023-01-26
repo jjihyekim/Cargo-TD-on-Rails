@@ -43,7 +43,7 @@ public class EnemyWeaponShoot : MonoBehaviour {
             var rotation = barrelEnd.rotation;
             var bullet = Instantiate(bulletPrefab, position + barrelEnd.forward * projectileSpawnOffset, rotation);
             var muzzleFlash = Instantiate(muzzleFlashPrefab, position, rotation);
-            bullet.GetComponent<Projectile>().myOriginObject = this.gameObject;
+            bullet.GetComponent<Projectile>().myOriginObject = this.transform.root.gameObject;
 
             yield return new WaitForSeconds(fireBarrageDelay);
         }

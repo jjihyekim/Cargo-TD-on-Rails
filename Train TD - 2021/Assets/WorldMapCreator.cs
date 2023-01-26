@@ -17,7 +17,8 @@ public class WorldMapCreator : MonoBehaviour {
 	public TMP_Text mapText;
 	private void Start() {
 		// we want this one frame after so that mapgenerator gets a chance to generate the map if need be
-		//Invoke(nameof(GenerateWorldMap), 0.01f);
+		if(DataSaver.s.GetCurrentSave().isInARun)
+			Invoke(nameof(GenerateWorldMap), 0.01f);
 	}
 
 	public bool worldMapOpen = false;
@@ -28,9 +29,7 @@ public class WorldMapCreator : MonoBehaviour {
 	public LayerMask castleClickLayerMask;
 
 	public void ToggleWorldMap() {
-		worldMapOpen = !worldMapOpen;
-
-		if (worldMapOpen) {
+		if (!worldMapOpen) {
 			OpenWorldMap();
 		} else {
 			ReturnToRegularMap();
@@ -97,29 +96,44 @@ public class WorldMapCreator : MonoBehaviour {
 	public GameObject targetStarInfoScreenBudget;
 
 	void OpenWorldMap() {
-		CameraController.s.EnterMapMode();
-		mapText.text = "Train";
-		StarterUIController.s.SetStarterUIStatus(false);
+		if (!worldMapOpen) {
+			for (int i = 0; i < castles.Count; i++) {
+				castles[i].Refresh();
+				if (castles[i].myInfo.isPlayerHere) {
+					playerTrainTargetTransform = castles[i].playerIndicator.transform;
+				}
+			}
+			
+			for (int i = 0; i < rails.Count; i++) {
+				rails[i].Refresh();
+			}
+			
+			CameraController.s.EnterMapMode();
+			mapText.text = "Train";
+			StarterUIController.s.SetStarterUIStatus(false);
 
-		Train.s.transform.position = playerTrainTargetTransform.transform.position;
-		Train.s.transform.localScale = playerTrainTargetTransform.transform.localScale;
+			Train.s.transform.position = playerTrainTargetTransform.transform.position;
+			Train.s.transform.localScale = playerTrainTargetTransform.transform.localScale;
 
-		MiniGUI_HealthBar.showHealthBars = false;
-		PlayerModuleSelector.s.DisableModuleSelecting();
-		worldMapOpen = true;
+			MiniGUI_HealthBar.showHealthBars = false;
+			PlayerModuleSelector.s.DisableModuleSelecting();
+			worldMapOpen = true;
+		}
 	}
 
 	public void ReturnToRegularMap() {
-		CameraController.s.ExitMapMode();
-		mapText.text = "Map";
-		StarterUIController.s.SetStarterUIStatus(true);
-		
-		Train.s.ResetTrainPosition();
-		
-		MiniGUI_HealthBar.showHealthBars = true;
-		PlayerModuleSelector.s.EnableModuleSelecting();
-		worldMapOpen = false;
-		targetStarInfoScreenBudget.SetActive(false);
+		if (worldMapOpen) {
+			CameraController.s.ExitMapMode();
+			mapText.text = "Map";
+			StarterUIController.s.SetStarterUIStatus(true);
+
+			Train.s.ResetTrainPosition();
+
+			MiniGUI_HealthBar.showHealthBars = true;
+			PlayerModuleSelector.s.EnableModuleSelecting();
+			worldMapOpen = false;
+			targetStarInfoScreenBudget.SetActive(false);
+		}
 	}
 
 	public void ResetMapPos() {
@@ -128,25 +142,22 @@ public class WorldMapCreator : MonoBehaviour {
 
 	private List<CastleWorldScript> castles;
 
-	public bool isWorldMapGenerated = false;
-
 	[Button]
-	void DebugGenerateWorldMap() {
-		GenerateWorldMap(true);
+	public void DebugGenerateWorldMap() {
+		GenerateWorldMap();
 	}
-	public void GenerateWorldMap(bool isForced = false) {
-		if (!isWorldMapGenerated || isForced) {
-			ResetMapPos();
-			objectsParent.DeleteAllChildren();
-			hexGrid.ClearGrids();
-			castles = CreateCastles();
-			CreateRandomWeights(castles);
-			CreateRails(castles);
 
-			hexGrid.CreateGridsOverAFewFrames(AfterGridWasMade);
+	public void GenerateWorldMap() {
+		ReturnToRegularMap();
 
-			isWorldMapGenerated = true;
-		}
+		ResetMapPos();
+		objectsParent.DeleteAllChildren();
+		hexGrid.ClearGrids();
+		castles = CreateCastles();
+		CreateRandomWeights(castles);
+		CreateRails();
+
+		hexGrid.CreateGridsOverAFewFrames(AfterGridWasMade);
 	}
 
 	void AfterGridWasMade() {
@@ -210,7 +221,6 @@ public class WorldMapCreator : MonoBehaviour {
 				var script = castle.GetComponent<CastleWorldScript>();
 				script.Initialize(myStar);
 				if (myStar.isPlayerHere) {
-					script.SetPlayerHere();
 					playerTrainTargetTransform = script.playerIndicator.transform;
 				}
 				
@@ -273,10 +283,11 @@ public class WorldMapCreator : MonoBehaviour {
 
 	public GameObject railAffectorPrefab;
 
-	void CreateRails(List<CastleWorldScript> castles) {
+	public List<RailWorldScript> rails = new List<RailWorldScript>();
+	void CreateRails() {
 		var map = DataSaver.s.GetCurrentSave().currentRun.map;
 
-
+		rails.Clear();
 		for (int i = 0; i < castles.Count; i++) {
 			var a = castles[i];
 
@@ -284,19 +295,8 @@ public class WorldMapCreator : MonoBehaviour {
 				var b = GetCastleWithName(castles, a.myInfo.outgoingConnections[j]);
 
 				var rail = Instantiate(railAffectorPrefab, objectsParent).GetComponent<RailWorldScript>();
-				rail.Initialize(a,b);
-				
-				if (a.myInfo.isPlayerHere) {
-					rail.SetHighlightState(true);
-					b.SetTravelable(true);
-					
-					CameraController.s.SetMapPos(a.transform.position);
-					
-				}else if (a.myInfo.previouslyVisited && b.myInfo.previouslyVisited) {
-					rail.SetPreviouslyVisited();
-				}
-
-				rail.SetEncounter(a.myInfo.outgoingConnectionLevels[j].isEncounter);
+				rail.Initialize(a,b, j);
+				rails.Add(rail);
 			}
 		}
 	}

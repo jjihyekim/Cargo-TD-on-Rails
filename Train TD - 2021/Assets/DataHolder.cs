@@ -25,6 +25,8 @@ public class DataHolder : MonoBehaviour {
     public CharacterDataScriptable[] characters;
     public CityDataScriptable[] cities;
     public EncounterTitle[] encounters;
+
+    public LevelDataScriptable[] levels;
     
     public Color moneyBackColor = Color.green;
 
@@ -62,12 +64,28 @@ public class DataHolder : MonoBehaviour {
 
     public GameObject GetEncounter(string encounterUniqueName) {
         for (int i = 0; i < encounters.Length; i++) {
-            if (PreProcess(encounters[i].title) == PreProcess(encounterUniqueName)) {
+            if ("e_" + PreProcess(encounters[i].gameObject.name) == PreProcess(encounterUniqueName)) {
                 return encounters[i].gameObject;
             }
         }
 
         Debug.LogError($"Can't find encounter {encounterUniqueName}");
+        return null;
+    }
+    
+    public LevelData GetLevel(string levelUniqueName) {
+        if (levelUniqueName.StartsWith("e_")) {
+            return new LevelData() { levelName = levelUniqueName, isEncounter = true };
+        }
+        
+        for (int i = 0; i < levels.Length; i++) {
+            var data = levels[i].GetData();
+            if (PreProcess(data.levelName) == PreProcess(levelUniqueName)) {
+                return data;
+            }
+        }
+
+        Debug.LogError($"Can't find level {levelUniqueName}");
         return null;
     }
     

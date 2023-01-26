@@ -6,6 +6,8 @@ using UnityEngine;
 using Random = UnityEngine.Random;
 
 public class TrainBuilding : MonoBehaviour {
+    [HideInInspector]
+    public bool canSelect = true;
 
     public string displayName = "Unnamed But Nice in game name";
     public string uniqueName = "unnamed";
@@ -348,7 +350,7 @@ public class TrainBuilding : MonoBehaviour {
 
     void SetUpOutlines() {
         if (_outlines.Count == 0) {
-            var renderers = GetComponentsInChildren<MeshRenderer>(true);
+            /*var renderers = GetComponentsInChildren<MeshRenderer>(true);
 
             foreach (var rend in renderers) {
                 if (rend.GetComponent<Outline>() == null && !rend.gameObject.CompareTag("NoOutline")) {
@@ -359,6 +361,13 @@ public class TrainBuilding : MonoBehaviour {
                     outline.enabled = false;
                     _outlines.Add(outline);
                 }
+            }*/
+
+            var moduleGraphics = GetComponentsInChildren<ModuleGraphics>(true);
+            for (int i = 0; i < moduleGraphics.Length; i++) {
+                var outline = moduleGraphics[i].GetComponent<Outline>();
+                if(outline != null)
+                    _outlines.Add(outline);
             }
         }
     }

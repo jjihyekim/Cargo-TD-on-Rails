@@ -21,6 +21,7 @@ public class SpeedController : MonoBehaviour, IShowOnDistanceRadar {
 
     public float enginePower = 0;
     public float enginePowerTarget = 0;
+    public float freePower = 0;
     public float enginePowerBoost = 1f;
     public float enginePowerPlayerControl = 1f;
     public float targetSpeed;
@@ -57,18 +58,30 @@ public class SpeedController : MonoBehaviour, IShowOnDistanceRadar {
 
     public void UpdateBasedOnLevelData() {
         var myLevel = SceneLoader.s.currentLevel;
-        missionDistance = myLevel.missionDistance;
+        if (myLevel != null)
+            missionDistance = myLevel.missionDistance;
+        else
+            missionDistance = 500;
+        
+        
         endTrainStation.startPos = Vector3.forward * missionDistance;
         enginePowerBoost = 1;
-        var myResources = DataSaver.s.GetCurrentSave().currentRun.myResources;
-        fuel = myResources.fuel;
-        maxFuel = myResources.maxFuel;
-        myFuelShower.SetMaxScrap(maxFuel);
+
+        if (DataSaver.s.GetCurrentSave().isInARun) {
+            var myResources = DataSaver.s.GetCurrentSave().currentRun.myResources;
+            fuel = myResources.fuel;
+            maxFuel = myResources.maxFuel;
+            myFuelShower.SetMaxScrap(maxFuel);
+        }
+
         maxSteam = engines.Count*100;
         steam = maxSteam/2f;
         mySteamShower.SetMaxScrap(maxSteam);
 
+
+        currentDistance = 0;
         LevelReferences.s.speed = 0;
+        internalRealSpeed = 0;
         targetSpeed = 0;
     }
 
@@ -115,23 +128,28 @@ public class SpeedController : MonoBehaviour, IShowOnDistanceRadar {
     public float debugSteamGeneration;
     public float debugSteamUse;
 
-
     public float trainWeightMultiplier = 0.8f;
+
+    public float internalRealSpeed;
     private void Update() {
         if (SceneLoader.s.isLevelInProgress) {
             enginePowerTarget = 0;
+            freePower = 0;
             for (int i = 0; i < engines.Count; i++) {
-                enginePowerTarget += engines[i].enginePower;
+                if (engines[i].isFreePower) {
+                    freePower += engines[i].enginePower;
+                } else {
+                    enginePowerTarget += engines[i].enginePower;
+                }
             }
-            
+
             var trainWeight = Train.s.GetTrainWeight();
             trainWeightText.text = trainWeight.ToString();
             trainWeight = (int)(trainWeight * trainWeightMultiplier);
 
             DoFuelAndPlayerEngineControls();
-            
-            
-            var engineTarget = enginePowerTarget * enginePowerBoost * enginePowerPlayerControl;
+
+            var engineTarget = enginePowerTarget * enginePowerBoost * enginePowerPlayerControl + freePower;
             enginePower = Mathf.MoveTowards(enginePower, engineTarget, enginePowerChangeDelta * Time.deltaTime);
 
             var steamGenerationPerSecond = steamPer100EnginePower * (enginePower/100f);
@@ -162,8 +180,14 @@ public class SpeedController : MonoBehaviour, IShowOnDistanceRadar {
             }
 
 
-            
-            LevelReferences.s.speed = Mathf.MoveTowards(LevelReferences.s.speed, targetSpeed, acceleration * Time.deltaTime);
+
+            internalRealSpeed = Mathf.MoveTowards(internalRealSpeed, targetSpeed, acceleration * Time.deltaTime);
+            LevelReferences.s.speed = Mathf.Max( internalRealSpeed - slowAmount, 0f);
+            slowAmount = Mathf.Lerp(slowAmount, 0, slowDecay * Time.deltaTime);
+            slowAmount = Mathf.Clamp(slowAmount, 0, 5);
+            if (slowAmount <= 0.2f) {
+                ToggleSlowedEffect(false);
+            }
 
             trainSpeedText.text = $"{LevelReferences.s.speed:F1}";
             mySpeedometer.SetSpeed(LevelReferences.s.speed);
@@ -311,5 +335,50 @@ public class SpeedController : MonoBehaviour, IShowOnDistanceRadar {
     
     public Sprite GetIcon() {
         return trainRadarImg;
+    }
+
+    public float slowAmount;
+    public float slowDecay = 0.1f;
+    public void AddSlow(float amount) {
+        if (slowAmount > 1)
+            amount /= slowAmount;
+        slowAmount += amount;
+        ToggleSlowedEffect(true);
+    }
+
+
+    public List<GameObject> activeSlowedEffects = new List<GameObject>();
+    private bool isSlowedOn = false;
+    void ToggleSlowedEffect(bool isOn) {
+        if (isOn && !isSlowedOn) {
+            for (int i = 0; i < engines.Count; i++) {
+                var effect = Instantiate(LevelReferences.s.currentlySlowedEffect, engines[i].transform.position, Quaternion.identity);
+                effect.transform.SetParent(engines[i].transform);
+                activeSlowedEffects.Add(effect);
+            }
+
+            isSlowedOn = true;
+        }
+
+        if (!isOn && isSlowedOn) {
+            for (int i = 0; i < activeSlowedEffects.Count; i++) {
+                SmartDestroy(activeSlowedEffects[i].gameObject);
+            }
+            
+            activeSlowedEffects.Clear();
+            isSlowedOn = false;
+        }
+    }
+    
+    void SmartDestroy(GameObject target) {
+        var particles = GetComponentsInChildren<ParticleSystem>();
+
+        foreach (var particle in particles) {
+            particle.transform.SetParent(null);
+            particle.Stop();
+            Destroy(particle.gameObject, 1f);
+        }
+            
+        Destroy(target);
     }
 }

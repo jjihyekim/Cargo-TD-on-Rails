@@ -23,8 +23,8 @@ public class RepairModule : MonoBehaviour, IActiveDuringCombat {
     void Update() {
         if (SceneLoader.s.isLevelInProgress) {
             if (curRepairDelay <= 0) {
-                BreadthFirstRepairSearch();
-                SpeedController.s.UseSteam(steamUsePerRepair);
+                if(BreadthFirstRepairSearch())
+                    SpeedController.s.UseSteam(steamUsePerRepair);
                 curRepairDelay = repairDelay;
             } else {
                 curRepairDelay -= Time.deltaTime;
@@ -33,7 +33,11 @@ public class RepairModule : MonoBehaviour, IActiveDuringCombat {
     }
 
 
-    void BreadthFirstRepairSearch() {
+    bool BreadthFirstRepairSearch() {
+        if(myCart == null)
+            myCart = GetComponentInParent<Cart>();
+        if(myTrain == null)
+            myTrain = GetComponentInParent<Train>();
         var carts = new List<Cart>();
         for (int i = 0; i < myTrain.carts.Count; i++) {
 
@@ -51,15 +55,17 @@ public class RepairModule : MonoBehaviour, IActiveDuringCombat {
 
         for (int i = 0; i < carts.Count; i++) {
             if (RepairDamageInCart(carts[i], false)) {
-                return;
+                return true;
             }
         }
         
         for (int i = 0; i < carts.Count; i++) {
             if (RepairDamageInCart(carts[i], true)) {
-                return;
+                return true;
             }
         }
+
+        return false;
     }
     
     private bool inBounds <T>(int index, List<T> array) 
@@ -87,6 +93,8 @@ public class RepairModule : MonoBehaviour, IActiveDuringCombat {
     }
 
     public void ActivateForCombat() {
+        myCart = GetComponentInParent<Cart>();
+        myTrain = GetComponentInParent<Train>();
         this.enabled = true;
     }
 

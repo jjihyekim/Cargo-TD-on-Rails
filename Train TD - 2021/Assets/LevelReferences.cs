@@ -33,6 +33,17 @@ public class LevelReferences : MonoBehaviour {
     public GameObject damageNumbersPrefab;
     public Transform uiDisplayParent;
 
+    public GameObject smallDamagePrefab;
+    public GameObject mediumDamagePrefab;
+    public GameObject bigDamagePrefab;
+
+
+    public GameObject teleportStartEffect;
+    public float teleportTime = 1f;
+    public GameObject teleportCompleteEffect;
+
+    public GameObject currentlySlowedEffect;
+
     public float speed = 1f;
 
     public static List<PossibleTarget> allTargets = new List<PossibleTarget>();
@@ -52,9 +63,13 @@ public class LevelReferences : MonoBehaviour {
     public LayerMask groundLayer;
     public LayerMask enemyLayer;
     public LayerMask buildingLayer;
+
+    public SingleUnityLayer playerBulletLayer;
+    public SingleUnityLayer enemyBulletLayer;
     
     private void Awake() {
         s = this;
+        
     }
 
 
@@ -63,7 +78,7 @@ public class LevelReferences : MonoBehaviour {
     public void SpawnResourceAtLocation(ResourceTypes type, float amount, Vector3 location) {
         SpawnResourceAtLocation(type, Mathf.RoundToInt(amount), location);
     }
-    public void SpawnResourceAtLocation(ResourceTypes type, int amount, Vector3 location) {
+    public void SpawnResourceAtLocation(ResourceTypes type, int amount, Vector3 location, bool customCollectTarget = false, Transform customCollectTargetTransform = null) {
         if (amount == 0)
             return;
         
@@ -93,7 +108,7 @@ public class LevelReferences : MonoBehaviour {
             pileComp.SetUp(targetAmount, type);
             amount -= maxMoneyPileCount;
 
-            StartCoroutine(ThrowPile(pile));
+            StartCoroutine(ThrowPile(pile, customCollectTarget, customCollectTargetTransform));
         }
     }
     
@@ -101,19 +116,34 @@ public class LevelReferences : MonoBehaviour {
     public float throwHorizontalSpeed = 0.1f;
     public float throwVerticalSpeed = 0.2f;
     public float throwGravity = 9.81f;
-    IEnumerator ThrowPile(GameObject pile) {
+
+    IEnumerator ThrowPile(GameObject pile, bool customCollectTarget = false, Transform customCollectTargetTransform = null) {
         var random = Random.insideUnitCircle.normalized;
         var direction = new Vector3(random.x, 0, random.y);
+        if (customCollectTarget) {
+            direction =  customCollectTargetTransform.position - pile.transform.position;
+            direction.y = 0;
+        }
+        
+        direction.Normalize();
         var verticalSpeed = throwVerticalSpeed;
 
         while (verticalSpeed > -throwVerticalSpeed) {
             pile.transform.position += (direction * throwHorizontalSpeed + Vector3.up * verticalSpeed) * Time.deltaTime;
-            
+
 
             verticalSpeed -= throwGravity * Time.deltaTime;
             yield return null;
         }
 
-        pile.GetComponent<ScrapPile>().CollectPile();
+        if (!customCollectTarget) {
+            pile.GetComponent<ScrapPile>().CollectPile();
+        } else {
+            pile.GetComponent<ScrapPile>().CollectPileWithTarget(customCollectTargetTransform);
+        }
     }
+
+    public float enemyDamageBuff = 1f;
+    public float playerDamageBuff = 1f;
+
 }

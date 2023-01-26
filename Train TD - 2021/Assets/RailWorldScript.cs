@@ -10,15 +10,18 @@ public class RailWorldScript : MonoBehaviour {
 
 	private CastleWorldScript source;
 	private CastleWorldScript target;
+	private int outgoingIndex;
 
 	public GameObject enemyMarker;
 	public GameObject encounterMarker;
 
 	private HexRailAffector myAffector;
 
-	public void Initialize(CastleWorldScript _from, CastleWorldScript _to) {
+	public void Initialize(CastleWorldScript _from, CastleWorldScript _to, int _outgoingIndex) {
 		source = _from;
 		target = _to;
+		outgoingIndex = _outgoingIndex;
+		
 		var sourcePos = source.transform.position;
 		var targetPos = target.transform.position;
 		
@@ -27,11 +30,27 @@ public class RailWorldScript : MonoBehaviour {
 		myAffector.endPos = targetPos;
 
 		transform.position = Vector3.Lerp(sourcePos, targetPos, 0.5f);
-			
-		SetHighlightState(false);
+		
+		Refresh();
 	}
 
-	public void SetHighlightState(bool isHighlight) {
+	public void Refresh() {
+		SetHighlightState(false);
+		
+		if (source.myInfo.isPlayerHere) {
+			SetHighlightState(true);
+			target.SetTravelable(true);
+					
+			CameraController.s.SetMapPos(source.transform.position);
+					
+		}else if (source.myInfo.previouslyVisited && target.myInfo.previouslyVisited) {
+			SetPreviouslyVisited();
+		}
+				
+		SetEncounter(DataHolder.s.GetLevel(source.myInfo.outgoingConnectionLevels[outgoingIndex]).isEncounter);
+	}
+
+	void SetHighlightState(bool isHighlight) {
 		if (isHighlight) {
 			myAffector.myPrefab = possiblePath;
 			
@@ -44,15 +63,14 @@ public class RailWorldScript : MonoBehaviour {
 			encounterMarker.transform.localScale = Vector3.one*0.6f;
 		}
 	}
-
-	public void SetPreviouslyVisited() {
+	void SetPreviouslyVisited() {
 		myAffector.myPrefab = previousPath;
 		
 		enemyMarker.transform.localScale = Vector3.one*0.6f;
 		encounterMarker.transform.localScale = Vector3.one*0.6f;
 	}
 
-	public void SetEncounter(bool isEncounter) {
+	void SetEncounter(bool isEncounter) {
 		enemyMarker.SetActive(!isEncounter);
 		encounterMarker.SetActive(isEncounter);
 	}

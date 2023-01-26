@@ -42,9 +42,11 @@ public class MissionWinFinisher : MonoBehaviour {
 
 	public void MissionWon(bool isShowingPrevRewards = false) {
 		SceneLoader.s.FinishLevel();
-		EnemyHealth.winSelfDestruct?.Invoke(false);
+		EnemyWavesController.s.Cleanup();
+		//EnemyHealth.winSelfDestruct?.Invoke(false);
 		ShowAlert(false);
 		
+		DistanceAndEnemyRadarController.s.ClearRadar();
 		
 		for (int i = 0; i < scriptsToDisable.Length; i++) {
 			scriptsToDisable[i].enabled = false;
@@ -54,13 +56,11 @@ public class MissionWinFinisher : MonoBehaviour {
 			gameObjectsToDisable[i].SetActive(false);
 		}
 
-		DeactiveRangeShows();
+		ChangeRangeShowState(false);
 		
 		var mySave = DataSaver.s.GetCurrentSave();
-		
-		
+
 		MapController.s.FinishTravelingToStar();
-		
 
 		// mission rewards
 		if(!isShowingPrevRewards)
@@ -79,7 +79,6 @@ public class MissionWinFinisher : MonoBehaviour {
 		cameraSwitcher.Engage();
 		winUI.SetActive(true);
 		
-
 
 		//send analytics
 		AnalyticsResult analyticsResult = Analytics.CustomEvent(
@@ -107,12 +106,12 @@ public class MissionWinFinisher : MonoBehaviour {
 		DirectControlMaster.s.DisableDirectControl();
 	}
 
-	void DeactiveRangeShows() {
+	void ChangeRangeShowState(bool state) {
 		foreach (var slot in Train.s.GetComponentsInChildren<Slot>()) {
 			var ranges = slot.GetComponentsInChildren<RangeVisualizer>();
 
 			for (int i = 0; i < ranges.Length; i++) {
-				ranges[i].ChangeVisualizerEdgeShowState(false);
+				ranges[i].ChangeVisualizerEdgeShowState(state);
 			}
 		}
 	}
@@ -289,7 +288,26 @@ public class MissionWinFinisher : MonoBehaviour {
 		if (DataSaver.s.GetCurrentSave().currentRun.map.GetPlayerStar().isBoss) {
 			ActFinishController.s.OpenActWinUI();
 		} else {
-			SceneLoader.s.BackToStarterMenuHardLoad();
+			//Cleanup();
+			SceneLoader.s.BackToStarterMenu();
+			SceneLoader.s.afterTransferCalls.Enqueue(() => Cleanup());
+		}
+	}
+
+	public void Cleanup() {
+		for (int i = 0; i < gameObjectsToDisable.Length; i++) {
+			gameObjectsToDisable[i].SetActive(false);
+		}
+
+		EnemyWavesController.s.Cleanup();
+		MapController.s.Cleanup();
+		
+		ChangeRangeShowState(true);
+		cameraSwitcher.Disengage();
+		winUI.SetActive(false);
+		
+		for (int i = 0; i < scriptsToDisable.Length; i++) {
+			scriptsToDisable[i].enabled = true;
 		}
 	}
 

@@ -1,7 +1,9 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
+using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
 
 public class SceneLoader : MonoBehaviour {
@@ -73,6 +75,7 @@ public class SceneLoader : MonoBehaviour {
     }
     
     private void Awake() {
+        ClearLevel();
         if (s == null) {
             s = this;
             DontDestroyOnLoad(gameObject);
@@ -90,24 +93,78 @@ public class SceneLoader : MonoBehaviour {
     
     public void SetCurrentLevel(LevelData levelData) {
         _currentLevel = levelData.Copy();
+
+        if (MiniGUI_DebugLevelName.s != null) {
+            MiniGUI_DebugLevelName.s.SetLevelName(_currentLevel.levelName);
+        }
+    }
+
+    void ClearLevel() {
+        _currentLevel = null;
     }
 
     public GameObject loadingScreen;
+    public GameObject loadingText;
     public CanvasGroup canvasGroup;
 
 
-    public void OpenProfileScreen() {
+    public void OpenProfileScreen(bool hardLoad = false) {
+        StopAllCoroutines();
         _gameState = GameState.profileMenu;
-        LoadScene(mainScene);
+        if (hardLoad) {
+            LoadScene(mainScene);
+        } else {
+            StartCoroutine(OnlyFade(false, () => DoOpenProfileMenu()));
+        }
     }
 
-    public void SetToStarterMenu() {
-        _gameState = GameState.starterMenu;
+    void DoOpenProfileMenu() {
+        ProfileSelectionMenu.s.OpenProfileMenu();
     }
-    
-    public void BackToStarterMenuHardLoad() {
+
+    public void BackToStarterMenu(bool showLoading = false) {
         _gameState = GameState.starterMenu;
-        LoadScene(mainScene, true);
+        
+        StopAllCoroutines();
+        afterTransferCalls.Clear();
+        StartCoroutine(OnlyFade(showLoading, () => DoTransfer()));
+        //LoadScene(mainScene, true);
+    }
+
+
+    public Queue<Action> afterTransferCalls = new Queue<Action>(); // must add stuff to this AFTER calling back to menu!
+    void DoTransfer() {
+        ClearLevel();
+        
+        while (afterTransferCalls.TryDequeue(out Action result)) {
+            result(); 
+        }
+        
+        WorldMapCreator.s.ReturnToRegularMap();
+        StarterUIController.s.OpenStarterUI();
+    }
+
+    public float fadeTime = 0.2f;
+    IEnumerator OnlyFade(bool showLoading, Action toCallInTheMiddle) {
+        isLoading = true;
+        loadingProgress = 0;
+        if(!showLoading)
+            loadingText.SetActive(false);
+        loadingScreen.SetActive(true);
+        yield return StartCoroutine(FadeLoadingScreen(currentFadeValue,1, fadeTime-0.01f));
+
+        yield return null; // one frame pause
+        
+        toCallInTheMiddle();
+
+        yield return StartCoroutine(FadeLoadingScreen(1,0, fadeTime));
+        loadingScreen.SetActive(false);
+        loadingText.SetActive(true);
+        isLoading = false;
+    }
+
+    public void ForceReloadScene() {
+        LoadScene(mainScene,true);
     }
 
     public static float loadingProgress;

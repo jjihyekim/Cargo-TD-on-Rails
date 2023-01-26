@@ -15,7 +15,7 @@ public class MiniGUI_BuyCart : MonoBehaviour
     public void Buy() {
         MoneyController.s.ModifyResource(ResourceTypes.money, -moneyCost);
         DataSaver.s.GetCurrentSave().currentRun.myTrain.myCarts.Add(new DataSaver.TrainState.CartState());
-        Train.s.DrawTrain(DataSaver.s.GetCurrentSave().currentRun.myTrain);
+        Train.s.DrawTrainBasedOnSaveData();
         DataSaver.s.SaveActiveGame();
         Destroy(gameObject);
     }

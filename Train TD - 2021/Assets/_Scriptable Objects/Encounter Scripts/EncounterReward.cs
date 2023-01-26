@@ -15,7 +15,7 @@ public class EncounterReward : MonoBehaviour {
     public TrainBuilding building;
 
 
-    public bool damageTrain = false;
+    public int damageTrain = 0;
 
     public void RandomizeReward() {
         if (randomizeAmount) {
@@ -24,7 +24,7 @@ public class EncounterReward : MonoBehaviour {
     }
 
     public void GainReward() {
-        if (!damageTrain) {
+        if (damageTrain <= 0) {
             if (building != null) {
                 UpgradesController.s.AddModulesToAvailableModules(building, amount);
             } else {
@@ -33,10 +33,19 @@ public class EncounterReward : MonoBehaviour {
         } else {
             var healths = Train.s.GetComponentsInChildren<ModuleHealth>();
 
+            var damagePercent = damageTrain * 0.25f;
+            var damageChance = 0.3f + (damageTrain * 0.1f);
+
             for (int i = 0; i < healths.Length; i++) {
-                if (Random.value > 0.5f) {
-                    healths[i].DealDamage(healths[i].maxHealth/4);
-                    Instantiate(LevelReferences.s.rocketExplosionEffectPrefab, healths[i].transform.position, Quaternion.identity);
+                if (Random.value > damageChance) {
+                    healths[i].DealDamage(healths[i].maxHealth * damagePercent);
+                    var prefab = LevelReferences.s.mediumDamagePrefab;
+                    if (damageTrain == 1)
+                        prefab = LevelReferences.s.smallDamagePrefab;
+                    if (damageTrain >= 3)
+                        prefab = LevelReferences.s.bigDamagePrefab;
+                    
+                    Instantiate(prefab, healths[i].transform.position, Quaternion.identity);
                 }
             }
             

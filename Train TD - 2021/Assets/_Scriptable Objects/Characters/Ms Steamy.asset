@@ -21,7 +21,7 @@ MonoBehaviour:
     - moduleUniqueName: Engine
       amount: 3
     - moduleUniqueName: pneumatic
-      amount: 1
+      amount: 3
     - moduleUniqueName: steamvents
       amount: 2
     starterTrain:
@@ -30,125 +30,77 @@ MonoBehaviour:
         - uniqueName: Engine
           health: -1
           ammo: -1
-          cargoCost: -1
-          cargoReward: -1
+        - uniqueName: 
+          health: -1
+          ammo: -2
+        - uniqueName: 
+          health: -1
+          ammo: -2
+        - uniqueName: 
+          health: -1
+          ammo: -2
+        - uniqueName: 
+          health: -1
+          ammo: -2
+        - uniqueName: 
+          health: -1
+          ammo: -2
         - uniqueName: 
           health: -1
           ammo: -1
-          cargoCost: -1
-          cargoReward: -1
         - uniqueName: 
           health: -1
           ammo: -1
-          cargoCost: -1
-          cargoReward: -1
-        - uniqueName: 
-          health: -1
-          ammo: -1
-          cargoCost: -1
-          cargoReward: -1
-        - uniqueName: pneumatic
-          health: -1
-          ammo: -1
-          cargoCost: -1
-          cargoReward: -1
-        - uniqueName: 
-          health: -1
-          ammo: -1
-          cargoCost: -1
-          cargoReward: -1
-        - uniqueName: 
-          health: -1
-          ammo: -1
-          cargoCost: -1
-          cargoReward: -1
-        - uniqueName: 
-          health: -1
-          ammo: -1
-          cargoCost: -1
-          cargoReward: -1
       - buildingStates:
         - uniqueName: tripleStorage
           health: -1
           ammo: -1
-          cargoCost: -1
-          cargoReward: -1
         - uniqueName: 
           health: -1
-          ammo: -1
-          cargoCost: -1
-          cargoReward: -1
+          ammo: -2
         - uniqueName: 
           health: -1
-          ammo: -1
-          cargoCost: -1
-          cargoReward: -1
+          ammo: -2
         - uniqueName: 
           health: -1
-          ammo: -1
-          cargoCost: -1
-          cargoReward: -1
+          ammo: -2
         - uniqueName: fuelStorage
           health: -1
           ammo: -1
-          cargoCost: -1
-          cargoReward: -1
         - uniqueName: 
           health: -1
-          ammo: -1
-          cargoCost: -1
-          cargoReward: -1
+          ammo: -2
         - uniqueName: 
           health: -1
-          ammo: -1
-          cargoCost: -1
-          cargoReward: -1
+          ammo: -2
         - uniqueName: 
           health: -1
-          ammo: -1
-          cargoCost: -1
-          cargoReward: -1
+          ammo: -2
       - buildingStates:
+        - uniqueName: pneumatic
+          health: -1
+          ammo: -2
         - uniqueName: 
           health: -1
-          ammo: -1
-          cargoCost: -1
-          cargoReward: -1
-        - uniqueName: 
-          health: -1
-          ammo: -1
-          cargoCost: -1
-          cargoReward: -1
+          ammo: -2
         - uniqueName: steamvents
           health: -1
-          ammo: -1
-          cargoCost: -1
-          cargoReward: -1
+          ammo: -2
         - uniqueName: steamvents
           health: -1
-          ammo: -1
-          cargoCost: -1
-          cargoReward: -1
+          ammo: -2
         - uniqueName: 
           health: -1
-          ammo: -1
-          cargoCost: -1
-          cargoReward: -1
+          ammo: -2
         - uniqueName: 
           health: -1
-          ammo: -1
-          cargoCost: -1
-          cargoReward: -1
+          ammo: -2
         - uniqueName: 
           health: -1
-          ammo: -1
-          cargoCost: -1
-          cargoReward: -1
+          ammo: -2
         - uniqueName: 
           health: -1
-          ammo: -1
-          cargoCost: -1
-          cargoReward: -1
+          ammo: -2
     starterResources:
       money: 200
       scraps: 50

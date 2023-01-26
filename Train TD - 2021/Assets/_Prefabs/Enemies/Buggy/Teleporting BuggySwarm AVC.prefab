@@ -29,6 +29,7 @@ Transform:
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 2.4920223, y: 3.958232, z: -6.318303}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
@@ -45,8 +46,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5716f35fe7475df4a8a2ab97df72a4c4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  enemyPrefab: {fileID: 2942942888468131762, guid: 7e6da2f139cd2594f903bd29435a1b06, type: 3}
-  enemyIcon: {fileID: 21300000, guid: d43c2da442e28124a8c35efb4bc70364, type: 3}
+  enemyPrefab: {fileID: 2942942888468131762, guid: b0d131a4dab930f40a5d77dc935dd25d, type: 3}
+  enemyIcon: {fileID: 21300000, guid: aba8f45393df8724a89b7c07a2090777, type: 3}
   speed: 5
   spreadAndCounts:
   - count: 3
@@ -62,6 +63,8 @@ MonoBehaviour:
   - {fileID: 8300000, guid: de908a6b1f33b2c439b305cea7dd71fb, type: 3}
   enemyDieSounds:
   - {fileID: 8300000, guid: 908a6c921e4428c4b924ab54e5bf2ec5, type: 3}
+  isTeleporting: 1
+  teleportTiming: {x: 10, y: 20}
 --- !u!114 &7435827003666740786
 MonoBehaviour:
   m_ObjectHideFlags: 0
