@@ -37,6 +37,9 @@ public class LevelReferences : MonoBehaviour {
     public GameObject mediumDamagePrefab;
     public GameObject bigDamagePrefab;
 
+    public GameObject buildingHPLowParticles;
+    public GameObject buildingHPCriticalParticles;
+    public GameObject buildingDestroyedParticles;
 
     public GameObject teleportStartEffect;
     public float teleportTime = 1f;
@@ -66,7 +69,31 @@ public class LevelReferences : MonoBehaviour {
 
     public SingleUnityLayer playerBulletLayer;
     public SingleUnityLayer enemyBulletLayer;
+
+    public float ammoShopCostMultiplier = 1f;
+    public float scrapShopCostMultiplier = 1f;
+    public float fuelShopCostMultiplier = 1f;
     
+    
+    public float ammoEnemyRewardMultiplier = 1f;
+    public float scrapEnemyRewardMultiplier = 1f;
+    public float fuelEnemyRewardMultiplier = 1f;
+
+    public float hpRepairCostMultiplier = 0.25f;
+
+    public float GetShopCostMultiplier(ResourceTypes type) {
+        switch (type) {
+            case ResourceTypes.ammo:
+                return ammoShopCostMultiplier;
+            case ResourceTypes.scraps:
+                return scrapShopCostMultiplier;
+            case ResourceTypes.fuel:
+                return fuelShopCostMultiplier;
+            default:
+                return 1;
+        }
+    }
+
     private void Awake() {
         s = this;
         

@@ -10,7 +10,9 @@ public class TooltipOnHoverOver : MonoBehaviour {
 
 	public Tooltip tooltip;
 
+	[NonSerialized]
 	public bool pointerIn = false;
+	[NonSerialized]
 	public bool displayingTooltip = false;
 	public void OnPointerEnter() {
 		pointerIn = true;

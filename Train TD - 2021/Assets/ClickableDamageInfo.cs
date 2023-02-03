@@ -16,6 +16,11 @@ public class ClickableDamageInfo : MonoBehaviour, IClickableInfo {
         }
     }
 
+
+    public bool ShowInfo() {
+        return true;
+    }
+
     public string GetInfo() {
         return $"{_gunModule.GetDamage()}dmg/{_gunModule.GetFireDelay()} secs";
     }

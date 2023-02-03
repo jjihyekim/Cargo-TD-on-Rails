@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -22,5 +23,9 @@ public class DataSaverMono : MonoBehaviour
 
     private void Start() {
         print("Save Location:" + Application.persistentDataPath);
+    }
+
+    private void Update() {
+        myDataSaver.Update();
     }
 }

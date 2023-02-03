@@ -8,7 +8,7 @@ using UnityEngine;
 
 public class TweakableEditor : MonoBehaviour {
 	
-	public TMP_InputField inputField;
+	/*public TMP_InputField inputField;
 
 	public TMP_Text status;
 	private void Start() {
@@ -44,5 +44,5 @@ public class TweakableEditor : MonoBehaviour {
 
 	void Reload() {
 		SceneLoader.s.BackToStarterMenu();
-	}
+	}*/
 }

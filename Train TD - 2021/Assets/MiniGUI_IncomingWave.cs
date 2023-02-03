@@ -51,7 +51,7 @@ public class MiniGUI_IncomingWave : MonoBehaviour {
         UpdatePositionText();
     }
 
-    private void LateUpdate() {
+    private void _LateUpdate() {
         AdjustPositionBasedOnOtherPositions();
     }
 
@@ -90,11 +90,17 @@ public class MiniGUI_IncomingWave : MonoBehaviour {
     private void OnEnable() {
         myVecRef = new Vector2Reference();
         globalPositions.Add(myVecRef);
+        
+        
+        CameraController.s.AfterCameraPosUpdate.AddListener(_LateUpdate);
     }
 
     private void OnDisable() {
         globalPositions.Remove(myVecRef);
         PointerExit();
+        
+        
+        CameraController.s.AfterCameraPosUpdate.RemoveListener(_LateUpdate);
     }
 
     void AdjustPositionBasedOnOtherPositions() {

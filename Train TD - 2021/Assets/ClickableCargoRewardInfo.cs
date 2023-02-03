@@ -9,6 +9,10 @@ public class ClickableCargoRewardInfo : MonoBehaviour, IClickableInfo {
         myModule = GetComponent<CargoModule>();
     }
 
+    public bool ShowInfo() {
+        return true;
+    }
+
     public string GetInfo() {
         return $"reward: +{myModule.GetReward()}";
     }

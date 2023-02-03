@@ -13,20 +13,21 @@ public class ModuleAmmo : MonoBehaviour, IResupplyAble, IActiveDuringCombat, IAc
     private GunModule myGunModule;
 
     private bool listenerAdded = false;
-    
-
-    public bool ShowAmmoBar() {
-        // add option to toggle all the ammo bars?
-        return true;
-        /*if (curAmmo != 0 && curAmmo != maxAmmo) {
-            return true;
-        } else {
-            return false;
-        }*/
-    }
 
     public void UseAmmo() {
-        curAmmo -= ammoPerShot;
+        var ammoUse = ammoPerShot;
+
+        if (myGunModule.beingDirectControlled)
+            ammoUse /= DirectControlMaster.s.directControlAmmoConservationBoost;
+        
+        curAmmo -= ammoUse;
+        
+        curAmmo = Mathf.Clamp(curAmmo, 0, maxAmmo);
+        UpdateModuleState();
+    }
+
+    public void UseFuel(float amount) {
+        curAmmo -= amount;
         curAmmo = Mathf.Clamp(curAmmo, 0, maxAmmo);
         UpdateModuleState();
     }
@@ -38,7 +39,12 @@ public class ModuleAmmo : MonoBehaviour, IResupplyAble, IActiveDuringCombat, IAc
     }
 
     void UpdateModuleState() {
-        myGunModule.hasAmmo = curAmmo >= ammoPerShot;
+        if (myGunModule != null) {
+            myGunModule.hasAmmo = curAmmo >= ammoPerShot;
+        }
+
+        if (GetComponent<EngineModule>())
+            GetComponent<EngineModule>().hasFuel = curAmmo > 0;
     }
 
     public int MissingSupplies() {
@@ -55,32 +61,39 @@ public class ModuleAmmo : MonoBehaviour, IResupplyAble, IActiveDuringCombat, IAc
         UpdateModuleState();
     }
 
+    private bool giveBackAmmoListenerAdded = false;
+
     public void ActivateForCombat() {
         this.enabled = true;
-        
+
         myGunModule = GetComponent<GunModule>();
-        if (!listenerAdded) {
+        if (!listenerAdded && myGunModule != null) {
             myGunModule.barrageShot.AddListener(UseAmmo);
             listenerAdded = true;
         }
 
         UpdateModuleState();
-        GetComponent<ModuleHealth>().dieEvent.AddListener(GiveBackStoredAmmo);
-        GetComponent<SellAction>()?.sellEvent.AddListener(GiveBackStoredAmmo);
+
+        if (!giveBackAmmoListenerAdded) {
+            giveBackAmmoListenerAdded = true;
+            GetComponent<ModuleHealth>().dieEvent.AddListener(GiveBackStoredAmmo);
+            GetComponent<SellAction>()?.sellEvent.AddListener(GiveBackStoredAmmo);
+        }
     }
 
     public void ActivateForShopping() {
         ActivateForCombat();
-        GetComponent<ModuleHealth>().dieEvent.AddListener(GiveBackStoredAmmo);
-        GetComponent<SellAction>()?.sellEvent.AddListener(GiveBackStoredAmmo);
     }
 
 
     public void Disable() {
         this.enabled = false;
         myGunModule = GetComponent<GunModule>();
-        GetComponent<ModuleHealth>().dieEvent.RemoveListener(GiveBackStoredAmmo);
-        GetComponent<SellAction>()?.sellEvent.RemoveListener(GiveBackStoredAmmo);
+        if (giveBackAmmoListenerAdded) {
+            giveBackAmmoListenerAdded = false;
+            GetComponent<ModuleHealth>().dieEvent.RemoveListener(GiveBackStoredAmmo);
+            GetComponent<SellAction>()?.sellEvent.RemoveListener(GiveBackStoredAmmo);
+        }
     }
     
     

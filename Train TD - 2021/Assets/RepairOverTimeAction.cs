@@ -19,7 +19,7 @@ public class RepairOverTimeAction : ModuleAction, IActiveDuringCombat {
 
 
 			for (int i = 0; i < healths.Length; i++) {
-				healths[i].DealDamage(-repairPerSecond * Time.deltaTime);
+				healths[i].Heal(repairPerSecond * Time.deltaTime);
 			}
 
 

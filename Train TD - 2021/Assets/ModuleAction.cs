@@ -60,16 +60,16 @@ public abstract class ModuleAction : UnlockableEffect {
 	}
 
 	public void RefundAction() {
-		var cost = -this.cost;
+		var refundAmount = -cost;
 
-		if (cost > 0) {
-			if (MoneyController.s.HasResource(myType, cost)) {
-				MoneyController.s.ModifyResource(myType, -cost);
+		if (refundAmount > 0) {
+			if (MoneyController.s.HasResource(myType, refundAmount)) {
+				MoneyController.s.ModifyResource(myType, -refundAmount);
 				curCooldown = cooldown;
 				_EngageAction();
 			}
 		} else {
-			MoneyController.s.ModifyResource(myType, -cost);
+			MoneyController.s.ModifyResource(myType, -refundAmount);
 			curCooldown = cooldown;
 			_EngageAction();
 		}

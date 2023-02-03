@@ -49,7 +49,6 @@ public class TargetPicker : MonoBehaviour, IActiveDuringCombat {
             if (closestTarget != null) {
                 targeter.SetTarget(closestTarget);
             } else {
-
                 targeter.UnsetTarget();
             }
         }
@@ -60,7 +59,7 @@ public class TargetPicker : MonoBehaviour, IActiveDuringCombat {
         Transform closestTargetWithEnoughHealth = null;
         var allTargets = LevelReferences.allTargets;
         for (int i = 0; i < allTargets.Count; i++) {
-            var canTarget = (allTargets[i] != GetComponentInParent<PossibleTarget>()) && (myPossibleTargets.Contains(allTargets[i].myType));
+            var canTarget = allTargets[i].enabled && (myPossibleTargets.Contains(allTargets[i].myType)) && (allTargets[i] != GetComponentInParent<PossibleTarget>());
             var targetHasEnoughHealth = (allTargets[i].GetHealth() >= targeter.GetDamage()) || !doHealthCheck;
             if (canTarget && targetHasEnoughHealth) {
                 if (IsPointInsideCone(allTargets[i].targetTransform.position, origin.position, origin.forward, rotationSpan, range, out float distance)) {

@@ -102,7 +102,7 @@ public class HexChunk : MonoBehaviour {
 
     public int batchSize = 1023; //max 1023
     public void FinalizeBatches() {
-	    print($"Got {tempBatches.Count} tempBatches to convert");
+	    //print($"Got {tempBatches.Count} tempBatches to convert");
 	    batches = new List<InstancingBatch>();
 	    
 	    

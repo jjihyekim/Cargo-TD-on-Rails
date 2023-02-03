@@ -14,15 +14,15 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   myCharacter:
     uniqueName: My Dude
-    description: Just your average dude. Starts with a regular gun and a regular
-      train.
-    starterUpgrades:
-    - {fileID: 11400000, guid: bb9a07f134773024ebcbc669ebedfeeb, type: 2}
+    description: Just your average dude. Starts with some basic guns and a great
+      potential.
     starterModules:
-    - moduleUniqueName: Engine
+    - moduleUniqueName: BasicNuclear
+      amount: 2
+    - moduleUniqueName: pneumatic
       amount: 2
     - moduleUniqueName: AVR
-      amount: 4
+      amount: 1
     - moduleUniqueName: tripleStorage
       amount: 1
     - moduleUniqueName: ammoStorage
@@ -30,133 +30,85 @@ MonoBehaviour:
     starterTrain:
       myCarts:
       - buildingStates:
-        - uniqueName: engine
+        - uniqueName: BasicNuclear
           health: -1
           ammo: -1
-          cargoCost: -1
-          cargoReward: -1
         - uniqueName: 
           health: -1
           ammo: -2
-          cargoCost: -1
-          cargoReward: -1
         - uniqueName: 
           health: -1
           ammo: -2
-          cargoCost: -1
-          cargoReward: -1
         - uniqueName: 
           health: -1
           ammo: -2
-          cargoCost: -1
-          cargoReward: -1
         - uniqueName: 
           health: -1
           ammo: -2
-          cargoCost: -1
-          cargoReward: -1
         - uniqueName: 
           health: -1
           ammo: -2
-          cargoCost: -1
-          cargoReward: -1
-        - uniqueName: AVR
+        - uniqueName: pneumatic
           health: -1
-          ammo: -2
-          cargoCost: -1
-          cargoReward: -1
-        - uniqueName: AVR
+          ammo: -1
+        - uniqueName: pneumatic
           health: -1
-          ammo: -2
-          cargoCost: -1
-          cargoReward: -1
+          ammo: -1
       - buildingStates:
         - uniqueName: tripleStorage
           health: -1
           ammo: -1
-          cargoCost: -1
-          cargoReward: -1
         - uniqueName: 
           health: -1
           ammo: -2
-          cargoCost: -1
-          cargoReward: -1
         - uniqueName: 
           health: -1
           ammo: -2
-          cargoCost: -1
-          cargoReward: -1
         - uniqueName: 
           health: -1
           ammo: -2
-          cargoCost: -1
-          cargoReward: -1
         - uniqueName: ammoStorage
           health: -1
           ammo: -1
-          cargoCost: -1
-          cargoReward: -1
         - uniqueName: 
           health: -1
           ammo: -2
-          cargoCost: -1
-          cargoReward: -1
         - uniqueName: 
           health: -1
           ammo: -2
-          cargoCost: -1
-          cargoReward: -1
         - uniqueName: 
           health: -1
           ammo: -2
-          cargoCost: -1
-          cargoReward: -1
       - buildingStates:
         - uniqueName: 
           health: -1
           ammo: -2
-          cargoCost: -1
-          cargoReward: -1
         - uniqueName: 
           health: -1
           ammo: -2
-          cargoCost: -1
-          cargoReward: -1
         - uniqueName: 
           health: -1
           ammo: -2
-          cargoCost: -1
-          cargoReward: -1
         - uniqueName: 
           health: -1
           ammo: -2
-          cargoCost: -1
-          cargoReward: -1
         - uniqueName: 
           health: -1
           ammo: -2
-          cargoCost: -1
-          cargoReward: -1
         - uniqueName: 
           health: -1
           ammo: -2
-          cargoCost: -1
-          cargoReward: -1
         - uniqueName: 
           health: -1
           ammo: -2
-          cargoCost: -1
-          cargoReward: -1
         - uniqueName: 
           health: -1
           ammo: -2
-          cargoCost: -1
-          cargoReward: -1
     starterResources:
       money: 200
       scraps: 50
       maxScraps: 50
-      ammo: 50
+      ammo: 25
       maxAmmo: 25
-      fuel: 25
+      fuel: 0
       maxFuel: 25

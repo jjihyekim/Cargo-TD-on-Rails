@@ -31,7 +31,9 @@ public class ModuleRewardsMaster : MonoBehaviour {
         
         for (int i = 0; i < playerStar.city.prices.Length; i++) {
             var priceIndex = playerStar.city.prices[i].Copy();
-            priceIndex.basePrice = (int)(priceIndex.basePrice * (1 + Random.Range(-shopPriceVariance, shopPriceVariance)));
+            var multiplier = LevelReferences.s.GetShopCostMultiplier(priceIndex.type);
+            var varience = (1 + Random.Range(-shopPriceVariance, shopPriceVariance));
+            priceIndex.basePrice = (int)(priceIndex.basePrice * multiplier * varience);
             currentRun.currentShopPrices.Add(priceIndex);
         }
 

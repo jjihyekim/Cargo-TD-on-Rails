@@ -80,7 +80,7 @@ public class FirstTimeTutorialController : MonoBehaviour {
                 }
             }
 
-            if (SpeedController.s.fuel < 5) {
+            if (MoneyController.s.fuel < 5) {
                 MoneyController.s.ModifyResource(ResourceTypes.fuel, 5);
             }
 

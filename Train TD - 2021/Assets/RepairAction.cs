@@ -23,7 +23,7 @@ public class RepairAction : ModuleAction, IActiveDuringShopping, IActiveDuringCo
             StartCoroutine(Repair());
         } else {
             Instantiate(DataHolder.s.repairPrefab, transform.position, transform.rotation);
-            _health.DealDamage(-(_health.maxHealth + 10));
+            _health.Heal((_health.maxHealth + 10));
         }
     }
 
@@ -34,19 +34,21 @@ public class RepairAction : ModuleAction, IActiveDuringShopping, IActiveDuringCo
         var count = 0;
         
         while (_health.currentHealth < _health.maxHealth && count < totalRepairCount) {
-            Instantiate(DataHolder.s.repairPrefab, transform.position, transform.rotation);
-            _health.DealDamage(-(repairAmount));
+            Repair(repairAmount);
             count += 1;
             yield return new WaitForSeconds(totalRepairTime/totalRepairCount);
         }
     }
 
+    public void Repair(float amount) {
+        Instantiate(DataHolder.s.repairPrefab, transform.position, transform.rotation);
+        _health.Heal((amount));
+    }
+
     protected override void _Update() {
-        var multiplier = 0.5f;
         /*if (!SceneLoader.s.isLevelInProgress) {
             multiplier = 0.25f; // it is cheaper to repair if you are not in combat
         }*/
-        
 
         var hpMissingPercent = 1-(_health.currentHealth / _health.maxHealth);
 
@@ -61,13 +63,21 @@ public class RepairAction : ModuleAction, IActiveDuringShopping, IActiveDuringCo
             actionName = $"Repair to full health";
         }
 
-        cost = Mathf.CeilToInt(_building.cost * hpMissingPercent * multiplier);
+        cost = Mathf.CeilToInt(_building.cost * hpMissingPercent * LevelReferences.s.hpRepairCostMultiplier);
         
         if (Mathf.Approximately(_health.currentHealth,_health.maxHealth)) {
             canEngage = false;
         } else {
             canEngage = true;
         }
+    }
+
+    public float GetCostPerHealth(float health) {
+        var hpMissingPercent = (health/ _health.maxHealth);
+
+        var _cost = _building.cost * hpMissingPercent * LevelReferences.s.hpRepairCostMultiplier;
+
+        return _cost;
     }
 
     public void ActivateForShopping() {

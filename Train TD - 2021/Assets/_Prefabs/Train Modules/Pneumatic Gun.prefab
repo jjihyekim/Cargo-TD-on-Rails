@@ -312,13 +312,12 @@ GameObject:
   - component: {fileID: 4987274482128882662}
   - component: {fileID: 5187701212064737548}
   - component: {fileID: -5567612607224715663}
-  - component: {fileID: 4689215919536455629}
   - component: {fileID: -2809547468729876337}
   - component: {fileID: -3899644368452891966}
   - component: {fileID: 7972787721209089323}
   - component: {fileID: -5527119762657934004}
-  - component: {fileID: -8437354419849529337}
   - component: {fileID: 925189702008724930}
+  - component: {fileID: 8958607328108650515}
   m_Layer: 17
   m_Name: Pneumatic Gun
   m_TagString: Untagged
@@ -380,6 +379,7 @@ MonoBehaviour:
   backGfx: {fileID: 0}
   isBuilt: 0
   autoSetUp: 0
+  isDestroyed: 0
   _outlines: []
 --- !u!114 &2934280374143819819
 MonoBehaviour:
@@ -405,10 +405,10 @@ MonoBehaviour:
   muzzleFlashPrefab: {fileID: 980176138545819842, guid: b58d077182325ea49941e75c95f259c8, type: 3}
   target: {fileID: 0}
   mortarRotation: 0
-  fireDelay: 1
-  fireBarrageCount: 2
+  fireDelay: 0.8
+  fireBarrageCount: 1
   fireBarrageDelay: 0.1
-  projectileDamage: 2.5
+  projectileDamage: 3.5
   rotateSpeed: 10
   gunActive: 1
   CanShoot: 0
@@ -432,6 +432,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   gunShakeOnShoot: 1
+  beingDirectControlled: 0
 --- !u!114 &7371494607064308679
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -482,6 +483,11 @@ MonoBehaviour:
   healthBar: {fileID: 0}
   explodePrefab: {fileID: 1046195756885079355, guid: 14455273e5a26a947a26caf9a4dfdd38, type: 3}
   isDead: 0
+  damageNearCartsOnDeath: 0
+  selfDamageMultiplier: 1
+  selfDamage: 0
+  selfDamageAmounts: 140000000a000000
+  explosionDamages: 640000003200000019000000
   burnResistant: 0
   currentBurn: 0
   burnSpeed: 0
@@ -556,20 +562,6 @@ MonoBehaviour:
   initialDelay: 1
   endDelay: 2
   boost: 5
---- !u!114 &4689215919536455629
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3146471024428373951}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ffd4c45972e0fc54a84560b4d5de93b9, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  maxAmmo: 60
-  ammoPerShot: 1
 --- !u!114 &-2809547468729876337
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -607,7 +599,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 42a2f1756d052d44ba1769b3301a1c66, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  uniqueName: AVC
 --- !u!114 &7972787721209089323
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -621,8 +612,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   tooltip:
-    text: Uses steam pressure to shoot scraps instead of ammo. Other than that it
-      is pretty similar to the standard AVC.
+    text: Uses steam pressure to shoot useless metal instead of ammo. Free to use
+      but not great damage.
   info: Pneumatic gun
 --- !u!114 &-5527119762657934004
 MonoBehaviour:
@@ -650,32 +641,6 @@ MonoBehaviour:
   myTooltip:
     text: Move this module to another slot instantly.
   freeInStation: 0
---- !u!114 &-8437354419849529337
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3146471024428373951}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c33a412f8442bd34aa1db59cc3bad577, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  isUnlocked: 1
-  unlockingUpgrade: {fileID: 0}
-  actionName: Reload
-  myType: 1
-  cost: 20
-  cooldown: 5
-  curCooldown: 0
-  canEngage: 1
-  canAfford: 1
-  isCooldownOver: 1
-  soundEffect:
-  - {fileID: 8300000, guid: 9158afb6966d445db9caf1dccf7acbcc, type: 3}
-  myTooltip:
-    text: 
 --- !u!114 &925189702008724930
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -704,6 +669,18 @@ MonoBehaviour:
     text: Control this weapon manually. During this the weapon won't use any ammo!
   directControlTransformSide: {fileID: 3334513714741136675}
   directControlTransformTop: {fileID: 1851804715737678291}
+--- !u!114 &8958607328108650515
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3146471024428373951}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f68cc5d632aa0b042a9a11038cda16d6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &3469176668768950665
 GameObject:
   m_ObjectHideFlags: 0

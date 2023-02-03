@@ -434,6 +434,7 @@ GameObject:
   - component: {fileID: 1322582120578632451}
   - component: {fileID: 6185752351275548796}
   - component: {fileID: 1446690471817192441}
+  - component: {fileID: 2567900796101324513}
   m_Layer: 17
   m_Name: Storage Combined
   m_TagString: Untagged
@@ -471,6 +472,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f5b56326a28e8a24c91959aa3382ef6a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  canSelect: 1
   displayName: Combined Storage
   uniqueName: tripleStorage
   Icon: {fileID: 21300000, guid: a9aba5b990a2e704c95e832a4a39c735, type: 3}
@@ -492,6 +494,7 @@ MonoBehaviour:
   backGfx: {fileID: 0}
   isBuilt: 0
   autoSetUp: 0
+  isDestroyed: 0
   _outlines: []
 --- !u!114 &-8913365783777513547
 MonoBehaviour:
@@ -569,6 +572,11 @@ MonoBehaviour:
   healthBar: {fileID: 0}
   explodePrefab: {fileID: 1046195756885079355, guid: 14455273e5a26a947a26caf9a4dfdd38, type: 3}
   isDead: 0
+  damageNearCartsOnDeath: 0
+  selfDamageMultiplier: 1
+  selfDamage: 0
+  selfDamageAmounts: 140000000a000000
+  explosionDamages: 640000003200000019000000
   burnResistant: 0
   currentBurn: 0
   burnSpeed: 0
@@ -655,6 +663,18 @@ MonoBehaviour:
     text: Move this storage module instantly. This is free when you are in a train
       station.
   freeInStation: 1
+--- !u!114 &2567900796101324513
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3146471024428373951}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f68cc5d632aa0b042a9a11038cda16d6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &3469176668768950665
 GameObject:
   m_ObjectHideFlags: 0

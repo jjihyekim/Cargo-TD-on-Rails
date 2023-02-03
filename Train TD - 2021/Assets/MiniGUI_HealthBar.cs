@@ -18,12 +18,17 @@ public class MiniGUI_HealthBar : MonoBehaviour{
     public Color armoredEnemyColor = Color.yellow;
     public Color enemyColor = Color.red;
     
+    public Color bulletAmmoColor = Color.yellow;
+    public Color fuelAmmoColor = Color.red;
+    
     
     public Slider ammoSlider;
+    public Image ammoFiller;
 
     public bool isPlayer;
 
     public static bool showHealthBars = true;
+    public static bool showAmmoBars = true;
 
     
     public void SetUp(ModuleHealth moduleHealth, ModuleAmmo moduleAmmo) {
@@ -32,6 +37,16 @@ public class MiniGUI_HealthBar : MonoBehaviour{
         myModuleAmmo = moduleAmmo;
         if (myModuleAmmo != null) {
             isAmmoBar = true;
+
+            var refillType = myModuleAmmo.GetComponent<ReloadAction>().myType;
+            switch (refillType) {
+                case ResourceTypes.ammo:
+                    ammoFiller.color = bulletAmmoColor;
+                    break;
+                case ResourceTypes.fuel:
+                    ammoFiller.color = fuelAmmoColor;
+                    break;
+            }
         }
         ammoSlider.gameObject.SetActive(isAmmoBar);
 
@@ -58,10 +73,14 @@ public class MiniGUI_HealthBar : MonoBehaviour{
     private void Update() {
         if (showHealthBars) {
             SetHealthBarValue();
+        } else {
+            slider.gameObject.SetActive(false);
+        }
+
+        if (showAmmoBars) {
             if (isAmmoBar)
                 SetAmmoBarValue();
         } else {
-            slider.gameObject.SetActive(false);
             ammoSlider.gameObject.SetActive(false);
         }
     }
@@ -94,19 +113,14 @@ public class MiniGUI_HealthBar : MonoBehaviour{
 
     void SetAmmoBarValue() {
         if (isAmmoBar) {
-            if (myModuleAmmo.ShowAmmoBar()) {
-                var percent = (float)myModuleAmmo.curAmmo / myModuleAmmo.maxAmmo;
-                percent = Mathf.Clamp(percent, 0, 1f);
+            var percent = (float)myModuleAmmo.curAmmo / myModuleAmmo.maxAmmo;
+            percent = Mathf.Clamp(percent, 0, 1f);
 
-                
-                ammoSlider.value = percent;
+            
+            ammoSlider.value = percent;
 
-                if(!ammoSlider.gameObject.activeSelf)
-                    ammoSlider.gameObject.SetActive(true);
-            } else {
-                if(ammoSlider.gameObject.activeSelf)
-                    ammoSlider.gameObject.SetActive(false);
-            }
+            if(!ammoSlider.gameObject.activeSelf)
+                ammoSlider.gameObject.SetActive(true);
         }
     }
 }

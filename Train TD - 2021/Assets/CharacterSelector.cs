@@ -62,6 +62,7 @@ public class CharacterSelector : MonoBehaviour {
         WorldMapCreator.s.GenerateWorldMap();
         HexGrid.s.RefreshGrid();
         UpgradesController.s.callWhenUpgradesOrModuleAmountsChanged?.Invoke();
+        Pauser.s.Unpause();
 
         DataSaver.s.SaveActiveGame();
         MusicPlayer.s.SwapMusicTracksAndPlay(false);

@@ -25,6 +25,7 @@ public class UIElementFollowWorldTarget : MonoBehaviour {
     public Transform sourceTransform;
     private RectTransform CanvasRect;
     private RectTransform ParentRect;
+    [HideInInspector]
     public RectTransform UIRect;
     private Camera mainCam;
 
@@ -32,11 +33,17 @@ public class UIElementFollowWorldTarget : MonoBehaviour {
         SetPosition();
     }*/
     
-    private void LateUpdate() {
+    
+    private void _LateUpdate() {
+        if (sourceTransform == null) {
+            this.enabled = false;
+            return;
+        }
+
         SetPosition();
     }
 
-    public void SetPosition() {
+    void SetPosition() {
         //then you calculate the position of the UI element
         //0,0 for the canvas is at the center of the screen, whereas WorldToViewPortPoint
         //treats the lower left corner as 0,0. Because of this, you need to subtract the height / width of the canvas * 0.5 to get the correct position.
@@ -72,11 +79,15 @@ public class UIElementFollowWorldTarget : MonoBehaviour {
         UIWorldFollowerSorter.activeElements.Add(this);
         if(avoidOverlaps)
             UIWorldFollowerSorter.avoidanceElements.Add(this);
+        
+        CameraController.s.AfterCameraPosUpdate.AddListener(_LateUpdate);
     }
 
     private void OnDisable() {
         UIWorldFollowerSorter.activeElements.Remove(this);
         if(avoidOverlaps)
             UIWorldFollowerSorter.avoidanceElements.Remove(this);
+        
+        CameraController.s.AfterCameraPosUpdate.RemoveListener(_LateUpdate);
     }
 }

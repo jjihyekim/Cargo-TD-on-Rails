@@ -16,7 +16,7 @@ public class DataHolder : MonoBehaviour {
     private void Awake() {
         if (s == null)
             s = this;
-        ResetTweakable();
+        //ResetTweakable();
     }
 
 
@@ -37,7 +37,7 @@ public class DataHolder : MonoBehaviour {
     //public AudioClip[] sellSounds;
 
     
-    [SerializeField]
+    /*[SerializeField]
     private TweakablesParentScriptable myTweakable;
     public TweakablesParent fullCopy;
 
@@ -60,7 +60,7 @@ public class DataHolder : MonoBehaviour {
     /// </summary>
     public TweakablesParent GetTweaks() {
         return fullCopy;
-    }
+    }*/
 
     public GameObject GetEncounter(string encounterUniqueName) {
         for (int i = 0; i < encounters.Length; i++) {

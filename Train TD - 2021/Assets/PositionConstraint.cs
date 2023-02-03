@@ -11,7 +11,7 @@ public class PositionConstraint : MonoBehaviour {
     public float xzStrength = 10f;
     public float yStrength = 2f;
     
-    private void LateUpdate() {
+    private void _LateUpdate() {
         var lerpXZ = Vector3.Lerp(transform.localPosition, Vector3.zero, xzStrength * Time.deltaTime);
         var lerpY = Vector3.Lerp(transform.localPosition, Vector3.zero, yStrength * Time.deltaTime);
 
@@ -30,5 +30,13 @@ public class PositionConstraint : MonoBehaviour {
         }
         
         transform.localPosition = targetPos;
+    }
+
+    private void OnEnable() {
+        CameraController.s.AfterCameraPosUpdate.AddListener(_LateUpdate);
+    }
+
+    private void OnDisable() {
+        CameraController.s.AfterCameraPosUpdate.RemoveListener(_LateUpdate);
     }
 }

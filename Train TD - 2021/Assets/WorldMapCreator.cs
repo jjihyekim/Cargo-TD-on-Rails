@@ -5,6 +5,7 @@ using Sirenix.OdinInspector;
 using TMPro;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.UI;
 using Random = UnityEngine.Random;
 
 public class WorldMapCreator : MonoBehaviour {
@@ -28,6 +29,9 @@ public class WorldMapCreator : MonoBehaviour {
 
 	public LayerMask castleClickLayerMask;
 
+	public Image mapIcon;
+	public Sprite openMapIcon;
+	public Sprite backToTrainIcon;
 	public void ToggleWorldMap() {
 		if (!worldMapOpen) {
 			OpenWorldMap();
@@ -118,6 +122,8 @@ public class WorldMapCreator : MonoBehaviour {
 			MiniGUI_HealthBar.showHealthBars = false;
 			PlayerModuleSelector.s.DisableModuleSelecting();
 			worldMapOpen = true;
+
+			mapIcon.sprite = backToTrainIcon;
 		}
 	}
 
@@ -133,6 +139,8 @@ public class WorldMapCreator : MonoBehaviour {
 			PlayerModuleSelector.s.EnableModuleSelecting();
 			worldMapOpen = false;
 			targetStarInfoScreenBudget.SetActive(false);
+
+			mapIcon.sprite = openMapIcon;
 		}
 	}
 

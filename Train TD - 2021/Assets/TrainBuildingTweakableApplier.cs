@@ -6,7 +6,7 @@ using UnityEngine;
 public class TrainBuildingTweakableApplier : MonoBehaviour
 {
 	
-	[ValueDropdown("GetAllBuildingNames")]
+	/*[ValueDropdown("GetAllBuildingNames")]
 	public string uniqueName = "unset";
 
 	private void OnEnable() {
@@ -37,7 +37,7 @@ public class TrainBuildingTweakableApplier : MonoBehaviour
 		var health = GetComponent<ModuleHealth>();
 		var hpPercent = health.currentHealth / health.maxHealth;
 		health.maxHealth = myTweaks.health;
-		health.currentHealth = myTweaks.health * hpPercent;
+		health.SetHealth(myTweaks.health*hpPercent);
 
 		var gun = GetComponent<GunModule>();
 		if(gun != null)
@@ -73,5 +73,5 @@ public class TrainBuildingTweakableApplier : MonoBehaviour
 			buildingNames.Add(buildings[i].uniqueName);
 		}
 		return buildingNames;
-	}
+	}*/
 }

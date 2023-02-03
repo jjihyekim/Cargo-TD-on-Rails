@@ -60,11 +60,11 @@ public class Cart : MonoBehaviour {
 
         var isThereAnyBuildingOnCart = false;
         for (int i = 0; i < frontSlot.myBuildings.Length; i++) {
-            if (frontSlot.myBuildings[i] != null)
+            if (frontSlot.myBuildings[i] != null && !frontSlot.myBuildings[i].isDestroyed)
                 isThereAnyBuildingOnCart = true;
         }
         for (int i = 0; i < backSlot.myBuildings.Length; i++) {
-            if (backSlot.myBuildings[i] != null)
+            if (backSlot.myBuildings[i] != null&& !backSlot.myBuildings[i].isDestroyed)
                 isThereAnyBuildingOnCart = true;
         }
 

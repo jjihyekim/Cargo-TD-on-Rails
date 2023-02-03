@@ -13,9 +13,9 @@ MonoBehaviour:
   m_Name: Trucks with bikes
   m_EditorClassIdentifier: 
   myData:
-    levelName: Smol Starts
-    specialIcon: {fileID: 0}
+    levelName: Trucks with bikes
     isEncounter: 0
+    isBossLevel: 0
     enemiesOnPath:
     - enemyIdentifier:
         enemyUniqueName: TruckCannon
@@ -39,7 +39,7 @@ MonoBehaviour:
       startMoving: 0
     - enemyIdentifier:
         enemyUniqueName: TruckCannon
-        enemyCount: 4
+        enemyCount: 2
       distanceOnPath: 350
       startMoving: 0
     dynamicSpawnEnemies:
@@ -48,6 +48,6 @@ MonoBehaviour:
         enemyCount: 3
       distanceFromTrain: 60
       firstSpawnTime: 30
-      spawnInterval: 15
-      increaseInNumberInterval: 4
+      spawnInterval: 30
+      increaseInNumberInterval: 3
     missionDistance: 500

@@ -112,6 +112,12 @@ public class TrainBuilding : MonoBehaviour {
 
     public bool isBuilt = false;
     public bool autoSetUp = false;
+
+    [Space] 
+    public bool isDestroyed = false;
+
+
+    [NonSerialized] public GameObject currentlyRepairingUIThing;
     private void Start() {
         if (autoSetUp) {
             isBuilt = true;
@@ -186,6 +192,8 @@ public class TrainBuilding : MonoBehaviour {
     private void OnDestroy() {
         if(mySlot != null)
             mySlot.RemoveBuilding(this);
+        if(currentlyRepairingUIThing != null)
+            Destroy(currentlyRepairingUIThing);
     }
 
     public void CompleteBuilding(bool playSound = true, bool playVoiceline = true) {
@@ -389,7 +397,7 @@ public class TrainBuilding : MonoBehaviour {
     }
 
     public void SetCurrentHealth(float health) {
-        GetComponent<ModuleHealth>().currentHealth = health;
+        GetComponent<ModuleHealth>().SetHealth(health);
     }
     
 }

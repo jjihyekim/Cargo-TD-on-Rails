@@ -27,8 +27,9 @@ public class DirectControlMaster : MonoBehaviour {
 	public ModuleHealth directControlTrainBuilding;
 	public DirectControlAction directControlAction;
 	private GunModule myGun;
+	public ModuleAmmo myAmmo;
+	public GameObject exitToReload;
 	private TargetPicker myTargetPicker;
-	public float cooldown;
 	public float curCooldown;
 
 
@@ -36,11 +37,17 @@ public class DirectControlMaster : MonoBehaviour {
 	public Image hitImage;
 	private Color hitImageColor;
 	public Slider cooldownSlider;
+	public Slider ammoSlider;
 	public GameObject DirectControlGameObject;
 
 	public bool directControlInProgress = false;
 
+	public float directControlDamageBoost = 1.2f;
+	public float directControlFireRateBoost = 1.2f;
+	public float directControlAmmoConservationBoost = 1.2f;
+	
 	private bool doShake = true;
+	public bool hasAmmo = true;
 	private void OnEnable() {
 		cancelDirectControlAction.action.Enable();
 		directControlShootAction.action.Enable();
@@ -60,12 +67,18 @@ public class DirectControlMaster : MonoBehaviour {
 
 			directControlTrainBuilding = directControlAction.GetComponent<ModuleHealth>();
 			myGun = directControlAction.GetComponent<GunModule>();
+			myAmmo = myGun.GetComponent<ModuleAmmo>();
+			ammoSlider.gameObject.SetActive(myAmmo != null);
+			if (myAmmo != null) {
+				hasAmmo = myAmmo.curAmmo > 0;
+			}
+			
 			myTargetPicker = directControlAction.GetComponent<TargetPicker>();
 
 			myGun.DeactivateGun();
-			cooldown = myGun.GetFireDelay();
 			myTargetPicker.enabled = false;
 			doShake = myGun.gunShakeOnShoot;
+			myGun.beingDirectControlled = true;
 
 			curCooldown = 0;
 
@@ -88,6 +101,7 @@ public class DirectControlMaster : MonoBehaviour {
 			if (myGun != null) {
 				myGun.ActivateGun();
 				myTargetPicker.enabled = true;
+				myGun.beingDirectControlled = false;
 			}
 
 			DirectControlGameObject.SetActive(false);
@@ -127,15 +141,21 @@ public class DirectControlMaster : MonoBehaviour {
 				//Debug.DrawLine(ray.origin, ray.GetPoint(10));
 			}
 
-			if (directControlShootAction.action.IsPressed()) {
+			if (hasAmmo && directControlShootAction.action.IsPressed()) {
 				if (curCooldown <= 0) {
-					myGun.ShootBarrageFree(OnShoot, OnHit);
-					curCooldown = cooldown;
+					myGun.ShootBarrage(false,OnShoot, OnHit);
+					curCooldown = myGun.GetFireDelay();
 				}
 			}
 
 			curCooldown -= Time.deltaTime;
-			cooldownSlider.value = Mathf.Clamp01(curCooldown / cooldown);
+			cooldownSlider.value = Mathf.Clamp01(curCooldown / myGun.GetFireDelay());
+
+			if (myAmmo != null) {
+				ammoSlider.value = myAmmo.curAmmo / myAmmo.maxAmmo;
+				hasAmmo = myAmmo.curAmmo > 0;
+				exitToReload.SetActive(!hasAmmo);
+			}
 
 			hitImageColor.a = onHitAlpha;
 			hitImage.color = hitImageColor;
@@ -154,7 +174,8 @@ public class DirectControlMaster : MonoBehaviour {
 
 	void OnShoot() {
 		//if (doShake) {
-		var range = Mathf.Clamp01(myGun.projectileDamage / 10f);
+		var range = Mathf.Clamp01(myGun.projectileDamage / 10f) + Mathf.Clamp01(myGun.projectileDamage / 10f);
+		range /= 2f;
 		
 		//print(range);
 		if (doShake) {
@@ -165,6 +186,8 @@ public class DirectControlMaster : MonoBehaviour {
 				Mathf.Lerp(0.1f, 0.5f, range),
 				true
 			);
+			
+			CameraController.s.ProcessDirectControl(new Vector2(Random.Range(-range*2, range*2), range*5));
 		} else {
 			/*CameraShakeController.s.ShakeCamera(
 				Mathf.Lerp(0.1f, 0.7f, range),

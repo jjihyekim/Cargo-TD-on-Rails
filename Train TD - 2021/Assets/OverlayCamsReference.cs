@@ -15,6 +15,8 @@ public class OverlayCamsReference : MonoBehaviour {
     public Camera fancy2duiCam;
     public Camera tooltipCam;
 
+    
+    public const float planeDistance = 1.5f;
 
     private void Start() {
         var camData = MainCameraReference.s.cam.GetUniversalAdditionalCameraData();

@@ -73,7 +73,7 @@ public class Pauser : MonoBehaviour {
                 { "distance", Mathf.RoundToInt(SpeedController.s.currentDistance / 10) *10},
                 { "time", Mathf.RoundToInt(SpeedController.s.currentTime/10) * 10},
                 
-                {"character", DataSaver.s.GetCurrentSave().currentRun.character},
+                {"character", DataSaver.s.GetCurrentSave().currentRun.character.uniqueName},
 
                 { "buildingsBuild", ModuleHealth.buildingsBuild },
                 { "buildingsDestroyed", ModuleHealth.buildingsDestroyed },
@@ -86,6 +86,7 @@ public class Pauser : MonoBehaviour {
         TimeController.s.UnPause();
         
         SceneLoader.s.BackToStarterMenu();
+        FirstTimeTutorialController.s.SkipTutorial();
         SceneLoader.s.afterTransferCalls.Enqueue(()=> MissionWinFinisher.s.Cleanup());
     }
 }

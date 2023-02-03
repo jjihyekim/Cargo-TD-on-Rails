@@ -30033,6 +30033,7 @@ MonoBehaviour:
   backGfx: {fileID: 6606896060513639486}
   isBuilt: 0
   autoSetUp: 0
+  isDestroyed: 0
   _outlines: []
 --- !u!114 &3044803135225542413
 MonoBehaviour:
@@ -30047,7 +30048,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   enginePower: 400
-  isFreePower: 1
+  isNuclear: 0
 --- !u!114 &8022081648539341584
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -30080,10 +30081,11 @@ MonoBehaviour:
   explodePrefab: {fileID: 1046195756885079355, guid: ba45d82dd9e9c524cbfa9f9590e1d7ee, type: 3}
   isDead: 0
   damageNearCartsOnDeath: 1
-  selfDamage: 1
+  selfDamageMultiplier: 1
+  selfDamage: 0
   selfDamageAmounts: 2300000019000000
-  explosionDamages: 640000003200000019000000
-  burnResistant: 0
+  explosionDamages: c80000006400000032000000
+  burnResistant: 1
   currentBurn: 0
   burnSpeed: 0
 --- !u!54 &316537732820777809

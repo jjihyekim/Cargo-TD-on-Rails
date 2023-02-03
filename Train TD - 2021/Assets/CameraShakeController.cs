@@ -27,7 +27,7 @@ public class CameraShakeController : MonoBehaviour {
     }
 
 
-    public void ShakeCamera(float duration, float magnitude, float verticalPushMagnitude = 0f, float verticalPushDuration = 1f, bool reAdjustHorizontal = false) {
+    public void ShakeCamera(float duration, float magnitude, float verticalPushMagnitude = 0f, float verticalPushDuration = 1f, bool doHorizontalPush = false) {
 		
         /*var bigDur = Mathf.Max(curDuration, duration);
         var smallDur = Mathf.Min(curDuration, duration);
@@ -40,7 +40,7 @@ public class CameraShakeController : MonoBehaviour {
         /*curDuration += duration;
         curMagnitude += magnitude;*/
         
-        if(reAdjustHorizontal)
+        if(doHorizontalPush)
             horizontalPush = Random.Range(-1f, 1f);
 
         var newShake = new ShakeWave() {

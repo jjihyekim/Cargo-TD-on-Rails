@@ -337,9 +337,18 @@
                     "initialStateCheck": true
                 },
                 {
-                    "name": "OpenBuildingActionMenu",
+                    "name": "SelectBuildingsOrEnemies",
                     "type": "Button",
                     "id": "bef9d661-35bf-4525-9840-6da950dac743",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "Deselect",
+                    "type": "Button",
+                    "id": "e193612c-ce1f-4773-b778-fe27595dd425",
                     "expectedControlType": "Button",
                     "processors": "",
                     "interactions": "",
@@ -376,7 +385,18 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "Keyboard",
-                    "action": "OpenBuildingActionMenu",
+                    "action": "SelectBuildingsOrEnemies",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "a5022ccb-c1a2-464f-baef-cefa7f2f14d8",
+                    "path": "<Mouse>/rightButton",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Deselect",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

@@ -40,6 +40,8 @@ public class MissionWinFinisher : MonoBehaviour {
 		winUI.SetActive(false);
 	}
 
+	public UnityEvent OnLevelFinished = new UnityEvent();
+	
 	public void MissionWon(bool isShowingPrevRewards = false) {
 		SceneLoader.s.FinishLevel();
 		EnemyWavesController.s.Cleanup();
@@ -70,7 +72,7 @@ public class MissionWinFinisher : MonoBehaviour {
 		// save our resources
 		mySave.currentRun.myResources.scraps = Mathf.FloorToInt(MoneyController.s.scraps);
 		mySave.currentRun.myTrain = Train.s.GetTrainState();
-		mySave.currentRun.myResources.fuel = Mathf.FloorToInt(SpeedController.s.fuel);
+		mySave.currentRun.myResources.fuel = Mathf.FloorToInt(MoneyController.s.fuel);
 		mySave.currentRun.myResources.ammo = Mathf.FloorToInt(MoneyController.s.ammo);
 		
 		DataSaver.s.SaveActiveGame();
@@ -104,6 +106,8 @@ public class MissionWinFinisher : MonoBehaviour {
 		SoundscapeController.s.PlayMissionWonSound();
 		MusicPlayer.s.SwapMusicTracksAndPlay(false);
 		DirectControlMaster.s.DisableDirectControl();
+		
+		OnLevelFinished?.Invoke();
 	}
 
 	void ChangeRangeShowState(bool state) {
@@ -283,6 +287,7 @@ public class MissionWinFinisher : MonoBehaviour {
 		ClearOldRewards();
 		DataSaver.s.GetCurrentSave().currentRun.unclaimedRewards = new List<string>();
 		DataSaver.s.GetCurrentSave().currentRun.shopInitialized = false;
+		Train.s.SaveTrainState();
 		DataSaver.s.SaveActiveGame();
 		
 		if (DataSaver.s.GetCurrentSave().currentRun.map.GetPlayerStar().isBoss) {

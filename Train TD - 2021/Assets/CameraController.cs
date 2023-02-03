@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Sirenix.OdinInspector;
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.InputSystem;
 
 public class CameraController : MonoBehaviour {
@@ -92,6 +93,8 @@ public class CameraController : MonoBehaviour {
     }
 
     private bool snappedToTrainLastFrame = false;
+
+    public UnityEvent AfterCameraPosUpdate = new UnityEvent();
     private void LateUpdate() {
         if (directControlActive) {
             ProcessDirectControl(moveAction.action.ReadValue<Vector2>());
@@ -115,6 +118,7 @@ public class CameraController : MonoBehaviour {
         
 
         SetMainCamPos();
+        AfterCameraPosUpdate?.Invoke();
     }
 
     private Vector2 mousePosLastFrame;
@@ -250,24 +254,33 @@ public class CameraController : MonoBehaviour {
         
         var transformed = cameraOffsetFlat.TransformDirection(delta);
         
-        cameraCenter.position += transformed * multiplier * Time.unscaledDeltaTime;
-
-        Transform topRight = isSnappedToMap ? mapCameraCornerTopRight : cameraCornerTopRight;
-        Transform bottomLeft = isSnappedToMap ? mapCameraCornerBottomLeft : cameraCornerBottomLeft;
-
-
+        
         var camPos = cameraCenter.position;
-        if (camPos.x < bottomLeft.position.x) {
-            cameraCenter.position = new Vector3(bottomLeft.position.x, camPos.y, camPos.z);
-        }else if (camPos.x > topRight.position.x) {
-            cameraCenter.position = new Vector3(topRight.position.x, camPos.y, camPos.z);
+        
+        camPos += transformed * multiplier * Time.unscaledDeltaTime;
+
+        Vector3 topRight = isSnappedToMap ? mapCameraCornerTopRight.position : cameraCornerTopRight.position;
+        Vector3 bottomLeft = isSnappedToMap ? mapCameraCornerBottomLeft.position : cameraCornerBottomLeft.position;
+        
+        if (!isSnappedToMap) {
+            var len = ((Train.s.cartCount-3) * DataHolder.s.cartLength)/2;
+            topRight.z += len;
+            bottomLeft.z -= len;
         }
         
-        if (camPos.z < bottomLeft.position.z) {
-            cameraCenter.position = new Vector3(camPos.x, camPos.y, bottomLeft.position.z);
-        }else if (camPos.z > topRight.position.z) {
-            cameraCenter.position = new Vector3(camPos.x, camPos.y, topRight.position.z);
+        if (camPos.x < bottomLeft.x) {
+            camPos = new Vector3(bottomLeft.x, camPos.y, camPos.z);
+        }else if (camPos.x > topRight.x) {
+            camPos = new Vector3(topRight.x, camPos.y, camPos.z);
         }
+        
+        if (camPos.z < bottomLeft.z) {
+            camPos = new Vector3(camPos.x, camPos.y, bottomLeft.z);
+        }else if (camPos.z > topRight.z) {
+            camPos = new Vector3(camPos.x, camPos.y, topRight.z);
+        }
+
+        cameraCenter.position = camPos;
     }
     
     

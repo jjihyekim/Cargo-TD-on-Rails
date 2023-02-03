@@ -46,10 +46,12 @@ MonoBehaviour:
       amount: 5
     - moduleUniqueName: nuclearEngine
       amount: 5
+    - moduleUniqueName: BasicNuclear
+      amount: 5
     starterTrain:
       myCarts:
       - buildingStates:
-        - uniqueName: Engine
+        - uniqueName: BasicNuclear
           health: -1
           ammo: -1
         - uniqueName: 
@@ -61,7 +63,7 @@ MonoBehaviour:
         - uniqueName: 
           health: -1
           ammo: -2
-        - uniqueName: Engine
+        - uniqueName: BasicNuclear
           health: -1
           ammo: -1
         - uniqueName: 

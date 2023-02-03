@@ -287,6 +287,7 @@ GameObject:
   - component: {fileID: 5898948501584312943}
   - component: {fileID: 71479957321414262}
   - component: {fileID: 1267976528583445399}
+  - component: {fileID: -1871825280601743515}
   m_Layer: 17
   m_Name: Flame Thrower
   m_TagString: Untagged
@@ -325,6 +326,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f5b56326a28e8a24c91959aa3382ef6a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  canSelect: 1
   displayName: Flame Thrower
   uniqueName: flamethrower
   Icon: {fileID: 21300000, guid: aba5e5016c4c6674eb61199621225374, type: 3}
@@ -347,6 +349,7 @@ MonoBehaviour:
   backGfx: {fileID: 0}
   isBuilt: 0
   autoSetUp: 0
+  isDestroyed: 0
   _outlines: []
 --- !u!114 &2934280374143819819
 MonoBehaviour:
@@ -375,7 +378,7 @@ MonoBehaviour:
   fireDelay: 0.5
   fireBarrageCount: 5
   fireBarrageDelay: 0.1
-  projectileDamage: 0.2
+  projectileDamage: 0.25
   rotateSpeed: 10
   gunActive: 1
   CanShoot: 0
@@ -399,6 +402,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   gunShakeOnShoot: 0
+  beingDirectControlled: 0
 --- !u!114 &7371494607064308679
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -449,6 +453,11 @@ MonoBehaviour:
   healthBar: {fileID: 0}
   explodePrefab: {fileID: 1046195756885079355, guid: 14455273e5a26a947a26caf9a4dfdd38, type: 3}
   isDead: 0
+  damageNearCartsOnDeath: 0
+  selfDamageMultiplier: 1
+  selfDamage: 0
+  selfDamageAmounts: 140000000a000000
+  explosionDamages: 640000003200000019000000
   burnResistant: 0
   currentBurn: 0
   burnSpeed: 0
@@ -671,6 +680,18 @@ MonoBehaviour:
     text: Control this weapon manually. During this the weapon won't use any ammo!
   directControlTransformSide: {fileID: 4505681118396502469}
   directControlTransformTop: {fileID: 5756153129021554054}
+--- !u!114 &-1871825280601743515
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3146471024428373951}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f68cc5d632aa0b042a9a11038cda16d6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &3469176668768950665
 GameObject:
   m_ObjectHideFlags: 0

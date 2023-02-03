@@ -89,14 +89,26 @@ public class DataSaver {
 
 	public bool dontSave = false;
 
+	public bool saveInNextFrame = false;
 	public void SaveActiveGame() {
 		if (!dontSave) {
-			earlySaveEvent?.Invoke();
-			saveEvent?.Invoke();
-			if(GetCurrentSave().isInARun)
-				GetCurrentSave().currentRun.playtime += Time.realtimeSinceStartup - saveStartTime;
-			saveStartTime = Time.realtimeSinceStartup;
-			Save(ActiveSave);
+			saveInNextFrame = true;
+		}
+	}
+
+	void DoSaveActiveGame() {
+		earlySaveEvent?.Invoke();
+		saveEvent?.Invoke();
+		if(GetCurrentSave().isInARun)
+			GetCurrentSave().currentRun.playtime += Time.realtimeSinceStartup - saveStartTime;
+		saveStartTime = Time.realtimeSinceStartup;
+		Save(ActiveSave);
+	}
+
+	public void Update() {
+		if (saveInNextFrame) {
+			DoSaveActiveGame();
+			saveInNextFrame = false;
 		}
 	}
 
@@ -198,11 +210,12 @@ public class DataSaver {
 		public int currentAct = 1;
 		
 		public StarMapState map = new StarMapState();
-		public List<string> upgrades = new List<string>();
 		public List<TrainModuleHolder> trainBuildings = new List<TrainModuleHolder>();
 
 		public float playtime;
 		public RunResources myResources = new RunResources();
+
+		public List<string> powerUps = new List<string>();
 
 		public List<string> unclaimedRewards = new List<string>();
 
@@ -244,61 +257,11 @@ public class DataSaver {
 		public int maxAmmo = 100;
 		public int fuel = 25;
 		public int maxFuel = 100;
-
-
+		
 		public static string GetTypeInNiceString(ResourceTypes types) {
 			return types.ToString();
 		}
 
-
-		public bool CanAdjustResource(int amount, ResourceTypes types) {
-			switch (types) {
-				case ResourceTypes.fuel:
-					if (amount > 0) {
-						return fuel + amount <= maxFuel;
-					} else {
-						return fuel >= amount;
-					}
-				case ResourceTypes.ammo:
-					if (amount > 0) {
-						return ammo + amount <= maxAmmo;
-					} else {
-						return ammo >= amount;
-					}
-				case ResourceTypes.money:
-					if (amount > 0) {
-						return true;
-					} else {
-						return money >= amount;
-					}
-				case ResourceTypes.scraps:
-					if (amount > 0) {
-						return scraps + amount <= maxScraps;
-					} else {
-						return scraps >= amount;
-					}
-				default:
-					return false;
-			}
-		}
-		
-		public void AddResource(int amount, ResourceTypes types) {
-			switch (types) {
-				case ResourceTypes.fuel:
-					fuel += amount;
-					break;
-				case ResourceTypes.ammo:
-					ammo += amount;
-					break;
-				case ResourceTypes.money:
-					money += amount;
-					break;
-				case ResourceTypes.scraps:
-					scraps += amount;
-					break;
-			}
-		}
-		
 		public RunResources Copy() {
 			var copy = new RunResources();
 			copy.money = money;

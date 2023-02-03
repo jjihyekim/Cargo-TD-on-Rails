@@ -34,7 +34,23 @@ public class StarterUIController : MonoBehaviour {
 
 
 	public Button mapOpenButton;
-	public GameObject mapDisabledDuringBattleOverlay;
+
+	public TMP_Text backToProfileOrAbandonText;
+	void UpdateBackToProfileOrAbandonButton() {
+		if (SceneLoader.s.isLevelInProgress) {
+			backToProfileOrAbandonText.text = "Abandon Run";
+		} else {
+			backToProfileOrAbandonText.text = "Back to Main Menu";
+		}
+	}
+	public void BackToProfileOrAbandon() {
+		if (SceneLoader.s.isLevelInProgress) {
+			Pauser.s.AbandonMission();
+		} else {
+			Pauser.s.Unpause();
+			BackToProfileSelection();
+		}
+	}
 	
 	public void BackToProfileSelection() {
 		starterUI.SetActive(false);
@@ -58,7 +74,7 @@ public class StarterUIController : MonoBehaviour {
 			Train.s.DrawTrainBasedOnSaveData();
 
 			mapOpenButton.interactable = true;
-			mapDisabledDuringBattleOverlay.SetActive(false);
+			//mapDisabledDuringBattleOverlay.SetActive(false);
 			
 			if (DataSaver.s.GetCurrentSave().currentRun.unclaimedRewards.Count > 0) {
 				StartLevel(false);
@@ -67,9 +83,10 @@ public class StarterUIController : MonoBehaviour {
 			} else {
 				OnEnteredStarterUI?.Invoke();
 			}
-		} 
-		
-		
+		}
+
+
+		UpdateBackToProfileOrAbandonButton();
 		OnLevelChanged?.Invoke();
 	}
 
@@ -83,7 +100,7 @@ public class StarterUIController : MonoBehaviour {
 			starterUI.SetActive(false);
 
 			mapOpenButton.interactable = false;
-			mapDisabledDuringBattleOverlay.SetActive(true);
+			//mapDisabledDuringBattleOverlay.SetActive(true);
 
 			if (!currentLevel.isEncounter) {
 				ClearStaticTrackers();
@@ -93,6 +110,7 @@ public class StarterUIController : MonoBehaviour {
 				Train.s.LevelStateChanged();
 				
 				OnLevelStarted?.Invoke();
+				UpdateBackToProfileOrAbandonButton();
 
 				if (legitStart) {
 					RangeVisualizer.SetAllRangeVisualiserState(true);
@@ -115,7 +133,7 @@ public class StarterUIController : MonoBehaviour {
 		starterUI.SetActive(false);
 
 		mapOpenButton.interactable = false;
-		mapDisabledDuringBattleOverlay.SetActive(true);
+		//mapDisabledDuringBattleOverlay.SetActive(true);
 
 		SceneLoader.s.FinishLevel();
 		EncounterController.s.EngageEncounter(encounterName);
@@ -171,7 +189,8 @@ public class StarterUIController : MonoBehaviour {
 		Train.s.LevelStateChanged();
 
 		OnLevelStarted?.Invoke();
-
+		UpdateBackToProfileOrAbandonButton();
+		
 		RangeVisualizer.SetAllRangeVisualiserState(true);
 
 		SoundscapeController.s.PlayMissionStartSound();

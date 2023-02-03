@@ -20,8 +20,8 @@ public class SpeedController : MonoBehaviour, IShowOnDistanceRadar {
     public float missionDistance = 300; //100 engine power goes 1 distance per second
 
     public float enginePower = 0;
-    public float enginePowerTarget = 0;
-    public float freePower = 0;
+    public float fuelPower = 0;
+    public float nuclearPower = 0;
     public float enginePowerBoost = 1f;
     public float enginePowerPlayerControl = 1f;
     public float targetSpeed;
@@ -36,11 +36,8 @@ public class SpeedController : MonoBehaviour, IShowOnDistanceRadar {
 
     public TrainStation endTrainStation;
 
-    public float fuel;
-    public float maxFuel;
-
     //public TMP_Text fuelText;
-    public TMP_Text fuelUseText;
+    //public TMP_Text fuelUseText;
 
     public Slider enginePowerSlider;
     public Image engineFill;
@@ -48,7 +45,6 @@ public class SpeedController : MonoBehaviour, IShowOnDistanceRadar {
     public Color engineDisabledColor;
     public GameObject engineDisabledWarning;
 
-    public ScrapBoxScript myFuelShower;
     public ScrapBoxScript mySteamShower;
 
     public float steam;
@@ -66,13 +62,6 @@ public class SpeedController : MonoBehaviour, IShowOnDistanceRadar {
         
         endTrainStation.startPos = Vector3.forward * missionDistance;
         enginePowerBoost = 1;
-
-        if (DataSaver.s.GetCurrentSave().isInARun) {
-            var myResources = DataSaver.s.GetCurrentSave().currentRun.myResources;
-            fuel = myResources.fuel;
-            maxFuel = myResources.maxFuel;
-            myFuelShower.SetMaxScrap(maxFuel);
-        }
 
         maxSteam = engines.Count*100;
         steam = maxSteam/2f;
@@ -131,15 +120,20 @@ public class SpeedController : MonoBehaviour, IShowOnDistanceRadar {
     public float trainWeightMultiplier = 0.8f;
 
     public float internalRealSpeed;
+    public int activeEngines = 0;
     private void Update() {
         if (SceneLoader.s.isLevelInProgress) {
-            enginePowerTarget = 0;
-            freePower = 0;
+            fuelPower = 0;
+            nuclearPower = 0;
             for (int i = 0; i < engines.Count; i++) {
-                if (engines[i].isFreePower) {
-                    freePower += engines[i].enginePower;
+                if (engines[i].isNuclear) {
+                    nuclearPower += engines[i].enginePower;
+                    activeEngines += 1;
                 } else {
-                    enginePowerTarget += engines[i].enginePower;
+                    if (engines[i].hasFuel) {
+                        fuelPower += engines[i].enginePower;
+                        activeEngines += 1;
+                    }
                 }
             }
 
@@ -149,7 +143,7 @@ public class SpeedController : MonoBehaviour, IShowOnDistanceRadar {
 
             DoFuelAndPlayerEngineControls();
 
-            var engineTarget = enginePowerTarget * enginePowerBoost * enginePowerPlayerControl + freePower;
+            var engineTarget = (fuelPower+nuclearPower) * enginePowerBoost * enginePowerPlayerControl;
             enginePower = Mathf.MoveTowards(enginePower, engineTarget, enginePowerChangeDelta * Time.deltaTime);
 
             var steamGenerationPerSecond = steamPer100EnginePower * (enginePower/100f);
@@ -194,8 +188,6 @@ public class SpeedController : MonoBehaviour, IShowOnDistanceRadar {
             mySteamSpeedometer.SetSpeed(targetSpeed);
             myEngineSpeedometer.SetSpeed(stabilizedSpeed); // used for the engine power speedometer
             enginePowerText.text = enginePower.ToString("F0");
-            
-            myFuelShower.SetScrap(fuel);
 
             currentTime += Time.deltaTime;
             timeText.text = GetNiceTime(currentTime);
@@ -219,58 +211,54 @@ public class SpeedController : MonoBehaviour, IShowOnDistanceRadar {
         } else {
             LevelReferences.s.speed = 0;
             enginePower = 0;
-            enginePowerText.text = enginePowerTarget.ToString("F0");
+            enginePowerText.text = fuelPower.ToString("F0");
         }
     }
 
+    public GameObject selfDamageWarning;
     private bool playedNoFuelSound = false;
     void DoFuelAndPlayerEngineControls() {
-        var engineCountMultiplier = 1f;
+        /*var engineCountMultiplier = 1f;
         if(engines.Count > 0)
             engineCountMultiplier = ((engines.Count-1)/2f + 1)/engines.Count;
 
-        var fuelUse = (enginePowerTarget*enginePowerPlayerControl)/100 * fuelUseMultiplier;
-        if (enginePowerPlayerControl > 1.25f) {
+        var fuelUse = (fuelPower*enginePowerPlayerControl)/100 * fuelUseMultiplier;
+        /*if (enginePowerPlayerControl > 1.25f) {
             fuelUse *= 1.2f;
         }else if(enginePowerPlayerControl > 1f) {
             fuelUse *= 1.1f;
-        }/*else if (enginePowerPlayerControl <= 0.5f) {
+        }else if (enginePowerPlayerControl <= 0.5f) {
             fuelUse *= 0.8f;
-        }*/
+        }#1#
 
         fuelUse *= engineCountMultiplier;
 
         fuelUseText.text = $"-{fuelUse:F2}/s";
-        fuel -= fuelUse * Time.deltaTime;
+        fuel -= fuelUse * Time.deltaTime;*/
+
+        var selfDamageState = 0;
+        if (enginePowerPlayerControl > 1f) {
+            selfDamageState = 1;
+        }else if (enginePowerPlayerControl > 1.25f) {
+            selfDamageState = 2;
+        }
+        for (int i = 0; i < engines.Count; i++) {
+            engines[i].SetSelfDamageState(selfDamageState);
+            engines[i].UseFuel(enginePowerPlayerControl*fuelUseMultiplier);
+        }
         
-        if (fuel <= 0) {
-            enginePowerPlayerControl = 0;
-            
+        selfDamageWarning.SetActive(selfDamageState > 0);
+        
+        
+        enginePowerPlayerControl = enginePowerSlider.value/4f;
+        
+        if (activeEngines <= 0) {
             engineFill.color = engineDisabledColor;
             engineDisabledWarning.SetActive( true);
-            
-            if (!playedNoFuelSound) {
-                SoundscapeController.s.PlayNoMoreResource(ResourceTypes.fuel);
-                playedNoFuelSound = true;
-            }
         } else {
-            enginePowerPlayerControl = enginePowerSlider.value/4f;
-            
             engineFill.color = engineFillColors[(int)enginePowerSlider.value];
             engineDisabledWarning.SetActive( false);
-            
-            if (playedNoFuelSound) {
-                playedNoFuelSound = false;
-            }
         }
-
-        fuel = Mathf.Clamp(fuel, 0, maxFuel);
-    }
-
-
-    public void ApplyStorageAmounts(int _maxFuel) {
-        maxFuel = _maxFuel;
-        myFuelShower.SetMaxScrap(maxFuel);
     }
 
     // v2 = u2 + 2as
@@ -298,31 +286,6 @@ public class SpeedController : MonoBehaviour, IShowOnDistanceRadar {
     }
 
 
-    public void ModifyFuel(float amount) {
-        if (SceneLoader.s.isLevelInProgress) {
-            if (fuel <= maxFuel) {
-                fuel += amount;
-                fuel = Mathf.Clamp(fuel, 0, maxFuel);
-            } else {
-                fuel += amount;
-            }
-            
-        } else {
-            var currentRunMyResources = DataSaver.s.GetCurrentSave().currentRun.myResources;
-            if (currentRunMyResources.fuel <= currentRunMyResources.maxFuel) {
-                currentRunMyResources.fuel += (int)amount;
-                currentRunMyResources.fuel = Mathf.Clamp(currentRunMyResources.fuel, 0, currentRunMyResources.maxFuel);
-            }
-
-            fuel = currentRunMyResources.fuel;
-        }
-        
-        if (fuel <= 0) {
-            SoundscapeController.s.PlayNoMoreResource(ResourceTypes.fuel);
-        }
-    }
-    
-
     public void UseSteam(float amount) {
         steam -= amount;
     }
@@ -332,6 +295,10 @@ public class SpeedController : MonoBehaviour, IShowOnDistanceRadar {
     }
 
     public Sprite trainRadarImg;
+
+    public bool IsTrain() {
+        return true;
+    }
     
     public Sprite GetIcon() {
         return trainRadarImg;

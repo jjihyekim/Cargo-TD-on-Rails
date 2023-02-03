@@ -146,6 +146,21 @@ public class Slot : MonoBehaviour/*, IPointerEnterHandler, IPointerExitHandler*/
 		}
 	}
 
+	private TrainBuilding[] prevSlots = new TrainBuilding[4];
+	public void TemporaryRemoval(TrainBuilding building) {
+		myBuildings.CopyTo(prevSlots, 0);
+		for (int i = 0; i < myBuildings.Length; i++) {
+			if (myBuildings[i] == building) {
+				myBuildings[i] = null;
+			}
+		}
+	}
+	
+	public void TemporaryRemoveReversal() {
+		prevSlots.CopyTo(myBuildings,0);
+	}
+
+
 	public Cart GetCart() {
 		return GetComponentInParent<Cart>();
 	}

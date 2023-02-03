@@ -5,29 +5,40 @@ using UnityEngine;
 
 public class ReloadAction : ModuleAction, IActiveDuringCombat, IActiveDuringShopping {
 	[NonSerialized]
-	public int fullCost;
+	public int fullCost = -1;
+
+	[NonSerialized] public float costWithoutAffordability;
 	private ModuleAmmo myMod;
 	protected override void _Start() {
-		fullCost = cost;
+		if(fullCost == -1)
+			fullCost = cost;
 		myMod = GetComponent<ModuleAmmo>();
 	}
 
 	protected override void _EngageAction() {
-		myMod.SetAmmo(myMod.maxAmmo);
+		var ammoToBuy = ((float)cost / (float)fullCost) * myMod.maxAmmo;
+		myMod.SetAmmo(ammoToBuy);
 	}
 
 	protected override void _Update() {
 		var percent = (1f - (float)myMod.curAmmo / myMod.maxAmmo);
-		cost = (int)( percent * fullCost);
+		costWithoutAffordability = (percent * fullCost);
+
+		var possibleToPay = MoneyController.s.GetAmountPossibleToPay(myType, costWithoutAffordability);
+		if (possibleToPay > 0)
+			cost = Mathf.FloorToInt(possibleToPay);
+		else 
+			cost = (int)costWithoutAffordability;
+		
 
 		canEngage = percent > 0.1f;
 	}
 
 	public void GiveBackCurrentStoredAmmo() {
 		var inversePercent = ((float)myMod.curAmmo / myMod.maxAmmo);
-		cost = (int)( inversePercent * fullCost);
+		var refundAmount = (int)( inversePercent * fullCost);
 		
-		LevelReferences.s.SpawnResourceAtLocation(myType, cost, transform.position);
+		LevelReferences.s.SpawnResourceAtLocation(myType, refundAmount, transform.position);
 	}
 
 	public void ActivateForCombat() {

@@ -22,7 +22,7 @@ public class MiniGUI_ModuleActionSelection : MonoBehaviour {
 
 		myModule = module;
 
-		var myActions = myModule.GetComponents<ModuleAction>();
+		/*var myActions = myModule.GetComponents<ModuleAction>();
 
 		int n = 0;
 		for (int i = 0; i < myActions.Length; i++) {
@@ -35,13 +35,15 @@ public class MiniGUI_ModuleActionSelection : MonoBehaviour {
 				}
 				n += 1;
 			}
-		}
+		}*/
 		
 		
 		var myInfo = myModule.GetComponentsInChildren<IClickableInfo>();
 		for (int i = 0; i < myInfo.Length; i++) {
-			var info = Instantiate(singleInfoPrefab, singleActionParent).GetComponent<MiniGUI_SingleInfo>().SetUp(myInfo[i]);
-			extraRects.Add(info.GetComponent<RectTransform>());
+			if (myInfo[i].ShowInfo()) {
+				var info = Instantiate(singleInfoPrefab, singleActionParent).GetComponent<MiniGUI_SingleInfo>().SetUp(myInfo[i]);
+				extraRects.Add(info.GetComponent<RectTransform>());
+			}
 		}
 
 

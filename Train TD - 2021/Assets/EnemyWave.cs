@@ -31,6 +31,10 @@ public class EnemyWave : MonoBehaviour, IShowOnDistanceRadar, ISpeedForEngineSou
 
     public bool isStealing = false;
     public bool isLeaving = false;
+
+    public bool IsTrain() {
+        return false;
+    }
     
     public Sprite GetMainSprite() {
         return DataHolder.s.GetEnemy(myEnemy.enemyUniqueName).GetComponent<EnemySwarmMaker>().enemyIcon;

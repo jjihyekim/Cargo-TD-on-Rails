@@ -9,6 +9,10 @@ public class ClickableHealthInfo : MonoBehaviour, IClickableInfo {
         myHealth = GetComponent<IHealth>();
     }
 
+    public bool ShowInfo() {
+        return true;
+    }
+
     public string GetInfo() {
         var isArmor = myHealth.HasArmor() ? "\narmored" : "";
         var info = myHealth.GetHealthRatioString() + "hp" + isArmor;

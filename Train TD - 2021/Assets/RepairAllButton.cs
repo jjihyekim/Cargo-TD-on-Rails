@@ -12,24 +12,19 @@ public class RepairAllButton : MonoBehaviour {
 
 
     private RepairAction[] _repairActions;
+    
+    
+    public Color regularColor = Color.black;
+    public Color cantAffordColor = Color.red;
     void Start() {
         _button = GetComponent<Button>();
         GetRepairModules();
         Update();
-    }
-
-    private void OnEnable() {
-        if(Train.s != null)
-            Train.s.trainUpdated.AddListener(GetRepairModules);
-        else
-            Invoke(nameof(DelayedEnable), 0.05f);
-    }
-
-    void DelayedEnable() {
         Train.s.trainUpdated.AddListener(GetRepairModules);
     }
 
-    private void OnDisable() {
+
+    private void OnDestroy() {
         Train.s.trainUpdated.RemoveListener(GetRepairModules);
     }
 
@@ -46,8 +41,6 @@ public class RepairAllButton : MonoBehaviour {
         }
     }
 
-    public Color regularColor = Color.black;
-    public Color cantAffordColor = Color.red;
     void Update() {
         var cost = 0;
 

@@ -29972,6 +29972,9 @@ GameObject:
   - component: {fileID: -8062254177491749771}
   - component: {fileID: 7680171318465439623}
   - component: {fileID: 8165811245893185045}
+  - component: {fileID: 1998424467055819187}
+  - component: {fileID: 7322172539440479892}
+  - component: {fileID: -1581095640621918555}
   m_Layer: 17
   m_Name: EngineModule
   m_TagString: Untagged
@@ -30010,6 +30013,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f5b56326a28e8a24c91959aa3382ef6a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  canSelect: 1
   displayName: Engine Module
   uniqueName: Engine
   Icon: {fileID: 21300000, guid: 889b1f9ff81b88041a3788953b9a4bb1, type: 3}
@@ -30032,6 +30036,7 @@ MonoBehaviour:
   backGfx: {fileID: 6606896060513639486}
   isBuilt: 0
   autoSetUp: 0
+  isDestroyed: 0
   _outlines: []
 --- !u!114 &3044803135225542413
 MonoBehaviour:
@@ -30046,6 +30051,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   enginePower: 300
+  isNuclear: 0
+  hasFuel: 1
+  baseFuelUsePerSecond: 1
 --- !u!114 &8022081648539341584
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -30077,6 +30085,11 @@ MonoBehaviour:
   healthBar: {fileID: 0}
   explodePrefab: {fileID: 1046195756885079355, guid: 14455273e5a26a947a26caf9a4dfdd38, type: 3}
   isDead: 0
+  damageNearCartsOnDeath: 0
+  selfDamageMultiplier: 1
+  selfDamage: 0
+  selfDamageAmounts: 140000000a000000
+  explosionDamages: 640000003200000019000000
   burnResistant: 0
   currentBurn: 0
   burnSpeed: 0
@@ -30233,6 +30246,57 @@ MonoBehaviour:
     text: A bigger train is heavier and needs more engines. Engines use fuel to generate
       steam which is in turn used to accelerate.
   info: Engine Module
+--- !u!114 &1998424467055819187
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4191698785256518694}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f68cc5d632aa0b042a9a11038cda16d6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &7322172539440479892
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4191698785256518694}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ffd4c45972e0fc54a84560b4d5de93b9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  maxAmmo: 20
+  ammoPerShot: 1
+--- !u!114 &-1581095640621918555
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4191698785256518694}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c33a412f8442bd34aa1db59cc3bad577, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  isUnlocked: 1
+  unlockingUpgrade: {fileID: 0}
+  actionName: Refuel
+  myType: 0
+  cost: 20
+  cooldown: 1
+  curCooldown: 0
+  canEngage: 1
+  canAfford: 1
+  isCooldownOver: 1
+  soundEffect: []
+  myTooltip:
+    text: 
 --- !u!1 &4423568369807129282
 GameObject:
   m_ObjectHideFlags: 0

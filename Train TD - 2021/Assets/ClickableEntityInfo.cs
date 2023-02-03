@@ -8,6 +8,11 @@ public class ClickableEntityInfo : MonoBehaviour, IClickableInfo {
     [TextArea]
     public string info;
 
+
+    public bool ShowInfo() {
+        return true;
+    }
+
     public string GetInfo() {
         return info;
     }
@@ -18,6 +23,7 @@ public class ClickableEntityInfo : MonoBehaviour, IClickableInfo {
 }
 
 public interface IClickableInfo {
+    public bool ShowInfo();
     public string GetInfo();
     public Tooltip GetTooltip();
 }

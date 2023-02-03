@@ -1,7 +1,6 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using Dreamteck.Splines.Primitives;
 using TMPro;
 using UnityEngine;
 using UnityEngine.InputSystem;

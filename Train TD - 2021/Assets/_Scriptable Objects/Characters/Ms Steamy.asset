@@ -15,19 +15,19 @@ MonoBehaviour:
   myCharacter:
     uniqueName: Ms Steamy
     description: Loves everything steam. Start with Pneumatic and steamvent guns.
-    starterUpgrades:
-    - {fileID: 11400000, guid: bb9a07f134773024ebcbc669ebedfeeb, type: 2}
     starterModules:
-    - moduleUniqueName: Engine
-      amount: 3
+    - moduleUniqueName: BasicNuclear
+      amount: 1
     - moduleUniqueName: pneumatic
       amount: 3
     - moduleUniqueName: steamvents
       amount: 2
+    - moduleUniqueName: Engine
+      amount: 1
     starterTrain:
       myCarts:
       - buildingStates:
-        - uniqueName: Engine
+        - uniqueName: BasicNuclear
           health: -1
           ammo: -1
         - uniqueName: 
@@ -107,5 +107,5 @@ MonoBehaviour:
       maxScraps: 50
       ammo: 0
       maxAmmo: 25
-      fuel: 50
+      fuel: 25
       maxFuel: 25

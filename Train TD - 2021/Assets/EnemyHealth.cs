@@ -38,20 +38,51 @@ public class EnemyHealth : MonoBehaviour, IHealth {
 		if (currentHealth <= 0 && isAlive) {
 			Die();
 		}
+		
+		SetBuildingShaderHealth(currentHealth / maxHealth);
+	}
+
+	public void Heal(float heal) {
+		currentHealth += heal;
+
+		if (currentHealth > maxHealth) {
+			currentHealth = maxHealth;
+		}
+
+		SetBuildingShaderHealth(currentHealth / maxHealth);
+	}
+
+	void SetBuildingShaderHealth(float value) {
+		var _renderers = GetComponentsInChildren<MeshRenderer>();
+		for (int j = 0; j < _renderers.Length; j++) {
+			var rend = _renderers[j];
+			rend.material.SetFloat("_Health", value);
+		}
+	}
+	
+	void SetBuildingShaderBurn(float value) {
+		var _renderers = GetComponentsInChildren<MeshRenderer>();
+		value = value.Remap(0, 10, 0, 1);
+		for (int j = 0; j < _renderers.Length; j++) {
+			var rend = _renderers[j];
+			rend.material.SetFloat("_Burn", value);
+		}
 	}
 
 
-	 float burnReduction = 0.5f;
+	float burnReduction = 0.5f;
 	public float currentBurn = 0;
 	public float burnSpeed = 0;
+	private float lastBurn;
 	public void BurnDamage(float damage) {
 		burnSpeed += damage;
 	}
 	private void Update() {
-		if (currentBurn >= 1) {
+		var burnDistance = Mathf.Max(burnSpeed / 2f, 1f);
+		if (currentBurn >= burnDistance) {
 			Instantiate(LevelReferences.s.damageNumbersPrefab, LevelReferences.s.uiDisplayParent)
 				.GetComponent<MiniGUI_DamageNumber>()
-				.SetUp(GetGameObject().transform, (int)1, true, false, true);
+				.SetUp(uiTransform, (int)1, true, false, true);
 			DealDamage(1);
 
 			currentBurn = 0;
@@ -60,7 +91,13 @@ public class EnemyHealth : MonoBehaviour, IHealth {
 		if (burnSpeed > 0.05f) {
 			currentBurn += burnSpeed * Time.deltaTime;
 		}
+
 		burnSpeed = Mathf.Lerp(burnSpeed,0,burnReduction*Time.deltaTime);
+
+		if (Mathf.Abs(lastBurn - burnSpeed) > 1 || (lastBurn > 0 && burnSpeed <= 0)) {
+			SetBuildingShaderBurn(burnSpeed);
+			lastBurn = burnSpeed;
+		}
 	}
 
 	private void Start() {
@@ -100,9 +137,17 @@ public class EnemyHealth : MonoBehaviour, IHealth {
 		}
 		
 		if (giveRewards) {
-			LevelReferences.s.SpawnResourceAtLocation(ResourceTypes.scraps, scrapReward, aliveObject.transform.position);
-			LevelReferences.s.SpawnResourceAtLocation(ResourceTypes.fuel, fuelReward, aliveObject.transform.position + Vector3.forward/2f);
-			LevelReferences.s.SpawnResourceAtLocation(ResourceTypes.ammo, ammoReward, aliveObject.transform.position + Vector3.left/2f);
+			LevelReferences.s.SpawnResourceAtLocation(ResourceTypes.scraps, 
+				scrapReward*LevelReferences.s.scrapEnemyRewardMultiplier, 
+				aliveObject.transform.position);
+			
+			LevelReferences.s.SpawnResourceAtLocation(ResourceTypes.fuel, 
+				fuelReward*LevelReferences.s.fuelEnemyRewardMultiplier, 
+				aliveObject.transform.position + Vector3.forward/2f);
+			
+			LevelReferences.s.SpawnResourceAtLocation(ResourceTypes.ammo, 
+				ammoReward*LevelReferences.s.ammoEnemyRewardMultiplier, 
+				aliveObject.transform.position + Vector3.left/2f);
 		}
 
 		var pos = aliveObject.position;
@@ -149,6 +194,10 @@ public class EnemyHealth : MonoBehaviour, IHealth {
 		return $"{currentHealth}/{maxHealth}";
 	}
 
+	public Transform GetUITransform() {
+		return uiTransform;
+	}
+
 	[ReadOnly]
 	public List<Outline> _outlines = new List<Outline>();
 
@@ -185,6 +234,7 @@ public class EnemyHealth : MonoBehaviour, IHealth {
 
 public interface IHealth {
 	public void DealDamage(float damage);
+	public void Heal(float heal);
 	public void BurnDamage(float damage);
 	public bool IsPlayer();
 	public GameObject GetGameObject();
@@ -192,4 +242,6 @@ public interface IHealth {
 	public bool HasArmor();
 	public float GetHealthPercent();
 	public string GetHealthRatioString();
+
+	public Transform GetUITransform();
 }

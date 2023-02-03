@@ -485,7 +485,7 @@ public class Projectile : MonoBehaviour {
                 target.DealDamage(dmg);
                 Instantiate(LevelReferences.s.damageNumbersPrefab, LevelReferences.s.uiDisplayParent)
                     .GetComponent<MiniGUI_DamageNumber>()
-                    .SetUp(target.GetGameObject().transform, (int)dmg, isPlayerBullet, armorProtected, isBurnDamage);
+                    .SetUp(target.GetUITransform(), (int)dmg, isPlayerBullet, armorProtected, isBurnDamage);
             }
 
             onHitCallback?.Invoke();

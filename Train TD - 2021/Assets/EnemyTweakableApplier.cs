@@ -6,7 +6,7 @@ using UnityEngine;
 
 public class EnemyTweakableApplier : MonoBehaviour {
     
-    [ValueDropdown("GetAllEnemyNames")]
+    /*[ValueDropdown("GetAllEnemyNames")]
     public string uniqueName = "unset";
 
     private void OnEnable() {
@@ -56,5 +56,5 @@ public class EnemyTweakableApplier : MonoBehaviour {
             enemyNames.Add(enemies[i].uniqueName);
         }
         return enemyNames;
-    }
+    }*/
 }

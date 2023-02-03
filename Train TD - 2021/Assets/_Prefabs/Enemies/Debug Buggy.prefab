@@ -1074,7 +1074,7 @@ MonoBehaviour:
   curSmallTime: 1
   randomSmallBumpForce: {x: 0, y: 0}
   positionDelta: 0.2
-  lerpSpeed: 3
+  lerpSpeed: 10
   targetMoveSpeed: 0.1
   target: {x: 0, y: 0, z: 0}
   targetTargetPosition: {x: 0, y: 0, z: 0}
@@ -1170,8 +1170,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   tooltip:
-    text: Goes somewhat fast but also dies somewhat fast. Average okay?
-  info: Regular enemy with average everything.
+    text: Has Lots of HP for debug purposes
+  info: Debug Buggy
 --- !u!1 &3043115728015220457
 GameObject:
   m_ObjectHideFlags: 0

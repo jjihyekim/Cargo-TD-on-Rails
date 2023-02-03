@@ -15,6 +15,7 @@ public class DistanceAndEnemyRadarController : MonoBehaviour {
 
     public Transform unitsParent;
     public GameObject unitsPrefab;
+    public GameObject trainPrefab;
 
     public List<GameObject> unitDisplays = new List<GameObject>();
 
@@ -22,8 +23,13 @@ public class DistanceAndEnemyRadarController : MonoBehaviour {
 
     public void RegisterUnit(IShowOnDistanceRadar unit) {
         myUnits.Add(unit);
-        unitDisplays.Add(Instantiate(unitsPrefab, unitsParent));
-        unitDisplays[unitDisplays.Count - 1].GetComponentInChildren<Image>().sprite = unit.GetIcon();
+        if (unit.IsTrain()) {
+            unitDisplays.Add(Instantiate(trainPrefab, unitsParent));
+        } else {
+            unitDisplays.Add(Instantiate(unitsPrefab, unitsParent));
+        }
+
+        unitDisplays[unitDisplays.Count - 1].transform.GetChild(0).GetComponent<Image>().sprite = unit.GetIcon();
         Update();
     }
 
@@ -80,6 +86,7 @@ public class DistanceAndEnemyRadarController : MonoBehaviour {
 }
 
 public interface IShowOnDistanceRadar {
+    public bool IsTrain();
     public float GetDistance();
     public Sprite GetIcon();
 }

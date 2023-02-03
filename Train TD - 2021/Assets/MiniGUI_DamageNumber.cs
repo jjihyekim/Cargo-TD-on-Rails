@@ -33,15 +33,13 @@ public class MiniGUI_DamageNumber : MonoBehaviour {
     public string[] enemyIsAttackedBig;
     
     public Color armorProtectedColor = Color.yellow;
-    public void SetUp(Transform _target, int damage, bool isPlayer, bool isArmorProtected, bool isBurned) {
+    public void SetUp(Transform _target, float damage, bool isPlayer, bool isArmorProtected, bool isBurned) {
         //dmgText.text = "-" + damage;
 
         if (isBurned) {
             dmgText.text = burned[Random.Range(0, burned.Length)];
             fadeOutStartTime /= 2;
-        }else
-
-        if (isPlayer) {
+        }else if (isPlayer) {
             if (isArmorProtected) {
                 dmgText.text = enemyIsAttackedArmorProtected[Random.Range(0, enemyIsAttackedArmorProtected.Length)];
             } else {
@@ -77,7 +75,26 @@ public class MiniGUI_DamageNumber : MonoBehaviour {
         targetWithOffset.transform.position = target;
         GetComponent<UIElementFollowWorldTarget>().SetUp(targetWithOffset);
 
+        dmgText.fontSize = DamageToFontSize(damage);
+
         StartCoroutine(DamageAnimation());
+    }
+
+    float DamageToFontSize(float damage) {
+        /*if (damage >= 20) {
+            damage = Mathf.Sqrt(damage * 20);
+        }
+
+        return damage.Remap(0, 45, 8, 40);*/
+        
+        var result = 8f;
+        if (damage < 15) {
+            result = 15.6f * Mathf.Log10(damage + 1.4f);
+        } else {
+            result = damage / 2f + 11;
+        }
+
+        return result;
     }
 
     private void OnDestroy() {

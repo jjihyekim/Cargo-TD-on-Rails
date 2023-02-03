@@ -29,7 +29,10 @@ public class CargoModule : MonoBehaviour, IActiveDuringCombat, IActiveDuringShop
     }
     
     public void CargoSold() {
-        GetComponentInParent<Slot>().RemoveBuilding(GetComponent<TrainBuilding>());
+        Destroy(gameObject);
+    }
+
+    public void CargoReturned() {
         Destroy(gameObject);
     }
 

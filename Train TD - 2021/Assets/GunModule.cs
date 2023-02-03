@@ -63,8 +63,10 @@ public class GunModule : MonoBehaviour, IComponentWithTarget, IActiveDuringComba
     public UnityEvent stopShootingEvent = new UnityEvent();
 
     public bool gunShakeOnShoot = true;
-    private float gunShakeMagnitude = 0.004f;
+    private float gunShakeMagnitude = 0.04f;
     private Vector3 gunShakeRotation = new Vector3(-2,0,0);
+
+    public bool beingDirectControlled = false;
     
     private void Update() {
         if (gunActive) {
@@ -111,16 +113,29 @@ public class GunModule : MonoBehaviour, IComponentWithTarget, IActiveDuringComba
     private Cart myCart = null;
     private void Start() {
         myCart = GetComponentInParent<Cart>();
+
+        for (int i = 0; i < rotateTransforms.Length; i++) {
+            var curRotate = rotateTransforms[i].transform;
+            var anchor = new GameObject("Turret Rotate Anchor");
+            anchor.transform.SetParent(curRotate.parent);
+            anchor.transform.position = curRotate.position;
+            curRotate.SetParent(anchor.transform);
+        }
     }
 
     float GetAttackSpeedMultiplier() {
+        var boost = 1f;
         if (myCart != null) {
-            return 1f / myCart.attackSpeedModifier;
-        } else {
-            return 1f;
+            boost /= myCart.attackSpeedModifier;
+        } 
+        
+        if (beingDirectControlled) {
+            boost /= DirectControlMaster.s.directControlFireRateBoost;
         }
+        
+        return boost;
     }
-    
+
     float GetDamageMultiplier() {
         var dmgMul = 1f;
         
@@ -132,6 +147,10 @@ public class GunModule : MonoBehaviour, IComponentWithTarget, IActiveDuringComba
             dmgMul *= LevelReferences.s.playerDamageBuff;
         } else {
             dmgMul *= LevelReferences.s.enemyDamageBuff;
+        }
+
+        if (beingDirectControlled) {
+            dmgMul *= DirectControlMaster.s.directControlDamageBoost;
         }
 
         return dmgMul;
@@ -147,7 +166,7 @@ public class GunModule : MonoBehaviour, IComponentWithTarget, IActiveDuringComba
                 yield return null;
             }
             if (isShooting) {
-                StartCoroutine(ShootBarrage());
+                StartCoroutine(_ShootBarrage());
             } else {
                 break;
             }
@@ -160,7 +179,7 @@ public class GunModule : MonoBehaviour, IComponentWithTarget, IActiveDuringComba
         isWarmedUp = false;
     }
     
-    IEnumerator ShootBarrage(bool isFree = false, GenericCallback shotCallback = null, GenericCallback onHitCallback = null) {
+    IEnumerator _ShootBarrage(bool isFree = false, GenericCallback shotCallback = null, GenericCallback onHitCallback = null) {
         stopShootingTimer = GetFireDelay()+0.05f;
         if (!isWarmedUp) {
             isWarmedUp = true;
@@ -215,26 +234,16 @@ public class GunModule : MonoBehaviour, IComponentWithTarget, IActiveDuringComba
 
     private bool stopUpdateRotation = false;
 
-    private bool realPositionsSet = false;
-    Vector3[] realPositions;
-    void RegisterRotateTransformRealPositions() {
-        realPositions = new Vector3[rotateTransforms.Length];
-        for (int i = 0; i < rotateTransforms.Length; i++) {
-            var rotateTransform = rotateTransforms[i].transform;
-            realPositions[i] = rotateTransform.localPosition;
-        }
-
-        realPositionsSet = true;
-    }
     public IEnumerator ShakeGun() {
         yield return null;
+        
+        var range = Mathf.Clamp01(projectileDamage / 10f) + Mathf.Clamp01(projectileDamage / 10f);
+        range /= 2f;
+        
         //stopUpdateRotation = true;
-        if (!realPositionsSet) {
-            RegisterRotateTransformRealPositions();
-        }
         for (int i = 0; i < rotateTransforms.Length; i++) {
             var rotateTransform = rotateTransforms[i].transform;
-            rotateTransform.localPosition = Random.insideUnitSphere * gunShakeMagnitude;
+            rotateTransform.localPosition = Random.insideUnitSphere * gunShakeMagnitude * range + (-rotateTransform.forward * gunShakeMagnitude * range * 2);
             rotateTransform.Rotate(gunShakeRotation);
         }
 
@@ -242,21 +251,21 @@ public class GunModule : MonoBehaviour, IComponentWithTarget, IActiveDuringComba
         //stopUpdateRotation = false;
         for (int i = 0; i < rotateTransforms.Length; i++) {
             var rotateTransform = rotateTransforms[i].transform;
-            rotateTransform.localPosition= realPositions[i];
+            rotateTransform.localPosition= Vector3.zero;
         }
     }
 
     [Button]
     public void ShootBarrageDebug() {
-        StartCoroutine(ShootBarrage(true));
+        StartCoroutine(_ShootBarrage(true));
     }
     [Button]
     public void ShootBarrageContinuousDebug() {
         StartCoroutine(ShootCycle());
     }
     
-    public void ShootBarrageFree(GenericCallback shotCallback, GenericCallback onHitCallback) {
-        StartCoroutine(ShootBarrage(true, shotCallback, onHitCallback));
+    public void ShootBarrage(bool isFree, GenericCallback shotCallback, GenericCallback onHitCallback) {
+        StartCoroutine(_ShootBarrage(isFree, shotCallback, onHitCallback));
     }
 
     bool AreThereEnoughMaterialsToShoot() {

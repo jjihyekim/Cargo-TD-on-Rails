@@ -204,7 +204,7 @@ public class SkyboxParametersScriptable : ScriptableObject {
 		
 		
 		var target = SkyboxController.Instance;
-		Debug.Log($"Setting {target.gameObject.name} settings");
+		//Debug.Log($"Setting {target.gameObject.name} settings");
 
 		target.SkyboxMaterial = SkyboxMaterial;
 		target.TopColor = _topColor;

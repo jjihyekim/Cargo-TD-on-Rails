@@ -195,6 +195,11 @@ public class PlayerBuildingController : MonoBehaviour {
     }
 
     private void TryToPutDownBuilding(InputAction.CallbackContext context) {
+        if (ignoreNextClick) {
+            ignoreNextClick = false;
+            return;
+        }
+
         if (activeSlot != null) {
             if (activeSlot.CanBuiltInSlot(tempBuilding, ref activeIndex)) {
                 var canBuildMore = true;
@@ -217,6 +222,7 @@ public class PlayerBuildingController : MonoBehaviour {
                 newBuilding.transform.position = activeSlot.transform.position;
                 newBuilding.CompleteBuilding(true, nextBuildSayVoiceline);
                 returnFinishedBuilding?.Invoke(newBuilding);
+                
                 
                 if(!nextBuildIsFree)
                     MoneyController.s.ModifyResource(ResourceTypes.scraps, -newBuilding.cost);
@@ -368,9 +374,14 @@ public class PlayerBuildingController : MonoBehaviour {
     }
 
 
+    public bool ignoreNextClick = false;
     public void StartBuilding(TrainBuilding building, 
         BuildingDoneCallback callback = null, GetTheFinishedBuilding buildingReturn = null, bool isFree = false, bool sayVoiceline = true
         ) {
+
+        ignoreNextClick = true;
+        Invoke(nameof(StopIgnoringClick),0.01f);
+        
         inputActionMap.FindActionMap(buildingActionMap).Enable();
         inputActionMap.FindActionMap(nonbuildingActionMap).Disable();
         
@@ -391,6 +402,10 @@ public class PlayerBuildingController : MonoBehaviour {
 
         Debug.Log($"Starting building: {building.displayName}");
         startBuildingEvent?.Invoke();
+    }
+
+    void StopIgnoringClick() {
+        ignoreNextClick = false;
     }
 
 

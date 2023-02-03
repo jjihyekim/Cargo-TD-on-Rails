@@ -698,6 +698,7 @@ GameObject:
   - component: {fileID: 1513791444851784707}
   - component: {fileID: -2279841472330544923}
   - component: {fileID: 2021261769006623840}
+  - component: {fileID: 8267175744800967737}
   m_Layer: 17
   m_Name: RocketLauncher
   m_TagString: Untagged
@@ -736,6 +737,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f5b56326a28e8a24c91959aa3382ef6a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  canSelect: 1
   displayName: Rocket Launcher
   uniqueName: Rocket
   Icon: {fileID: 21300000, guid: fec227fc5b9ef8848bc5c349d122d353, type: 3}
@@ -758,6 +760,7 @@ MonoBehaviour:
   backGfx: {fileID: 0}
   isBuilt: 0
   autoSetUp: 0
+  isDestroyed: 0
   _outlines: []
 --- !u!114 &2664401322561058686
 MonoBehaviour:
@@ -788,7 +791,7 @@ MonoBehaviour:
   fireDelay: 3
   fireBarrageCount: 1
   fireBarrageDelay: 0.5
-  projectileDamage: 50
+  projectileDamage: 100
   rotateSpeed: 10
   gunActive: 1
   CanShoot: 0
@@ -799,7 +802,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   canPenetrateArmor: 1
-  fuelUsePerShot: 1
+  fuelUsePerShot: 0
   steamUsePerShot: 0
   needWarmUp: 0
   startWarmUpEvent:
@@ -811,7 +814,8 @@ MonoBehaviour:
   stopShootingEvent:
     m_PersistentCalls:
       m_Calls: []
-  gunShakeOnShoot: 1
+  gunShakeOnShoot: 0
+  beingDirectControlled: 0
 --- !u!114 &7641972898590985362
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -862,6 +866,11 @@ MonoBehaviour:
   healthBar: {fileID: 0}
   explodePrefab: {fileID: 1046195756885079355, guid: 14455273e5a26a947a26caf9a4dfdd38, type: 3}
   isDead: 0
+  damageNearCartsOnDeath: 0
+  selfDamageMultiplier: 1
+  selfDamage: 0
+  selfDamageAmounts: 140000000a000000
+  explosionDamages: 640000003200000019000000
   burnResistant: 0
   currentBurn: 0
   burnSpeed: 0
@@ -919,8 +928,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ffd4c45972e0fc54a84560b4d5de93b9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxAmmo: 30
-  ammoPerShot: 3
+  maxAmmo: 10
+  ammoPerShot: 1
 --- !u!114 &-5925618615010043299
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -990,7 +999,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   tooltip:
-    text: Rockets go BOOM! Needs both fuel and ammo to work. Penetrates armor.
+    text: Rockets go BOOM! Need fuel instead of ammo. Penetrates armor.
   info: Rocket Launcher
 --- !u!114 &-2279841472330544923
 MonoBehaviour:
@@ -1033,7 +1042,7 @@ MonoBehaviour:
   isUnlocked: 1
   unlockingUpgrade: {fileID: 0}
   actionName: Reload
-  myType: 2
+  myType: 0
   cost: 40
   cooldown: 5
   curCooldown: 0
@@ -1044,6 +1053,18 @@ MonoBehaviour:
   - {fileID: 8300000, guid: 9158afb6966d445db9caf1dccf7acbcc, type: 3}
   myTooltip:
     text: 
+--- !u!114 &8267175744800967737
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2876656872020492522}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f68cc5d632aa0b042a9a11038cda16d6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &2983896549083203264
 GameObject:
   m_ObjectHideFlags: 0

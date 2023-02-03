@@ -296,9 +296,9 @@ public class Train : MonoBehaviour {
             var state = GetTrainState();
             state.myCarts.RemoveAt(index);
             DrawTrain(state);
-        } else {
+        } /*else {
             Debug.Log($"Cart with illegal index {index} {cart} {cart.gameObject.name}");
-        }
+        }*/
         
         if(carts.Count <= 0 && SceneLoader.s.isLevelInProgress)
             MissionLoseFinisher.s.MissionLost();
@@ -406,8 +406,7 @@ public class Train : MonoBehaviour {
             mySave.maxScraps = maxScraps;
             mySave.maxAmmo = maxAmmo;
 
-            MoneyController.s.ApplyStorageAmounts(maxScraps, maxAmmo);
-            SpeedController.s.ApplyStorageAmounts(maxFuel);
+            MoneyController.s.ApplyStorageAmounts(maxScraps, maxAmmo,maxFuel);
         }
     }
 

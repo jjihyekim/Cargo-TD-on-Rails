@@ -41,7 +41,7 @@ public class EngineFireController : MonoBehaviour {
     }
 
     private float lastSpeed = 0;
-    private float lastEnginePower = 100;
+    private float lastEnginePowerPlayerControl = 1;
     public int lastSpeedTier = 0;
     //public float pitchRange = 0.2f;
     void Update()
@@ -51,8 +51,8 @@ public class EngineFireController : MonoBehaviour {
 		    UpdateEngineParticleSystemValues();
 	    }
 
-	    if (Mathf.Abs(lastEnginePower - SpeedController.s.enginePower) > 5) {
-		    lastEnginePower = SpeedController.s.enginePower;
+	    if (Mathf.Abs(lastEnginePowerPlayerControl - SpeedController.s.enginePowerPlayerControl) > 0.1f) {
+		    lastEnginePowerPlayerControl = SpeedController.s.enginePowerPlayerControl;
 		    UpdateEngineParticleSystemValues();
 	    }
 	    
@@ -93,12 +93,13 @@ public class EngineFireController : MonoBehaviour {
 
 
     public bool isLevelFinishTriggered = false;
+    public bool fireActive = true;
     void UpdateEngineParticleSystemValues() {
 	    var emissionModule = _particleSystem.emission;
 	    var mainModule = _particleSystem.main;
-	    if (!SceneLoader.s.isLevelStarted()) {
+	    if (!SceneLoader.s.isLevelStarted() || !fireActive) {
 		    emissionModule.enabled = false;
-	    } else if(lastSpeed > 0.2f && lastEnginePower > 5) {
+	    } else if(lastSpeed > 0.2f && lastEnginePowerPlayerControl > 0) {
 		    emissionModule.enabled = true;
 		    var burst = emissionModule.GetBurst(0);
 		    currentDelay = Mathf.Max(baseDelay/(((LevelReferences.s.speed-1)*speedDelayEffect)+1), minDelay);
@@ -108,13 +109,17 @@ public class EngineFireController : MonoBehaviour {
 		    forceOverLifeTime.y = new ParticleSystem.MinMaxCurve(LevelReferences.s.speed * 25f);
 
 		    // Engine Boost
-		    if (lastEnginePower > 300) {
+		    var playerControlAdjusted = lastEnginePowerPlayerControl;
+		    var powerLow = lastEnginePowerPlayerControl.Remap(0, 1.5f,2,50) * (_engine.enginePower / 300f);
+		    var powerHigh = lastEnginePowerPlayerControl.Remap(0, 1.5f,14,80) * (_engine.enginePower / 300f);
+		    mainModule.startSpeed = new ParticleSystem.MinMaxCurve(powerLow, powerHigh);
+		    /*if (lastEnginePower > 300) {
 			    mainModule.startSpeed = new ParticleSystem.MinMaxCurve(50, 80);
 		    }else if(lastEnginePower > 150){
 			    mainModule.startSpeed = new ParticleSystem.MinMaxCurve(20, 40);
 			} else {
 			    mainModule.startSpeed = new ParticleSystem.MinMaxCurve(5, 14);
-		    }
+		    }*/
 	    } else {
 		    emissionModule.enabled = false;
 		    if (SceneLoader.s.isLevelFinished() && !isLevelFinishTriggered) {
@@ -124,5 +129,13 @@ public class EngineFireController : MonoBehaviour {
 			    _audio.loop = false;
 		    }
 	    }
+    }
+
+    public void StopEngineFire() {
+	    fireActive = false;
+    }
+
+    public void ActivateEngineFire() {
+	    fireActive = true;
     }
 }
