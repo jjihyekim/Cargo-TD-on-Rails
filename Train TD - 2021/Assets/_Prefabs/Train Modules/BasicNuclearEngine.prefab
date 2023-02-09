@@ -30133,6 +30133,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   enginePower: 300
   isNuclear: 1
+  hasFuel: 1
+  baseFuelUsePerSecond: 1
 --- !u!114 &8022081648539341584
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -30168,6 +30170,7 @@ MonoBehaviour:
   selfDamageMultiplier: 1
   selfDamage: 0
   selfDamageAmounts: 140000000a000000
+  isCartHp: 0
   explosionDamages: 3c0000002800000014000000
   burnResistant: 1
   currentBurn: 0
@@ -30200,8 +30203,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 57753de41d57ab242a96112d02204fec, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  isUnlocked: 1
-  unlockingUpgrade: {fileID: 0}
   actionName: Sell
   myType: 1
   cost: -50
@@ -30226,8 +30227,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9c7641ce9f64ad24dba5c5859ec0c315, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  isUnlocked: 0
-  unlockingUpgrade: {fileID: 11400000, guid: c1365fbf018b8d54582197f3f3222bf8, type: 2}
   actionName: Overload
   myType: 1
   cost: 50
@@ -30236,9 +30235,10 @@ MonoBehaviour:
   canEngage: 1
   canAfford: 1
   isCooldownOver: 1
-  soundEffect: []
+  soundEffect:
+  - {fileID: 8300000, guid: ff5188ee1de80324c924af2e1b91d847, type: 3}
   myTooltip:
-    text: 
+    text: Double this engine's power for a bit.
   actionTime: 60
   engineSpeedMultiplier: 2
 --- !u!114 &-5921104565242264179
@@ -30253,8 +30253,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e2391291028b8b2468209bfc893e1223, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  isUnlocked: 0
-  unlockingUpgrade: {fileID: 11400000, guid: e9f31f3927636234aae2fa4233ff98ff, type: 2}
   actionName: Stop
   myType: 1
   cost: 0
@@ -30283,8 +30281,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7dd82790b735196458fe58421304356e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  isUnlocked: 1
-  unlockingUpgrade: {fileID: 0}
   actionName: Repair
   myType: 1
   cost: 25
@@ -30308,7 +30304,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 42a2f1756d052d44ba1769b3301a1c66, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  uniqueName: Engine
 --- !u!114 &8165811245893185045
 MonoBehaviour:
   m_ObjectHideFlags: 0

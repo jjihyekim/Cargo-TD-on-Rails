@@ -39,11 +39,19 @@ public class SettingsController : MonoBehaviour {
         } else {
             SceneLoader.s.BackToStarterMenu();
         }
+        
+        Pauser.s.Unpause();
     }
     
     public void ResetRunAndReplayTutorial() {
+        if (SceneLoader.s.isLevelInProgress) {
+            MissionWinFinisher.s.Cleanup();
+        }
+        MenuToggle.HideAllToggleMenus();
+        
         PlayerPrefs.SetInt("finishedTutorial", 0);
         FirstTimeTutorialController.s.ReDoTutorial();
+        Pauser.s.Unpause();
         //ResetRun();
     }
 

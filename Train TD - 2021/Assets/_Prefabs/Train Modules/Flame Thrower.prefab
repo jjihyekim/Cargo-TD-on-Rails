@@ -457,6 +457,7 @@ MonoBehaviour:
   selfDamageMultiplier: 1
   selfDamage: 0
   selfDamageAmounts: 140000000a000000
+  isCartHp: 0
   explosionDamages: 640000003200000019000000
   burnResistant: 0
   currentBurn: 0
@@ -489,8 +490,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 57753de41d57ab242a96112d02204fec, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  isUnlocked: 1
-  unlockingUpgrade: {fileID: 0}
   actionName: Sell
   myType: 1
   cost: -25
@@ -515,8 +514,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dc0c002db587f7b4ba62878449e6c367, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  isUnlocked: 0
-  unlockingUpgrade: {fileID: 11400000, guid: bb9a07f134773024ebcbc669ebedfeeb, type: 2}
   actionName: Quick Fire
   myType: 1
   cost: 25
@@ -525,9 +522,10 @@ MonoBehaviour:
   canEngage: 1
   canAfford: 1
   isCooldownOver: 1
-  soundEffect: []
+  soundEffect:
+  - {fileID: 8300000, guid: 12906c6fcc15eb2499ed0ce23fe171ad, type: 3}
   myTooltip:
-    text: 
+    text: Shoot really fast for a little bit.
   actionTime: 8
   initialDelay: 1
   endDelay: 2
@@ -558,8 +556,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7dd82790b735196458fe58421304356e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  isUnlocked: 1
-  unlockingUpgrade: {fileID: 0}
   actionName: Repair
   myType: 1
   cost: 25
@@ -583,7 +579,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 42a2f1756d052d44ba1769b3301a1c66, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  uniqueName: AVC
 --- !u!114 &7352235396040452379
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -612,8 +607,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d8b3a4bd1ddc40646b537648a04bdd51, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  isUnlocked: 1
-  unlockingUpgrade: {fileID: 0}
   actionName: Move Gun
   myType: 1
   cost: 10
@@ -638,8 +631,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c33a412f8442bd34aa1db59cc3bad577, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  isUnlocked: 1
-  unlockingUpgrade: {fileID: 0}
   actionName: Reload
   myType: 0
   cost: 20
@@ -664,8 +655,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8f88ead1c80db9e4984329978c418b9e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  isUnlocked: 1
-  unlockingUpgrade: {fileID: 0}
   actionName: Assume Direct Control
   myType: 1
   cost: 0

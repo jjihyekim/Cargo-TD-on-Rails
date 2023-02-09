@@ -43,9 +43,11 @@ public class MiniGUI_BuySupplies : MonoBehaviour
 		} 
 
 		if (myPriceIndex == null) {
-			Destroy(gameObject);
+			gameObject.SetActive( false);
 			return;
-		}
+		} 
+			
+		gameObject.SetActive( true);
 
 		costText.text = myPriceIndex.basePrice.ToString();
 	}

@@ -17,6 +17,8 @@ public class MiniGUI_PlayerActionInfo : MonoBehaviour {
     public GameObject shopSellInfo;
     public GameObject moveInfo;
     public GameObject directControlInfo;
+    public GameObject powerUpInfo;
+    public TMP_Text powerUpInfoText;
 
     public TMP_Text amountText;
 
@@ -63,6 +65,7 @@ public class MiniGUI_PlayerActionInfo : MonoBehaviour {
 
     public void Deactivate() {
         cost = -1;
+        powerUpInfoText.text = "";
         panel.SetActive(false);
         reloadInfoAmmo.SetActive(false);
         reloadInfoFuel.SetActive(false);
@@ -71,6 +74,7 @@ public class MiniGUI_PlayerActionInfo : MonoBehaviour {
         shopRepairInfo.SetActive(false);
         moveInfo.SetActive(false);
         shopSellInfo.SetActive(false);
+        powerUpInfo.SetActive(false);
     }
 
     public void ShowRepairInfo(int _cost, ResourceTypes type) {
@@ -114,6 +118,14 @@ public class MiniGUI_PlayerActionInfo : MonoBehaviour {
         panel.SetActive(true);
         shopSellInfo.SetActive(true);
         amountText.text = $"+{-cost}";
+        
+        Update();
+    }
+
+    public void ShowPowerUpInfo(string description) {
+        panel.SetActive(true);
+        powerUpInfo.SetActive(true);
+        powerUpInfoText.text = description;
         
         Update();
     }

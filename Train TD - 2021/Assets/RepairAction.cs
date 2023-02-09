@@ -19,15 +19,15 @@ public class RepairAction : ModuleAction, IActiveDuringShopping, IActiveDuringCo
     }
 
     protected override void _EngageAction() {
-        if (SceneLoader.s.isLevelInProgress) {
+        /*if (SceneLoader.s.isLevelInProgress) {
             StartCoroutine(Repair());
-        } else {
+        } else {*/
             Instantiate(DataHolder.s.repairPrefab, transform.position, transform.rotation);
             _health.Heal((_health.maxHealth + 10));
-        }
+        //}
     }
 
-    IEnumerator Repair() {
+    /*IEnumerator Repair() {
         var totalRepairTime = 10f;
         var totalRepairCount = 5;
         var repairAmount = _health.maxHealth * percentPerRepairDuringCombat * (1f/totalRepairCount);
@@ -38,7 +38,7 @@ public class RepairAction : ModuleAction, IActiveDuringShopping, IActiveDuringCo
             count += 1;
             yield return new WaitForSeconds(totalRepairTime/totalRepairCount);
         }
-    }
+    }*/
 
     public void Repair(float amount) {
         Instantiate(DataHolder.s.repairPrefab, transform.position, transform.rotation);

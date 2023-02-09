@@ -27,6 +27,8 @@ public class DataHolder : MonoBehaviour {
     public EncounterTitle[] encounters;
 
     public LevelDataScriptable[] levels;
+
+    public PowerUpScriptable[] powerUps;
     
     public Color moneyBackColor = Color.green;
 
@@ -61,6 +63,17 @@ public class DataHolder : MonoBehaviour {
     public TweakablesParent GetTweaks() {
         return fullCopy;
     }*/
+
+    public PowerUpScriptable GetPowerUp(string powerUpUniqueName) {
+        for (int i = 0; i < powerUps.Length; i++) {
+            if (PreProcess(powerUps[i].name) == PreProcess(powerUpUniqueName)) {
+                return powerUps[i];
+            }
+        }
+
+        Debug.LogError($"Can't find power up {powerUpUniqueName}");
+        return null;
+    }
 
     public GameObject GetEncounter(string encounterUniqueName) {
         for (int i = 0; i < encounters.Length; i++) {

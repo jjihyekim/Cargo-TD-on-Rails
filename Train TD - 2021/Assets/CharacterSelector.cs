@@ -34,10 +34,18 @@ public class CharacterSelector : MonoBehaviour {
     }
 
     private CharacterData data;
+    private bool characterChangeInProgress = false;
+
     public void SelectCharacter(CharacterData _data) {
-        data = _data;
-        if (!SceneLoader.s.isLoading) {
-            SceneLoader.s.BackToStarterMenu(true);
+        if (!characterChangeInProgress) {
+            if (SceneLoader.s.isProfileMenu()) {
+                ProfileSelectionMenu.s.StartGame();
+            } else {
+                SceneLoader.s.BackToStarterMenu(true);
+            }
+            
+            characterChangeInProgress = true;
+            data = _data;
             SceneLoader.s.afterTransferCalls.Enqueue(() => DoTransfer());
         }
     }
@@ -66,5 +74,6 @@ public class CharacterSelector : MonoBehaviour {
 
         DataSaver.s.SaveActiveGame();
         MusicPlayer.s.SwapMusicTracksAndPlay(false);
+        characterChangeInProgress = false;
     }
 }

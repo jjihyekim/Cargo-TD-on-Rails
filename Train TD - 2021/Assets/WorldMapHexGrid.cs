@@ -89,10 +89,11 @@ public class WorldMapHexGrid : MonoBehaviour {
 	}
 
 	public void ClearGrids() {
+		StopAllCoroutines();
+		
 		if (hexChunk != null) {
 			Destroy(hexChunk.gameObject);
 		}
-
 		hexChunk = null;
 	}
 	

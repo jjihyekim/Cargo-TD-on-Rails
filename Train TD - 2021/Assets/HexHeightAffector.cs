@@ -15,8 +15,8 @@ public class HexHeightAffector : MonoBehaviour
 
     public float randomness = 0.2f;
 
-    private void OnDrawGizmos() {
+    /*private void OnDrawGizmos() {
         Gizmos.color = Color.HSVToRGB(0, pinWeight, 1);
         Gizmos.DrawWireSphere(transform.position, pinDistance);
-    }
+    }*/
 }

@@ -17,9 +17,8 @@ public class WorldMapCreator : MonoBehaviour {
 
 	public TMP_Text mapText;
 	private void Start() {
-		// we want this one frame after so that mapgenerator gets a chance to generate the map if need be
 		if(DataSaver.s.GetCurrentSave().isInARun)
-			Invoke(nameof(GenerateWorldMap), 0.01f);
+			GenerateWorldMap();
 	}
 
 	public bool worldMapOpen = false;

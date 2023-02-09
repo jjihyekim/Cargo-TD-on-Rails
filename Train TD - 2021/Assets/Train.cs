@@ -127,12 +127,11 @@ public class Train : MonoBehaviour {
     }
 
 
-    public void SaveTrainState(bool forceDuringLevel = false) {
+    public void SaveTrainState() {
         if (!SceneLoader.s.isLevelInProgress) {
             Invoke(nameof(OneFrameLater), 0.01f);
         }
     }
-
     void OneFrameLater() { // because sometimes train doesnt get updated fast enough
         DataSaver.s.GetCurrentSave().currentRun.myTrain = GetTrainState();
         DataSaver.s.SaveActiveGame();
@@ -289,20 +288,22 @@ public class Train : MonoBehaviour {
     public void CartDestroyed(Cart cart) {
         if(suppressRedraw)
             return;
+        
+        StopShake();
 
         var index = carts.IndexOf(cart.transform);
 
         if (index > -1) {
-            var state = GetTrainState();
-            state.myCarts.RemoveAt(index);
-            DrawTrain(state);
+            carts.Remove(cart.transform);
+            UpdateCartPositions();
         } /*else {
             Debug.Log($"Cart with illegal index {index} {cart} {cart.gameObject.name}");
         }*/
         
+        RestartShake();
+        
         if(carts.Count <= 0 && SceneLoader.s.isLevelInProgress)
             MissionLoseFinisher.s.MissionLost();
-        
         
         // draw train already calls this
         //trainUpdatedThroughNonBuildingActions?.Invoke();

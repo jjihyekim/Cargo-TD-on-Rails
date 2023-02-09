@@ -17,8 +17,10 @@ public class FirstTimeTutorialController : MonoBehaviour {
     private void Awake() {
         s = this;
         tutorialUI.SetActive(false);
+    }
+
+    private void Start() {
         if (PlayerPrefs.GetInt("finishedTutorial", 0) == 0) {
-            DisableIfOpenedGuideBefore.shouldDisableBecauseOfTutorial = true;
             Invoke(nameof(EngageFirstTimeTutorial),0.01f);
         } else {
             this.enabled = false;
@@ -26,32 +28,12 @@ public class FirstTimeTutorialController : MonoBehaviour {
     }
 
     public void ReDoTutorial() {
-        DisableIfOpenedGuideBefore.shouldDisableBecauseOfTutorial = true;
         DataSaver.s.GetCurrentSave().isInARun = false;
         EngageFirstTimeTutorial();
     }
 
     public void EngageFirstTimeTutorial() {
-        if (!DataSaver.s.GetCurrentSave().isInARun || DataSaver.s.GetCurrentSave().currentRun.character.uniqueName != tutorialCharacter.myCharacter.uniqueName) {
-            DataSaver.s.GetCurrentSave().currentRun = new DataSaver.RunState();
-            DataSaver.s.GetCurrentSave().currentRun.SetCharacter(tutorialCharacter.myCharacter);
-            DataSaver.s.GetCurrentSave().isInARun = true;
-            UpgradesController.s.callWhenUpgradesOrModuleAmountsChanged?.Invoke();
-
-            MapController.s.GenerateStarMap();
-            WorldMapCreator.s.GenerateWorldMap();
-            HexGrid.s.RefreshGrid();
-            
-            DataSaver.s.SaveActiveGame();
-            SceneLoader.s.BackToStarterMenu(true);
-            
-            SceneLoader.s.ForceReloadScene();
-            return;
-        }
-
-        if(SceneLoader.s.isProfileMenu())
-            ProfileSelectionMenu.s.StartGame();
-        
+        CharacterSelector.s.SelectCharacter(tutorialCharacter.myCharacter);
         SceneLoader.s.afterTransferCalls.Enqueue(() => DoStartTutorial());
     }
 
@@ -288,8 +270,7 @@ public class FirstTimeTutorialController : MonoBehaviour {
     public GameObject[] variousTutorialScreens;
 
     IEnumerator TutorialProcess() {
-        FillEmptyTrainSlotsWithDummy();
-
+        //FillEmptyTrainSlotsWithDummy();
 
         CameraController.s.rotateAction.action.performed += CamRotateActionDone;
         PlayerBuildingController.s.startBuildingEvent.AddListener(OnPlayerIsBuilding);
@@ -331,7 +312,6 @@ public class FirstTimeTutorialController : MonoBehaviour {
         var enemyData = new EnemyOnPathData() {
             distanceOnPath = (int)SpeedController.s.currentDistance + 30,
             enemyIdentifier = new EnemyIdentifier() { enemyCount = 1, enemyUniqueName = supplyEnemyName },
-            startMoving = false
         };
 
         EnemyWavesController.s.SpawnEnemy(enemyData);
@@ -378,7 +358,6 @@ public class FirstTimeTutorialController : MonoBehaviour {
         var regularEnemyData = new EnemyOnPathData() {
             distanceOnPath = (int)SpeedController.s.currentDistance + 30,
             enemyIdentifier = new EnemyIdentifier() { enemyCount = 2, enemyUniqueName = regularEnemyName },
-            startMoving = false
         };
 
         EnemyWavesController.s.SpawnEnemy(regularEnemyData);
@@ -400,14 +379,14 @@ public class FirstTimeTutorialController : MonoBehaviour {
     public CharacterDataScriptable defaultStartCharacter;
 
     void TutorialComplete() {
+        tutorialEngaged = false;
         mapButton.interactable = true;
         PlayerPrefs.SetInt("finishedTutorial", 1);
-        DisableIfOpenedGuideBefore.shouldDisableBecauseOfTutorial = false;
-        CharacterSelector.s.SelectCharacterInstant(defaultStartCharacter.myCharacter);
-        MusicPlayer.s.SwapMusicTracksAndPlay(false);
-
-        tutorialEngaged = false;
-        SceneLoader.s.ForceReloadScene();
+        /*CharacterSelector.s.SelectCharacter(defaultStartCharacter.myCharacter);
+        MusicPlayer.s.SwapMusicTracksAndPlay(false);*/
+        
+        tutorialUI.SetActive(false);
+        SettingsController.s.ResetRun();
     }
     
     public void SkipTutorial (){

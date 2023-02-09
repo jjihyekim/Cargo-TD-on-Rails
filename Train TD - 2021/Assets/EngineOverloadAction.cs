@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class EngineOverloadAction : ModuleAction, IActiveDuringCombat
+public class EngineOverloadAction : ModuleAction, IActiveDuringCombat, IBoostAction
 {
 	
 	[Space]
@@ -19,12 +19,16 @@ public class EngineOverloadAction : ModuleAction, IActiveDuringCombat
 		GetComponent<EngineStopAction>().canEngage = false;
 		
 		Invoke(nameof(StopAction), actionTime);
+		
+		SetBoostStatus(true);
 	}
 
 	void StopAction() {
 		GetComponent<EngineModule>().enginePower = originalPower;
 		
 		GetComponent<EngineStopAction>().canEngage = true;
+		
+		SetBoostStatus(false);
 	}
 	
 	public void ActivateForCombat() {

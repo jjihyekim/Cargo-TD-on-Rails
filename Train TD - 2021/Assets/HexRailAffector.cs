@@ -9,10 +9,10 @@ public class HexRailAffector : MonoBehaviour {
 
    public GameObject myPrefab;
    
-   private void OnDrawGizmos() {
+   /*private void OnDrawGizmos() {
       Gizmos.color = Color.blue;
       Gizmos.DrawLine(startPos + Vector3.up*3, endPos + Vector3.up*1);
-   }
+   }*/
 }
 
 

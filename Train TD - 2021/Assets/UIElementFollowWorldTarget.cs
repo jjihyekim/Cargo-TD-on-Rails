@@ -5,9 +5,12 @@ using UnityEngine;
 
 public class UIElementFollowWorldTarget : MonoBehaviour {
 
+    public bool autoSetUp = false;
     public bool avoidOverlaps = true;
     private void Start() {
         this.enabled = sourceTransform != null;
+        if (autoSetUp)
+            SetUp(sourceTransform);
     }
 
     public void SetUp(Transform target) {

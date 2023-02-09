@@ -6,7 +6,7 @@ using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
 using Random = UnityEngine.Random;
 
-public abstract class ModuleAction : UnlockableEffect {
+public abstract class ModuleAction : MonoBehaviour {
 	public string actionName = "unknown Action";
 
 	public ResourceTypes myType = ResourceTypes.scraps;
@@ -25,6 +25,19 @@ public abstract class ModuleAction : UnlockableEffect {
 	public AudioClip[] soundEffect;
 
 	public Tooltip myTooltip;
+	protected virtual void _Start() { }
+	public void Start() { _Start();}
+
+	public void EngageForFree() {
+		_EngageAction();
+		
+		if (!SceneLoader.s.isLevelInProgress)
+			Train.s.SaveTrainState();
+
+		if (soundEffect.Length > 0) {
+			SoundscapeController.s.PlayModuleSkillActivate(soundEffect[Random.Range(0, soundEffect.Length)]);
+		}
+	}
 
 	public void EngageAction() {
 		if (canEngage) {
@@ -92,6 +105,19 @@ public abstract class ModuleAction : UnlockableEffect {
 		}
 		
 		_Update();
+	}
+	
+	protected void SetBoostStatus(bool isBoosting) {
+		var boostVal = isBoosting ? 2.5f : 0f;
+		var renderers = GetComponentsInChildren<MeshRenderer>();
+		for (int j = 0; j < renderers.Length; j++) {
+			var rend = renderers[j];
+			rend.material.SetFloat("_Boost_Amount", boostVal);
+		}
+	}
+
+	public Tooltip GetTooltip() {
+		return myTooltip;
 	}
 }
 

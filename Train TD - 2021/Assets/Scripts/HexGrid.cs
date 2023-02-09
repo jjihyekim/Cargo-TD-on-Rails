@@ -291,3 +291,37 @@ public class PrefabWithWeights {
 		return index;
 	}
 }
+
+
+[Serializable]
+public class NumberWithWeights {
+	[HorizontalGroup(LabelWidth = 50)]
+	public int number;
+	[HorizontalGroup(LabelWidth = 20, Width = 100)]
+	public float weight = 1f;
+	
+	public static int WeightedRandomRoll(NumberWithWeights[] F) {
+		var totalFreq = 0f;
+		for (int i = 0; i < F.Length; i++) {
+			totalFreq += F[i].weight;
+		}
+		
+		var roll = Random.Range(0,totalFreq);
+		// Ex: we roll 0.68
+		//   #0 subtracts 0.25, leaving 0.43
+		//   #1 subtracts 0.4, leaving 0.03
+		//   #2 is a $$anonymous$$t
+		var index = -1;
+		for(int i=0; i<F.Length; i++) {
+			if (roll <= F[i].weight) {
+				index=i; break;
+			}
+			roll -= F[i].weight;
+		}
+		// just in case we manage to roll 0.0001 past the $$anonymous$$ghest:
+		if(index==-1) 
+			index=F.Length-1;
+
+		return F[index].number;
+	}
+}

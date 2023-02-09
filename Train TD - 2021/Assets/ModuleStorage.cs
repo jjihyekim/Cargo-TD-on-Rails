@@ -20,9 +20,8 @@ public class ModuleStorage : MonoBehaviour, IActiveDuringCombat, IActiveDuringSh
     private int chunkAmount = 5;
     private float curAmount = 0;
 
-    private bool generateMaterials = false;
     private void Update() {
-        if (generateMaterials) {
+        if (SceneLoader.s.isLevelInProgress) {
             curAmount += generationPerSecond * Time.deltaTime;
             if (curAmount > chunkAmount) {
                 curAmount -= chunkAmount;
@@ -41,12 +40,10 @@ public class ModuleStorage : MonoBehaviour, IActiveDuringCombat, IActiveDuringSh
 
     public void ActivateForCombat() {
         this.enabled = true;
-        generateMaterials = true;
     }
 
     public void ActivateForShopping() {
         this.enabled = true;
-        generateMaterials = false;
     }
 
     public void Disable() {

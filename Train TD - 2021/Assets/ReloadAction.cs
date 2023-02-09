@@ -17,7 +17,8 @@ public class ReloadAction : ModuleAction, IActiveDuringCombat, IActiveDuringShop
 
 	protected override void _EngageAction() {
 		var ammoToBuy = ((float)cost / (float)fullCost) * myMod.maxAmmo;
-		myMod.SetAmmo(ammoToBuy);
+		var totalAmmo = myMod.curAmmo + ammoToBuy;
+		myMod.SetAmmo(totalAmmo);
 	}
 
 	protected override void _Update() {

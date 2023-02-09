@@ -1002,7 +1002,6 @@ MonoBehaviour:
         currentAct: 1
         map:
           chunks: []
-        upgrades: []
         trainBuildings: []
         playtime: 0
         myResources:
@@ -1013,6 +1012,7 @@ MonoBehaviour:
           maxAmmo: 100
           fuel: 25
           maxFuel: 50
+        powerUps: []
         unclaimedRewards: []
         shopInitialized: 0
         currentShopModules: []
@@ -1066,7 +1066,6 @@ MonoBehaviour:
         currentAct: 1
         map:
           chunks: []
-        upgrades: []
         trainBuildings: []
         playtime: 0
         myResources:
@@ -1077,6 +1076,7 @@ MonoBehaviour:
           maxAmmo: 100
           fuel: 25
           maxFuel: 50
+        powerUps: []
         unclaimedRewards: []
         shopInitialized: 0
         currentShopModules: []
@@ -1130,7 +1130,6 @@ MonoBehaviour:
         currentAct: 1
         map:
           chunks: []
-        upgrades: []
         trainBuildings: []
         playtime: 0
         myResources:
@@ -1141,12 +1140,14 @@ MonoBehaviour:
           maxAmmo: 100
           fuel: 25
           maxFuel: 50
+        powerUps: []
         unclaimedRewards: []
         shopInitialized: 0
         currentShopModules: []
         currentShopPrices: []
     loadingComplete: 0
     dontSave: 0
+    saveInNextFrame: 0
 --- !u!114 &1066860337956249595
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1213,6 +1214,7 @@ MonoBehaviour:
   - {fileID: 1944673793999917900, guid: 526049ba670f7764783345211dabcca4, type: 3}
   - {fileID: 1944673793999917900, guid: f22255233f6a08e469901467224c72cc, type: 3}
   - {fileID: 2221048273178476507, guid: d82716a84e23d0a44b80f6db6b5e90ce, type: 3}
+  - {fileID: 2221048273178476507, guid: 3b32f639cbe7c754084ca75b85b9ebb6, type: 3}
   enemies:
   - uniqueName: BuggyAVC
     data: {fileID: 5297413553918262561, guid: 845f1cf4e800d8e45b607240c9e6190c, type: 3}
@@ -1306,25 +1308,13 @@ MonoBehaviour:
   - {fileID: 11400000, guid: a665294ebe521524ab361394107cea28, type: 2}
   - {fileID: 11400000, guid: f14de6342fcfd8248982409a7a1275d2, type: 2}
   - {fileID: 11400000, guid: 9ee5e0c810e83dd4eb46563111bb780e, type: 2}
+  powerUps:
+  - {fileID: 11400000, guid: e4f6feee71538644289ba169a701ac18, type: 2}
+  - {fileID: 11400000, guid: 72c8380ccf7b68a45a38deebf8c39e24, type: 2}
+  - {fileID: 11400000, guid: d64975c4fead0f04f8afc256017abdee, type: 2}
   moneyBackColor: {r: 0.7830189, g: 0.64343905, b: 0, a: 1}
   repairPrefab: {fileID: 172524484023753321, guid: 63ac6f74862b66b49b9d837b5a27adf3, type: 3}
   sellPrefab: {fileID: 172524484023753321, guid: 5c944d37062c8b04d8a0fa76e4e24049, type: 3}
-  myTweakable: {fileID: 11400000, guid: 0367cf1fdaa96e342aeb8acdc6b4294e, type: 2}
-  fullCopy:
-    globalTweaks:
-      repairAndSellCostPerHealthLost_Battle: 0.5
-      repairAndSellCostPerHealthLost_Shop: 0.75
-      moduleActionInitialDelay: 1
-      moduleActionEndDelay: 2
-      cartHealth: 200
-      cartWeight: 50
-    trainBuildings: []
-    enemies: []
-    missions: []
-    rewards: []
-  tweakableChanged:
-    m_PersistentCalls:
-      m_Calls: []
 --- !u!114 &1197221469
 MonoBehaviour:
   m_ObjectHideFlags: 0

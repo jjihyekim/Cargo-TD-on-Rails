@@ -10,6 +10,7 @@ public class CheatsController : MonoBehaviour
     public InputActionReference cheatButton;
     
     public EncounterTitle debugEncounter;
+    public PowerUpScriptable debugPowerUp;
 
     public bool infiniteLevel = false;
     public bool debugNoRegularSpawns = false;
@@ -34,6 +35,11 @@ public class CheatsController : MonoBehaviour
     [Button]
     void DebugEnemySpawn(int distance) {
         EnemyWavesController.s.DebugEnemySpawn(debugEnemy, distance);
+    }
+
+    [Button]
+    void DebugAddPowerUp() {
+        PlayerActionsController.s.GetPowerUp(debugPowerUp);
     }
 
     [Button]

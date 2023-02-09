@@ -62,7 +62,8 @@ public class EnemyHealth : MonoBehaviour, IHealth {
 	
 	void SetBuildingShaderBurn(float value) {
 		var _renderers = GetComponentsInChildren<MeshRenderer>();
-		value = value.Remap(0, 10, 0, 1);
+		value = value.Remap(0, 10, 0, 0.5f);
+		value = Mathf.Clamp(value, 0, 2f);
 		for (int j = 0; j < _renderers.Length; j++) {
 			var rend = _renderers[j];
 			rend.material.SetFloat("_Burn", value);
@@ -82,10 +83,10 @@ public class EnemyHealth : MonoBehaviour, IHealth {
 		if (currentBurn >= burnDistance) {
 			Instantiate(LevelReferences.s.damageNumbersPrefab, LevelReferences.s.uiDisplayParent)
 				.GetComponent<MiniGUI_DamageNumber>()
-				.SetUp(uiTransform, (int)1, true, false, true);
-			DealDamage(1);
+				.SetUp(uiTransform, burnDistance, false, isArmored, true);
+			DealDamage(burnDistance);
 
-			currentBurn = 0;
+			currentBurn -= burnDistance;
 		}
 
 		if (burnSpeed > 0.05f) {

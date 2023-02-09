@@ -31,6 +31,7 @@ public class ModuleHealth : MonoBehaviour, IHealth, IActiveDuringCombat, IActive
     public int[] selfDamageAmounts = new[] { 20, 10 };
 
     private TrainBuilding myBuilding;
+    public bool isCartHp = false;
 
     private GameObject activeHPCriticalIndicatorEffects;
     private enum HPLowStates {
@@ -69,8 +70,7 @@ public class ModuleHealth : MonoBehaviour, IHealth, IActiveDuringCombat, IActive
         if(isDead)
             return;
         myBuilding = GetComponent<TrainBuilding>();
-        if (myBuilding == null) {
-            Debug.LogError("Building is missing!");
+        if (myBuilding == null) { // carts have module health but not trainbuilding
             return;
         }
 
@@ -291,10 +291,10 @@ public class ModuleHealth : MonoBehaviour, IHealth, IActiveDuringCombat, IActive
         if (currentBurn >= burnDistance) {
             Instantiate(LevelReferences.s.damageNumbersPrefab, LevelReferences.s.uiDisplayParent)
                 .GetComponent<MiniGUI_DamageNumber>()
-                .SetUp(GetGameObject().transform, (int)1, true, false, true);
-            DealDamage(1);
+                .SetUp(GetGameObject().transform, burnDistance, true, false, true);
+            DealDamage(burnDistance);
 
-            currentBurn = 0;
+            currentBurn -= burnDistance;
         }
 
         if (burnSpeed > 0.05f) {
@@ -349,6 +349,13 @@ public class ModuleHealth : MonoBehaviour, IHealth, IActiveDuringCombat, IActive
     public void Die() {
         if (damageNearCartsOnDeath) {
             DamageNearCartsOnDeath();
+        }
+
+        if (isCartHp) {
+            var buildings = GetComponentsInChildren<TrainBuilding>();
+            for (int i = 0; i < buildings.Length; i++) {
+                buildings[i].GetComponent<ModuleHealth>().Die();
+            }
         }
         
         isDead = true;
@@ -448,7 +455,8 @@ public class ModuleHealth : MonoBehaviour, IHealth, IActiveDuringCombat, IActive
     
     void SetBuildingShaderBurn(float value) {
         var _renderers = GetComponentsInChildren<MeshRenderer>();
-        value = value.Remap(0, 10, 0, 1);
+        value = value.Remap(0, 10, 0, 0.5f);
+        value = Mathf.Clamp(value, 0, 2f);
         for (int j = 0; j < _renderers.Length; j++) {
             var rend = _renderers[j];
             if (rend != null) {
@@ -498,7 +506,12 @@ public class ModuleHealth : MonoBehaviour, IHealth, IActiveDuringCombat, IActive
     }
 
     public Transform GetUITransform() {
-        return GetComponent<TrainBuilding>().GetUITargetTransform(false);
+        myBuilding = GetComponent<TrainBuilding>();
+        if (myBuilding != null) {
+            return myBuilding.GetUITargetTransform(false);
+        } else {
+            return transform;
+        }
     }
 
     public void ActivateForCombat() {

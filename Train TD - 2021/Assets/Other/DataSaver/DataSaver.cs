@@ -245,6 +245,11 @@ public class DataSaver {
 			}
 
 			myResources = characterData.starterResources.Copy();
+
+			powerUps = new List<string>();
+			for (int i = 0; i < 3; i++) {
+				powerUps.Add("");
+			}
 		}
 	}
 

@@ -19,99 +19,117 @@ public class EnemyWavesController : MonoBehaviour {
 
 	public bool enemiesInitialized = false;
 
-	[NonSerialized]
-	public bool debugNoRegularSpawns = false;
-    public void UpdateBasedOnLevelData() {
-	    Cleanup();
-	    if(debugNoRegularSpawns)
-		    return;
-	    
-	    if(!DataSaver.s.GetCurrentSave().isInARun || SceneLoader.s.currentLevel == null || SceneLoader.s.currentLevel.isEncounter)
-		    return;
-	    
-	    enemiesInitialized = !SceneLoader.s.currentLevel.isEncounter;
-	    if (enemiesInitialized) {
-		    var enemiesOnPath = SceneLoader.s.currentLevel.enemiesOnPath;
-		    for (int i = 0; i < enemiesOnPath.Length; i++) {
-			    SpawnEnemy(enemiesOnPath[i].enemyIdentifier, enemiesOnPath[i].distanceOnPath, enemiesOnPath[i].startMoving /*, enemiesOnPath[i].isLeft*/);
-		    }
-	    }
-    }
+	[NonSerialized] public bool debugNoRegularSpawns = false;
 
 
-    
-    public void DebugEnemySpawn(EnemyIdentifier debugEnemy, int distance) {
-	    SpawnEnemy(debugEnemy, SpeedController.s.currentDistance + distance, false);
-    }
+	public MiniGUI_PursuerTimer pursuerTimerObject;
 
-    public void SpawnEnemy(EnemyOnPathData data) {
-	    SpawnEnemy(data.enemyIdentifier, data.distanceOnPath, data.startMoving);
-    }
 
-    public int maxConcurrentWaves = 6;
+	private void Start() {
+		Cleanup();
+	}
 
-    void SpawnEnemy(EnemyIdentifier enemyIdentifier, float distance, bool startMoving) {
-	    var playerDistance = SpeedController.s.currentDistance;
-	    var wave = Instantiate(enemyWavePrefab, Vector3.forward*(distance-playerDistance), Quaternion.identity).GetComponent<EnemyWave>();
-	    wave.transform.SetParent(transform);
-	    wave.SetUp(enemyIdentifier, distance, startMoving, Random.value > 0.5f);
-	    waves.Add(wave);
-    }
-    
-    void Update()
-    {
-	    if (SceneLoader.s.isLevelInProgress && enemiesInitialized) {
+	public void UpdateBasedOnLevelData() {
+		Cleanup();
+		if (debugNoRegularSpawns)
+			return;
 
-		    var playerDistance = SpeedController.s.currentDistance;
-		    
-		    for (int i = 0; i < waves.Count; i++) {
-			    waves[i].UpdateBasedOnDistance(playerDistance);
-		    }
+		if (!DataSaver.s.GetCurrentSave().isInARun || SceneLoader.s.currentLevel == null || SceneLoader.s.currentLevel.isEncounter)
+			return;
 
-		    
-		    if(debugNoRegularSpawns)
-			    return;
-		    
-		    if (waves.Count < maxConcurrentWaves) {
-			    for (int i = 0; i < SceneLoader.s.currentLevel.dynamicSpawnEnemies.Length; i++) {
-				    var enemy = SceneLoader.s.currentLevel.dynamicSpawnEnemies[i];
-				    if (enemy.firstSpawned) {
-					    if (enemy.curTime >= enemy.spawnInterval) {
-						    SpawnEnemy(enemy.enemyIdentifier, playerDistance - enemy.distanceFromTrain, true);
-						    enemy.curTime = 0;
+		enemiesInitialized = !SceneLoader.s.currentLevel.isEncounter;
+		if (enemiesInitialized) {
+			var enemiesOnPath = SceneLoader.s.currentLevel.enemiesOnPath;
+			for (int i = 0; i < enemiesOnPath.Length; i++) {
+				SpawnEnemy(enemiesOnPath[i].enemyIdentifier, enemiesOnPath[i].distanceOnPath, false, enemiesOnPath[i].isLeft);
+			}
+		}
 
-						    enemy.curIncreaseInNumberCount += 1;
-						    if (enemy.increaseInNumberInterval >= 0  && enemy.curIncreaseInNumberCount >= enemy.increaseInNumberInterval) {
-							    enemy.enemyIdentifier.enemyCount += 1;
-							    enemy.curIncreaseInNumberCount = 0;
-						    }
-					    }
-				    } else {
-					    if (enemy.curTime >= enemy.firstSpawnTime) {
-						    SpawnEnemy(enemy.enemyIdentifier, playerDistance - enemy.distanceFromTrain, true);
-						    enemy.curTime = 0;
-						    enemy.firstSpawned = true;
-					    }
-				    }
 
-				    enemy.curTime += Time.deltaTime;
-			    }
-		    }
-	    } else {
-		    var playerDistance = SpeedController.s.currentDistance;
-		    
-		    for (int i = 0; i < waves.Count; i++) {
-			    waves[i].UpdateBasedOnDistance(playerDistance);
-		    }
-	    }
-    }
+		if (SceneLoader.s.currentLevel.dynamicSpawnEnemies.Length > 1) {
+			Debug.LogError("Multiple dynamic spawn enemies aren't properly supported.");
+		}
 
-    public void RemoveWave(EnemyWave toRemove) {
-	    waves.Remove(toRemove);
-    }
+		if (SceneLoader.s.currentLevel.dynamicSpawnEnemies.Length > 0) {
+			pursuerTimerObject.SetUp(SceneLoader.s.currentLevel.dynamicSpawnEnemies[0]);
+		}
 
-    public void Cleanup() {
-	    transform.DeleteAllChildren();
-	    enemiesInitialized = false;
-    }
+		pursuerTimerObject.gameObject.SetActive(false);
+
+		for (int i = 0; i < SceneLoader.s.currentLevel.dynamicSpawnEnemies.Length; i++) {
+			var curDynamicSpawn = SceneLoader.s.currentLevel.dynamicSpawnEnemies[i];
+			curDynamicSpawn.curTime = curDynamicSpawn.firstSpawnTime;
+		}
+	}
+
+
+
+	public void DebugEnemySpawn(EnemyIdentifier debugEnemy, int distance) {
+		SpawnEnemy(debugEnemy, SpeedController.s.currentDistance + distance, false, false);
+	}
+
+	public void SpawnEnemy(EnemyOnPathData data) {
+		SpawnEnemy(data.enemyIdentifier, data.distanceOnPath, false, data.isLeft);
+	}
+
+	public int maxConcurrentWaves = 6;
+
+	void SpawnEnemy(EnemyIdentifier enemyIdentifier, float distance, bool startMoving, bool isLeft) {
+		var playerDistance = SpeedController.s.currentDistance;
+		var wave = Instantiate(enemyWavePrefab, Vector3.forward * (distance - playerDistance), Quaternion.identity).GetComponent<EnemyWave>();
+		wave.transform.SetParent(transform);
+		wave.SetUp(enemyIdentifier, distance, startMoving, isLeft);
+		waves.Add(wave);
+	}
+
+	void Update() {
+		if (SceneLoader.s.isLevelInProgress && enemiesInitialized) {
+			pursuerTimerObject.gameObject.SetActive(true);
+
+			var playerDistance = SpeedController.s.currentDistance;
+
+			for (int i = 0; i < waves.Count; i++) {
+				waves[i].UpdateBasedOnDistance(playerDistance);
+			}
+
+
+			if (debugNoRegularSpawns)
+				return;
+
+			if (waves.Count < maxConcurrentWaves) {
+				for (int i = 0; i < SceneLoader.s.currentLevel.dynamicSpawnEnemies.Length; i++) {
+					var enemy = SceneLoader.s.currentLevel.dynamicSpawnEnemies[i];
+					
+					if (enemy.curTime <= 0) {
+						SpawnEnemy(enemy.enemyIdentifier, playerDistance - enemy.distanceFromTrain, true, Random.value > 0.5f);
+						enemy.curTime = enemy.spawnInterval;
+
+						enemy.curIncreaseInNumberCount += 1;
+						if (enemy.increaseInNumberInterval >= 0 && enemy.curIncreaseInNumberCount >= enemy.increaseInNumberInterval) {
+							enemy.enemyIdentifier.enemyCount += 1;
+							enemy.curIncreaseInNumberCount = 0;
+						}
+					}
+
+					enemy.curTime -= Time.deltaTime;
+				}
+			}
+		} else {
+			var playerDistance = SpeedController.s.currentDistance;
+
+			for (int i = 0; i < waves.Count; i++) {
+				waves[i].UpdateBasedOnDistance(playerDistance);
+			}
+		}
+	}
+
+	public void RemoveWave(EnemyWave toRemove) {
+		waves.Remove(toRemove);
+	}
+
+	public void Cleanup() {
+		pursuerTimerObject.gameObject.SetActive(false);
+		transform.DeleteAllChildren();
+		enemiesInitialized = false;
+	}
 }

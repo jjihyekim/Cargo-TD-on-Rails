@@ -35,7 +35,7 @@ public class MiniGUI_BuyBuilding : MonoBehaviour {
     public void Buy() {
         MoneyController.s.ModifyResource(ResourceTypes.money, -moneyCost);
 
-        UpgradesController.s.AddModulesToAvailableModules(myBuilding, 1);
+        UpgradesController.s.AddModulesToAvailableModules(myBuilding.uniqueName, 1);
         ModuleRewardsMaster.s.ShopModuleBought(holder);
 
         Destroy(gameObject);

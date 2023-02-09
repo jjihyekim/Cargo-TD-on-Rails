@@ -380,7 +380,7 @@ public class PlayerBuildingController : MonoBehaviour {
         ) {
 
         ignoreNextClick = true;
-        Invoke(nameof(StopIgnoringClick),0.01f);
+        Invoke(nameof(StopIgnoringClick),0.1f);
         
         inputActionMap.FindActionMap(buildingActionMap).Enable();
         inputActionMap.FindActionMap(nonbuildingActionMap).Disable();

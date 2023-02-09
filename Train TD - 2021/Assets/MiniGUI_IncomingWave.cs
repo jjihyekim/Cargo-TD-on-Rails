@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
-using UnityStandardAssets.Utility;
 
 public class MiniGUI_IncomingWave : MonoBehaviour {
     public Vector3 sourcePosition;

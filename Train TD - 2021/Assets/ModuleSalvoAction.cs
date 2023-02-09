@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ModuleSalvoAction : ModuleAction, IActiveDuringCombat {
+public class ModuleSalvoAction : ModuleAction, IActiveDuringCombat, IBoostAction {
     
     [Space] 
     public float actionTime = 5f;
@@ -23,6 +23,8 @@ public class ModuleSalvoAction : ModuleAction, IActiveDuringCombat {
         Invoke(nameof(StartShooting), initialDelay);
 		
         Invoke(nameof(StopAction), initialDelay+actionTime);
+        
+        SetBoostStatus(true);
     }
 
     void StartShooting() {
@@ -33,6 +35,8 @@ public class ModuleSalvoAction : ModuleAction, IActiveDuringCombat {
         GetComponent<GunModule>().fireDelay *= fireSpeedBoost;
         GetComponent<GunModule>().DeactivateGun();
         Invoke(nameof(SetRangeBackToNormal), endDelay);
+        
+        SetBoostStatus(false);
     }
 
     void SetRangeBackToNormal() {

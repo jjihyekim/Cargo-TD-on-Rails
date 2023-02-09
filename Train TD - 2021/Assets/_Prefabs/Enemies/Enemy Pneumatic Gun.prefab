@@ -176,7 +176,7 @@ MonoBehaviour:
   target: {fileID: 0}
   mortarRotation: 0
   fireDelay: 2
-  fireBarrageCount: 2
+  fireBarrageCount: 1
   fireBarrageDelay: 0.2
   projectileDamage: 6
   rotateSpeed: 10
@@ -202,6 +202,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   gunShakeOnShoot: 0
+  beingDirectControlled: 0
 --- !u!114 &1868355569120209836
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -76,6 +76,9 @@ public class PlayerActionsController : MonoBehaviour {
         shopReloadActionButton.OnButtonPressed.AddListener(EnterReloadMode);
         shopMoveActionButton.OnButtonPressed.AddListener(EnterShopMoveMode);
         shopSellActionButton.OnButtonPressed.AddListener(EnterShopSellMode);
+        
+        
+        UpdatePowerUpButtons();
     }
 
     void OnLevelStart()
@@ -129,7 +132,7 @@ public class PlayerActionsController : MonoBehaviour {
     }
     
     public enum  ActionModes {
-        none, repair, reload, directControl, shopRepair, shopMove, shopSell
+        none, repair, reload, directControl, shopRepair, shopMove, shopSell, powerUp
     }
 
     public ActionModes currentMode = ActionModes.none;
@@ -143,6 +146,7 @@ public class PlayerActionsController : MonoBehaviour {
     [ColorUsage(true, true)] public Color directControlColor = Color.blue;
     [ColorUsage(true, true)] public Color moveColor = Color.blue;
     [ColorUsage(true, true)] public Color sellColor = Color.blue;
+    [ColorUsage(true, true)] public Color powerUpColor = Color.blue;
 
     void ResetMaterials() {
         var trainBuildings = Train.s.GetComponentsInChildren<TrainBuilding>();
@@ -164,6 +168,7 @@ public class PlayerActionsController : MonoBehaviour {
         if(reEnterTimer > 0 && lastMode == ActionModes.repair)
             return;
         if (currentMode != ActionModes.repair) {
+            EnterAMode(ActionModes.repair);
             var trainBuildings = Train.s.GetComponentsInChildren<TrainBuilding>();
 
             for (int i = 0; i < trainBuildings.Length; i++) {
@@ -172,9 +177,7 @@ public class PlayerActionsController : MonoBehaviour {
                 }
             }
 
-            currentMode = ActionModes.repair;
             HealthBarShow();
-            EnterAMode();
         } else {
             LeaveAllModes();
         }
@@ -184,6 +187,7 @@ public class PlayerActionsController : MonoBehaviour {
         if(reEnterTimer > 0 && lastMode == ActionModes.shopRepair)
             return;
         if (currentMode != ActionModes.shopRepair) {
+            EnterAMode(ActionModes.shopRepair);
             var trainBuildings = Train.s.GetComponentsInChildren<TrainBuilding>();
 
             for (int i = 0; i < trainBuildings.Length; i++) {
@@ -191,10 +195,7 @@ public class PlayerActionsController : MonoBehaviour {
                     SetBuildingColor(trainBuildings[i], GetRepairColor(trainBuildings[i]));
                 }
             }
-
-            currentMode = ActionModes.shopRepair;
             HealthBarShow();
-            EnterAMode();
         } else {
             LeaveAllModes();
         }
@@ -220,6 +221,7 @@ public class PlayerActionsController : MonoBehaviour {
         if(reEnterTimer > 0 && lastMode == ActionModes.reload)
             return;
         if (currentMode != ActionModes.reload) {
+            EnterAMode(ActionModes.reload);
             var trainBuildings = Train.s.GetComponentsInChildren<TrainBuilding>();
 
             for (int i = 0; i < trainBuildings.Length; i++) {
@@ -228,9 +230,7 @@ public class PlayerActionsController : MonoBehaviour {
                 }
             }
 
-            currentMode = ActionModes.reload;
             AmmoBarShow();
-            EnterAMode();
         }else {
             LeaveAllModes();
         }
@@ -244,6 +244,7 @@ public class PlayerActionsController : MonoBehaviour {
         if(reEnterTimer > 0 && lastMode == ActionModes.directControl)
             return;
         if (currentMode != ActionModes.directControl) {
+            EnterAMode(ActionModes.directControl);
             var trainBuildings = Train.s.GetComponentsInChildren<TrainBuilding>();
 
             for (int i = 0; i < trainBuildings.Length; i++) {
@@ -251,9 +252,6 @@ public class PlayerActionsController : MonoBehaviour {
                     SetBuildingColor(trainBuildings[i], directControlColor);
                 }
             }
-
-            currentMode = ActionModes.directControl;
-            EnterAMode();
         } else {
             LeaveAllModes();
         }
@@ -267,6 +265,7 @@ public class PlayerActionsController : MonoBehaviour {
         if(reEnterTimer > 0 && lastMode == ActionModes.shopMove)
             return;
         if (currentMode != ActionModes.shopMove) {
+            EnterAMode(ActionModes.shopMove);
             var trainBuildings = Train.s.GetComponentsInChildren<TrainBuilding>();
 
             for (int i = 0; i < trainBuildings.Length; i++) {
@@ -274,9 +273,6 @@ public class PlayerActionsController : MonoBehaviour {
                     SetBuildingColor(trainBuildings[i], moveColor);
                 }
             }
-
-            currentMode = ActionModes.shopMove;
-            EnterAMode();
         } else {
             LeaveAllModes();
         }
@@ -290,6 +286,7 @@ public class PlayerActionsController : MonoBehaviour {
         if(reEnterTimer > 0 && lastMode == ActionModes.shopSell)
             return;
         if (currentMode != ActionModes.shopSell) {
+            EnterAMode(ActionModes.shopSell);
             var trainBuildings = Train.s.GetComponentsInChildren<TrainBuilding>();
 
             for (int i = 0; i < trainBuildings.Length; i++) {
@@ -297,9 +294,6 @@ public class PlayerActionsController : MonoBehaviour {
                     SetBuildingColor(trainBuildings[i], sellColor);
                 }
             }
-
-            currentMode = ActionModes.shopSell;
-            EnterAMode();
         } else {
             LeaveAllModes();
         }
@@ -309,7 +303,125 @@ public class PlayerActionsController : MonoBehaviour {
         return building.GetComponent<SellAction>();
     }
 
-    void EnterAMode() {
+    public void ClickPowerUpButton(MiniGUI_PowerUpButton button) {
+        activePowerUp = button.myPowerUp;
+        activePowerUpButton = button;
+        switch (activePowerUp.myType) {
+            case PowerUpScriptable.PowerUpType.boost:
+                EnterPowerUpMode();
+                break;
+            case PowerUpScriptable.PowerUpType.massHeal:
+                var _repairActions = Train.s.GetComponentsInChildren<RepairAction>();
+                for (int i = 0; i < _repairActions.Length; i++) {
+                    _repairActions[i].EngageForFree();
+                }
+                ClickPowerUpButtonDelete(button);
+                break;
+            case PowerUpScriptable.PowerUpType.massReload:
+                var _reloadActions = Train.s.GetComponentsInChildren<ReloadAction>();
+                for (int i = 0; i < _reloadActions.Length; i++) {
+                    _reloadActions[i].cost = _reloadActions[i].fullCost;
+                    _reloadActions[i].EngageForFree();
+                }
+                ClickPowerUpButtonDelete(button);
+                break;
+            case PowerUpScriptable.PowerUpType.buildGun:
+                throw new NotImplementedException();
+                ClickPowerUpButtonDelete(button);
+                break;
+        }
+    }
+
+    public void ClickPowerUpButtonDelete(MiniGUI_PowerUpButton button) {
+        var index = -1;
+        for (int i = 0; i < myPowerUpButtons.Length; i++) {
+            if (myPowerUpButtons[i] == button)
+                index = i;
+        }
+
+        DataSaver.s.GetCurrentSave().currentRun.powerUps[index] = "";
+        UpdatePowerUpButtons();
+        LeaveAllModes();
+    }
+
+    private PowerUpScriptable activePowerUp;
+    private MiniGUI_PowerUpButton activePowerUpButton;
+    private bool costInfoStayOn = false;
+    void EnterPowerUpMode() {
+        if(reEnterTimer > 0 && lastMode == ActionModes.powerUp)
+            return;
+        if (currentMode != ActionModes.powerUp) {
+            EnterAMode(ActionModes.powerUp);
+            var trainBuildings = Train.s.GetComponentsInChildren<TrainBuilding>();
+
+            for (int i = 0; i < trainBuildings.Length; i++) {
+                if (IsPowerUpable(trainBuildings[i])) {
+                    SetBuildingColor(trainBuildings[i], powerUpColor);
+                }
+            }
+            
+            costInfo.ShowPowerUpInfo(activePowerUp.description);
+            costInfoStayOn = true;
+        } else {
+            LeaveAllModes();
+        }
+    }
+
+    bool IsPowerUpable(TrainBuilding building) {
+        switch (activePowerUp.myType) {
+            case PowerUpScriptable.PowerUpType.boost: {
+                var action = building.GetComponent<IBoostAction>();
+                if (action != null)
+                    return true;
+
+                break;
+            }
+            case PowerUpScriptable.PowerUpType.massHeal: 
+            case PowerUpScriptable.PowerUpType.massReload: 
+            case PowerUpScriptable.PowerUpType.buildGun:
+                Debug.LogError("This powerup should never check whether it can apply to places!");
+                break;
+        }
+        
+        return false;
+    }
+    
+    void ApplyPowerUp(TrainBuilding building) {
+        switch (activePowerUp.myType) {
+            case PowerUpScriptable.PowerUpType.boost: {
+                var action = building.GetComponent<IBoostAction>();
+                if (action != null)
+                    action.EngageForFree();
+
+                break;
+            }
+            case PowerUpScriptable.PowerUpType.massHeal: {
+                var action = building.GetComponent<RepairAction>();
+                if (action != null)
+                    action.EngageForFree();
+
+                break;
+            }
+            case PowerUpScriptable.PowerUpType.massReload: {
+                var action = building.GetComponent<ReloadAction>();
+                if (action != null)
+                    action.EngageForFree();
+
+                break;
+            }
+            case PowerUpScriptable.PowerUpType.buildGun:
+                Debug.LogError("This powerup should never check whether it can apply to places!");
+                break;
+        }
+    }
+    
+
+    void EnterAMode(ActionModes toEnter) {
+        if (currentMode != toEnter) {
+            LeaveAllModes();
+        }
+
+        currentMode = toEnter;
         PlayerModuleSelector.s.canSelectModules = false;
     }
 
@@ -320,6 +432,7 @@ public class PlayerActionsController : MonoBehaviour {
         ResetMaterials();
         currentMode = ActionModes.none;
         costInfo.Deactivate();
+        costInfoStayOn = false;
         DeselectObject();
         
         AmmoBarReset();
@@ -371,6 +484,12 @@ public class PlayerActionsController : MonoBehaviour {
                             activeBuilding.GetComponent<SellAction>().EngageAction();
                         }
                         break;
+                    case ActionModes.powerUp:
+                        if (IsPowerUpable(activeBuilding)) {
+                            ApplyPowerUp(activeBuilding);
+                            ClickPowerUpButtonDelete(activePowerUpButton);
+                        }
+                        break;
                 }
             } else {
                 LeaveAllModes();
@@ -380,7 +499,7 @@ public class PlayerActionsController : MonoBehaviour {
 
     void StartRepairing(TrainBuilding building) {
         currentlyRepairing.Add(building);
-        var newRepairUIThing = Instantiate(currentlyRepairingUIThing.gameObject);
+        var newRepairUIThing = Instantiate(currentlyRepairingUIThing.gameObject, currentlyRepairingUIThing.transform.parent);
         newRepairUIThing.GetComponent<UIElementFollowWorldTarget>().SetUp(building.GetUITargetTransform(false));
         newRepairUIThing.SetActive(true);
         building.currentlyRepairingUIThing = newRepairUIThing;
@@ -528,7 +647,8 @@ public class PlayerActionsController : MonoBehaviour {
             activeBuilding = null;
         }
         
-        costInfo.Deactivate();
+        if(!costInfoStayOn)
+            costInfo.Deactivate();
     }
 
     void SelectObject(Slot slot, int index) {
@@ -585,6 +705,7 @@ public class PlayerActionsController : MonoBehaviour {
                 switch (currentMode) {
                     case ActionModes.reload:
                         if (!IsReloadable(building)) {
+                            costInfo.Deactivate();
                             return;
                         } else {
                             var reloadAction = building.GetComponent<ReloadAction>();
@@ -593,6 +714,7 @@ public class PlayerActionsController : MonoBehaviour {
                         break;
                     case ActionModes.repair:
                         if (!IsRepairable(building)) {
+                            costInfo.Deactivate();
                             return;
                         } else {
                             var repairCostPerSecond = GetRepairCostPerSecond(building);
@@ -601,6 +723,7 @@ public class PlayerActionsController : MonoBehaviour {
                         break;
                     case ActionModes.directControl:
                         if (!IsDirectControllable(building)) {
+                            costInfo.Deactivate();
                             return;
                         } else {
                             costInfo.ShowDirectControlInfo();
@@ -608,6 +731,7 @@ public class PlayerActionsController : MonoBehaviour {
                         break;
                     case ActionModes.shopRepair:
                         if (!IsRepairable(building)) {
+                            costInfo.Deactivate();
                             return;
                         } else {
                             var totalRepairCost = GetTotalRepairCost(building);
@@ -616,6 +740,7 @@ public class PlayerActionsController : MonoBehaviour {
                         break;
                     case ActionModes.shopMove:
                         if (!IsMoveable(building)) {
+                            costInfo.Deactivate();
                             return;
                         } else {
                             costInfo.ShowMoveInfo();
@@ -623,17 +748,68 @@ public class PlayerActionsController : MonoBehaviour {
                         break;
                     case ActionModes.shopSell:
                         if (!IsSellable(building)) {
+                            costInfo.Deactivate();
                             return;
                         } else {
                             var refund = building.GetComponent<SellAction>().cost;
                             costInfo.ShowShopSellInfo(refund);
                         }
                         break;
+                    case ActionModes.powerUp:
+                        var action = activeBuilding.GetComponent<IBoostAction>();
+
+                        if (action != null) {
+                            costInfo.ShowPowerUpInfo(action.GetTooltip().text);
+                        } else {
+                            costInfo.ShowPowerUpInfo("Cannot Boost");
+                        }
+                        break;
+                }
+            } else {
+                switch (currentMode) {
+                    case ActionModes.powerUp:
+                        costInfo.ShowPowerUpInfo(activePowerUp.description);
+                        break;
                 }
             }
-
-
+            
+            
             building.SetHighlightState(isSelected);
+        }
+    }
+
+    public void GetPowerUp(PowerUpScriptable powerUpScriptable) {
+        var myPowerups = DataSaver.s.GetCurrentSave().currentRun.powerUps;
+        for (int i = 0; i < myPowerups.Count; i++) {
+            if (myPowerups[i].Length == 0) {
+                myPowerups[i] = powerUpScriptable.name;
+                break;
+            }
+        }
+        
+        UpdatePowerUpButtons();
+
+        if (!SceneLoader.s.isLevelInProgress) {
+            DataSaver.s.SaveActiveGame();
+        }
+    }
+
+
+
+    public MiniGUI_PowerUpButton[] myPowerUpButtons;
+    void UpdatePowerUpButtons() {
+        var powerUps = DataSaver.s.GetCurrentSave().currentRun.powerUps;
+
+        while (powerUps.Count < 3) {
+            powerUps.Add("");
+        }
+
+        for (int i = 0; i < myPowerUpButtons.Length; i++) {
+            if (powerUps[i].Length > 0) {
+                myPowerUpButtons[i].SetPowerUp(DataHolder.s.GetPowerUp(powerUps[i]));
+            } else {
+                myPowerUpButtons[i].Clear();
+            }
         }
     }
 }

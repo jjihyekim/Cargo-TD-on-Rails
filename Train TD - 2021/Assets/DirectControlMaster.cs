@@ -71,6 +71,10 @@ public class DirectControlMaster : MonoBehaviour {
 			ammoSlider.gameObject.SetActive(myAmmo != null);
 			if (myAmmo != null) {
 				hasAmmo = myAmmo.curAmmo > 0;
+			} else {
+				exitToReload.SetActive(false);
+				ammoSlider.value = 0;
+				hasAmmo = true;
 			}
 			
 			myTargetPicker = directControlAction.GetComponent<TargetPicker>();

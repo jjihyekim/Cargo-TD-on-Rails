@@ -870,6 +870,7 @@ MonoBehaviour:
   selfDamageMultiplier: 1
   selfDamage: 0
   selfDamageAmounts: 140000000a000000
+  isCartHp: 0
   explosionDamages: 640000003200000019000000
   burnResistant: 0
   currentBurn: 0
@@ -902,8 +903,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 57753de41d57ab242a96112d02204fec, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  isUnlocked: 1
-  unlockingUpgrade: {fileID: 0}
   actionName: Sell
   myType: 1
   cost: -50
@@ -942,8 +941,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 059294cf041670b4f997054af1dc34a8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  isUnlocked: 0
-  unlockingUpgrade: {fileID: 11400000, guid: 3139769320654044683ab5c56c1efbb1, type: 2}
   actionName: Salvo
   myType: 1
   cost: 50
@@ -952,9 +949,10 @@ MonoBehaviour:
   canEngage: 1
   canAfford: 1
   isCooldownOver: 1
-  soundEffect: []
+  soundEffect:
+  - {fileID: 8300000, guid: 766f3c6100135b6418f281a1d63eb1e4, type: 3}
   myTooltip:
-    text: Launch a rocket salvo. Make sure to have enough ammo!
+    text: 'Launch a rocket salvo. '
   actionTime: 2
   initialDelay: 2
   endDelay: 2
@@ -973,8 +971,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7dd82790b735196458fe58421304356e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  isUnlocked: 1
-  unlockingUpgrade: {fileID: 0}
   actionName: Repair
   myType: 1
   cost: 25
@@ -1013,8 +1009,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d8b3a4bd1ddc40646b537648a04bdd51, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  isUnlocked: 1
-  unlockingUpgrade: {fileID: 0}
   actionName: Move Gun
   myType: 1
   cost: 10
@@ -1039,8 +1033,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c33a412f8442bd34aa1db59cc3bad577, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  isUnlocked: 1
-  unlockingUpgrade: {fileID: 0}
   actionName: Reload
   myType: 0
   cost: 40

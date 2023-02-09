@@ -35,8 +35,8 @@ public class EnemyOnPathData {
 	public EnemyIdentifier enemyIdentifier = new EnemyIdentifier();
 
 	public int distanceOnPath = 30;
-	public bool startMoving = false;
-	//public bool isLeft = false;
+	[HideInInspector]
+	public bool isLeft = false;
 }
 
 [Serializable]
@@ -50,8 +50,6 @@ public class EnemyDynamicSpawnData {
 	public int increaseInNumberInterval = 2;
 	[NonSerialized]
 	public float curTime = 0;
-	[NonSerialized]
-	public bool firstSpawned = false;
 	[NonSerialized] 
 	public int curIncreaseInNumberCount = 0;
 	//public bool isLeft = false;

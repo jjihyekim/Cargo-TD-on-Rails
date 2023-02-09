@@ -35,6 +35,7 @@ public class MissionWinFinisher : MonoBehaviour {
 	public GameObject scrapRewardPrefab;
 	public GameObject cartRewardPrefab;
 	public GameObject upgradeRewardPrefab;
+	public GameObject powerUpRewardPrefab;
 
 	private void Start() {
 		winUI.SetActive(false);
@@ -80,28 +81,32 @@ public class MissionWinFinisher : MonoBehaviour {
 		ShowAndGiveMissionRewards();
 		cameraSwitcher.Engage();
 		winUI.SetActive(true);
-		
 
-		//send analytics
-		AnalyticsResult analyticsResult = Analytics.CustomEvent(
-			"LevelWon",
-			new Dictionary<string, object> {
-				{ "Level", SceneLoader.s.currentLevel.levelName },
-				
-				{"character", DataSaver.s.GetCurrentSave().currentRun.character.uniqueName},
-				
-				{ "buildingsBuild", ModuleHealth.buildingsBuild },
-				{ "buildingsDestroyed", ModuleHealth.buildingsDestroyed },
-				
-				{ "enemiesLeftAlive", EnemyHealth.enemySpawned - EnemyHealth.enemyKilled},
-				{ "emptyTrainSlots", Train.s.GetEmptySlotCount() },
-				{ "winTime", SpeedController.s.currentTime },
-			}
-		);
+
+		if (SceneLoader.s.currentLevel != null)  { // if level is null that means we are getting unclaimed rewards. hence no need to send data again.
+			
+			//send analytics
+			AnalyticsResult analyticsResult = Analytics.CustomEvent(
+				"LevelWon",
+				new Dictionary<string, object> {
+					{ "Level", SceneLoader.s.currentLevel.levelName },
+
+					{ "character", DataSaver.s.GetCurrentSave().currentRun.character.uniqueName },
+
+					{ "buildingsBuild", ModuleHealth.buildingsBuild },
+					{ "buildingsDestroyed", ModuleHealth.buildingsDestroyed },
+
+					{ "enemiesLeftAlive", EnemyHealth.enemySpawned - EnemyHealth.enemyKilled },
+					{ "emptyTrainSlots", Train.s.GetEmptySlotCount() },
+					{ "winTime", SpeedController.s.currentTime },
+				}
+			);
+			
+			Debug.Log("Mission Won Analytics: " + analyticsResult);
+			
+			PlayerBuildingController.s.LogCurrentLevelBuilds(true);
+		}
 		
-		Debug.Log("Mission Won Analytics: " + analyticsResult);
-		
-		PlayerBuildingController.s.LogCurrentLevelBuilds(true);
 
 		SoundscapeController.s.PlayMissionWonSound();
 		MusicPlayer.s.SwapMusicTracksAndPlay(false);
@@ -141,6 +146,8 @@ public class MissionWinFinisher : MonoBehaviour {
 			rewardMoney += cargoObj.GetComponent<MiniGUI_DeliveredCargo>().SetUp(cargo);
 			cargo.CargoSold();
 		}
+		
+		Train.s.SaveTrainState();
 
 		cargoText.text = $"Cargo Delivered {allCargo.Length}";
 
@@ -148,18 +155,20 @@ public class MissionWinFinisher : MonoBehaviour {
 		mySave.currentRun.unclaimedRewards.Add($"s{Random.Range(50,60)}");
 		mySave.currentRun.unclaimedRewards.Add($"m{rewardMoney}");
 
-		Upgrade[] upgradeRewards;
+		string[] upgradeRewards;
 		if (playerStar.isBoss) {
 			upgradeRewards = UpgradesController.s.GetRandomBossRewards();
 		} else {
 			upgradeRewards = UpgradesController.s.GetRandomLevelRewards();
 		}
 
-		var upgradesString = string.Join(",", upgradeRewards.Select(u => u.upgradeUniqueName));
+		var upgradesString = string.Join(",", upgradeRewards);
 		mySave.currentRun.unclaimedRewards.Add($"u{upgradesString}");
 		
 		if(playerStar.rewardCart > 0 || Train.s.cartCount < maxTrainLengthForGettingCartReward)
 			mySave.currentRun.unclaimedRewards.Add($"c{1}");
+		
+		mySave.currentRun.unclaimedRewards.Add($"p{DataHolder.s.powerUps[Random.Range(0, DataHolder.s.powerUps.Length)].name}");//power up -> boost
 	}
 
 	void ShowAndGiveMissionRewards() {
@@ -189,12 +198,7 @@ public class MissionWinFinisher : MonoBehaviour {
 					break;
 				case 'u':
 					var upgradeNames = cur.Substring(1).Split(',');
-					List<Upgrade> upgradeRewards = new List<Upgrade>();
-					for (int j = 0; j < upgradeNames.Length; j++) {
-						upgradeRewards.Add(UpgradesController.s.GetUpgrade(upgradeNames[j]));
-					}
-					
-					Instantiate(upgradeRewardPrefab, rewardsParent).GetComponent<MiniGUI_UpgradeReward>().SetUpReward(upgradeRewards.ToArray(), i);
+					Instantiate(upgradeRewardPrefab, rewardsParent).GetComponent<MiniGUI_BuildingReward>().SetUpReward(upgradeNames, i);
 					unclaimedRewardCount += 1;
 					
 					break;
@@ -205,7 +209,11 @@ public class MissionWinFinisher : MonoBehaviour {
 					} else {
 						Debug.LogError($"Can't parse reward: {cur}");
 					}
-					
+					break;
+				
+				case 'p':
+					var powerUpName = cur.Substring(1);
+					Instantiate(powerUpRewardPrefab, rewardsParent).GetComponent<MiniGUI_PowerUpReward>().SetUpReward(DataHolder.s.GetPowerUp(powerUpName), i);
 					break;
 				
 				case 'r':
@@ -306,6 +314,7 @@ public class MissionWinFinisher : MonoBehaviour {
 
 		EnemyWavesController.s.Cleanup();
 		MapController.s.Cleanup();
+		UpgradesController.s.DrawShopOptions();
 		
 		ChangeRangeShowState(true);
 		cameraSwitcher.Disengage();

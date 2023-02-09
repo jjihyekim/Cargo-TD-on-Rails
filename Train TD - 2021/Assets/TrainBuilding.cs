@@ -192,6 +192,7 @@ public class TrainBuilding : MonoBehaviour {
     private void OnDestroy() {
         if(mySlot != null)
             mySlot.RemoveBuilding(this);
+        
         if(currentlyRepairingUIThing != null)
             Destroy(currentlyRepairingUIThing);
     }
