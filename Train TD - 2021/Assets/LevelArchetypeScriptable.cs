@@ -27,6 +27,9 @@ public class LevelArchetypeScriptable : ScriptableObject {
     public ConstructedLevel GenerateLevel() {
         var level = new ConstructedLevel();
 
+        level.mySegmentsA = new LevelSegment[segmentCount];
+        level.mySegmentsB = new LevelSegment[segmentCount];
+
         for (int i = 0; i < segmentCount; i++) {
             level.mySegmentsA[i] = GenerateSegment();
             level.mySegmentsB[i] = GenerateSegment();

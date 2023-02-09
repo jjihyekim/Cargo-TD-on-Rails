@@ -86,6 +86,11 @@ public class ProfileSelectionMenu : MonoBehaviour {
         SceneLoader.s.afterTransferCalls.Enqueue(() => DoTransfer());
     }
 
+    public void QuickStartGame() {
+        SceneLoader.s.DebugQuickBackToStarterMenu();
+        DoTransfer();
+    }
+
     void DoTransfer() {
         profileCameraSwithcer.Disengage();
         ProfileUI.SetActive(false);

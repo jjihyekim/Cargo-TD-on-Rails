@@ -131,6 +131,15 @@ public class SceneLoader : MonoBehaviour {
         //LoadScene(mainScene, true);
     }
 
+    public void DebugQuickBackToStarterMenu() {
+        _gameState = GameState.starterMenu;
+        StopAllCoroutines();
+        afterTransferCalls.Clear();
+        loadingScreen.SetActive(false);
+        isLoading = false;
+        DoTransfer();
+    }
+
 
     public Queue<Action> afterTransferCalls = new Queue<Action>(); // must add stuff to this AFTER calling back to menu!
     void DoTransfer() {

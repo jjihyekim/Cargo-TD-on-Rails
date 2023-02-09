@@ -14,14 +14,32 @@ public class CheatsController : MonoBehaviour
 
     public bool infiniteLevel = false;
     public bool debugNoRegularSpawns = false;
+    public bool instantEnterPlayMode = false;
     public EnemyIdentifier debugEnemy;
 
+
     private void Start() {
+        #if !UNITY_EDITOR
+        debugNoRegularSpawns = false;
+        infiniteLevel = false;
+        instantEnterPlayMode = false;
+        #endif
+        
+        
         if(debugNoRegularSpawns || infiniteLevel)
             Debug.LogError("Debug options active!");
         
         if (debugNoRegularSpawns)
             EnemyWavesController.s.debugNoRegularSpawns = true;
+
+        if (instantEnterPlayMode) {
+           Invoke(nameof(QuickStart),0.01f);
+        }
+    }
+
+    void QuickStart() {
+        ProfileSelectionMenu.s.QuickStartGame();
+        StarterUIController.s.QuickStart();
     }
 
     private void Update() {

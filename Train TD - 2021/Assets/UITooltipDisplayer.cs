@@ -11,6 +11,8 @@ public class UITooltipDisplayer : MonoBehaviour {
     public float curTimer = 0;
 
     public bool showingTooltip = false;
+
+    public bool doubleTimer = false;
     private void Update() {
         if (myTooltip != null && myTooltip.text.Length > 0) {
             Vector2 mousePos = Mouse.current.position.ReadValue();
@@ -20,7 +22,7 @@ public class UITooltipDisplayer : MonoBehaviour {
                 curTimer = 0;
             }
 
-            if (curTimer > TooltipsMaster.tooltipShowTime) {
+            if (curTimer > (doubleTimer ? TooltipsMaster.tooltipShowTime * 2 : TooltipsMaster.tooltipShowTime)) {
                 Show();
             } else {
                 Hide();
