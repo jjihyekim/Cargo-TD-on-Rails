@@ -52,6 +52,8 @@ public class UpgradesController : MonoBehaviour {
 			var option = Instantiate(shopOptionPrefab, shopOptionsParent).GetComponent<MiniGUI_BuyBuilding>();
 			option.Setup(shopOptions[i]);
 		}
+		
+		SetUpBuyCargo.s.SetUpCargos();
 	}
 
 	public void AddModulesToAvailableModules(string buildingUniqueName, int count) {

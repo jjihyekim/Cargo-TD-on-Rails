@@ -72,6 +72,7 @@ public class CharacterSelector : MonoBehaviour {
         UpgradesController.s.callWhenUpgradesOrModuleAmountsChanged?.Invoke();
         Pauser.s.Unpause();
         PlayerActionsController.s.UpdatePowerUpButtons();
+        UpgradesController.s.DrawShopOptions();
 
         DataSaver.s.SaveActiveGame();
         MusicPlayer.s.SwapMusicTracksAndPlay(false);

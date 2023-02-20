@@ -10,11 +10,9 @@ public class EngineOverloadAction : ModuleAction, IActiveDuringCombat
 	public float engineSpeedMultiplier = 2f;
 	private int originalPower;
 	protected override void _EngageAction() {
-
 		originalPower = GetComponent<EngineModule>().enginePower;
 
 		GetComponent<EngineModule>().enginePower = (int)(originalPower*engineSpeedMultiplier);
-		
 		
 		GetComponent<EngineStopAction>().canEngage = false;
 		

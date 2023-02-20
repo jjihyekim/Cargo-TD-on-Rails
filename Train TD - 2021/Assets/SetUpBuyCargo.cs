@@ -15,22 +15,15 @@ public class SetUpBuyCargo : MonoBehaviour {
     public GameObject cargoSellButtonPrefab;
     public Transform cargoParent;
 
-    public GameObject noCargoAvailableBecauseEncounter;
+    public MiniGUI_StarterBuildingButton noCargoAvailableBecauseEncounter;
 
-    private void Start() {
-        /*StarterUIController.s.OnLevelChanged.AddListener(SetUpCargos);
-        StarterUIController.s.OnEnteredStarterUI.AddListener(SetUpCargos);*/
-        if (DataSaver.s.GetCurrentSave().isInARun) {
-            SetUpCargos();
-        }
-    }
-
-    void SetUpCargos() {
-        //ClearPreviousCargo();
-        
-        
+    MiniGUI_StarterBuildingButton button;
+    
+    public void SetUpCargos() {
         var playerStar = DataSaver.s.GetCurrentSave().currentRun.map.GetPlayerStar();
-        var button = Instantiate(cargoSellButtonPrefab, cargoParent).GetComponent<MiniGUI_StarterBuildingButton>();
+        if(button == null)
+            button = Instantiate(cargoSellButtonPrefab, cargoParent).GetComponent<MiniGUI_StarterBuildingButton>();
+        
         var cargo = GetCargoWithType(playerStar.city.cargosSold[Random.Range(0, playerStar.city.cargosSold.Length)]);
 
         button.SetUp(cargo.GetComponent<TrainBuilding>()/*, 20, data.cost, data.reward*/);
