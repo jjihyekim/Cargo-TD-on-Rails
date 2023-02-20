@@ -910,8 +910,6 @@ GameObject:
   - component: {fileID: 1066860337956249592}
   - component: {fileID: 1066860337956249595}
   - component: {fileID: 1515822202}
-  - component: {fileID: 1197221469}
-  - component: {fileID: 2879342519507688178}
   m_Layer: 0
   m_Name: _ConstantObjects
   m_TagString: Untagged
@@ -1168,11 +1166,18 @@ MonoBehaviour:
     scenePath: Assets/Scenes/InitialScene.unity
   _currentLevel:
     levelName: unset
-    isEncounter: 0
+    levelNiceName: 
+    mySegmentsA: []
+    mySegmentsB: []
+    dynamicSpawnData:
+      enemyIdentifier:
+        enemyUniqueName: unset
+        enemyCount: 1
+      distanceFromTrain: 30
+      firstSpawnTime: 30
+      spawnInterval: 30
+      increaseInNumberInterval: 2
     isBossLevel: 0
-    enemiesOnPath: []
-    dynamicSpawnEnemies: []
-    missionDistance: 300
   _gameState: 0
   autoOpenProfiles: 0
   loadingScreen: {fileID: 1740159616}
@@ -1234,14 +1239,6 @@ MonoBehaviour:
     data: {fileID: 8567764965066828291, guid: 167eb19127e4fa74aa76b56e51367d6b, type: 3}
   - uniqueName: SupplierGatling
     data: {fileID: 8567764965066828291, guid: 692722e00ae7e5b4f8252280d55f2d4e, type: 3}
-  - uniqueName: TurretAVC
-    data: {fileID: 5297413553918262561, guid: f2ab42356cb1d354e8baabef15711c3d, type: 3}
-  - uniqueName: TurretCannon
-    data: {fileID: 5297413553918262561, guid: 2b549ab8f0a6dbc4b8a1753d55b16f53, type: 3}
-  - uniqueName: TurretGatling
-    data: {fileID: 5297413553918262561, guid: 34ca2d4f5ac5ede48bd7fee1048c7fe3, type: 3}
-  - uniqueName: TurretRockets
-    data: {fileID: 5297413553918262561, guid: de9ec9fad091ac8449fa4a6f450d7d7e, type: 3}
   - uniqueName: TeleportingBuggyAVC
     data: {fileID: 5297413553918262561, guid: 071c8061e6809c640949f7bdfa72504f, type: 3}
   - uniqueName: TeleportingBuggyCannon
@@ -1258,6 +1255,8 @@ MonoBehaviour:
     data: {fileID: 5297413553918262561, guid: f6d3434bbaf479d4db699bead21d2239, type: 3}
   - uniqueName: BossTeleporter
     data: {fileID: 3387775018460824596, guid: 1ab9c6d2aa4b2d7458a805827da37f26, type: 3}
+  - uniqueName: PowerUpCarrier
+    data: {fileID: 8567764965066828291, guid: f967fbf18add4a842a78d52f285eedf0, type: 3}
   characters:
   - {fileID: 11400000, guid: 059b7d277410e644482aaf682aef739f, type: 2}
   - {fileID: 11400000, guid: 2ee611f29a603744199eea6d9a3668ca, type: 2}
@@ -1315,60 +1314,6 @@ MonoBehaviour:
   moneyBackColor: {r: 0.7830189, g: 0.64343905, b: 0, a: 1}
   repairPrefab: {fileID: 172524484023753321, guid: 63ac6f74862b66b49b9d837b5a27adf3, type: 3}
   sellPrefab: {fileID: 172524484023753321, guid: 5c944d37062c8b04d8a0fa76e4e24049, type: 3}
---- !u!114 &1197221469
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1066860337956249594}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: cdaa9293cf383664abb380399271b1a7, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  levelDataScriptables:
-  - {fileID: 11400000, guid: 490a7b36f8d0c3d478696cdb10bf7e69, type: 2}
-  - {fileID: 11400000, guid: c393bb40291095e48b464e33e27d5f70, type: 2}
-  - {fileID: 11400000, guid: 7c8f4efe62c155e43b56816446150dfb, type: 2}
-  - {fileID: 11400000, guid: 30b53525c2cad324b9b1a0d5f74721ae, type: 2}
-  - {fileID: 11400000, guid: 2e6ba252936a8194290bd71d222c9888, type: 2}
-  - {fileID: 11400000, guid: a6d894180c4c0344599ffeb1bad1ea6c, type: 2}
-  - {fileID: 11400000, guid: 3197762caf9c5ba4c8dcbf4b0b650d4c, type: 2}
-  - {fileID: 11400000, guid: 5494274709734124b94f4de092f26f37, type: 2}
-  - {fileID: 11400000, guid: a01fb8147b9dd37489d7bbc5472b905d, type: 2}
-  - {fileID: 11400000, guid: 5d355632f840f6041992abb50da73eb7, type: 2}
-  - {fileID: 11400000, guid: 2934dcbe138a9d044894315d34635c71, type: 2}
-  - {fileID: 11400000, guid: 38490de6d7c4ad64eb55726eb400f2f4, type: 2}
-  - {fileID: 11400000, guid: 85455ea1b6fdf8c4ba6c4ee2558f7ccb, type: 2}
-  - {fileID: 11400000, guid: cf92652e50cc41e46a04029d20b8d7c0, type: 2}
-  - {fileID: 11400000, guid: a1c4466aa860fe2469a79e0d82c89854, type: 2}
-  - {fileID: 11400000, guid: 265cd3cc99700d14bb8e1419f05ea8e5, type: 2}
-  - {fileID: 11400000, guid: 50c616aa7de02154783b5e380a624a7f, type: 2}
-  - {fileID: 11400000, guid: 6739b5cfa0988b04b8668ff5db0237a8, type: 2}
-  - {fileID: 11400000, guid: 6b302e3f47f51314ca79441e6d03e4e8, type: 2}
-  - {fileID: 11400000, guid: 70cd36719f60e59408bc37f16c00bef9, type: 2}
-  - {fileID: 11400000, guid: 40666bdceb09ca94baa49ea75b43d62a, type: 2}
-  - {fileID: 11400000, guid: a461a96bea544e5498ca8d54726002bc, type: 2}
-  - {fileID: 11400000, guid: 1b367ee03ec05024a87b507057f168fb, type: 2}
-  - {fileID: 11400000, guid: d750168af7ac66a46875213a0a900fd0, type: 2}
-  - {fileID: 11400000, guid: 69ee3aa1084b5f4489ae7484cb05ebf2, type: 2}
-  - {fileID: 11400000, guid: a665294ebe521524ab361394107cea28, type: 2}
-  - {fileID: 11400000, guid: f14de6342fcfd8248982409a7a1275d2, type: 2}
-  - {fileID: 11400000, guid: 9ee5e0c810e83dd4eb46563111bb780e, type: 2}
-  allLevels: []
---- !u!114 &2879342519507688178
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1066860337956249594}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8c72a00ad2e56bf4a8dbf6891c200d91, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &3640201124203540823
 GameObject:
   m_ObjectHideFlags: 0

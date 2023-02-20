@@ -324,6 +324,7 @@ public class Train : MonoBehaviour {
     public float restoreDelay = 0.1f;
 
     public bool doShake = true;
+    private float shakeBlock = 0f;
     private void Update() {
         if (SceneLoader.s.isLevelInProgress && doShake) {
             if (curDistance < 0) {
@@ -334,19 +335,28 @@ public class Train : MonoBehaviour {
                 curDistance -= LevelReferences.s.speed * Time.deltaTime;
             }
         }
+
+        if (!doShake) {
+            shakeBlock -= Time.deltaTime;
+            if (shakeBlock <= 0) {
+                _RestartShake();
+            }
+        }
     }
 
     public void StopShake() {
-        StopAllCoroutines();
-        for (int i = 0; i < carts.Count; i++) {
-            carts[i].localPosition = cartDefPositions[i];
+        if (doShake) {
+            StopAllCoroutines();
+            for (int i = 0; i < carts.Count; i++) {
+                carts[i].localPosition = cartDefPositions[i];
+            }
+            doShake = false;
         }
-
-        doShake = false;
     }
 
     public void RestartShake() {
-        Invoke(nameof(_RestartShake), 0.01f); // one frame later so that any transform changes have been applied
+        if(shakeBlock < 0f)
+            Invoke(nameof(_RestartShake), 0.01f); // one frame later so that any transform changes have been applied
     }
 
     public void SwapCarts(Cart cart1, Cart cart2) {
@@ -364,11 +374,13 @@ public class Train : MonoBehaviour {
     }
 
     void _RestartShake() {
-        for (int i = 0; i < carts.Count; i++) {
-            cartDefPositions[i] =  carts[i].localPosition;
-        }
+        if (!doShake) {
+            for (int i = 0; i < carts.Count; i++) {
+                cartDefPositions[i] = carts[i].localPosition;
+            }
 
-        doShake = true;
+            doShake = true;
+        }
     }
 
 
@@ -507,5 +519,118 @@ public class Train : MonoBehaviour {
 
     public void TrainUpdated() {
         trainUpdated?.Invoke();
+    }
+
+
+    public void UpdateTrainCartsBasedOnRotation(float rotationStartZ, float rotationEndZ, float maxXOffset, float arcLength, bool isGoingLeft) {// rotation angle is 45 degrees
+        StopShake();
+        shakeBlock = 1f;
+
+        if (rotationStartZ > 0) { // before we start rotating the ground
+            for (int i = 0; i < carts.Count; i++) {
+                var curCart = carts[i];
+
+                if (curCart.position.z > rotationEndZ) { // pass the curve in the flat area
+                    var pos = curCart.position;
+                    var posDelta = (pos.z - rotationEndZ);
+                    pos.x = 1-Mathf.Cos(45 * Mathf.Deg2Rad);
+                    pos.x *= maxXOffset;
+                    pos.x += posDelta;
+                    pos.x *= (isGoingLeft ? -1 : 1);
+                    
+                    curCart.transform.position = pos;
+                    curCart.transform.rotation = Quaternion.Euler(0,45*(isGoingLeft ? -1 : 1),0);
+
+                }else if (curCart.position.z > rotationStartZ) { // in the curve
+                    var pos = curCart.position;
+                    var posDelta = (pos.z - rotationStartZ)/arcLength;
+
+                    var angle = posDelta * 45f;
+                    pos.x = 1-Mathf.Cos(angle * Mathf.Deg2Rad);
+                    pos.x *= maxXOffset;
+                    pos.x *= (isGoingLeft ? -1 : 1);
+
+                    curCart.transform.position = pos;
+                    curCart.transform.rotation = Quaternion.Euler(0,angle*(isGoingLeft ? -1 : 1),0);
+                } // rest of the carts are flat
+            }
+        }else if (rotationEndZ > 0) { // before we stop rotating
+            for (int i = 0; i < carts.Count; i++) {
+                var curCart = carts[i];
+                
+                var pos = curCart.position;
+                var angleDelta = Mathf.Clamp(pos.z, rotationStartZ, rotationEndZ);
+                var angle = (angleDelta/arcLength) * 45f;
+                var absAngle = Mathf.Abs(angle);
+
+                if (pos.z > rotationEndZ) { // pass the curve in the flat area
+                    var posDelta = (pos.z - rotationEndZ);
+                    
+                    pos.x = 1-Mathf.Cos(absAngle * Mathf.Deg2Rad);
+                    pos.x *= maxXOffset;
+                    pos.x += posDelta * (Mathf.Sin(absAngle * Mathf.Deg2Rad)/Mathf.Sin((90-absAngle)*Mathf.Deg2Rad));
+                    pos.x *= (isGoingLeft ? -1 : 1);
+                    
+                    curCart.transform.position = pos;
+                    curCart.transform.rotation = Quaternion.Euler(0,angle*(isGoingLeft ? -1 : 1),0);
+
+                }else if (pos.z > rotationStartZ) { // in the curve
+                    
+                    pos.x = Mathf.Abs(1-Mathf.Cos(absAngle * Mathf.Deg2Rad));
+                    pos.x *= maxXOffset;
+                    pos.x *= (isGoingLeft ? -1 : 1);
+                    
+                    curCart.transform.position = pos;
+                    curCart.transform.rotation = Quaternion.Euler(0,angle*(isGoingLeft ? -1 : 1),0);
+                } else { // behind the curve
+                    
+                    var posDelta = (rotationStartZ - pos.z);
+                    
+                    pos.x = 1-Mathf.Cos(absAngle * Mathf.Deg2Rad);
+                    pos.x *= maxXOffset;
+                    pos.x += posDelta * (Mathf.Sin(absAngle * Mathf.Deg2Rad)/Mathf.Sin((90-absAngle)*Mathf.Deg2Rad));
+                    pos.x *= (isGoingLeft ? -1 : 1);
+                    
+                    curCart.transform.position = pos;
+                    curCart.transform.rotation = Quaternion.Euler(0,angle*(isGoingLeft ? -1 : 1),0);
+                }
+            }
+            
+        } else { // after we stop rotating
+            for (int i = 0; i < carts.Count; i++) {
+                var curCart = carts[i];
+
+                if (curCart.position.z < rotationStartZ) { // pass the curve in the flat area in the waaay back
+                    var pos = curCart.position;
+                    var posDelta = (pos.z - rotationEndZ);
+                    pos.x = 1-Mathf.Cos(45 * Mathf.Deg2Rad);
+                    pos.x *= maxXOffset;
+                    pos.x += posDelta;
+                    pos.x *= (isGoingLeft ? -1 : 1);
+                    
+                    curCart.transform.position = pos;
+                    curCart.transform.rotation = Quaternion.Euler(0,45*(isGoingLeft ? -1 : 1),0);
+
+                }else if (curCart.position.z < rotationEndZ) { // in the curve
+                    var pos = curCart.position;
+                    var posDelta = (pos.z - rotationEndZ)/arcLength;
+
+                    var angle = posDelta * 45f;
+                    pos.x = 1-Mathf.Cos(angle * Mathf.Deg2Rad);
+                    pos.x *= maxXOffset;
+                    pos.x *= (isGoingLeft ? -1 : 1);
+
+                    curCart.transform.position = pos;
+                    curCart.transform.rotation = Quaternion.Euler(0,angle*(isGoingLeft ? -1 : 1),0);
+                } else {// rest of the carts are flat
+                    var pos = curCart.position;
+                    pos.x = 0;
+
+                    curCart.transform.position = pos;
+                    curCart.transform.rotation = Quaternion.identity;
+                } 
+            }
+        }
+
     }
 }

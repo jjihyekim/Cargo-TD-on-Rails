@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using Sirenix.OdinInspector;
 using UnityEngine;
 using UnityEngine.UI;
@@ -16,17 +15,15 @@ public class HexGrid : MonoBehaviour {
 	public float terrainRandomnessMagnitude = 1f;
 	public float terrainSlope = 1f;
 
-	private HexCell[] cells;
-
 	public GameObject hexChunkPrefab;
 	public GameObject railsPrefab;
-
-
+	
 	public Biome[] biomes;
 	
-	[Serializable]
+	[System.Serializable]
 	public class Biome {
 		public GameObject groundPrefab;
+		public GameObject groundTrackSwitchPrefab;
 		public PrefabWithWeights[] sideDecor;
 		public Light sun;
 		public SkyboxParametersScriptable skybox;
@@ -45,9 +42,12 @@ public class HexGrid : MonoBehaviour {
 
 	public float gridOffset {
 		get {
-			return gridSize.x * HexMetrics.outerRadius * 1.1f;
+			return gridSize.x;
+			//return gridSize.x * HexMetrics.outerRadius * 1.1f;
 		}
 	}
+	
+	
 
 	public float decorSpread = 1f;
 
@@ -190,11 +190,35 @@ public class HexGrid : MonoBehaviour {
 		transform.parent.GetComponentInChildren<ReflectionProbe>().RenderProbe();
 	}
 
-	public int gridCount = 3;
+	public Vector2 zRangesToFill;
+	Biome currentBiome;
 	void CreateChunks() {
+		if (!DataSaver.s.GetCurrentSave().isInARun)
+			biomeOverride = 0;
+
+		if (biomeOverride < 0) {
+			var targetBiome = DataSaver.s.GetCurrentSave().currentRun.map.GetPlayerStar().biome;
+			if (targetBiome < 0 || targetBiome > biomes.Length) {
+				Debug.LogError($"Illegal biome {targetBiome}");
+				targetBiome = 0;
+			}
+
+			currentBiome = biomes[targetBiome];
+		} else {
+			currentBiome = biomes[biomeOverride];
+		}
+
+		for (int i = 0; i < biomes.Length; i++) {
+			biomes[i].sun.gameObject.SetActive(false);
+		}
+
+		currentBiome.skybox.SetActiveSkybox(currentBiome.sun, null);
+
+		var gridCount = Mathf.FloorToInt(Mathf.Abs(zRangesToFill.x - zRangesToFill.y) / gridSize.x);
+		
 		for (int i = 0; i < gridCount; i++) {
-			var hex = Instantiate(hexChunkPrefab, transform);
-			CreateCells(hex.transform);
+			var hex = Instantiate(currentBiome.groundPrefab, transform);
+			//CreateCells(hex.transform);
 			hex.transform.position = Vector3.forward * (i-1) * (gridOffset) + transform.position;
 			hexParents.Add(hex.transform);
 		}
@@ -220,10 +244,15 @@ public class HexGrid : MonoBehaviour {
 	}
 
 	public float lastRealDistance = 0;
-	public float distance = 0;
+	//public float distance = 0;
+	public List<float> trackSwitchDistances = new List<float>();
+
+	private TrackSwitchHex toAttachTo;
+	private bool doubleNextOne = false;
 	private void Update() {
 		var delta = SpeedController.s.currentDistance - lastRealDistance;
-		distance += delta;
+		lastRealDistance = SpeedController.s.currentDistance;
+		//distance += delta;
 
 		foreach (var parent in hexParents) {
 			//parent.GetComponent<Rigidbody>().MovePosition(parent.position + Vector3.back * GlobalReferences.s.speed * Time.deltaTime);
@@ -231,18 +260,60 @@ public class HexGrid : MonoBehaviour {
 			// correct one
 			parent.transform.position += Vector3.back * delta;
 		}
-
-		while (distance > gridOffset) {
-			distance -= gridOffset;
+		
+		while (hexParents[0].position.z < zRangesToFill.x) {
+			//distance -= gridOffset;
 			var lastHex = hexParents[0];
 			hexParents.RemoveAt(0);
 			lastHex.GetComponent<HexChunk>().ClearForeign();
 			//UpdateGrid(lastHex);
 			lastHex.position = hexParents[hexParents.Count - 1].transform.position + Vector3.forward * gridOffset;
-			hexParents.Add(lastHex);
+			if (doubleNextOne) {
+				lastHex.position = hexParents[hexParents.Count - 1].transform.position + Vector3.forward * (gridOffset * 2);
+				doubleNextOne = false;
+			}
+
+
+			if (lastHex.GetComponent <TrackSwitchHex>()) {
+				var regularHex = Instantiate(currentBiome.groundPrefab, transform);
+				var pos = lastHex.transform.position;
+				pos.x = 0;
+				regularHex.transform.position = pos;
+				hexParents.Insert(0, lastHex.GetComponent<TrackSwitchHex>().attachedHex);
+				lastHex.GetComponent<TrackSwitchHex>().attachedHex.SetParent(transform);
+				hexParents[0].transform.position = hexParents[1].transform.position - (Vector3.forward * gridOffset);
+				hexParents[0].transform.rotation = Quaternion.identity;
+				Destroy(lastHex.gameObject);
+				lastHex = regularHex.transform;
+			}
+			
+			
+			for (int i = 0; i < trackSwitchDistances.Count; i++) {
+				if (SpeedController.s.currentDistance + lastHex.position.z > trackSwitchDistances[i]) {
+					var trackSwitchHex = Instantiate(currentBiome.groundTrackSwitchPrefab, transform);
+					trackSwitchHex.transform.position = lastHex.transform.position;
+					Destroy(lastHex.gameObject);
+					lastHex = trackSwitchHex.transform;
+					
+					trackSwitchDistances.RemoveAt(i);
+
+					toAttachTo = lastHex.GetComponent<TrackSwitchHex>();
+					hexParents.Add(lastHex);
+					return;
+				}
+			}
+			
+			if (toAttachTo != null) {
+				var fakeHex = Instantiate(lastHex.gameObject).transform;
+				toAttachTo.AttachHex(lastHex, fakeHex);
+				toAttachTo = null;
+				doubleNextOne = true;
+			} else {
+				hexParents.Add(lastHex);
+			}
 		}
-		while (distance < 1) {
-			distance += gridOffset;
+		while (hexParents[hexParents.Count - 1].position.z > zRangesToFill.y) {
+			//distance += gridOffset;
 			var lastHex = hexParents[hexParents.Count-1];
 			hexParents.RemoveAt(hexParents.Count-1);
 			lastHex.GetComponent<HexChunk>().ClearForeign();
@@ -251,12 +322,24 @@ public class HexGrid : MonoBehaviour {
 			hexParents.Insert(0, lastHex);
 		}
 
+	}
+
+
+	public void ClearTrackSwitchDistances() {
+		trackSwitchDistances.Clear();
+	}
+	[Button]
+	public void DoTrackSwitchAtDistance(float trackSwitchDistance) {
+		trackSwitchDistances.Add(trackSwitchDistance-(gridSize.x/2));
+	}
+
+	public void ResetDistance() {
 		lastRealDistance = SpeedController.s.currentDistance;
 	}
 }
 
 
-[Serializable]
+[System.Serializable]
 public class PrefabWithWeights {
 	[HorizontalGroup(LabelWidth = 50)]
 	public GameObject prefab;
@@ -293,7 +376,7 @@ public class PrefabWithWeights {
 }
 
 
-[Serializable]
+[System.Serializable]
 public class NumberWithWeights {
 	[HorizontalGroup(LabelWidth = 50)]
 	public int number;

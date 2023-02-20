@@ -227,7 +227,11 @@ public class PlayerBuildingController : MonoBehaviour {
                 if(!nextBuildIsFree)
                     MoneyController.s.ModifyResource(ResourceTypes.scraps, -newBuilding.cost);
                 nextBuildIsFree = false;
-                
+                var ammo = newBuilding.GetComponent<ReloadAction>();
+                if (ammo) {
+                    ammo.EngageForFree();
+                }
+
                 Train.s.SaveTrainState();
 
                 LogData(currentlyMultiBuilding, newBuilding);
@@ -378,6 +382,7 @@ public class PlayerBuildingController : MonoBehaviour {
     public void StartBuilding(TrainBuilding building, 
         BuildingDoneCallback callback = null, GetTheFinishedBuilding buildingReturn = null, bool isFree = false, bool sayVoiceline = true
         ) {
+        isFree = true;
 
         ignoreNextClick = true;
         Invoke(nameof(StopIgnoringClick),0.1f);

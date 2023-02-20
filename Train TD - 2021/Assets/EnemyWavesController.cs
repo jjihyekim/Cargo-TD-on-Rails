@@ -29,36 +29,36 @@ public class EnemyWavesController : MonoBehaviour {
 		Cleanup();
 	}
 
-	public void UpdateBasedOnLevelData() {
+
+	public void SetUpLevel() {
 		Cleanup();
-		if (debugNoRegularSpawns)
-			return;
-
-		if (!DataSaver.s.GetCurrentSave().isInARun || SceneLoader.s.currentLevel == null || SceneLoader.s.currentLevel.isEncounter)
-			return;
-
-		enemiesInitialized = !SceneLoader.s.currentLevel.isEncounter;
-		if (enemiesInitialized) {
-			var enemiesOnPath = SceneLoader.s.currentLevel.enemiesOnPath;
-			for (int i = 0; i < enemiesOnPath.Length; i++) {
-				SpawnEnemy(enemiesOnPath[i].enemyIdentifier, enemiesOnPath[i].distanceOnPath, false, enemiesOnPath[i].isLeft);
-			}
-		}
-
-
-		if (SceneLoader.s.currentLevel.dynamicSpawnEnemies.Length > 1) {
-			Debug.LogError("Multiple dynamic spawn enemies aren't properly supported.");
-		}
-
-		if (SceneLoader.s.currentLevel.dynamicSpawnEnemies.Length > 0) {
-			pursuerTimerObject.SetUp(SceneLoader.s.currentLevel.dynamicSpawnEnemies[0]);
-		}
+		pursuerTimerObject.SetUp(SceneLoader.s.currentLevel.dynamicSpawnData);
 
 		pursuerTimerObject.gameObject.SetActive(false);
 
-		for (int i = 0; i < SceneLoader.s.currentLevel.dynamicSpawnEnemies.Length; i++) {
-			var curDynamicSpawn = SceneLoader.s.currentLevel.dynamicSpawnEnemies[i];
-			curDynamicSpawn.curTime = curDynamicSpawn.firstSpawnTime;
+		var curDynamicSpawn = SceneLoader.s.currentLevel.dynamicSpawnData;
+		curDynamicSpawn.curTime = curDynamicSpawn.firstSpawnTime;
+	}
+
+	public Queue<PowerUpScriptable> powerUpScriptables = new Queue<PowerUpScriptable>();
+	public void SpawnEnemiesOnSegment(float segmentStartDistance, LevelSegment segment) {
+		if (debugNoRegularSpawns)
+			return;
+
+		enemiesInitialized = !segment.isEncounter;
+		if (enemiesInitialized) {
+
+			PowerUpScriptable powerUpScriptable = null;
+			if (segment.rewardPowerUpAtTheEnd) {
+				powerUpScriptable = DataHolder.s.GetPowerUp(segment.powerUpRewardUniqueName);
+			}
+
+			powerUpScriptables.Enqueue(powerUpScriptable);
+			
+			var enemiesOnPath = segment.enemiesOnPath;
+			for (int i = 0; i < enemiesOnPath.Length; i++) {
+				SpawnEnemy(enemiesOnPath[i].enemyIdentifier, segmentStartDistance+ enemiesOnPath[i].distanceOnPath, false, enemiesOnPath[i].isLeft, powerUpScriptable);
+			}
 		}
 	}
 
@@ -74,11 +74,11 @@ public class EnemyWavesController : MonoBehaviour {
 
 	public int maxConcurrentWaves = 6;
 
-	void SpawnEnemy(EnemyIdentifier enemyIdentifier, float distance, bool startMoving, bool isLeft) {
+	void SpawnEnemy(EnemyIdentifier enemyIdentifier, float distance, bool startMoving, bool isLeft, PowerUpScriptable powerUp = null) {
 		var playerDistance = SpeedController.s.currentDistance;
 		var wave = Instantiate(enemyWavePrefab, Vector3.forward * (distance - playerDistance), Quaternion.identity).GetComponent<EnemyWave>();
 		wave.transform.SetParent(transform);
-		wave.SetUp(enemyIdentifier, distance, startMoving, isLeft);
+		wave.SetUp(enemyIdentifier, distance, startMoving, isLeft, powerUp);
 		waves.Add(wave);
 	}
 
@@ -97,8 +97,8 @@ public class EnemyWavesController : MonoBehaviour {
 				return;
 
 			if (waves.Count < maxConcurrentWaves) {
-				for (int i = 0; i < SceneLoader.s.currentLevel.dynamicSpawnEnemies.Length; i++) {
-					var enemy = SceneLoader.s.currentLevel.dynamicSpawnEnemies[i];
+				//for (int i = 0; i < SceneLoader.s.currentLevel.dynamicSpawnEnemies.Length; i++) {
+					var enemy = SceneLoader.s.currentLevel.dynamicSpawnData;
 					
 					if (enemy.curTime <= 0) {
 						SpawnEnemy(enemy.enemyIdentifier, playerDistance - enemy.distanceFromTrain, true, Random.value > 0.5f);
@@ -112,7 +112,7 @@ public class EnemyWavesController : MonoBehaviour {
 					}
 
 					enemy.curTime -= Time.deltaTime;
-				}
+				//}
 			}
 		} else {
 			var playerDistance = SpeedController.s.currentDistance;
@@ -131,5 +131,6 @@ public class EnemyWavesController : MonoBehaviour {
 		pursuerTimerObject.gameObject.SetActive(false);
 		transform.DeleteAllChildren();
 		enemiesInitialized = false;
+		powerUpScriptables.Clear();
 	}
 }

@@ -32,6 +32,9 @@ public class EnemyHealth : MonoBehaviour, IHealth {
 
 	[Tooltip("Will reduce incoming damage by 50% if gun doesn't have armor penetration")]
 	public bool isArmored = false;
+
+	public bool rewardPowerUp = false;
+
 	public void DealDamage(float damage) {
 		currentHealth -= damage;
 
@@ -149,6 +152,10 @@ public class EnemyHealth : MonoBehaviour, IHealth {
 			LevelReferences.s.SpawnResourceAtLocation(ResourceTypes.ammo, 
 				ammoReward*LevelReferences.s.ammoEnemyRewardMultiplier, 
 				aliveObject.transform.position + Vector3.left/2f);
+
+			if (rewardPowerUp) {
+				PlayerActionsController.s.GetPowerUp(EnemyWavesController.s.powerUpScriptables.Dequeue());
+			}
 		}
 
 		var pos = aliveObject.position;

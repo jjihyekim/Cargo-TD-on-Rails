@@ -110,8 +110,8 @@ public class EngineFireController : MonoBehaviour {
 
 		    // Engine Boost
 		    var playerControlAdjusted = lastEnginePowerPlayerControl;
-		    var powerLow = lastEnginePowerPlayerControl.Remap(0, 1.5f,2,50) * (_engine.enginePower / 300f);
-		    var powerHigh = lastEnginePowerPlayerControl.Remap(0, 1.5f,14,80) * (_engine.enginePower / 300f);
+		    var powerLow = lastEnginePowerPlayerControl.Remap(0, 1.5f,6,60) * (_engine.enginePower / 300f);
+		    var powerHigh = lastEnginePowerPlayerControl.Remap(0, 1.5f,8,80) * (_engine.enginePower / 300f);
 		    mainModule.startSpeed = new ParticleSystem.MinMaxCurve(powerLow, powerHigh);
 		    /*if (lastEnginePower > 300) {
 			    mainModule.startSpeed = new ParticleSystem.MinMaxCurve(50, 80);

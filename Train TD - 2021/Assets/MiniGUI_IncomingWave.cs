@@ -41,6 +41,8 @@ public class MiniGUI_IncomingWave : MonoBehaviour {
 
         countText.text = (myWave.myEnemy.enemyCount != -1) ? "x" + myWave.myEnemy.enemyCount.ToString() : "x1";
         Update();
+
+        GetComponent<Image>().color = enemyWave.isLeft ? LevelReferences.s.leftColor : LevelReferences.s.rightColor;
     }
 
     const float edgeGive = 5;

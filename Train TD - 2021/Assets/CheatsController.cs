@@ -15,16 +15,19 @@ public class CheatsController : MonoBehaviour
     public bool infiniteLevel = false;
     public bool debugNoRegularSpawns = false;
     public bool instantEnterPlayMode = false;
+    public bool playerIsImmune;
     public EnemyIdentifier debugEnemy;
-
+    
 
     private void Start() {
         #if !UNITY_EDITOR
         debugNoRegularSpawns = false;
         infiniteLevel = false;
         instantEnterPlayMode = false;
+        playerIsImmune= false;
         #endif
-        
+
+
         
         if(debugNoRegularSpawns || infiniteLevel)
             Debug.LogError("Debug options active!");
@@ -48,6 +51,9 @@ public class CheatsController : MonoBehaviour
                 SpeedController.s.IncreaseMissionEndDistance(50);
             }
         }
+        
+        ModuleHealth.isImmune = playerIsImmune;
+        
     }
 
     [Button]

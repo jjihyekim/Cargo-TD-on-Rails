@@ -81,6 +81,14 @@ public class LevelReferences : MonoBehaviour {
 
     public float hpRepairCostMultiplier = 0.25f;
 
+
+    public Color leftColor = Color.white;
+    public Color rightColor = Color.white;
+
+    public Sprite encounterIcon;
+
+    public EnemyIdentifier powerUpSpawnerEnemy;
+
     public float GetShopCostMultiplier(ResourceTypes type) {
         switch (type) {
             case ResourceTypes.ammo:

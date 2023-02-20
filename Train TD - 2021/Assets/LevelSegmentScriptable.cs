@@ -27,14 +27,15 @@ public class LevelSegment {
 
 	[HideInInspector]
 	public bool isEncounter = false;
-	public bool isBossLevel = false;
 
 	public EnemyOnPathData[] enemiesOnPath;
 
 	public bool rewardPowerUpAtTheEnd = false;
-	public bool rewardResourceAtTheEnd = false;
 	
 	public int segmentLength = 200;
+	
+	[Header("this will get autofilled")]
+	public string powerUpRewardUniqueName;
 	
 	public bool isRealLevel() {
 		return levelName != "unset";

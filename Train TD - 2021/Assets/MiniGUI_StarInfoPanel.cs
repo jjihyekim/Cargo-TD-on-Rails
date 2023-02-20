@@ -20,7 +20,7 @@ public class MiniGUI_StarInfoPanel : MonoBehaviour {
     public bool isTravel;
 
     public BoolReturnCallback hideCallback;
-    public void Initialize(StarState star, LevelData connectionLevel, BoolReturnCallback _hideCallback = null) {
+    public void Initialize(StarState star, ConstructedLevel connectionLevel, BoolReturnCallback _hideCallback = null) {
         StopAllCoroutines();
         currentStar = star;
         starName.text = currentStar.starName;
@@ -28,7 +28,7 @@ public class MiniGUI_StarInfoPanel : MonoBehaviour {
         bossDetected.SetActive(star.isBoss);
 
         if (!star.isBoss && connectionLevel != null) {
-            var isEncounter = connectionLevel.isEncounter;
+            var isEncounter = false;
             encounterDetected.SetActive(isEncounter);
             shipDetected.SetActive(!isEncounter);
         } else {
@@ -41,7 +41,7 @@ public class MiniGUI_StarInfoPanel : MonoBehaviour {
         hideCallback = _hideCallback;
     }
     
-    public void Initialize(StarState sourceStar, StarState targetStar, LevelData connectionLevel) {
+    public void Initialize(StarState sourceStar, StarState targetStar, ConstructedLevel connectionLevel) {
         Initialize(targetStar, connectionLevel);
         starName.text = $"{sourceStar.starName}\nto\n{targetStar.starName}";
     }

@@ -22,9 +22,9 @@ public class SceneLoader : MonoBehaviour {
     }
     
     [SerializeField]
-    private LevelData _currentLevel;
+    private ConstructedLevel _currentLevel;
 
-    public LevelData currentLevel {
+    public ConstructedLevel currentLevel {
         get {
             return _currentLevel;
         }
@@ -91,7 +91,7 @@ public class SceneLoader : MonoBehaviour {
         }
     }
     
-    public void SetCurrentLevel(LevelData levelData) {
+    public void SetCurrentLevel(ConstructedLevel levelData) {
         _currentLevel = levelData.Copy();
 
         if (MiniGUI_DebugLevelName.s != null) {

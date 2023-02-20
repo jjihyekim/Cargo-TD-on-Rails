@@ -47,7 +47,7 @@ public class RailWorldScript : MonoBehaviour {
 			SetPreviouslyVisited();
 		}
 				
-		SetEncounter(DataHolder.s.GetLevel(source.myInfo.outgoingConnectionLevels[outgoingIndex]).isEncounter);
+		SetEncounter(false);
 	}
 
 	void SetHighlightState(bool isHighlight) {

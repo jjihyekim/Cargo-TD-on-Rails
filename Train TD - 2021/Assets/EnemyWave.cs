@@ -48,13 +48,16 @@ public class EnemyWave : MonoBehaviour, IShowOnDistanceRadar, ISpeedForEngineSou
         lineRenderer = GetComponentInChildren<LineRenderer>();
     }
 
-    public void SetUp(EnemyIdentifier data, float position, bool isMoving, bool _isLeft) {
+    public void SetUp(EnemyIdentifier data, float position, bool isMoving, bool _isLeft, PowerUpScriptable powerUp) {
         myEnemy = data;
         var en = DataHolder.s.GetEnemy(myEnemy.enemyUniqueName);
         var mySwarm = en.GetComponent<EnemySwarmMaker>();
         if (mySwarm == null) {
             Debug.LogError($"Enemy is missing swarm maker {en.gameObject.name} {data.enemyUniqueName}");
         }
+
+        bool hasPowerUp = data.enemyUniqueName == LevelReferences.s.powerUpSpawnerEnemy.enemyUniqueName;
+       
         mySpeed = mySwarm.speed;
         isTeleporting = mySwarm.isTeleporting;
         teleportTiming = mySwarm.teleportTiming;
@@ -67,7 +70,7 @@ public class EnemyWave : MonoBehaviour, IShowOnDistanceRadar, ISpeedForEngineSou
         }
         
         isLeft = _isLeft;
-        SpawnEnemy();
+        SpawnEnemy(hasPowerUp, powerUp);
         
         SetTargetPosition();
         myXOffset = targetXOffset;
@@ -223,7 +226,7 @@ public class EnemyWave : MonoBehaviour, IShowOnDistanceRadar, ISpeedForEngineSou
             targetDistanceOffset = Random.Range(-halfLength, halfLength);
 
             targetXOffset = Random.Range(0.7f+waveSpawnXSpread, 3.2f-waveSpawnXSpread);
-            if (isLeft)
+            if (!isLeft)
                 targetXOffset = -targetXOffset;
         } else {
             SetTargetPositionStealing();
@@ -255,13 +258,17 @@ public class EnemyWave : MonoBehaviour, IShowOnDistanceRadar, ISpeedForEngineSou
         
         GetComponentInChildren<StealerHarpoonModule>().SetTarget(randomCargo); // we are assuming stealers come in packs of 1
         
-        if (isLeft)
+        if (!isLeft)
             targetXOffset = -targetXOffset;
     }
-    void SpawnEnemy() {
+    void SpawnEnemy(bool hasPowerUp, PowerUpScriptable powerUp) {
         drawnEnemies = Instantiate(DataHolder.s.GetEnemy(myEnemy.enemyUniqueName), transform).GetComponent<EnemySwarmMaker>();
         drawnEnemies.transform.ResetTransformation();
         waveSpawnXSpread = drawnEnemies.SetData(myEnemy.enemyCount);
+
+        if (hasPowerUp) {
+            drawnEnemies.enemyIcon = powerUp.icon;
+        }
     }
 
     void DestroyRouteDisplay() {
@@ -353,6 +360,10 @@ public class EnemyWave : MonoBehaviour, IShowOnDistanceRadar, ISpeedForEngineSou
 
     public Sprite GetIcon() {
         return DataHolder.s.GetEnemy(myEnemy.enemyUniqueName).GetComponent<EnemySwarmMaker>().enemyIcon;
+    }
+
+    public bool isLeftUnit() {
+        return isLeft;
     }
 
     public float GetSpeed() {

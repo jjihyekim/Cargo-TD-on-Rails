@@ -102,7 +102,6 @@ public class StarterUIController : MonoBehaviour {
 			mapOpenButton.interactable = false;
 			//mapDisabledDuringBattleOverlay.SetActive(true);
 
-			if (!currentLevel.isEncounter) {
 				ClearStaticTrackers();
 
 				gameUI.SetActive(true);
@@ -121,10 +120,10 @@ public class StarterUIController : MonoBehaviour {
 					if(currentLevel.isBossLevel)
 						MiniGUI_BossNameUI.s.ShowBossName(currentLevel.levelName);
 				}
-			} else {
+			/*} else {
 				SceneLoader.s.FinishLevel();
 				EncounterController.s.EngageEncounter(currentLevel);
-			}
+			}*/ // stuf to do during encounters
 		}
 	}
 
@@ -167,16 +166,16 @@ public class StarterUIController : MonoBehaviour {
 			return;
 		}
 
-		var level = DataHolder.s.GetLevel(playerStar.outgoingConnectionLevels[selectedLevelIndex]);
+		var level = playerStar.outgoingConnectionLevels[selectedLevelIndex];
 		SceneLoader.s.SetCurrentLevel(level);
-		missionDistance.text = "Mission Length: " + level.missionDistance;
+		//missionDistance.text = "Mission Length: " + level.missionDistance;
 		levelSelected = true;
 		OnLevelChanged?.Invoke();
 	}
 
-	public void SelectLevelAndStart_StarterUIStartOnly(LevelData data) {
+	public void SelectLevelAndStart_StarterUIStartOnly(ConstructedLevel data) {
 		SceneLoader.s.SetCurrentLevel(data);
-		missionDistance.text = "Mission Length: " + data.missionDistance;
+		//missionDistance.text = "Mission Length: " + data.missionDistance;
 		levelSelected = true;
 		OnLevelChanged?.Invoke();
 
@@ -201,8 +200,10 @@ public class StarterUIController : MonoBehaviour {
 
 
 	public void QuickStart() {
-		var playerStar = DataSaver.s.GetCurrentSave().currentRun.map.GetPlayerStar();
-		var targetStar = DataSaver.s.GetCurrentSave().currentRun.map.GetStarWithName(playerStar.outgoingConnections[0]);
-		SelectLevelAndStart(targetStar);
+		if (DataSaver.s.GetCurrentSave().isInARun) {
+			var playerStar = DataSaver.s.GetCurrentSave().currentRun.map.GetPlayerStar();
+			var targetStar = DataSaver.s.GetCurrentSave().currentRun.map.GetStarWithName(playerStar.outgoingConnections[0]);
+			SelectLevelAndStart(targetStar);
+		}
 	}
 }

@@ -14,6 +14,8 @@ public class SpeedController : MonoBehaviour, IShowOnDistanceRadar {
         s = this;
     }
 
+    public float debugSpeedOverride = -1f;
+
     public float currentTime = 0;
     public float currentDistance = 0;
 
@@ -54,10 +56,7 @@ public class SpeedController : MonoBehaviour, IShowOnDistanceRadar {
 
     public void UpdateBasedOnLevelData() {
         var myLevel = SceneLoader.s.currentLevel;
-        if (myLevel != null)
-            missionDistance = myLevel.missionDistance;
-        else
-            missionDistance = 500;
+        missionDistance = 500;
         
         
         endTrainStation.startPos = Vector3.forward * missionDistance;
@@ -75,8 +74,13 @@ public class SpeedController : MonoBehaviour, IShowOnDistanceRadar {
     }
 
     public void IncreaseMissionEndDistance(float amount) {
-        missionDistance += amount;
+        SetMissionEndDistance(missionDistance + amount);
+    }
+    
+    public void SetMissionEndDistance(float distance) {
+        missionDistance = distance;
         endTrainStation.startPos = Vector3.forward * missionDistance;
+        HexGrid.s.ResetDistance();
     }
 
     private void Start() {
@@ -177,6 +181,11 @@ public class SpeedController : MonoBehaviour, IShowOnDistanceRadar {
 
             internalRealSpeed = Mathf.MoveTowards(internalRealSpeed, targetSpeed, acceleration * Time.deltaTime);
             LevelReferences.s.speed = Mathf.Max( internalRealSpeed - slowAmount, 0f);
+            
+            if (debugSpeedOverride > 0) {
+                LevelReferences.s.speed = debugSpeedOverride;
+            }
+            
             slowAmount = Mathf.Lerp(slowAmount, 0, slowDecay * Time.deltaTime);
             slowAmount = Mathf.Clamp(slowAmount, 0, 5);
             if (slowAmount <= 0.2f) {
@@ -302,6 +311,10 @@ public class SpeedController : MonoBehaviour, IShowOnDistanceRadar {
     
     public Sprite GetIcon() {
         return trainRadarImg;
+    }
+
+    public bool isLeftUnit() {
+        return false;
     }
 
     public float slowAmount;

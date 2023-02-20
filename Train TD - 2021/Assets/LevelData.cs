@@ -34,7 +34,7 @@ public class LevelData {
 public class EnemyOnPathData {
 	public EnemyIdentifier enemyIdentifier = new EnemyIdentifier();
 
-	public int distanceOnPath = 30;
+	public int distanceOnPath = 45;
 	[HideInInspector]
 	public bool isLeft = false;
 }
@@ -44,10 +44,10 @@ public class EnemyDynamicSpawnData {
 	public EnemyIdentifier enemyIdentifier = new EnemyIdentifier();
 
 	public int distanceFromTrain = 30;
-	public float firstSpawnTime = 30;
-	public float spawnInterval = 30;
+	public float firstSpawnTime = 45;
+	public float spawnInterval = 45;
 
-	public int increaseInNumberInterval = 2;
+	public int increaseInNumberInterval = 3;
 	[NonSerialized]
 	public float curTime = 0;
 	[NonSerialized] 

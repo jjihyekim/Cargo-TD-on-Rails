@@ -21,7 +21,8 @@ public class FirstTimeTutorialController : MonoBehaviour {
 
     private void Start() {
         if (PlayerPrefs.GetInt("finishedTutorial", 0) == 0) {
-            Invoke(nameof(EngageFirstTimeTutorial),0.01f);
+            Debug.LogError("Tutorial Disabled!");
+            //Invoke(nameof(EngageFirstTimeTutorial),0.01f);
         } else {
             this.enabled = false;
         }
@@ -38,12 +39,13 @@ public class FirstTimeTutorialController : MonoBehaviour {
     }
 
     void DoStartTutorial() {
-        StarterUIController.s.OpenStarterUI();
+        throw new NotImplementedException();
+        /*StarterUIController.s.OpenStarterUI();
         StarterUIController.s.SelectLevelAndStart_StarterUIStartOnly(tutorialLevel.GetData() );
         tutorialEngaged = true;
 
         mapButton.interactable = false;
-        StartCoroutine(TutorialProcess());
+        StartCoroutine(TutorialProcess());*/
     }
 
 

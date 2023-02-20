@@ -9,47 +9,21 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: db512ea5c3f84be49c44fcd62d024370, type: 3}
+  m_Script: {fileID: 11500000, guid: b5d10d787ef192242aedf03f5045cbbd, type: 3}
   m_Name: The Army
   m_EditorClassIdentifier: 
-  myData:
-    levelName: Army
-    isEncounter: 0
-    isBossLevel: 1
-    enemiesOnPath:
-    - enemyIdentifier:
-        enemyUniqueName: Army
-        enemyCount: 1
-      distanceOnPath: 30
-      startMoving: 0
-    - enemyIdentifier:
-        enemyUniqueName: Army
-        enemyCount: 1
-      distanceOnPath: 90
-      startMoving: 0
-    - enemyIdentifier:
-        enemyUniqueName: Army
-        enemyCount: 2
-      distanceOnPath: 150
-      startMoving: 0
-    - enemyIdentifier:
-        enemyUniqueName: Army
-        enemyCount: 5
-      distanceOnPath: 400
-      startMoving: 0
-    dynamicSpawnEnemies:
-    - enemyIdentifier:
-        enemyUniqueName: SupplierSafe
-        enemyCount: 1
-      distanceFromTrain: 30
-      firstSpawnTime: 30
-      spawnInterval: 30
-      increaseInNumberInterval: 2
-    - enemyIdentifier:
-        enemyUniqueName: Army
-        enemyCount: 1
-      distanceFromTrain: 30
-      firstSpawnTime: 240
-      spawnInterval: 45
-      increaseInNumberInterval: 4
-    missionDistance: 700
+  isBossLevel: 0
+  possibleLevels:
+  - {fileID: 11400000, guid: 1cecbdbf1dae52e46897a0611f5f2579, type: 2}
+  - {fileID: 11400000, guid: 36cabfc8b0859ed4aa24e1fc1ca1574b, type: 2}
+  - {fileID: 11400000, guid: 88440591d13923f46ad24fd357da5eaf, type: 2}
+  - {fileID: 11400000, guid: faa0664b69b98bd438c02de835848c95, type: 2}
+  possibleEncounters: []
+  possibleDynamicSpawns:
+  - enemyIdentifier:
+      enemyUniqueName: Army
+      enemyCount: 1
+    distanceFromTrain: 30
+    firstSpawnTime: 200
+    spawnInterval: 60
+    increaseInNumberInterval: 4

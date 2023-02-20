@@ -9,6 +9,8 @@ using UnityEngine.UI;
 
 public class ModuleHealth : MonoBehaviour, IHealth, IActiveDuringCombat, IActiveDuringShopping {
 
+    public static bool isImmune = false;
+
     public float maxHealth = 50;
     public float currentHealth = 50;
 
@@ -42,6 +44,9 @@ public class ModuleHealth : MonoBehaviour, IHealth, IActiveDuringCombat, IActive
     [Button]
     public void DealDamage(float damage) {
         Assert.IsTrue(damage > 0);
+        if(isImmune)
+            return;
+
         if (!isDead) {
             currentHealth -= damage;
 
