@@ -13,24 +13,24 @@ MonoBehaviour:
   m_Name: Truck with buggies
   m_EditorClassIdentifier: 
   myData:
-    levelName: unset
+    levelName: Truck with buggies
     isEncounter: 0
     enemiesOnPath:
     - enemyIdentifier:
         enemyUniqueName: BuggyAVC
         enemyCount: 1
-      distanceOnPath: 45
+      distanceOnPath: 0
       isLeft: 0
     - enemyIdentifier:
         enemyUniqueName: TruckCannon
         enemyCount: 2
-      distanceOnPath: 90
+      distanceOnPath: 45
       isLeft: 0
     - enemyIdentifier:
         enemyUniqueName: BuggyCannon
         enemyCount: 3
-      distanceOnPath: 120
+      distanceOnPath: 60
       isLeft: 0
     rewardPowerUpAtTheEnd: 1
-    rewardResourceAtTheEnd: 0
     segmentLength: 150
+    powerUpRewardUniqueName: 

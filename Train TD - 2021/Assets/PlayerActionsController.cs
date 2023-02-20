@@ -308,7 +308,12 @@ public class PlayerActionsController : MonoBehaviour {
         activePowerUpButton = button;
         switch (activePowerUp.myType) {
             case PowerUpScriptable.PowerUpType.boost:
-                EnterPowerUpMode();
+                //EnterPowerUpMode();
+                var _boostActions = Train.s.GetComponentsInChildren<IBoostAction>();
+                for (int i = 0; i < _boostActions.Length; i++) {
+                    _boostActions[i].EngageForFree();
+                }
+                ClickPowerUpButtonDelete(button);
                 break;
             case PowerUpScriptable.PowerUpType.massHeal:
                 var _repairActions = Train.s.GetComponentsInChildren<RepairAction>();
@@ -485,10 +490,11 @@ public class PlayerActionsController : MonoBehaviour {
                         }
                         break;
                     case ActionModes.powerUp:
-                        if (IsPowerUpable(activeBuilding)) {
+                        /*if (IsPowerUpable(activeBuilding)) {
                             ApplyPowerUp(activeBuilding);
                             ClickPowerUpButtonDelete(activePowerUpButton);
-                        }
+                        }*/
+                        Debug.LogError("Powerup should not be applied to a thing!");
                         break;
                 }
             } else {
@@ -756,13 +762,14 @@ public class PlayerActionsController : MonoBehaviour {
                         }
                         break;
                     case ActionModes.powerUp:
-                        var action = activeBuilding.GetComponent<IBoostAction>();
+                        /*var action = activeBuilding.GetComponent<IBoostAction>();
 
                         if (action != null) {
                             costInfo.ShowPowerUpInfo(action.GetTooltip().text);
                         } else {
                             costInfo.ShowPowerUpInfo("Cannot Boost");
-                        }
+                        }*/
+                        // power up applies to everything.
                         break;
                 }
             } else {
@@ -797,18 +804,20 @@ public class PlayerActionsController : MonoBehaviour {
 
 
     public MiniGUI_PowerUpButton[] myPowerUpButtons;
-    void UpdatePowerUpButtons() {
-        var powerUps = DataSaver.s.GetCurrentSave().currentRun.powerUps;
+    public void UpdatePowerUpButtons() {
+        if (DataSaver.s.GetCurrentSave().isInARun) {
+            var powerUps = DataSaver.s.GetCurrentSave().currentRun.powerUps;
 
-        while (powerUps.Count < 3) {
-            powerUps.Add("");
-        }
+            while (powerUps.Count < 3) {
+                powerUps.Add("");
+            }
 
-        for (int i = 0; i < myPowerUpButtons.Length; i++) {
-            if (powerUps[i].Length > 0) {
-                myPowerUpButtons[i].SetPowerUp(DataHolder.s.GetPowerUp(powerUps[i]));
-            } else {
-                myPowerUpButtons[i].Clear();
+            for (int i = 0; i < myPowerUpButtons.Length; i++) {
+                if (powerUps[i].Length > 0) {
+                    myPowerUpButtons[i].SetPowerUp(DataHolder.s.GetPowerUp(powerUps[i]));
+                } else {
+                    myPowerUpButtons[i].Clear();
+                }
             }
         }
     }

@@ -142,6 +142,7 @@ public class MoneyController : MonoBehaviour {
                 fuel += amount;
             }
             
+            myFuel.SetScrap(fuel);
         } else {
             var currentRunMyResources = DataSaver.s.GetCurrentSave().currentRun.myResources;
             if (currentRunMyResources.fuel <= currentRunMyResources.maxFuel) {

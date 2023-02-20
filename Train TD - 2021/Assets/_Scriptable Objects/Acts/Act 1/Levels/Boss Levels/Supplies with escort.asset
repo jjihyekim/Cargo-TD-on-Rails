@@ -13,29 +13,29 @@ MonoBehaviour:
   m_Name: Supplies with escort
   m_EditorClassIdentifier: 
   myData:
-    levelName: unset
+    levelName: Supplies with escort
     isEncounter: 0
     enemiesOnPath:
     - enemyIdentifier:
         enemyUniqueName: SupplierSafe
         enemyCount: 1
-      distanceOnPath: 45
+      distanceOnPath: 0
       isLeft: 0
     - enemyIdentifier:
         enemyUniqueName: Army
         enemyCount: 1
-      distanceOnPath: 45
+      distanceOnPath: 0
       isLeft: 0
     - enemyIdentifier:
         enemyUniqueName: SupplierSafe
         enemyCount: 2
-      distanceOnPath: 100
+      distanceOnPath: 30
       isLeft: 0
     - enemyIdentifier:
         enemyUniqueName: Army
         enemyCount: 2
-      distanceOnPath: 100
+      distanceOnPath: 60
       isLeft: 0
     rewardPowerUpAtTheEnd: 0
-    rewardResourceAtTheEnd: 0
     segmentLength: 150
+    powerUpRewardUniqueName: 

@@ -32,9 +32,11 @@ public class LevelSegment {
 
 	public bool rewardPowerUpAtTheEnd = false;
 	
+	//[Tooltip("This will be expanded by about 100 to make space at the start and the end")]
+	[HideInInspector]
 	public int segmentLength = 200;
 	
-	[Header("this will get autofilled")]
+	[HideInInspector]
 	public string powerUpRewardUniqueName;
 	
 	public bool isRealLevel() {

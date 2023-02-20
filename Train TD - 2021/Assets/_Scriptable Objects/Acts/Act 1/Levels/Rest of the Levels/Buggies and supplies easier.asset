@@ -13,24 +13,24 @@ MonoBehaviour:
   m_Name: Buggies and supplies easier
   m_EditorClassIdentifier: 
   myData:
-    levelName: unset
+    levelName: Buggies and supplies easier
     isEncounter: 0
     enemiesOnPath:
     - enemyIdentifier:
         enemyUniqueName: BuggyPneumatic
         enemyCount: 3
-      distanceOnPath: 45
+      distanceOnPath: 0
       isLeft: 0
     - enemyIdentifier:
         enemyUniqueName: SupplierSafe
         enemyCount: 2
-      distanceOnPath: 90
+      distanceOnPath: 40
       isLeft: 0
     - enemyIdentifier:
         enemyUniqueName: BuggyPneumatic
         enemyCount: 1
-      distanceOnPath: 120
+      distanceOnPath: 90
       isLeft: 0
     rewardPowerUpAtTheEnd: 0
-    rewardResourceAtTheEnd: 0
     segmentLength: 150
+    powerUpRewardUniqueName: 

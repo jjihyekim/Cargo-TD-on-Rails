@@ -23,7 +23,7 @@ public class CarLikeMovementOffsetsController : MonoBehaviour{
     public Vector3 target;
     public Vector3 targetTargetPosition;
 
-    public float lookRotationDelta = 0.5f;
+    float lookRotationDelta = 20f;
     
     public Vector3 centerOfMass  = new Vector3(0, -0.1f, 0);
 
@@ -66,12 +66,13 @@ public class CarLikeMovementOffsetsController : MonoBehaviour{
 
         if (transform.position.y < -1) {
             transform.position += Vector3.up*20;
-            GetComponent<Rigidbody>().velocity = Vector3.zero;
+            rg.velocity = Vector3.zero;
         }
-        
-        
-        var lookRotation = transform.localPosition - target;
+
+
+        var lookRotation = rg.velocity;
         lookRotation.z = 0.5f;
+        lookRotation.y = 0;
         lookRotation.x = Mathf.Clamp(lookRotation.x, -0.2f, 0.2f);
         var realLookRotation = Quaternion.LookRotation(lookRotation, Vector3.up);
         var eulerAngles = transform.rotation.eulerAngles;

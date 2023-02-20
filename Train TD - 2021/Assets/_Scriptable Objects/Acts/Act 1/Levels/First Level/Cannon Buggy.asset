@@ -13,15 +13,14 @@ MonoBehaviour:
   m_Name: Cannon Buggy
   m_EditorClassIdentifier: 
   myData:
-    levelName: First Level Buggies
+    levelName: Cannon Buggy
     isEncounter: 0
-    isBossLevel: 0
     enemiesOnPath:
     - enemyIdentifier:
         enemyUniqueName: BuggyCannon
         enemyCount: 1
-      distanceOnPath: 45
+      distanceOnPath: 0
       isLeft: 0
     rewardPowerUpAtTheEnd: 0
-    rewardResourceAtTheEnd: 0
     segmentLength: 100
+    powerUpRewardUniqueName: 

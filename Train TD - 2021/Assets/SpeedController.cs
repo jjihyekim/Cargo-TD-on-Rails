@@ -84,6 +84,10 @@ public class SpeedController : MonoBehaviour, IShowOnDistanceRadar {
     }
 
     private void Start() {
+        StarterUIController.s.OnLevelStarted.AddListener(SpeedControllerRegisterTrain);
+    }
+
+    void SpeedControllerRegisterTrain() {
         DistanceAndEnemyRadarController.s.RegisterUnit(this);
     }
 

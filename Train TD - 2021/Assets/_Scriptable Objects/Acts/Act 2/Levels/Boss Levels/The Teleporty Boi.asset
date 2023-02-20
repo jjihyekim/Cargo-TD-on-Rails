@@ -9,52 +9,21 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: db512ea5c3f84be49c44fcd62d024370, type: 3}
+  m_Script: {fileID: 11500000, guid: b5d10d787ef192242aedf03f5045cbbd, type: 3}
   m_Name: The Teleporty Boi
   m_EditorClassIdentifier: 
-  myData:
-    levelName: The Teleporty Boi
-    isEncounter: 0
-    isBossLevel: 1
-    enemiesOnPath:
-    - enemyIdentifier:
-        enemyUniqueName: BossTeleporter
-        enemyCount: 1
-      distanceOnPath: 80
-      startMoving: 0
-    - enemyIdentifier:
-        enemyUniqueName: Slower
-        enemyCount: 1
-      distanceOnPath: 80
-      startMoving: 0
-    - enemyIdentifier:
-        enemyUniqueName: TeleportingBuggyGatling
-        enemyCount: 3
-      distanceOnPath: 160
-      startMoving: 0
-    - enemyIdentifier:
-        enemyUniqueName: TeleportingBuggyGatling
-        enemyCount: 3
-      distanceOnPath: 200
-      startMoving: 0
-    - enemyIdentifier:
-        enemyUniqueName: Slower
-        enemyCount: 2
-      distanceOnPath: 400
-      startMoving: 0
-    dynamicSpawnEnemies:
-    - enemyIdentifier:
-        enemyUniqueName: SupplierSafe
-        enemyCount: 1
-      distanceFromTrain: 30
-      firstSpawnTime: 30
-      spawnInterval: 30
-      increaseInNumberInterval: 4
-    - enemyIdentifier:
-        enemyUniqueName: TeleportingBuggyGatling
-        enemyCount: 1
-      distanceFromTrain: 60
-      firstSpawnTime: 30
-      spawnInterval: 30
-      increaseInNumberInterval: 2
-    missionDistance: 700
+  isBossLevel: 1
+  firstLevel: {fileID: 11400000, guid: 548fd8734347c5641b553302822488aa, type: 2}
+  possibleLevels:
+  - {fileID: 11400000, guid: 6f237cb1e7be3f942bff8caadb2bb45e, type: 2}
+  - {fileID: 11400000, guid: 721da0ebb1099ff4d92325ef8bab6d23, type: 2}
+  - {fileID: 11400000, guid: 69e07a51e2187e543adf8f5eea061ce5, type: 2}
+  possibleEncounters: []
+  possibleDynamicSpawns:
+  - enemyIdentifier:
+      enemyUniqueName: TeleportingBuggyGatling
+      enemyCount: 1
+    distanceFromTrain: 30
+    firstSpawnTime: 120
+    spawnInterval: 45
+    increaseInNumberInterval: 3

@@ -71,6 +71,7 @@ public class CharacterSelector : MonoBehaviour {
         HexGrid.s.RefreshGrid();
         UpgradesController.s.callWhenUpgradesOrModuleAmountsChanged?.Invoke();
         Pauser.s.Unpause();
+        PlayerActionsController.s.UpdatePowerUpButtons();
 
         DataSaver.s.SaveActiveGame();
         MusicPlayer.s.SwapMusicTracksAndPlay(false);

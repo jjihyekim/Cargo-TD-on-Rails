@@ -10,48 +10,43 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: db512ea5c3f84be49c44fcd62d024370, type: 3}
-  m_Name: Teleporting Buggies and Slowers
+  m_Name: --Trucks and slowers
   m_EditorClassIdentifier: 
   myData:
-    levelName: Teleporting Buggies and Slowers
+    levelName: Trucks and slowers
     isEncounter: 0
     enemiesOnPath:
     - enemyIdentifier:
-        enemyUniqueName: Slower
-        enemyCount: 2
+        enemyUniqueName: TruckCannon
+        enemyCount: 1
       distanceOnPath: 30
       startMoving: 0
     - enemyIdentifier:
-        enemyUniqueName: TeleportingBuggyAVC
+        enemyUniqueName: Slower
         enemyCount: 2
       distanceOnPath: 90
       startMoving: 0
     - enemyIdentifier:
-        enemyUniqueName: TeleportingBuggyAVC
-        enemyCount: 6
+        enemyUniqueName: TruckCannon
+        enemyCount: 2
       distanceOnPath: 150
       startMoving: 0
     - enemyIdentifier:
-        enemyUniqueName: SupplierSafe
-        enemyCount: 2
-      distanceOnPath: 300
-      startMoving: 0
-    - enemyIdentifier:
         enemyUniqueName: Slower
-        enemyCount: 3
-      distanceOnPath: 220
+        enemyCount: 2
+      distanceOnPath: 250
       startMoving: 0
     - enemyIdentifier:
-        enemyUniqueName: TeleportingBuggyCannon
-        enemyCount: 6
-      distanceOnPath: 240
+        enemyUniqueName: TruckCannon
+        enemyCount: 4
+      distanceOnPath: 350
       startMoving: 0
     dynamicSpawnEnemies:
     - enemyIdentifier:
-        enemyUniqueName: TeleportingBuggyGatling
-        enemyCount: 2
+        enemyUniqueName: TruckFlamer
+        enemyCount: 1
       distanceFromTrain: 30
       firstSpawnTime: 30
       spawnInterval: 30
-      increaseInNumberInterval: 2
+      increaseInNumberInterval: 3
     missionDistance: 500

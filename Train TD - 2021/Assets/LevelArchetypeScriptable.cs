@@ -12,6 +12,7 @@ public class LevelArchetypeScriptable : ScriptableObject {
 
     public bool isBossLevel;
 
+    public LevelSegmentScriptable firstLevel;
     public LevelSegmentScriptable[] possibleLevels;
     public EncounterTitle[] possibleEncounters;
     public EnemyDynamicSpawnData[] possibleDynamicSpawns;
@@ -40,6 +41,11 @@ public class LevelArchetypeScriptable : ScriptableObject {
         level.mySegmentsB = new LevelSegment[segmentCount];
 
         for (int i = 0; i < segmentCount; i++) {
+            if (i == 0 && firstLevel != null) {
+                level.mySegmentsA[0] = firstLevel.GetData();
+                level.mySegmentsB[0] = firstLevel.GetData();
+            }
+            
             var segmentType = NumberWithWeights.WeightedRandomRoll(enemyDirectionsChances);
             
             switch (segmentType) {
@@ -98,14 +104,13 @@ public class LevelArchetypeScriptable : ScriptableObject {
     }
 
 
+    private int firstEnemyInSegmentDistance = 40;
+    private int lastEnemyAndSegmentEndDistance = 60;
+    private int powerUpEnemyDistanceFromLastEnemy = 60;
     LevelSegment GenerateSegment(int type) { // 0 -> random 1 -> all left 2 -> all right 
         var segment =  possibleLevels[Random.Range(0, possibleLevels.Length)].GetData().Copy();
-        
-        var enemyOffset = segment.enemiesOnPath[0].distanceOnPath;
 
-        if (enemyOffset < 50) {
-            enemyOffset = 50 - enemyOffset;
-        }
+        var enemyOffset = firstEnemyInSegmentDistance;
 
         for (int i = 0; i < segment.enemiesOnPath.Length; i++) {
             segment.enemiesOnPath[i].distanceOnPath += enemyOffset;
@@ -132,26 +137,26 @@ public class LevelArchetypeScriptable : ScriptableObject {
         
 
         if (segment.rewardPowerUpAtTheEnd) {
-            if (furthestEnemyDistance + 100 > segment.segmentLength) {
-                segment.segmentLength = furthestEnemyDistance + 100;
-            }
+            /*if (furthestEnemyDistance + (lastEnemyAndSegmentEndDistance*2) > segment.segmentLength) {
+                segment.segmentLength = furthestEnemyDistance + (lastEnemyAndSegmentEndDistance*2);
+            }*/
             
+            furthestEnemyDistance += powerUpEnemyDistanceFromLastEnemy;
             var enemiesOnPath = new List<EnemyOnPathData>(segment.enemiesOnPath);
             enemiesOnPath.Add(new EnemyOnPathData() {
-                distanceOnPath = segment.segmentLength-50,
+                distanceOnPath = furthestEnemyDistance,
                 enemyIdentifier =  LevelReferences.s.powerUpSpawnerEnemy,
                 isLeft = segment.enemiesOnPath[segment.enemiesOnPath.Length-1].isLeft
             });
+
 
             segment.enemiesOnPath = enemiesOnPath.ToArray();
 
             segment.powerUpRewardUniqueName = DataHolder.s.powerUps[Random.Range(0, DataHolder.s.powerUps.Length)].name;
 
-        } else {
-            if (furthestEnemyDistance + 50 > segment.segmentLength) {
-                segment.segmentLength = furthestEnemyDistance + 50;
-            }
         }
+
+        segment.segmentLength = furthestEnemyDistance + lastEnemyAndSegmentEndDistance;
         
         segment.segmentLength += segment.segmentLength % HexGrid.s.gridSize.x;
         //segment.segmentLength -= HexGrid.s.gridSize.x / 2;

@@ -13,34 +13,34 @@ MonoBehaviour:
   m_Name: Truck with more trucks
   m_EditorClassIdentifier: 
   myData:
-    levelName: unset
+    levelName: Truck with more trucks
     isEncounter: 0
     enemiesOnPath:
     - enemyIdentifier:
         enemyUniqueName: TruckCannon
         enemyCount: 2
-      distanceOnPath: 45
+      distanceOnPath: 0
       isLeft: 0
     - enemyIdentifier:
         enemyUniqueName: SupplierSafe
         enemyCount: 2
-      distanceOnPath: 90
+      distanceOnPath: 40
       isLeft: 0
     - enemyIdentifier:
         enemyUniqueName: TruckFlamer
         enemyCount: 1
-      distanceOnPath: 120
+      distanceOnPath: 60
       isLeft: 0
     - enemyIdentifier:
         enemyUniqueName: SupplierSafe
         enemyCount: 3
-      distanceOnPath: 150
+      distanceOnPath: 100
       isLeft: 0
     - enemyIdentifier:
         enemyUniqueName: TruckCannon
         enemyCount: 3
-      distanceOnPath: 180
+      distanceOnPath: 150
       isLeft: 0
     rewardPowerUpAtTheEnd: 1
-    rewardResourceAtTheEnd: 0
     segmentLength: 200
+    powerUpRewardUniqueName: 

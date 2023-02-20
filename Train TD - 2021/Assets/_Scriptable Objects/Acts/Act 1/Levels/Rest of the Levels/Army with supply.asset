@@ -13,19 +13,19 @@ MonoBehaviour:
   m_Name: Army with supply
   m_EditorClassIdentifier: 
   myData:
-    levelName: unset
+    levelName: Army with supply
     isEncounter: 0
     enemiesOnPath:
     - enemyIdentifier:
         enemyUniqueName: Army
         enemyCount: 1
-      distanceOnPath: 45
+      distanceOnPath: 0
       isLeft: 0
     - enemyIdentifier:
         enemyUniqueName: SupplierSafe
         enemyCount: 2
-      distanceOnPath: 90
+      distanceOnPath: 35
       isLeft: 0
     rewardPowerUpAtTheEnd: 1
-    rewardResourceAtTheEnd: 0
     segmentLength: 120
+    powerUpRewardUniqueName: 

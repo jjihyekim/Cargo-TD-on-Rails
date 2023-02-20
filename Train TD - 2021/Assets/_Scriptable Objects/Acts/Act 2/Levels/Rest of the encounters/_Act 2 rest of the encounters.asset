@@ -1,0 +1,47 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b5d10d787ef192242aedf03f5045cbbd, type: 3}
+  m_Name: _Act 2 rest of the encounters
+  m_EditorClassIdentifier: 
+  isBossLevel: 0
+  firstLevel: {fileID: 0}
+  possibleLevels:
+  - {fileID: 11400000, guid: d0870ea8c9edc2f43a3bd6f4ae9233c8, type: 2}
+  - {fileID: 11400000, guid: ba50c158113131f468b99c5e61e79c4d, type: 2}
+  - {fileID: 11400000, guid: 2caf1d1febc85f844baf13adfcaccfe7, type: 2}
+  - {fileID: 11400000, guid: 21f3bea4345c225489bd23595b4ce4d6, type: 2}
+  - {fileID: 11400000, guid: fd6d7f85a70c989408b049b641c0cc64, type: 2}
+  possibleEncounters:
+  - {fileID: 3295736480921032522, guid: 74e11eec2b679cc4ca2084d1fe90b999, type: 3}
+  - {fileID: 1727440949419904987, guid: a9a82e9936c43bb449d3c23bf8fd4903, type: 3}
+  possibleDynamicSpawns:
+  - enemyIdentifier:
+      enemyUniqueName: TruckFlamer
+      enemyCount: 1
+    distanceFromTrain: 30
+    firstSpawnTime: 45
+    spawnInterval: 45
+    increaseInNumberInterval: 3
+  - enemyIdentifier:
+      enemyUniqueName: TeleportingBuggyGatling
+      enemyCount: 2
+    distanceFromTrain: 30
+    firstSpawnTime: 45
+    spawnInterval: 30
+    increaseInNumberInterval: 3
+  - enemyIdentifier:
+      enemyUniqueName: Army
+      enemyCount: 1
+    distanceFromTrain: 30
+    firstSpawnTime: 45
+    spawnInterval: 45
+    increaseInNumberInterval: 3

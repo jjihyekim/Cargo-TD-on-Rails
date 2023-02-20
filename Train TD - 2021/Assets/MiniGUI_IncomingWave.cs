@@ -60,27 +60,34 @@ public class MiniGUI_IncomingWave : MonoBehaviour {
         //then you calculate the position of the UI element
         //0,0 for the canvas is at the center of the screen, whereas WorldToViewPortPoint
         //treats the lower left corner as 0,0. Because of this, you need to subtract the height / width of the canvas * 0.5 to get the correct position.
-        Vector2 ViewportPosition = mainCam.WorldToViewportPoint(sourcePosition);
-        Vector2 WorldObject_ScreenPosition = new Vector2(
-            ((ViewportPosition.x * CanvasRect.sizeDelta.x) - (CanvasRect.sizeDelta.x * 0.5f)),
-            ((ViewportPosition.y * CanvasRect.sizeDelta.y) - (CanvasRect.sizeDelta.y * 0.5f)));
+        Vector3 ViewportPosition = mainCam.WorldToViewportPoint(sourcePosition);
 
-        //now you can set the position of the ui element
-        var halfWidthLimit = (CanvasRect.rect.width - (UIRect.rect.width + edgeGive)) / 2f;
-        var halfHeightLimit = (CanvasRect.rect.height - (UIRect.rect.height + edgeGive)) / 2f;
-        WorldObject_ScreenPosition.x = Mathf.Clamp(WorldObject_ScreenPosition.x,
-            -halfWidthLimit,
-            halfWidthLimit - (0.1f * CanvasRect.rect.width)
-        );
-        WorldObject_ScreenPosition.y = Mathf.Clamp(WorldObject_ScreenPosition.y,
-            -halfHeightLimit + (0.2f * CanvasRect.rect.height),
-            halfHeightLimit - (0.15f * CanvasRect.rect.height)
-        );
+        if (ViewportPosition.z > 0) {
+            Vector2 WorldObject_ScreenPosition = new Vector2(
+                ((ViewportPosition.x * CanvasRect.sizeDelta.x) - (CanvasRect.sizeDelta.x * 0.5f)),
+                ((ViewportPosition.y * CanvasRect.sizeDelta.y) - (CanvasRect.sizeDelta.y * 0.5f)));
 
-        myVecRef.vector2 = WorldObject_ScreenPosition;
-        UIRect.anchoredPosition = WorldObject_ScreenPosition;
+            //now you can set the position of the ui element
+            var halfWidthLimit = (CanvasRect.rect.width - (UIRect.rect.width + edgeGive)) / 2f;
+            var halfHeightLimit = (CanvasRect.rect.height - (UIRect.rect.height + edgeGive)) / 2f;
+            WorldObject_ScreenPosition.x = Mathf.Clamp(WorldObject_ScreenPosition.x,
+                -halfWidthLimit,
+                halfWidthLimit - (0.1f * CanvasRect.rect.width)
+            );
+            WorldObject_ScreenPosition.y = Mathf.Clamp(WorldObject_ScreenPosition.y,
+                -halfHeightLimit + (0.2f * CanvasRect.rect.height),
+                halfHeightLimit - (0.15f * CanvasRect.rect.height)
+            );
+
+            myVecRef.vector2 = WorldObject_ScreenPosition;
+            UIRect.anchoredPosition = WorldObject_ScreenPosition;
+        } else {
+            // if we cant see the object go to some off screen location
+            myVecRef.vector2 = new Vector2(100000, 100000);
+            UIRect.anchoredPosition = new Vector2(100000, 100000);
+        }
     }
-    
+
     class Vector2Reference {
         public Vector2 vector2;
     }

@@ -1,0 +1,72 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: db512ea5c3f84be49c44fcd62d024370, type: 3}
+  m_Name: --Buggies and thiefs
+  m_EditorClassIdentifier: 
+  myData:
+    levelName: Smol Starts
+    isEncounter: 0
+    enemiesOnPath:
+    - enemyIdentifier:
+        enemyUniqueName: Stealer
+        enemyCount: 1
+      distanceOnPath: 30
+      startMoving: 0
+    - enemyIdentifier:
+        enemyUniqueName: BuggyAVC
+        enemyCount: 2
+      distanceOnPath: 90
+      startMoving: 0
+    - enemyIdentifier:
+        enemyUniqueName: Stealer
+        enemyCount: 1
+      distanceOnPath: 150
+      startMoving: 0
+    - enemyIdentifier:
+        enemyUniqueName: Stealer
+        enemyCount: 1
+      distanceOnPath: 150
+      startMoving: 0
+    - enemyIdentifier:
+        enemyUniqueName: BuggyAVC
+        enemyCount: 6
+      distanceOnPath: 250
+      startMoving: 0
+    - enemyIdentifier:
+        enemyUniqueName: BuggyCannon
+        enemyCount: 3
+      distanceOnPath: 350
+      startMoving: 0
+    - enemyIdentifier:
+        enemyUniqueName: Stealer
+        enemyCount: 1
+      distanceOnPath: 350
+      startMoving: 0
+    - enemyIdentifier:
+        enemyUniqueName: Stealer
+        enemyCount: 1
+      distanceOnPath: 350
+      startMoving: 0
+    - enemyIdentifier:
+        enemyUniqueName: Stealer
+        enemyCount: 1
+      distanceOnPath: 350
+      startMoving: 0
+    dynamicSpawnEnemies:
+    - enemyIdentifier:
+        enemyUniqueName: Stealer
+        enemyCount: 1
+      distanceFromTrain: 30
+      firstSpawnTime: 30
+      spawnInterval: 30
+      increaseInNumberInterval: -1
+    missionDistance: 500

@@ -51,10 +51,9 @@ public class EnemyWavesController : MonoBehaviour {
 			PowerUpScriptable powerUpScriptable = null;
 			if (segment.rewardPowerUpAtTheEnd) {
 				powerUpScriptable = DataHolder.s.GetPowerUp(segment.powerUpRewardUniqueName);
+				powerUpScriptables.Enqueue(powerUpScriptable);
 			}
 
-			powerUpScriptables.Enqueue(powerUpScriptable);
-			
 			var enemiesOnPath = segment.enemiesOnPath;
 			for (int i = 0; i < enemiesOnPath.Length; i++) {
 				SpawnEnemy(enemiesOnPath[i].enemyIdentifier, segmentStartDistance+ enemiesOnPath[i].distanceOnPath, false, enemiesOnPath[i].isLeft, powerUpScriptable);

@@ -13,25 +13,19 @@ MonoBehaviour:
   m_Name: Lots of Bikes
   m_EditorClassIdentifier: 
   myData:
-    levelName: First Level Buggies
+    levelName: Lots of Bikes
     isEncounter: 0
-    isBossLevel: 0
     enemiesOnPath:
     - enemyIdentifier:
         enemyUniqueName: Biker
         enemyCount: 1
-      distanceOnPath: 45
+      distanceOnPath: 0
       isLeft: 0
     - enemyIdentifier:
         enemyUniqueName: Biker
         enemyCount: 3
-      distanceOnPath: 100
-      isLeft: 0
-    - enemyIdentifier:
-        enemyUniqueName: Biker
-        enemyCount: 6
-      distanceOnPath: 150
+      distanceOnPath: 50
       isLeft: 0
     rewardPowerUpAtTheEnd: 0
-    rewardResourceAtTheEnd: 0
-    segmentLength: 200
+    segmentLength: 150
+    powerUpRewardUniqueName: 

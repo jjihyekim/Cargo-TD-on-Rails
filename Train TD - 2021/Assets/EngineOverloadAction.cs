@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class EngineOverloadAction : ModuleAction, IActiveDuringCombat, IBoostAction
+public class EngineOverloadAction : ModuleAction, IActiveDuringCombat
 {
 	
 	[Space]

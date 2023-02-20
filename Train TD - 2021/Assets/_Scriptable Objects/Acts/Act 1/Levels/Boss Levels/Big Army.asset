@@ -13,29 +13,29 @@ MonoBehaviour:
   m_Name: Big Army
   m_EditorClassIdentifier: 
   myData:
-    levelName: unset
+    levelName: Big Army
     isEncounter: 0
     enemiesOnPath:
     - enemyIdentifier:
         enemyUniqueName: Army
         enemyCount: 1
-      distanceOnPath: 45
+      distanceOnPath: 0
+      isLeft: 0
+    - enemyIdentifier:
+        enemyUniqueName: Army
+        enemyCount: 2
+      distanceOnPath: 50
+      isLeft: 0
+    - enemyIdentifier:
+        enemyUniqueName: SupplierSafe
+        enemyCount: 1
+      distanceOnPath: 75
       isLeft: 0
     - enemyIdentifier:
         enemyUniqueName: Army
         enemyCount: 2
       distanceOnPath: 100
       isLeft: 0
-    - enemyIdentifier:
-        enemyUniqueName: SupplierSafe
-        enemyCount: 1
-      distanceOnPath: 125
-      isLeft: 0
-    - enemyIdentifier:
-        enemyUniqueName: Army
-        enemyCount: 2
-      distanceOnPath: 150
-      isLeft: 0
     rewardPowerUpAtTheEnd: 1
-    rewardResourceAtTheEnd: 0
     segmentLength: 200
+    powerUpRewardUniqueName: 

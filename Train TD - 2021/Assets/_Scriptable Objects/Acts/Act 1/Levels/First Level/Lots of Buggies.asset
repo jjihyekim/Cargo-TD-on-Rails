@@ -13,25 +13,19 @@ MonoBehaviour:
   m_Name: Lots of Buggies
   m_EditorClassIdentifier: 
   myData:
-    levelName: First Level Buggies
+    levelName: Lots of Buggies
     isEncounter: 0
-    isBossLevel: 0
     enemiesOnPath:
     - enemyIdentifier:
         enemyUniqueName: BuggyAVC
         enemyCount: 1
-      distanceOnPath: 45
-      isLeft: 0
-    - enemyIdentifier:
-        enemyUniqueName: BuggyPneumatic
-        enemyCount: 2
-      distanceOnPath: 100
+      distanceOnPath: 0
       isLeft: 0
     - enemyIdentifier:
         enemyUniqueName: BuggyAVC
         enemyCount: 2
-      distanceOnPath: 150
+      distanceOnPath: 50
       isLeft: 0
     rewardPowerUpAtTheEnd: 0
-    rewardResourceAtTheEnd: 0
-    segmentLength: 200
+    segmentLength: 50
+    powerUpRewardUniqueName: 

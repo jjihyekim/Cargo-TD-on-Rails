@@ -13,24 +13,24 @@ MonoBehaviour:
   m_Name: Truck with bikes
   m_EditorClassIdentifier: 
   myData:
-    levelName: unset
+    levelName: Truck with bikes
     isEncounter: 0
     enemiesOnPath:
     - enemyIdentifier:
         enemyUniqueName: TruckCannon
         enemyCount: 1
-      distanceOnPath: 45
+      distanceOnPath: 0
       isLeft: 0
     - enemyIdentifier:
         enemyUniqueName: SupplierSafe
         enemyCount: 2
-      distanceOnPath: 90
+      distanceOnPath: 40
       isLeft: 0
     - enemyIdentifier:
         enemyUniqueName: Biker
         enemyCount: 3
-      distanceOnPath: 120
+      distanceOnPath: 60
       isLeft: 0
     rewardPowerUpAtTheEnd: 0
-    rewardResourceAtTheEnd: 0
     segmentLength: 150
+    powerUpRewardUniqueName: 
