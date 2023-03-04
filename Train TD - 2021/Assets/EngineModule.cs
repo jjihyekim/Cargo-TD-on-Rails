@@ -7,7 +7,7 @@ public class EngineModule : MonoBehaviour, IActiveDuringCombat, IActiveDuringSho
    public int enginePower = 100;
    public bool isNuclear = false;
 
-   public bool hasFuel = true;
+   public bool hasFuel = false;
    private void OnEnable() {
       SpeedController.s.AddEngine(this);
    }
@@ -18,23 +18,11 @@ public class EngineModule : MonoBehaviour, IActiveDuringCombat, IActiveDuringSho
       }
    }
 
-   private int lastSelfDamageAmount = -1;
-   public void SetSelfDamageState(int amount) {
-      if (amount != lastSelfDamageAmount) {
-         lastSelfDamageAmount = amount;
-         switch (amount) {
-            case 0:
-               GetComponent<ModuleHealth>().selfDamage = false;
-               break;
-            case 1:
-               GetComponent<ModuleHealth>().selfDamage = true;
-               GetComponent<ModuleHealth>().selfDamageMultiplier = 1;
-               break;
-            case 2:
-               GetComponent<ModuleHealth>().selfDamage = true;
-               GetComponent<ModuleHealth>().selfDamageMultiplier = 2;
-               break;
-         }
+   private bool lastSelfDamageAmount = false;
+   public void SetSelfDamageState(bool doSelfDamage) {
+      if (doSelfDamage != lastSelfDamageAmount) {
+         lastSelfDamageAmount = doSelfDamage;
+         GetComponent<ModuleHealth>().selfDamage = doSelfDamage;
       }
    }
 

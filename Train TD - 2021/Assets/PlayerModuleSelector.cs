@@ -71,16 +71,16 @@ public class PlayerModuleSelector : MonoBehaviour {
                 activeActionSelection.SetUp(activeBuilding);
                 isActionSelectionActive = true;
                 
-                if(PlayerPrefs.GetInt("SnapToPlayer", 1) == 1)
-                    CameraController.s.SnapToTrainModule(activeBuilding);
+                /*if(PlayerPrefs.GetInt("SnapToPlayer", 1) == 1)
+                    CameraController.s.SnapToTrainModule(activeBuilding);*/
                 
             } else if (activeEnemy != null) {
                 activeActionSelection.gameObject.SetActive(true);
                 activeActionSelection.SetUp(activeEnemy);
                 isActionSelectionActive = true;
                 
-                if(PlayerPrefs.GetInt("SnapToEnemies", 1) == 1)
-                    CameraController.s.SnapToTransform(activeEnemy.transform);
+                /*if(PlayerPrefs.GetInt("SnapToEnemies", 1) == 1)
+                    CameraController.s.SnapToTransform(activeEnemy.transform);*/
             } else {
                 HideModuleActionSelector();
             }

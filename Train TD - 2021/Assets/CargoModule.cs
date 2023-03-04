@@ -5,17 +5,9 @@ using UnityEngine;
 
 public class CargoModule : MonoBehaviour, IActiveDuringCombat, IActiveDuringShopping {
 
-    public int cargoSize = 1;
-
-    public int moneyReward = 100;
-    //public int moneyCost = 50;
+    public bool isBuildingReward;
+    public string myReward;
     
-    public enum CargoTypes {
-        ammo, fuel, food
-    }
-
-    public CargoTypes myCargoType;
-
     public void ActivateForCombat() {
         this.enabled = true;
     }
@@ -36,8 +28,7 @@ public class CargoModule : MonoBehaviour, IActiveDuringCombat, IActiveDuringShop
         Destroy(gameObject);
     }
 
-    public int GetReward() {
-        var health = GetComponent<ModuleHealth>().GetHealthPercent();
-        return (int)(health * moneyReward);
+    public string GetReward() {
+        return myReward;
     }
 }

@@ -71,7 +71,7 @@ public class MiniGUI_StarterBuildingButton : MonoBehaviour {
 		cargoNameText.text = myBuilding.displayName;
 		//cost = _cost;
 		//reward = _reward;
-		rewardText.text = $"+{building.GetComponent<CargoModule>().moneyReward}";
+		//rewardText.text = $"+{building.GetComponent<CargoModule>().moneyReward}";
 		UpdateCountText();
 	}
 

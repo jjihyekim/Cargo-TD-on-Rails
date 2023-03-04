@@ -37,19 +37,23 @@ public class ReloadAllButton : MonoBehaviour
         }
     }
 
+    private bool isFree = true;
+
     void Update() {
         var cost = 0;
 
         for (int i = 0; i < _reloadActions.Length; i++) {
-            if(_reloadActions[i].myType == ResourceTypes.ammo)
-                cost += (int)_reloadActions[i].costWithoutAffordability;
+            if (_reloadActions[i].myType == ResourceTypes.ammo)
+                //cost += (int)_reloadActions[i].costWithoutAffordability;
+                cost += _reloadActions[i].cost;
         }
 
-        costText.text = cost.ToString();
 
-        var canAfford = MoneyController.s.HasResource(ResourceTypes.ammo, cost);
+        var canAfford = MoneyController.s.HasResource(ResourceTypes.ammo, cost) || isFree;
         _button.interactable = cost > 0 && canAfford;
         costText.color = canAfford ? regularColor : cantAffordColor;
+        
+        costText.text = isFree ? "Free" : cost.ToString();
     }
 
 

@@ -33,12 +33,12 @@ public class MiniGUI_BuySupplies : MonoBehaviour
 		if (curRun.shopInitialized) {
 			myPriceIndex = null;
 
-			for (int i = 0; i < curRun.currentShopPrices.Count; i++) {
+			/*for (int i = 0; i < curRun.currentShopPrices.Count; i++) {
 				if (curRun.currentShopPrices[i].type == myType) {
 					myPriceIndex = curRun.currentShopPrices[i];
 					break;
 				}
-			}
+			}*/
 
 		} 
 

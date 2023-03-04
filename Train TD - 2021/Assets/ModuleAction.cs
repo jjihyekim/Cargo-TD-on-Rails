@@ -39,7 +39,7 @@ public abstract class ModuleAction : MonoBehaviour {
 		}
 	}
 
-	public void EngageAction() {
+	public bool EngageAction() {
 		if (canEngage) {
 			if (curCooldown <= 0) {
 				if (cost > 0) {
@@ -54,6 +54,8 @@ public abstract class ModuleAction : MonoBehaviour {
 						if (soundEffect.Length > 0) {
 							SoundscapeController.s.PlayModuleSkillActivate(soundEffect[Random.Range(0, soundEffect.Length)]);
 						}
+
+						return true;
 					}
 				} else {
 					//MoneyController.s.ModifyResource(myType, -cost);
@@ -67,9 +69,13 @@ public abstract class ModuleAction : MonoBehaviour {
 					if (soundEffect.Length > 0) {
 						SoundscapeController.s.PlayModuleSkillActivate(soundEffect[Random.Range(0, soundEffect.Length)]);
 					}
+
+					return true;
 				}
 			}
 		}
+
+		return false;
 	}
 
 	public void RefundAction() {

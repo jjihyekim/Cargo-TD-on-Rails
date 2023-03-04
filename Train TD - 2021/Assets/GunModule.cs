@@ -47,9 +47,6 @@ public class GunModule : MonoBehaviour, IComponentWithTarget, IActiveDuringComba
 
     public bool canPenetrateArmor = false;
 
-    /*public float ammoUsePerShot = 0;
-    public float scrapUsePerShot = 0;*/
-    public float fuelUsePerShot = 0;
     public float steamUsePerShot = 0;
 
     public bool needWarmUp = false;
@@ -133,6 +130,12 @@ public class GunModule : MonoBehaviour, IComponentWithTarget, IActiveDuringComba
             boost /= DirectControlMaster.s.directControlFireRateBoost;
         }
         
+        if (isPlayer) {
+            boost /= TweakablesMaster.s.myTweakables.playerFirerateBoost;
+        } else {
+            boost /= TweakablesMaster.s.myTweakables.enemyFirerateBoost;
+        }
+        
         return boost;
     }
 
@@ -144,9 +147,9 @@ public class GunModule : MonoBehaviour, IComponentWithTarget, IActiveDuringComba
         }
 
         if (isPlayer) {
-            dmgMul *= LevelReferences.s.playerDamageBuff;
+            dmgMul *= TweakablesMaster.s.myTweakables.playerDamageMultiplier;
         } else {
-            dmgMul *= LevelReferences.s.enemyDamageBuff;
+            dmgMul *= TweakablesMaster.s.myTweakables.enemyDamageMutliplier;
         }
 
         if (beingDirectControlled) {
@@ -191,7 +194,7 @@ public class GunModule : MonoBehaviour, IComponentWithTarget, IActiveDuringComba
         }
 
         for (int i = 0; i < fireBarrageCount; i++) {
-            if (!isPlayer || AreThereEnoughMaterialsToShoot() || isFree) {
+            //if (!isPlayer || AreThereEnoughMaterialsToShoot() || isFree) {
                 var barrelEnd = GetShootTransform().transform;
                 var position = barrelEnd.position;
                 var rotation = barrelEnd.rotation;
@@ -212,19 +215,14 @@ public class GunModule : MonoBehaviour, IComponentWithTarget, IActiveDuringComba
                     LogShotData(projectileDamage*GetDamageMultiplier());
 
                 if (isPlayer && !isFree) {
-                    /*MoneyController.s.SubtractAmmo(ammoUsePerShot);
-                    MoneyController.s.SubtractScraps(scrapUsePerShot);*/
-                    if (fuelUsePerShot > 0) {
-                        MoneyController.s.ModifyResource(ResourceTypes.fuel, -fuelUsePerShot);
-                    }
-                    SpeedController.s.UseSteam(steamUsePerShot);
+                    SpeedController.s.UseSteam(steamUsePerShot*TweakablesMaster.s.myTweakables.gunSteamUseMultiplier);
                 }
                 
                 shotCallback?.Invoke();
                 onBulletFiredEvent?.Invoke();
                 if(gunShakeOnShoot)
                     StartCoroutine(ShakeGun());
-            }
+            //}
             yield return new WaitForSeconds(fireBarrageDelay);
         }
         
@@ -268,19 +266,9 @@ public class GunModule : MonoBehaviour, IComponentWithTarget, IActiveDuringComba
         StartCoroutine(_ShootBarrage(isFree, shotCallback, onHitCallback));
     }
 
-    bool AreThereEnoughMaterialsToShoot() {
-        var areThereEnough = true;
-
-        // ReSharper disable once ConditionIsAlwaysTrueOrFalse
-        /*areThereEnough = areThereEnough && MoneyController.s.ammo >= ammoUsePerShot;
-        areThereEnough = areThereEnough && MoneyController.s.scraps >= scrapUsePerShot;*/
-        areThereEnough = areThereEnough && MoneyController.s.HasResource(ResourceTypes.fuel, fuelUsePerShot);
-        
-        return areThereEnough;
-    }
 
     void LogShotData(float damage) {
-        var currentLevelStats = PlayerBuildingController.s.currentLevelStats;
+        /*var currentLevelStats = PlayerBuildingController.s.currentLevelStats;
         var buildingName = GetComponent<TrainBuilding>().uniqueName;
         if (currentLevelStats.TryGetValue(buildingName, out PlayerBuildingController.BuildingData data)) {
             data.damageData += damage;
@@ -289,7 +277,7 @@ public class GunModule : MonoBehaviour, IComponentWithTarget, IActiveDuringComba
             toAdd.uniqueName = buildingName;
             toAdd.damageData += damage;
             currentLevelStats.Add(buildingName, toAdd);
-        }
+        }*/
     }
 
     private int lastIndex = -1;

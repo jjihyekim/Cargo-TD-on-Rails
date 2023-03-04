@@ -143,7 +143,7 @@ public class StarterUIController : MonoBehaviour {
 		ModuleHealth.buildingsDestroyed = 0;
 		EnemyHealth.enemySpawned = 0;
 		EnemyHealth.enemyKilled = 0;
-		PlayerBuildingController.s.currentLevelStats = new Dictionary<string, PlayerBuildingController.BuildingData>();
+		//PlayerBuildingController.s.currentLevelStats = new Dictionary<string, PlayerBuildingController.BuildingData>();
 	}
 
 	public void SelectLevelAndStart(StarState targetStar) {

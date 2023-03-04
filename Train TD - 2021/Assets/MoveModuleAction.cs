@@ -8,6 +8,7 @@ public class MoveModuleAction : ModuleAction, IActiveDuringCombat, IActiveDuring
     private int realCost = -1;
     protected override void _EngageAction() {
         var building = GetComponent<TrainBuilding>();
+        building.mySlot.TemporaryRemoval(building);
         PlayerBuildingController.s.StartBuilding(DataHolder.s.GetBuilding(building.uniqueName), BuildingDoneCallback, GetTheFinishedBuilding, true,false);
         PlayerModuleSelector.s.HideModuleActionSelector();
         building.SetHighlightState(true);
@@ -28,15 +29,9 @@ public class MoveModuleAction : ModuleAction, IActiveDuringCombat, IActiveDuring
     }
 
     void GetTheFinishedBuilding(TrainBuilding newBuilding) {
-        newBuilding.SetCurrentHealth(GetComponent<ModuleHealth>().currentHealth);
-
-        var ammo = GetComponent<ModuleAmmo>();
-
-        if (ammo != null) {
-            var newAmmo = newBuilding.GetComponent<ModuleAmmo>();
-
-            newAmmo.SetAmmo(ammo.curAmmo);
-        }
+        var state = new DataSaver.TrainState.CartState.BuildingState();
+        Train.ApplyBuildingToState(GetComponent<TrainBuilding>(),state);
+        Train.ApplyStateToBuilding(newBuilding, state);
     }
 
     public void ActivateForCombat() {

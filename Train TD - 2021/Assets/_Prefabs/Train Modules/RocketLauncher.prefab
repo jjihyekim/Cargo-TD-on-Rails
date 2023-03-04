@@ -863,6 +863,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   maxHealth: 300
   currentHealth: 300
+  damageReductionMultiplier: 1
   healthBar: {fileID: 0}
   explodePrefab: {fileID: 1046195756885079355, guid: 14455273e5a26a947a26caf9a4dfdd38, type: 3}
   isDead: 0
@@ -927,8 +928,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ffd4c45972e0fc54a84560b4d5de93b9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxAmmo: 10
-  ammoPerShot: 1
+  maxAmmo: 5
+  ammoPerBarrage: 1
 --- !u!114 &-5925618615010043299
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1035,7 +1036,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   actionName: Reload
   myType: 0
-  cost: 40
+  cost: 1
   cooldown: 5
   curCooldown: 0
   canEngage: 1

@@ -14,6 +14,8 @@ public class ModuleHealth : MonoBehaviour, IHealth, IActiveDuringCombat, IActive
     public float maxHealth = 50;
     public float currentHealth = 50;
 
+    public float damageReductionMultiplier = 1f;
+
 
     [ReadOnly]
     public MiniGUI_HealthBar healthBar;
@@ -26,7 +28,6 @@ public class ModuleHealth : MonoBehaviour, IHealth, IActiveDuringCombat, IActive
     public static int buildingsDestroyed;
 
     public bool damageNearCartsOnDeath = false;
-    public float selfDamageMultiplier = 1;
     public bool selfDamage = false;
     [ShowIf("selfDamage")] 
     private float selfDamageTimer;
@@ -352,9 +353,9 @@ public class ModuleHealth : MonoBehaviour, IHealth, IActiveDuringCombat, IActive
     
     [Button]
     public void Die() {
-        if (damageNearCartsOnDeath) {
+        /*if (damageNearCartsOnDeath) {
             DamageNearCartsOnDeath();
-        }
+        }*/
 
         if (isCartHp) {
             var buildings = GetComponentsInChildren<TrainBuilding>();
@@ -419,6 +420,10 @@ public class ModuleHealth : MonoBehaviour, IHealth, IActiveDuringCombat, IActive
         
         Instantiate(explodePrefab, transform.position, transform.rotation);
         SoundscapeController.s.PlayModuleExplode();
+        
+        if (damageNearCartsOnDeath) {
+            DamageNearCartsOnDeath();
+        }
     }
 
     [Button]

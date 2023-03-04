@@ -509,7 +509,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   myType: 1
-  amount: 125
+  amount: 25
   generationPerSecond: 0
 --- !u!114 &5560575729523208099
 MonoBehaviour:
@@ -524,7 +524,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   myType: 0
-  amount: 50
+  amount: 1
   generationPerSecond: 0
 --- !u!114 &5512184099890068669
 MonoBehaviour:
@@ -539,8 +539,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   myType: 2
-  amount: 25
-  generationPerSecond: 0
+  amount: 1
+  generationPerSecond: 0.005
 --- !u!114 &5592445795315755096
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -569,11 +569,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   maxHealth: 200
   currentHealth: 200
+  damageReductionMultiplier: 1
   healthBar: {fileID: 0}
   explodePrefab: {fileID: 1046195756885079355, guid: 14455273e5a26a947a26caf9a4dfdd38, type: 3}
   isDead: 0
   damageNearCartsOnDeath: 0
-  selfDamageMultiplier: 1
   selfDamage: 0
   selfDamageAmounts: 140000000a000000
   isCartHp: 0
@@ -610,7 +610,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   tooltip:
-    text: Stores 100 Scraps, 50 Fuel, 25 Ammo. Does not generate any resources.
+    text: Stores 10 Scraps, 1 Fuel, 1 Ammo. Generates a little bit of ammo.
   info: Stores some of each resource
 --- !u!114 &6185752351275548796
 MonoBehaviour:

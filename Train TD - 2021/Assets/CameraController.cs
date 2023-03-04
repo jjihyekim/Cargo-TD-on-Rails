@@ -62,7 +62,7 @@ public class CameraController : MonoBehaviour {
     public float minSnapDistance = 2f;
 
     public bool canEdgeMove = false;
-
+    
     protected void OnEnable()
     {
         moveAction.action.Enable();
@@ -461,11 +461,12 @@ public class CameraController : MonoBehaviour {
     private Vector2 rotTarget;
     public float mouseSensitivity = 1f;
     public float gamepadSensitivity = 1f;
+    public float overallSensitivity = 1f;
     private bool rotLerping = true;
 
     public void ProcessDirectControl(Vector2 stickInput) {
         var realInput = stickInput*gamepadSensitivity + Mouse.current.delta.ReadValue() * mouseSensitivity;
-        realInput *= Time.unscaledDeltaTime;
+        realInput *= Time.unscaledDeltaTime * (overallSensitivity/2.5f);
 
         rotTarget += realInput;
 
@@ -497,5 +498,9 @@ public class CameraController : MonoBehaviour {
     public void DisableDirectControl() {
         directControlActive = false;
         Cursor.lockState = CursorLockMode.None;
+    }
+
+    public void ManualRotateDirectControl(float amount) {
+        rotTarget.x += amount/1.2f;
     }
 }

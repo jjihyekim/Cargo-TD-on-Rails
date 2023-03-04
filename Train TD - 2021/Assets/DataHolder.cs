@@ -16,7 +16,6 @@ public class DataHolder : MonoBehaviour {
     private void Awake() {
         if (s == null)
             s = this;
-        //ResetTweakable();
     }
 
 
@@ -37,32 +36,7 @@ public class DataHolder : MonoBehaviour {
     //public GameObject trainModuleGenericExplodePrefab;
 
     //public AudioClip[] sellSounds;
-
     
-    /*[SerializeField]
-    private TweakablesParentScriptable myTweakable;
-    public TweakablesParent fullCopy;
-
-    public void OverrideData(TweakablesParent data) {
-        fullCopy = data;
-        tweakableChanged?.Invoke(fullCopy);
-        var state = Train.s.GetTrainState();
-        Train.s.DrawTrain(state);
-    }
-
-    public void ResetTweakable() {
-        fullCopy = myTweakable.myTweakable.Clone();
-    }
-
-
-    public UnityEvent<TweakablesParent> tweakableChanged;
-    
-    /// <summary>
-    /// Make sure to also sign up to the "tweakableChanged" event if you are getting tweaks.
-    /// </summary>
-    public TweakablesParent GetTweaks() {
-        return fullCopy;
-    }*/
 
     public PowerUpScriptable GetPowerUp(string powerUpUniqueName) {
         for (int i = 0; i < powerUps.Length; i++) {

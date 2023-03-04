@@ -7,7 +7,7 @@ public class ReloadAction : ModuleAction, IActiveDuringCombat, IActiveDuringShop
 	[NonSerialized]
 	public int fullCost = -1;
 
-	[NonSerialized] public float costWithoutAffordability;
+	//[NonSerialized] public float costWithoutAffordability;
 	private ModuleAmmo myMod;
 	protected override void _Start() {
 		if(fullCost == -1)
@@ -23,13 +23,14 @@ public class ReloadAction : ModuleAction, IActiveDuringCombat, IActiveDuringShop
 
 	protected override void _Update() {
 		var percent = (1f - (float)myMod.curAmmo / myMod.maxAmmo);
-		costWithoutAffordability = (percent * fullCost);
+		/*costWithoutAffordability = (percent * fullCost);
 
 		var possibleToPay = MoneyController.s.GetAmountPossibleToPay(myType, costWithoutAffordability);
 		if (possibleToPay > 0)
 			cost = Mathf.FloorToInt(possibleToPay);
 		else 
-			cost = (int)costWithoutAffordability;
+			cost = (int)costWithoutAffordability;*/
+		cost = 1;
 		
 
 		canEngage = percent > 0.1f;

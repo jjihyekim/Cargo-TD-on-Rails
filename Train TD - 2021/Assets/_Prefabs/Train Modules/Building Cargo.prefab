@@ -144,7 +144,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 32eaa249dc256dc42ab329df245751ef, type: 2}
+  - {fileID: 2100000, guid: dbfb4b8232d3afc4fb4051a9c2e082f0, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -227,7 +227,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 32eaa249dc256dc42ab329df245751ef, type: 2}
+  - {fileID: 2100000, guid: dbfb4b8232d3afc4fb4051a9c2e082f0, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -431,9 +431,10 @@ GameObject:
   - component: {fileID: 4987274482128882662}
   - component: {fileID: -5961050653454529255}
   - component: {fileID: -2543070092906998890}
-  - component: {fileID: 1284319437691263344}
+  - component: {fileID: -8640323134701063638}
+  - component: {fileID: 7303852204085857890}
   m_Layer: 17
-  m_Name: Fuel Cargo
+  m_Name: Building Cargo
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -469,9 +470,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f5b56326a28e8a24c91959aa3382ef6a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  displayName: Crude Oil Cargo
-  uniqueName: fuelCargo
-  Icon: {fileID: 21300000, guid: a136425fe96dcc04bb3b44f7acbae855, type: 3}
+  canSelect: 1
+  displayName: Building Cargo
+  uniqueName: buildCargo
+  Icon: {fileID: 21300000, guid: d08a9e4c47b0f9a4f87a4ee9df8104cb, type: 3}
   moduleBuiltSound: []
   mySlot: {fileID: 0}
   canPointSide: 0
@@ -480,7 +482,7 @@ MonoBehaviour:
   canBeRotatedUp: 0
   localShopCost: 100
   cost: 0
-  weight: 50
+  weight: 100
   myRotation: 0
   canBeTargetingAreaRotatable: 0
   occupiesEntireSlot: 1
@@ -490,6 +492,7 @@ MonoBehaviour:
   backGfx: {fileID: 0}
   isBuilt: 0
   autoSetUp: 0
+  isDestroyed: 0
   _outlines: []
 --- !u!114 &8343774546683050373
 MonoBehaviour:
@@ -503,9 +506,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0476e76a40770ea42a9720f0dda8c301, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  cargoSize: 1
-  moneyReward: 100
-  myCargoType: 1
+  isBuildingReward: 0
+  buildingReward: 
+  powerupReward: 
 --- !u!114 &5592445795315755096
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -534,9 +537,15 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   maxHealth: 200
   currentHealth: 200
+  damageReductionMultiplier: 1
   healthBar: {fileID: 0}
   explodePrefab: {fileID: 1046195756885079355, guid: 14455273e5a26a947a26caf9a4dfdd38, type: 3}
   isDead: 0
+  damageNearCartsOnDeath: 0
+  selfDamage: 0
+  selfDamageAmounts: 140000000a000000
+  isCartHp: 0
+  explosionDamages: 640000003200000019000000
   burnResistant: 0
   currentBurn: 0
   burnSpeed: 0
@@ -580,8 +589,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3fc12dfc22da57840a0a8c87d9cdd0f0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  isUnlocked: 1
-  unlockingUpgrade: {fileID: 0}
   actionName: Return Cargo
   myType: 1
   cost: 0
@@ -594,7 +601,7 @@ MonoBehaviour:
   myTooltip:
     text: Return this cargo for its original price.
   myButton: {fileID: 0}
---- !u!114 &1284319437691263344
+--- !u!114 &-8640323134701063638
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -607,9 +614,33 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   tooltip:
-    text: Somebody in your target city needs this cargo. They convert this into the
-      fuel your train (and everyone else) needs.
-  info: Cruide Oil Cargo
+    text: Use the move tool if you want to carry this cargo to the next city. If
+      you manage to bring safely you will earn a reward!
+  info: Cargo Job
+--- !u!114 &7303852204085857890
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3146471024428373951}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d8b3a4bd1ddc40646b537648a04bdd51, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  actionName: Move
+  myType: 1
+  cost: 0
+  cooldown: 1
+  curCooldown: 0
+  canEngage: 1
+  canAfford: 1
+  isCooldownOver: 1
+  soundEffect: []
+  myTooltip:
+    text: 
+  freeInStation: 0
 --- !u!1 &3469176668768950665
 GameObject:
   m_ObjectHideFlags: 0
@@ -887,7 +918,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 32eaa249dc256dc42ab329df245751ef, type: 2}
+  - {fileID: 2100000, guid: ccbe3b63b76a09b49a59fe08ffe41e7e, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -1006,7 +1037,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 32eaa249dc256dc42ab329df245751ef, type: 2}
+  - {fileID: 2100000, guid: dbfb4b8232d3afc4fb4051a9c2e082f0, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -1089,7 +1120,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 32eaa249dc256dc42ab329df245751ef, type: 2}
+  - {fileID: 2100000, guid: dbfb4b8232d3afc4fb4051a9c2e082f0, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -1204,7 +1235,7 @@ GameObject:
   m_Component:
   - component: {fileID: 5891583664425259778}
   - component: {fileID: 291423508599813359}
-  - component: {fileID: 3885422922215443703}
+  - component: {fileID: 712562906044396184}
   m_Layer: 17
   m_Name: Gfxs
   m_TagString: Untagged
@@ -1243,7 +1274,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   activeGfx: {fileID: 5072410334052235268}
   hologramGfx: {fileID: 4039291173115647169}
---- !u!114 &3885422922215443703
+--- !u!114 &712562906044396184
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}

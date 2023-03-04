@@ -154,6 +154,11 @@ public class PlayerActionsController : MonoBehaviour {
         for (int i = 0; i < trainBuildings.Length; i++) {
             SetBuildingColor(trainBuildings[i], nonSelectedColor);
         }   
+        
+        var shopBuildings = UpgradesController.s.shopableComponentsParent.GetComponentsInChildren<TrainBuilding>();
+        for (int i = 0; i < shopBuildings.Length; i++) {
+            SetBuildingColor(shopBuildings[i], nonSelectedColor);
+        }
     }
 
     void SetBuildingColor(TrainBuilding building, Color color) {
@@ -273,6 +278,13 @@ public class PlayerActionsController : MonoBehaviour {
                     SetBuildingColor(trainBuildings[i], moveColor);
                 }
             }
+            
+            var shopBuildings = UpgradesController.s.shopableComponentsParent.GetComponentsInChildren<TrainBuilding>();
+            for (int i = 0; i < shopBuildings.Length; i++) {
+                if (IsMoveable(shopBuildings[i])) {
+                    SetBuildingColor(shopBuildings[i], moveColor);
+                }
+            }
         } else {
             LeaveAllModes();
         }
@@ -292,6 +304,13 @@ public class PlayerActionsController : MonoBehaviour {
             for (int i = 0; i < trainBuildings.Length; i++) {
                 if (IsSellable(trainBuildings[i])) {
                     SetBuildingColor(trainBuildings[i], sellColor);
+                }
+            }
+            
+            var shopBuildings = UpgradesController.s.shopableComponentsParent.GetComponentsInChildren<TrainBuilding>();
+            for (int i = 0; i < shopBuildings.Length; i++) {
+                if (IsSellable(shopBuildings[i])) {
+                    SetBuildingColor(shopBuildings[i], sellColor);
                 }
             }
         } else {
@@ -531,6 +550,7 @@ public class PlayerActionsController : MonoBehaviour {
         if (isSuccess) {
             Destroy(movingBuilding.gameObject);
             Train.s.SaveTrainState();
+
         } else {
             movingBuilding.SetHighlightState(false);
             movingBuilding.mySlot.TemporaryRemoveReversal();
@@ -542,14 +562,21 @@ public class PlayerActionsController : MonoBehaviour {
     }
 
     void GetTheFinishedBuilding(TrainBuilding newBuilding) {
-        newBuilding.SetCurrentHealth(movingBuilding.GetComponent<ModuleHealth>().currentHealth);
-
-        var ammo = movingBuilding.GetComponent<ModuleAmmo>();
-
-        if (ammo != null) {
-            var newAmmo = newBuilding.GetComponent<ModuleAmmo>();
-
-            newAmmo.SetAmmo(ammo.curAmmo);
+        var state = new DataSaver.TrainState.CartState.BuildingState();
+        Train.ApplyBuildingToState(movingBuilding,state);
+        Train.ApplyStateToBuilding(newBuilding, state);
+        
+        if (!SceneLoader.s.isLevelStarted()) {
+            var cargo = newBuilding.GetComponent<CargoModule>();
+            if (cargo != null) {
+                var isNewBuildingOnTrain = cargo.GetComponentInParent<Train>() != null;
+                var isOldBuildingOnTrain = movingBuilding.GetComponentInParent<Train>() != null;
+                if (isNewBuildingOnTrain && !isOldBuildingOnTrain) {
+                    UpgradesController.s.RemoveCargoFromShopArea(cargo);
+                }else if (!isNewBuildingOnTrain && isOldBuildingOnTrain) {
+                    UpgradesController.s.AddCargoToShopArea(cargo);
+                }
+            }
         }
     }
 

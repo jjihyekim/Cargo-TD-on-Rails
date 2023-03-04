@@ -18,6 +18,7 @@ public class SettingsController : MonoBehaviour {
         for (int i = 0; i < initRequiredSettings.Length; i++) {
             initRequiredSettings[i].Initialize();
         }
+        MusicPlayer.s.SwapMusicTracksAndPlay(false);
     }
 
     

@@ -37,8 +37,8 @@ public class ScrapBoxScript : MonoBehaviour
 	    //scaler = maxScrap;
 	    //scaler = scaler.Remap(50, 400, 1.6f, 0.65f);
 	    //Debug.Log(scaler);
-	    scrapPerPiece = maxScrap / maxPieces;
-	    scrapPerPiece = Mathf.Clamp(scrapPerPiece, 5, float.MaxValue);
+	    /*scrapPerPiece = maxScrap / maxPieces;
+	    scrapPerPiece = Mathf.Clamp(scrapPerPiece, 5, float.MaxValue);*/
     }
     
 
@@ -56,7 +56,7 @@ public class ScrapBoxScript : MonoBehaviour
     private void Update() {
 	    var delta = targetScraps - curScrap;
 
-	    if (Mathf.Abs(delta) > scrapPerPiece*mininumChunkPercent) {
+	    if (Mathf.Abs(delta) >= scrapPerPiece*mininumChunkPercent) {
 		    if (delta > 0) {
 			    if (timer <= 0) {
 				    timer = 0.1f;

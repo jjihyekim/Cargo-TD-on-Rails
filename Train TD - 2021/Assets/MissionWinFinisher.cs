@@ -35,6 +35,7 @@ public class MissionWinFinisher : MonoBehaviour {
 	public GameObject scrapRewardPrefab;
 	public GameObject cartRewardPrefab;
 	public GameObject upgradeRewardPrefab;
+	public GameObject singleModuleRewardPrefab;
 	public GameObject powerUpRewardPrefab;
 
 	private void Start() {
@@ -48,9 +49,7 @@ public class MissionWinFinisher : MonoBehaviour {
 		EnemyWavesController.s.Cleanup();
 		//EnemyHealth.winSelfDestruct?.Invoke(false);
 		ShowAlert(false);
-		
-		DistanceAndEnemyRadarController.s.ClearRadar();
-		
+
 		for (int i = 0; i < scriptsToDisable.Length; i++) {
 			scriptsToDisable[i].enabled = false;
 		}
@@ -139,11 +138,18 @@ public class MissionWinFinisher : MonoBehaviour {
 		var mySave = DataSaver.s.GetCurrentSave();
 		var playerStar = mySave.currentRun.map.GetPlayerStar();
 		
-		var rewardMoney = playerStar.rewardMoney;
+		//var rewardMoney = playerStar.rewardMoney;
 		var allCargo = Train.s.GetComponentsInChildren<CargoModule>();
 		foreach (var cargo in allCargo) {
 			var cargoObj = Instantiate(cargoDeliveredPrefab, cargoDeliveredParent);
-			rewardMoney += cargoObj.GetComponent<MiniGUI_DeliveredCargo>().SetUp(cargo);
+			cargoObj.GetComponent<MiniGUI_DeliveredCargo>().SetUp(cargo);
+			//rewardMoney += cargoObj.GetComponent<MiniGUI_DeliveredCargo>().SetUp(cargo);
+			if(cargo.isBuildingReward){
+			
+				mySave.currentRun.unclaimedRewards.Add($"b{cargo.myReward}");
+			}else {
+				mySave.currentRun.unclaimedRewards.Add($"p{cargo.myReward}");
+			}
 			cargo.CargoSold();
 		}
 		
@@ -152,10 +158,10 @@ public class MissionWinFinisher : MonoBehaviour {
 		cargoText.text = $"Cargo Delivered {allCargo.Length}";
 
 		// mission rewards, must do after the stuff above
-		mySave.currentRun.unclaimedRewards.Add($"s{Random.Range(50,60)}");
-		mySave.currentRun.unclaimedRewards.Add($"m{rewardMoney}");
+		//mySave.currentRun.unclaimedRewards.Add($"s{Random.Range(50,60)}");
+		//mySave.currentRun.unclaimedRewards.Add($"m{rewardMoney}");
 
-		string[] upgradeRewards;
+		/*string[] upgradeRewards;
 		if (playerStar.isBoss) {
 			upgradeRewards = UpgradesController.s.GetRandomBossRewards();
 		} else {
@@ -163,12 +169,12 @@ public class MissionWinFinisher : MonoBehaviour {
 		}
 
 		var upgradesString = string.Join(",", upgradeRewards);
-		mySave.currentRun.unclaimedRewards.Add($"u{upgradesString}");
+		mySave.currentRun.unclaimedRewards.Add($"u{upgradesString}");*/
 		
 		if(playerStar.rewardCart > 0 || Train.s.cartCount < maxTrainLengthForGettingCartReward)
 			mySave.currentRun.unclaimedRewards.Add($"c{1}");
 		
-		mySave.currentRun.unclaimedRewards.Add($"p{DataHolder.s.powerUps[Random.Range(0, DataHolder.s.powerUps.Length)].name}");//power up -> boost
+		//mySave.currentRun.unclaimedRewards.Add($"p{DataHolder.s.powerUps[Random.Range(0, DataHolder.s.powerUps.Length)].name}");//power up -> boost
 	}
 
 	void ShowAndGiveMissionRewards() {
@@ -218,6 +224,10 @@ public class MissionWinFinisher : MonoBehaviour {
 				
 				case 'r':
 					// Redeemed. Don't do anything.
+					break;
+				case 'b':
+					var buildingName = cur.Substring(1);
+					Instantiate(singleModuleRewardPrefab, rewardsParent).GetComponent<MiniGUI_SingleBuildingReward>().SetUpReward(buildingName, i);
 					break;
 				default:
 					Debug.LogError($"Unknown reward: {cur}");
@@ -315,6 +325,7 @@ public class MissionWinFinisher : MonoBehaviour {
 		EnemyWavesController.s.Cleanup();
 		MapController.s.Cleanup();
 		UpgradesController.s.DrawShopOptions();
+		DistanceAndEnemyRadarController.s.ClearRadar();
 		
 		ChangeRangeShowState(true);
 		cameraSwitcher.Disengage();

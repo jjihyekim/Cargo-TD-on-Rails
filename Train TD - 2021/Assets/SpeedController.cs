@@ -25,7 +25,7 @@ public class SpeedController : MonoBehaviour, IShowOnDistanceRadar {
     public float fuelPower = 0;
     public float nuclearPower = 0;
     public float enginePowerBoost = 1f;
-    public float enginePowerPlayerControl = 1f;
+    public int enginePowerPlayerControl = 1;
     public float targetSpeed;
     public float speedMultiplier = 1.5f;
 
@@ -125,6 +125,12 @@ public class SpeedController : MonoBehaviour, IShowOnDistanceRadar {
     public float debugSteamGeneration;
     public float debugSteamUse;
 
+    public float engineOverloadPowerIncrease = 1.5f;
+    public float breakPower = 1f;
+
+    private float currentEngineOverloadPowerMultiplier = 1f;
+    public float currentBreakPower = 0;
+
     public float trainWeightMultiplier = 0.8f;
 
     public float internalRealSpeed;
@@ -151,18 +157,17 @@ public class SpeedController : MonoBehaviour, IShowOnDistanceRadar {
 
             DoFuelAndPlayerEngineControls();
 
-            var engineTarget = (fuelPower+nuclearPower) * enginePowerBoost * enginePowerPlayerControl;
+            var engineTarget = (fuelPower+nuclearPower) * enginePowerBoost * currentEngineOverloadPowerMultiplier;
             enginePower = Mathf.MoveTowards(enginePower, engineTarget, enginePowerChangeDelta * Time.deltaTime);
 
             var steamGenerationPerSecond = steamPer100EnginePower * (enginePower/100f);
             debugSteamGeneration = steamGenerationPerSecond;
             steam += steamGenerationPerSecond * Time.deltaTime;
-            
-            mySteamShower.SetScrap(steam);
 
             var steamUsePerSecond = steam * steamUsePercentage;
             debugSteamUse = steamUsePerSecond;
-            steam -= steamUsePerSecond*Time.deltaTime;
+            if(currentBreakPower <= 0) // dont use steam if breaking
+                steam -= steamUsePerSecond*Time.deltaTime;
             
             mySteamShower.SetScrap(steam);
 
@@ -179,9 +184,14 @@ public class SpeedController : MonoBehaviour, IShowOnDistanceRadar {
             if (targetSpeed > LevelReferences.s.speed) {
                 var excessEnginePower = (pressurePower / trainWeight);
                 acceleration += excessEnginePower.Remap(0,0.5f,0,0.2f);
+            } else {
+                acceleration *= currentBreakPower;
             }
 
-
+            if (currentBreakPower > 0) {
+                targetSpeed = 0;
+            }
+            
 
             internalRealSpeed = Mathf.MoveTowards(internalRealSpeed, targetSpeed, acceleration * Time.deltaTime);
             LevelReferences.s.speed = Mathf.Max( internalRealSpeed - slowAmount, 0f);
@@ -231,39 +241,32 @@ public class SpeedController : MonoBehaviour, IShowOnDistanceRadar {
     public GameObject selfDamageWarning;
     private bool playedNoFuelSound = false;
     void DoFuelAndPlayerEngineControls() {
-        /*var engineCountMultiplier = 1f;
-        if(engines.Count > 0)
-            engineCountMultiplier = ((engines.Count-1)/2f + 1)/engines.Count;
+        enginePowerPlayerControl = Mathf.RoundToInt(enginePowerSlider.value);
 
-        var fuelUse = (fuelPower*enginePowerPlayerControl)/100 * fuelUseMultiplier;
-        /*if (enginePowerPlayerControl > 1.25f) {
-            fuelUse *= 1.2f;
-        }else if(enginePowerPlayerControl > 1f) {
-            fuelUse *= 1.1f;
-        }else if (enginePowerPlayerControl <= 0.5f) {
-            fuelUse *= 0.8f;
-        }#1#
+        var selfDamage = enginePowerPlayerControl > 1;
 
-        fuelUse *= engineCountMultiplier;
-
-        fuelUseText.text = $"-{fuelUse:F2}/s";
-        fuel -= fuelUse * Time.deltaTime;*/
-
-        var selfDamageState = 0;
-        if (enginePowerPlayerControl > 1f) {
-            selfDamageState = 1;
-        }else if (enginePowerPlayerControl > 1.25f) {
-            selfDamageState = 2;
-        }
         for (int i = 0; i < engines.Count; i++) {
-            engines[i].SetSelfDamageState(selfDamageState);
-            engines[i].UseFuel(enginePowerPlayerControl*fuelUseMultiplier);
+            engines[i].SetSelfDamageState(selfDamage);
+            engines[i].UseFuel(enginePowerPlayerControl);
+        }
+
+        switch (enginePowerPlayerControl) {
+            case 0:
+                currentEngineOverloadPowerMultiplier = 1;
+                currentBreakPower = breakPower;
+                break;
+            case 1:
+                currentEngineOverloadPowerMultiplier = 1;
+                currentBreakPower = 0;
+                break;
+            case 2:
+                currentEngineOverloadPowerMultiplier = engineOverloadPowerIncrease;
+                currentBreakPower = 0;
+                break;
         }
         
-        selfDamageWarning.SetActive(selfDamageState > 0);
+        selfDamageWarning.SetActive(selfDamage);
         
-        
-        enginePowerPlayerControl = enginePowerSlider.value/4f;
         
         if (activeEngines <= 0) {
             engineFill.color = engineDisabledColor;

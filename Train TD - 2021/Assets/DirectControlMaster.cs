@@ -126,6 +126,8 @@ public class DirectControlMaster : MonoBehaviour {
 	private float onHitAlpha = 0f;
 	public float onHitAlphaDecay = 2f;
 
+	public GameObject noAmmoInStorage;
+	public Transform noAmmoParent;
 	private void Update() {
 		if (directControlInProgress) {
 			if (directControlTrainBuilding == null || directControlTrainBuilding.isDead || myGun == null) {
@@ -145,12 +147,22 @@ public class DirectControlMaster : MonoBehaviour {
 				//Debug.DrawLine(ray.origin, ray.GetPoint(10));
 			}
 
-			if (hasAmmo && directControlShootAction.action.IsPressed()) {
-				if (curCooldown <= 0) {
-					myGun.ShootBarrage(false,OnShoot, OnHit);
-					curCooldown = myGun.GetFireDelay();
+			if (hasAmmo) {
+				if (directControlShootAction.action.IsPressed()) {
+					if (curCooldown <= 0) {
+						myGun.ShootBarrage(false, OnShoot, OnHit);
+						curCooldown = myGun.GetFireDelay();
+					}
+				}
+			} else {
+				if (directControlShootAction.action.triggered) {
+					var managedToReload = myAmmo.GetComponent<ReloadAction>().EngageAction();
+					if (!managedToReload) {
+						Instantiate(noAmmoInStorage, noAmmoParent);
+					}
 				}
 			}
+			
 
 			curCooldown -= Time.deltaTime;
 			cooldownSlider.value = Mathf.Clamp01(curCooldown / myGun.GetFireDelay());

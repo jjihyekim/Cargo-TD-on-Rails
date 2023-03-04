@@ -142,15 +142,15 @@ public class EnemyHealth : MonoBehaviour, IHealth {
 		
 		if (giveRewards) {
 			LevelReferences.s.SpawnResourceAtLocation(ResourceTypes.scraps, 
-				scrapReward*LevelReferences.s.scrapEnemyRewardMultiplier, 
+				scrapReward*TweakablesMaster.s.myTweakables.scrapEnemyRewardMultiplier, 
 				aliveObject.transform.position);
 			
 			LevelReferences.s.SpawnResourceAtLocation(ResourceTypes.fuel, 
-				fuelReward*LevelReferences.s.fuelEnemyRewardMultiplier, 
+				fuelReward*TweakablesMaster.s.myTweakables.fuelEnemyRewardMultiplier, 
 				aliveObject.transform.position + Vector3.forward/2f);
 			
 			LevelReferences.s.SpawnResourceAtLocation(ResourceTypes.ammo, 
-				ammoReward*LevelReferences.s.ammoEnemyRewardMultiplier, 
+				ammoReward*TweakablesMaster.s.myTweakables.ammoEnemyRewardMultiplier, 
 				aliveObject.transform.position + Vector3.left/2f);
 
 			if (rewardPowerUp) {

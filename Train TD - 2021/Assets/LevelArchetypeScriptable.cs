@@ -85,6 +85,7 @@ public class LevelArchetypeScriptable : ScriptableObject {
 
         if (possibleEncounters.Length > 0) {
             var encounterCount = NumberWithWeights.WeightedRandomRoll(encounterChances);
+            encounterCount = 0;
 
             for (int i = 0; i < encounterCount; i++) {
                 var mySegment = Random.Range(1, segmentCount); // first one is never an encounter
@@ -105,8 +106,8 @@ public class LevelArchetypeScriptable : ScriptableObject {
 
 
     private int firstEnemyInSegmentDistance = 40;
-    private int lastEnemyAndSegmentEndDistance = 60;
-    private int powerUpEnemyDistanceFromLastEnemy = 60;
+    private int lastEnemyAndSegmentEndDistance = 50;
+    private int powerUpEnemyDistanceFromLastEnemy = 40;
     LevelSegment GenerateSegment(int type) { // 0 -> random 1 -> all left 2 -> all right 
         var segment =  possibleLevels[Random.Range(0, possibleLevels.Length)].GetData().Copy();
 

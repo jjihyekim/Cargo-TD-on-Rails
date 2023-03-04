@@ -119,11 +119,13 @@ public class Slot : MonoBehaviour/*, IPointerEnterHandler, IPointerExitHandler*/
 
 		myBuildings[slot].transform.SetParent(transform);
 		myBuildings[slot].transform.localPosition = Vector3.zero;
-		
-		GetComponentInParent<Cart>().SlotsAreUpdated();
-		if (GetComponentInParent<Train>()) {
-			GetComponentInParent<Train>().trainWeightDirty = true;
-			Train.s.trainUpdated?.Invoke();
+
+		if (GetComponentInParent<Cart>()) {
+			GetComponentInParent<Cart>().SlotsAreUpdated();
+			if (GetComponentInParent<Train>()) {
+				GetComponentInParent<Train>().trainWeightDirty = true;
+				Train.s.trainUpdated?.Invoke();
+			}
 		}
 	}
 

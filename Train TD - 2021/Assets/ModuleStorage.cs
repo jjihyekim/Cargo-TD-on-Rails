@@ -17,7 +17,7 @@ public class ModuleStorage : MonoBehaviour, IActiveDuringCombat, IActiveDuringSh
     }
 
 
-    private int chunkAmount = 5;
+    private int chunkAmount = 1;
     private float curAmount = 0;
 
     private void Update() {

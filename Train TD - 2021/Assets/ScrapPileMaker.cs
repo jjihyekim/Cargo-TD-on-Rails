@@ -10,11 +10,11 @@ public class ScrapPileMaker : MonoBehaviour {
     public float spreadMultiplier = 0.25f;
     public Vector2 sizeRange = new Vector2(0.1f, 0.2f);
     
-    public void MakePile(int count, bool clear = true) {
+    public void MakePile(int _count, bool clear = true) {
         if(clear)
             Clear();
 
-        this.count = count;
+        count = _count;
         
         for (int i = 0; i < count; i++) {
             var pile = Instantiate(pilePart, transform);
@@ -27,7 +27,7 @@ public class ScrapPileMaker : MonoBehaviour {
     [Button]
     public void EditorMakePile() {
         EditorClear();
-        MakePile(4, false);
+        MakePile(count, false);
     }
 
     void Clear() {

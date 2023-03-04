@@ -8,19 +8,25 @@ public class ModuleAmmo : MonoBehaviour, IResupplyAble, IActiveDuringCombat, IAc
 
     public float curAmmo { get; private set; }
     public int maxAmmo = 100;
-    public float ammoPerShot = 1;
+    public float ammoPerBarrage = 1;
 
     private GunModule myGunModule;
 
     private bool listenerAdded = false;
 
-    public void UseAmmo() {
-        var ammoUse = ammoPerShot;
+    float AmmoUseWithMultipliers() {
+        var ammoUse = ammoPerBarrage;
 
         if (myGunModule.beingDirectControlled)
             ammoUse /= DirectControlMaster.s.directControlAmmoConservationBoost;
-        
-        curAmmo -= ammoUse;
+
+        ammoUse /= TweakablesMaster.s.myTweakables.magazineSizeMultiplier;
+
+        return ammoUse;
+    }
+    
+    public void UseAmmo() {
+        curAmmo -= AmmoUseWithMultipliers();
         
         curAmmo = Mathf.Clamp(curAmmo, 0, maxAmmo);
         UpdateModuleState();
@@ -40,7 +46,7 @@ public class ModuleAmmo : MonoBehaviour, IResupplyAble, IActiveDuringCombat, IAc
 
     void UpdateModuleState() {
         if (myGunModule != null) {
-            myGunModule.hasAmmo = curAmmo >= ammoPerShot;
+            myGunModule.hasAmmo = curAmmo >= AmmoUseWithMultipliers();
         }
 
         if (GetComponent<EngineModule>())

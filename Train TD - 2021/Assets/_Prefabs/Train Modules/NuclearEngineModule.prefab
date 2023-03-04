@@ -30079,15 +30079,15 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   maxHealth: 600
   currentHealth: 600
+  damageReductionMultiplier: 1
   healthBar: {fileID: 0}
   explodePrefab: {fileID: 1046195756885079355, guid: ba45d82dd9e9c524cbfa9f9590e1d7ee, type: 3}
   isDead: 0
   damageNearCartsOnDeath: 1
-  selfDamageMultiplier: 1
   selfDamage: 0
-  selfDamageAmounts: 2300000019000000
+  selfDamageAmounts: a000000050000000
   isCartHp: 0
-  explosionDamages: c80000006400000032000000
+  explosionDamages: 90010000c800000064000000
   burnResistant: 1
   currentBurn: 0
   burnSpeed: 0
@@ -30233,8 +30233,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   tooltip:
     text: A bigger train is heavier and needs more engines. This nuclear fueled engine
-      will generate steam for free! You can't turn it off though, and if it explodes
-      it will damage nearby buildings and carts.
+      will generate steam for free! If it explodes it will damage nearby buildings
+      and carts.
   info: Nuclear Engine Module
 --- !u!1 &4423568369807129282
 GameObject:

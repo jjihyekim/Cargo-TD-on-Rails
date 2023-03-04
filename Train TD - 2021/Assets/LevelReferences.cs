@@ -69,19 +69,7 @@ public class LevelReferences : MonoBehaviour {
 
     public SingleUnityLayer playerBulletLayer;
     public SingleUnityLayer enemyBulletLayer;
-
-    public float ammoShopCostMultiplier = 1f;
-    public float scrapShopCostMultiplier = 1f;
-    public float fuelShopCostMultiplier = 1f;
     
-    
-    public float ammoEnemyRewardMultiplier = 1f;
-    public float scrapEnemyRewardMultiplier = 1f;
-    public float fuelEnemyRewardMultiplier = 1f;
-
-    public float hpRepairCostMultiplier = 0.25f;
-
-
     public Color leftColor = Color.white;
     public Color rightColor = Color.white;
 
@@ -89,26 +77,12 @@ public class LevelReferences : MonoBehaviour {
 
     public EnemyIdentifier powerUpSpawnerEnemy;
 
-    public float GetShopCostMultiplier(ResourceTypes type) {
-        switch (type) {
-            case ResourceTypes.ammo:
-                return ammoShopCostMultiplier;
-            case ResourceTypes.scraps:
-                return scrapShopCostMultiplier;
-            case ResourceTypes.fuel:
-                return fuelShopCostMultiplier;
-            default:
-                return 1;
-        }
-    }
-
     private void Awake() {
         s = this;
         
     }
 
-
-    const int maxMoneyPileCount = 25;
+    const int maxMoneyPileCount = 5;
 
     public void SpawnResourceAtLocation(ResourceTypes type, float amount, Vector3 location) {
         SpawnResourceAtLocation(type, Mathf.RoundToInt(amount), location);
@@ -177,8 +151,4 @@ public class LevelReferences : MonoBehaviour {
             pile.GetComponent<ScrapPile>().CollectPileWithTarget(customCollectTargetTransform);
         }
     }
-
-    public float enemyDamageBuff = 1f;
-    public float playerDamageBuff = 1f;
-
 }

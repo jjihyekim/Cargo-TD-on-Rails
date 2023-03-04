@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.Serialization;
 
@@ -11,6 +12,7 @@ public class ScrapPile : MonoBehaviour {
     public int scrapAmount = 0;
     public bool isCollected = false;
 
+    public TMP_Text amount;
 
     public ResourceTypes myType;
     
@@ -20,6 +22,7 @@ public class ScrapPile : MonoBehaviour {
         StickToGround();
         GetComponentInChildren<ScrapPileMaker>().MakePile(scrapAmount);
         transform.SetParent(LevelReferences.s.playerTransform);
+        amount.text = scrap.ToString();
         PickTarget();
     }
 

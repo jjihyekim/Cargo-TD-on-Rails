@@ -1098,6 +1098,7 @@ MonoBehaviour:
     text: 
   curTimer: 0
   showingTooltip: 0
+  doubleTimer: 0
 --- !u!1 &5933303633041653184
 GameObject:
   m_ObjectHideFlags: 0
@@ -1444,6 +1445,7 @@ MonoBehaviour:
     text: 
   curTimer: 0
   showingTooltip: 0
+  doubleTimer: 0
 --- !u!1 &6993352186547702509
 GameObject:
   m_ObjectHideFlags: 0
@@ -1794,6 +1796,7 @@ MonoBehaviour:
     text: These are your current resources and your character name.
   curTimer: 0
   showingTooltip: 0
+  doubleTimer: 0
 --- !u!1 &7684935381924732572
 GameObject:
   m_ObjectHideFlags: 0
@@ -2021,7 +2024,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &4881998593718669633
 RectTransform:
   m_ObjectHideFlags: 0
@@ -2039,10 +2042,10 @@ RectTransform:
   m_Father: {fileID: 4625870125217600892}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 0}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 46.195, y: -47.158}
+  m_SizeDelta: {x: 88.39, y: 30.39}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &8460426384480388806
 GameObject:
@@ -2194,7 +2197,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &3412075067332202715
 RectTransform:
   m_ObjectHideFlags: 0
@@ -2212,10 +2215,10 @@ RectTransform:
   m_Father: {fileID: 4625870125217600892}
   m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 0}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 134.58499, y: -47.158}
+  m_SizeDelta: {x: 88.39, y: 30.39}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &9007451726727880024
 GameObject:
@@ -2373,6 +2376,7 @@ MonoBehaviour:
     text: 
   curTimer: 0
   showingTooltip: 0
+  doubleTimer: 0
 --- !u!1 &9080417890221251524
 GameObject:
   m_ObjectHideFlags: 0

@@ -690,15 +690,16 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   maxHealth: 200
   currentHealth: 200
-  scrapReward: 20
+  scrapReward: 2
   ammoReward: 0
-  fuelReward: 20
+  fuelReward: 0
   deathPrefab: {fileID: 2226602934599951851, guid: 3a3b38f12c3451643bbb329bd16c7e3e, type: 3}
   aliveObject: {fileID: 3038431740301894644}
   isAlive: 1
   uiTransform: {fileID: 4734297801412349416}
   healthBar: {fileID: 0}
   isArmored: 1
+  rewardPowerUp: 0
   currentBurn: 0
   burnSpeed: 0
   _outlines: []
@@ -831,7 +832,6 @@ MonoBehaviour:
   targetMoveSpeed: 0.1
   target: {x: 0, y: 0, z: 0}
   targetTargetPosition: {x: 0, y: 0, z: 0}
-  lookRotationDelta: 10
   centerOfMass: {x: 0, y: -0.1, z: 0}
   forwardForce: 10
   stickToGround: 0

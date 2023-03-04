@@ -162,19 +162,20 @@ public class Train : MonoBehaviour {
         return trainState;
     }
 
-    private static void ApplyBuildingToState(TrainBuilding building, DataSaver.TrainState.CartState.BuildingState buildingState) {
+    public static void ApplyBuildingToState(TrainBuilding building, DataSaver.TrainState.CartState.BuildingState buildingState) {
         if (building != null) {
             buildingState.uniqueName = building.uniqueName;
             buildingState.health = building.GetCurrentHealth();
 
-            /*var cargo = building.GetComponent<CargoModule>();
+            var cargo = building.GetComponent<CargoModule>();
             if (cargo != null) {
                 //buildingState.cargoCost = cargo.moneyCost;
-                buildingState.cargoReward = cargo.moneyReward;
+                buildingState.isBuildingCargo = cargo.isBuildingReward;
+                buildingState.cargoReward = cargo.myReward;
             } else {
-                buildingState.cargoCost = -1;
-                buildingState.cargoReward = -1;
-            }*/
+                buildingState.isBuildingCargo = false;
+                buildingState.cargoReward = "";
+            }
 
             var ammo = building.GetComponent<ModuleAmmo>();
             
@@ -220,15 +221,22 @@ public class Train : MonoBehaviour {
     private static void AddBuildingToSlot(Slot slot, int slotIndex, TrainBuilding buildingScript, DataSaver.TrainState.CartState.BuildingState buildingState) {
         var newBuilding = Instantiate(buildingScript.gameObject).GetComponent<TrainBuilding>();
         slot.AddBuilding(newBuilding, slotIndex);
+        
+        ApplyStateToBuilding(newBuilding, buildingState);
+
+        newBuilding.CompleteBuilding(false);
+    }
+
+    public static void ApplyStateToBuilding(TrainBuilding buildingScript, DataSaver.TrainState.CartState.BuildingState buildingState) {
         if (buildingState.health > 0) {
-            newBuilding.SetCurrentHealth(buildingState.health);
+            buildingScript.SetCurrentHealth(buildingState.health);
         }
 
         if (buildingState.ammo >= 0) {
-            var ammo = newBuilding.GetComponent<ModuleAmmo>();
+            var ammo = buildingScript.GetComponent<ModuleAmmo>();
             ammo.SetAmmo(buildingState.ammo);
         }else if (buildingState.ammo == -2) {
-            var ammo = newBuilding.GetComponent<ModuleAmmo>();
+            var ammo = buildingScript.GetComponent<ModuleAmmo>();
             if (ammo != null) {
                 ammo.SetAmmo(ammo.maxAmmo);
             } else {
@@ -236,13 +244,11 @@ public class Train : MonoBehaviour {
             }
         }
 
-        /*if (buildingState.cargoCost >= 0) {
-            var cargo = newBuilding.GetComponent<CargoModule>();
-            //cargo.moneyCost = buildingState.cargoCost;
-            cargo.moneyReward = buildingState.cargoReward;
-        }*/
-
-        newBuilding.CompleteBuilding(false);
+        var cargoModule = buildingScript.GetComponent<CargoModule>();
+        if (cargoModule != null) {
+            cargoModule.isBuildingReward = buildingState.isBuildingCargo;
+            cargoModule.myReward = buildingState.cargoReward;
+        }
     }
 
     public Transform AddTrainCartAtIndex(int index) {

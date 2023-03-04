@@ -14,8 +14,6 @@ public class CityDataScriptable : ScriptableObject {
 [Serializable]
 public class CityData {
 	public string nameSuffix;
-	
-	public CargoModule.CargoTypes[] cargosSold;
 
 	public SupplyPrice[] prices;
 

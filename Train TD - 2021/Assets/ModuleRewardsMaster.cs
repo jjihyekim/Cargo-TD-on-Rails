@@ -12,7 +12,7 @@ public class ModuleRewardsMaster : MonoBehaviour {
         s = this;
     }
 
-    public TrainModuleHolder[] GetShopContent() {
+    /*public TrainModuleHolder[] GetShopContent() {
         var currentRun = DataSaver.s.GetCurrentSave().currentRun;
         if (!currentRun.shopInitialized) {
             InitializeShop(currentRun);
@@ -31,9 +31,15 @@ public class ModuleRewardsMaster : MonoBehaviour {
         
         for (int i = 0; i < playerStar.city.prices.Length; i++) {
             var priceIndex = playerStar.city.prices[i].Copy();
-            var multiplier = LevelReferences.s.GetShopCostMultiplier(priceIndex.type);
-            var varience = (1 + Random.Range(-shopPriceVariance, shopPriceVariance));
-            priceIndex.basePrice = (int)(priceIndex.basePrice * multiplier * varience);
+            
+            if (priceIndex.type == ResourceTypes.ammo) {
+                continue;
+            }
+            
+            var multiplier = TweakablesMaster.s.GetShopCostMultiplier(priceIndex.type);
+            var variance = (1 + Random.Range(-shopPriceVariance, shopPriceVariance));
+            // we don't want to have an extra variable so change the "base price" for the random price.
+            priceIndex.basePrice = (int)(priceIndex.basePrice * multiplier * variance); 
             currentRun.currentShopPrices.Add(priceIndex);
         }
 
@@ -47,7 +53,7 @@ public class ModuleRewardsMaster : MonoBehaviour {
         modules.Remove(holder);
         currentRun.currentShopModules = modules.ToArray();
         DataSaver.s.SaveActiveGame();
-    }
+    }*/
 
     
     // see UpgradesController.GetRandomLevelRewards
@@ -60,8 +66,8 @@ public class ModuleRewardsMaster : MonoBehaviour {
     public TrainModuleHolder[] act2ShopModules;
     public TrainModuleHolder[] act3ShopModules;
     
-    TrainModuleHolder[] GenerateModules(int modCount) {
-        TrainModuleHolder[] shopOptions = new TrainModuleHolder[modCount];
+    TrainModuleHolder[] GenerateModules(int moduleCount) {
+        TrainModuleHolder[] shopOptions = new TrainModuleHolder[moduleCount];
 
         TrainModuleHolder[] modules;
         switch (DataSaver.s.GetCurrentSave().currentRun.currentAct) {
@@ -80,7 +86,7 @@ public class ModuleRewardsMaster : MonoBehaviour {
                 break;
         }
 
-        for (int i = 0; i < modCount; i++) {
+        for (int i = 0; i < moduleCount; i++) {
             shopOptions[i] = modules[Random.Range(0, modules.Length)].Copy();
         }
 

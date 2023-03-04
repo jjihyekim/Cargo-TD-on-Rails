@@ -387,7 +387,6 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   canPenetrateArmor: 1
-  fuelUsePerShot: 0
   steamUsePerShot: 0.25
   needWarmUp: 0
   startWarmUpEvent:
@@ -418,7 +417,7 @@ MonoBehaviour:
   myOverride:
     isOverride: 1
     rotations: 0200000003000000
-    rotationSpanOverride: 90
+    rotationSpanOverride: 140
   myPossibleTargets: 00000000
 --- !u!114 &5592445795315755096
 MonoBehaviour:
@@ -448,11 +447,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   maxHealth: 200
   currentHealth: 200
+  damageReductionMultiplier: 1
   healthBar: {fileID: 0}
   explodePrefab: {fileID: 1046195756885079355, guid: 14455273e5a26a947a26caf9a4dfdd38, type: 3}
   isDead: 0
   damageNearCartsOnDeath: 0
-  selfDamageMultiplier: 1
   selfDamage: 0
   selfDamageAmounts: 140000000a000000
   isCartHp: 0

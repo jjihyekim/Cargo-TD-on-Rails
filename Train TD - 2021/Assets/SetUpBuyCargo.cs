@@ -24,9 +24,9 @@ public class SetUpBuyCargo : MonoBehaviour {
         if(button == null)
             button = Instantiate(cargoSellButtonPrefab, cargoParent).GetComponent<MiniGUI_StarterBuildingButton>();
         
-        var cargo = GetCargoWithType(playerStar.city.cargosSold[Random.Range(0, playerStar.city.cargosSold.Length)]);
+        //var cargo = GetCargoWithType(playerStar.city.cargosSold[Random.Range(0, playerStar.city.cargosSold.Length)]);
 
-        button.SetUp(cargo.GetComponent<TrainBuilding>()/*, 20, data.cost, data.reward*/);
+        //button.SetUp(cargo.GetComponent<TrainBuilding>()/*, 20, data.cost, data.reward*/);
         
         /*if (StarterUIController.s.levelSelected) {
             var playerStar = DataSaver.s.GetCurrentSave().currentRun.map.GetPlayerStar();
@@ -99,7 +99,7 @@ public class SetUpBuyCargo : MonoBehaviour {
         }
     }*/
 
-    GameObject GetCargoWithType(CargoModule.CargoTypes type) {
+    /*GameObject GetCargoWithType(CargoModule.CargoTypes type) {
         for (int i = 0; i < cargoBuildings.Length; i++) {
             if (cargoBuildings[i].GetComponent<CargoModule>().myCargoType == type) {
                 return cargoBuildings[i];
@@ -107,5 +107,5 @@ public class SetUpBuyCargo : MonoBehaviour {
         }
 
         return null;
-    }
+    }*/
 }

@@ -507,8 +507,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   myType: 0
-  amount: 100
-  generationPerSecond: 0.1
+  amount: 3
+  generationPerSecond: 0
 --- !u!114 &5592445795315755096
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -537,6 +537,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   maxHealth: 200
   currentHealth: 200
+  damageReductionMultiplier: 1
   healthBar: {fileID: 0}
   explodePrefab: {fileID: 1046195756885079355, guid: 14455273e5a26a947a26caf9a4dfdd38, type: 3}
   isDead: 0
@@ -544,6 +545,7 @@ MonoBehaviour:
   selfDamageMultiplier: 1
   selfDamage: 0
   selfDamageAmounts: 140000000a000000
+  isCartHp: 0
   explosionDamages: 640000003200000019000000
   burnResistant: 0
   currentBurn: 0
@@ -577,9 +579,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   tooltip:
-    text: Stores 100 Fuel. Generates 5 fuel every 50 seconds during battle. Don't
-      ask how.
-  info: Max fuel +100, +0.1 fuel/sec
+    text: 'Stores 3 Fuel. '
+  info: Max fuel +3
 --- !u!114 &8139463446753786062
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -592,8 +593,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7dd82790b735196458fe58421304356e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  isUnlocked: 1
-  unlockingUpgrade: {fileID: 0}
   actionName: Repair
   myType: 1
   cost: 25
@@ -617,8 +616,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d8b3a4bd1ddc40646b537648a04bdd51, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  isUnlocked: 1
-  unlockingUpgrade: {fileID: 0}
   actionName: Move Storage
   myType: 1
   cost: 50

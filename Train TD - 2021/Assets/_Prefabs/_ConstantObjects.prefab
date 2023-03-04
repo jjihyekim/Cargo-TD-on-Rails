@@ -472,7 +472,7 @@ MonoBehaviour:
   trackNameAndTime: 
   curTrackClip: {fileID: 0}
   curTrackTime: 0
-  isPlaying: 1
+  isPlaying: 0
   isPaused: 0
   realVolume: -1
 --- !u!82 &1292632658
@@ -976,27 +976,43 @@ MonoBehaviour:
             - uniqueName: 
               health: -1
               ammo: -1
+              isBuildingCargo: 0
+              cargoReward: 
             - uniqueName: 
               health: -1
               ammo: -1
+              isBuildingCargo: 0
+              cargoReward: 
             - uniqueName: 
               health: -1
               ammo: -1
+              isBuildingCargo: 0
+              cargoReward: 
             - uniqueName: 
               health: -1
               ammo: -1
+              isBuildingCargo: 0
+              cargoReward: 
             - uniqueName: 
               health: -1
               ammo: -1
+              isBuildingCargo: 0
+              cargoReward: 
             - uniqueName: 
               health: -1
               ammo: -1
+              isBuildingCargo: 0
+              cargoReward: 
             - uniqueName: 
               health: -1
               ammo: -1
+              isBuildingCargo: 0
+              cargoReward: 
             - uniqueName: 
               health: -1
               ammo: -1
+              isBuildingCargo: 0
+              cargoReward: 
         currentAct: 1
         map:
           chunks: []
@@ -1013,8 +1029,10 @@ MonoBehaviour:
         powerUps: []
         unclaimedRewards: []
         shopInitialized: 0
-        currentShopModules: []
-        currentShopPrices: []
+        shopState:
+          buildingCargos: []
+          powerUpCargos: []
+          scrapPileCount: 0
     - saveName: unnamed
       isActiveSave: 0
       isRealSaveFile: 0
@@ -1040,27 +1058,43 @@ MonoBehaviour:
             - uniqueName: 
               health: -1
               ammo: -1
+              isBuildingCargo: 0
+              cargoReward: 
             - uniqueName: 
               health: -1
               ammo: -1
+              isBuildingCargo: 0
+              cargoReward: 
             - uniqueName: 
               health: -1
               ammo: -1
+              isBuildingCargo: 0
+              cargoReward: 
             - uniqueName: 
               health: -1
               ammo: -1
+              isBuildingCargo: 0
+              cargoReward: 
             - uniqueName: 
               health: -1
               ammo: -1
+              isBuildingCargo: 0
+              cargoReward: 
             - uniqueName: 
               health: -1
               ammo: -1
+              isBuildingCargo: 0
+              cargoReward: 
             - uniqueName: 
               health: -1
               ammo: -1
+              isBuildingCargo: 0
+              cargoReward: 
             - uniqueName: 
               health: -1
               ammo: -1
+              isBuildingCargo: 0
+              cargoReward: 
         currentAct: 1
         map:
           chunks: []
@@ -1077,8 +1111,10 @@ MonoBehaviour:
         powerUps: []
         unclaimedRewards: []
         shopInitialized: 0
-        currentShopModules: []
-        currentShopPrices: []
+        shopState:
+          buildingCargos: []
+          powerUpCargos: []
+          scrapPileCount: 0
     - saveName: unnamed
       isActiveSave: 0
       isRealSaveFile: 0
@@ -1104,27 +1140,43 @@ MonoBehaviour:
             - uniqueName: 
               health: -1
               ammo: -1
+              isBuildingCargo: 0
+              cargoReward: 
             - uniqueName: 
               health: -1
               ammo: -1
+              isBuildingCargo: 0
+              cargoReward: 
             - uniqueName: 
               health: -1
               ammo: -1
+              isBuildingCargo: 0
+              cargoReward: 
             - uniqueName: 
               health: -1
               ammo: -1
+              isBuildingCargo: 0
+              cargoReward: 
             - uniqueName: 
               health: -1
               ammo: -1
+              isBuildingCargo: 0
+              cargoReward: 
             - uniqueName: 
               health: -1
               ammo: -1
+              isBuildingCargo: 0
+              cargoReward: 
             - uniqueName: 
               health: -1
               ammo: -1
+              isBuildingCargo: 0
+              cargoReward: 
             - uniqueName: 
               health: -1
               ammo: -1
+              isBuildingCargo: 0
+              cargoReward: 
         currentAct: 1
         map:
           chunks: []
@@ -1141,8 +1193,10 @@ MonoBehaviour:
         powerUps: []
         unclaimedRewards: []
         shopInitialized: 0
-        currentShopModules: []
-        currentShopPrices: []
+        shopState:
+          buildingCargos: []
+          powerUpCargos: []
+          scrapPileCount: 0
     loadingComplete: 0
     dontSave: 0
     saveInNextFrame: 0
@@ -1220,6 +1274,8 @@ MonoBehaviour:
   - {fileID: 1944673793999917900, guid: f22255233f6a08e469901467224c72cc, type: 3}
   - {fileID: 2221048273178476507, guid: d82716a84e23d0a44b80f6db6b5e90ce, type: 3}
   - {fileID: 2221048273178476507, guid: 3b32f639cbe7c754084ca75b85b9ebb6, type: 3}
+  - {fileID: 1944673793999917900, guid: e954acc88150f3846b9165a584d08148, type: 3}
+  - {fileID: 1944673793999917900, guid: 12f75827be54062469f760069f3e06d0, type: 3}
   enemies:
   - uniqueName: BuggyAVC
     data: {fileID: 5297413553918262561, guid: 845f1cf4e800d8e45b607240c9e6190c, type: 3}

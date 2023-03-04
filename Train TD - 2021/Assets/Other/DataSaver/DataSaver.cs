@@ -220,8 +220,7 @@ public class DataSaver {
 		public List<string> unclaimedRewards = new List<string>();
 
 		public bool shopInitialized = false;
-		public TrainModuleHolder[] currentShopModules;
-		public List<SupplyPrice> currentShopPrices = new List<SupplyPrice>();
+		public UpgradesController.ShopState shopState;
 		
 		public void SetCharacter(CharacterData characterData) {
 			character = characterData;
@@ -292,22 +291,14 @@ public class DataSaver {
 				[ValueDropdown("GetAllModuleNames")]
 				public string uniqueName = "";
 
-				/*private bool showInfoThing => uniqueName != "";
-				[ShowIf("showInfoThing")]
-				public bool hideExtraInfo = true;*/
-				
-				//[HideIf("hideExtraInfo")]
 				[HideInInspector]
 				public int health = -1;
-				//[HideIf("hideExtraInfo")]
 				[HideInInspector]
 				public int ammo = -1;
-				//[HideIf("hideExtraInfo")]
-				/*[HideInInspector]
-				public int cargoCost = -1;
-				//[HideIf("hideExtraInfo")]
 				[HideInInspector]
-				public int cargoReward = -1;*/
+				public bool isBuildingCargo;
+				[HideInInspector]
+				public string cargoReward;
 
 				public void EmptyState() {
 					uniqueName = "";

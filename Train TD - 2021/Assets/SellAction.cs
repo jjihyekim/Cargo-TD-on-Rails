@@ -11,6 +11,9 @@ public class SellAction : ModuleAction, IActiveDuringCombat, IActiveDuringShoppi
 
 	public bool isCombatMode = true;
 
+	public bool isScrapPile = false;
+	public bool isFuelPile = false;
+
 	[NonSerialized]
 	public UnityEvent sellEvent = new UnityEvent();
 	protected override void _Start() {
@@ -25,6 +28,14 @@ public class SellAction : ModuleAction, IActiveDuringCombat, IActiveDuringShoppi
 	protected override void _EngageAction() {
 		Instantiate(DataHolder.s.sellPrefab, transform.position, transform.rotation);
 		sellEvent?.Invoke();
+
+		if (isScrapPile) {
+			UpgradesController.s.RemoveScrapFromShopArea();
+		}
+
+		if (isFuelPile) {
+			UpgradesController.s.RemoveFuelFromShopArea();
+		}
 		
 		Train.s.SaveTrainState();
 		Destroy(gameObject);

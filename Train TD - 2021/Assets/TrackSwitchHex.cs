@@ -21,6 +21,7 @@ public class TrackSwitchHex : MonoBehaviour {
         PathSelectorController.s.RegisterTrackSwitchHex(this);
     }
 
+    private float prevAngle = 0;
     void Update() {
         var gridSizeX = HexGrid.s.gridSize.x;
         var zPos = transform.position.z/ gridSizeX;
@@ -50,6 +51,8 @@ public class TrackSwitchHex : MonoBehaviour {
 
             transform.position = pos;
             
+            CameraController.s.ManualRotateDirectControl(angle-prevAngle);
+            prevAngle = angle;
         }
 
         if (zPos < -0.5f) {

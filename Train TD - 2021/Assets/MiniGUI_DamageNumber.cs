@@ -86,6 +86,8 @@ public class MiniGUI_DamageNumber : MonoBehaviour {
         }
 
         return damage.Remap(0, 45, 8, 40);*/
+
+        damage *= TweakablesMaster.s.myTweakables.enemyFirerateBoost;
         
         var result = 8f;
         if (damage < 15) {

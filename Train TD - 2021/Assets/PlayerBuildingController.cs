@@ -258,28 +258,22 @@ public class PlayerBuildingController : MonoBehaviour {
 
     private void LogData(bool currentlyMultiBuilding, TrainBuilding newBuilding) {
         var buildingName = newBuilding.uniqueName;
-        var cData = new ConstructionData() {
-            buildTrainPercent = activeSlot.DistancePercent(),
-            isMultiBuild = currentlyMultiBuilding,
-            buildLevelDistance = SpeedController.s.currentDistance,
-            buildRotation = newBuilding.myRotation,
-        };
+        
 
-        if (currentLevelStats.TryGetValue(buildingName, out BuildingData data)) {
+        /*if (currentLevelStats.TryGetValue(buildingName, out BuildingData data)) {
             data.constructionData.Add(cData);
         } else {
             var toAdd = new BuildingData();
             toAdd.uniqueName = buildingName;
-            toAdd.constructionData.Add(cData);
             currentLevelStats.Add(buildingName, toAdd);
-        }
+        }*/
     }
 
     public Transform statsParent;
     public GameObject statsPrefab;
 
     public void LogCurrentLevelBuilds(bool isWon) {
-        foreach (var keyValPair in currentLevelStats) {
+        /*foreach (var keyValPair in currentLevelStats) {
             var bName = keyValPair.Key;
             var bData = keyValPair.Value;
             var constStats = bData.constructionData;
@@ -321,33 +315,7 @@ public class PlayerBuildingController : MonoBehaviour {
             
             Instantiate(statsPrefab, statsParent).GetComponent<MiniGUI_StatDisplay>().SetUp(bName + " Build Count", (constStats.Count).ToString());
             Instantiate(statsPrefab, statsParent).GetComponent<MiniGUI_StatDisplay>().SetUp(bName + " Damage", ((int)bData.damageData).ToString());
-        }
-    }
-
-    int DistanceToStats(float distance) {
-        return Mathf.RoundToInt(distance / 10) * 10;
-    }
-
-    int RatioToStatsPercent(float ratio) {
-        // only in sets of 5 > 0% 5% 10% etc.
-        return Mathf.RoundToInt(ratio * 20) * 5;
-    }
-
-    public Dictionary<string, BuildingData> currentLevelStats = new Dictionary<string, BuildingData>();
-
-
-    public class BuildingData {
-        public string uniqueName;
-        public float damageData = 0;
-        public List<ConstructionData> constructionData = new List<ConstructionData>();
-    }
-    
-    
-    public struct ConstructionData {
-        public float buildTrainPercent;
-        public bool isMultiBuild;
-        public float buildLevelDistance;
-        public TrainBuilding.Rots buildRotation;
+        }*/
     }
 
     void CancelBuilding(InputAction.CallbackContext context) {

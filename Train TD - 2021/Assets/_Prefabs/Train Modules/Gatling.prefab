@@ -389,7 +389,6 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   canPenetrateArmor: 0
-  fuelUsePerShot: 0
   steamUsePerShot: 0
   needWarmUp: 1
   startWarmUpEvent:
@@ -420,7 +419,7 @@ MonoBehaviour:
   myOverride:
     isOverride: 1
     rotations: 0200000003000000
-    rotationSpanOverride: 90
+    rotationSpanOverride: 140
   myPossibleTargets: 00000000
 --- !u!114 &5592445795315755096
 MonoBehaviour:
@@ -450,11 +449,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   maxHealth: 200
   currentHealth: 200
+  damageReductionMultiplier: 1
   healthBar: {fileID: 0}
   explodePrefab: {fileID: 1046195756885079355, guid: 14455273e5a26a947a26caf9a4dfdd38, type: 3}
   isDead: 0
   damageNearCartsOnDeath: 0
-  selfDamageMultiplier: 1
   selfDamage: 0
   selfDamageAmounts: 140000000a000000
   isCartHp: 0
@@ -542,8 +541,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ffd4c45972e0fc54a84560b4d5de93b9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxAmmo: 30
-  ammoPerShot: 0.5
+  maxAmmo: 20
+  ammoPerBarrage: 1
 --- !u!114 &-2809547468729876337
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -632,7 +631,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   actionName: Reload
   myType: 2
-  cost: 40
+  cost: 1
   cooldown: 5
   curCooldown: 0
   canEngage: 1
