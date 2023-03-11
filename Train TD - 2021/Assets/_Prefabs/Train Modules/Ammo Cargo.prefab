@@ -433,6 +433,7 @@ GameObject:
   - component: {fileID: -2543070092906998890}
   - component: {fileID: 1322582120578632451}
   - component: {fileID: 2318959320066720034}
+  - component: {fileID: 6145279009495250148}
   m_Layer: 17
   m_Name: Ammo Cargo
   m_TagString: Untagged
@@ -470,6 +471,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f5b56326a28e8a24c91959aa3382ef6a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  canSelect: 1
   displayName: Saltpeter Cargo
   uniqueName: ammoCargo
   Icon: {fileID: 21300000, guid: 332e935882e9cbd40baeeeefa0bca040, type: 3}
@@ -491,6 +493,7 @@ MonoBehaviour:
   backGfx: {fileID: 0}
   isBuilt: 0
   autoSetUp: 0
+  isDestroyed: 0
   _outlines: []
 --- !u!114 &8343774546683050373
 MonoBehaviour:
@@ -504,9 +507,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0476e76a40770ea42a9720f0dda8c301, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  cargoSize: 1
-  moneyReward: 100
-  myCargoType: 0
+  isBuildingReward: 0
+  myReward: 
 --- !u!114 &5592445795315755096
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -535,9 +537,15 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   maxHealth: 200
   currentHealth: 200
+  damageReductionMultiplier: 1
   healthBar: {fileID: 0}
   explodePrefab: {fileID: 1046195756885079355, guid: 14455273e5a26a947a26caf9a4dfdd38, type: 3}
   isDead: 0
+  damageNearCartsOnDeath: 0
+  selfDamage: 0
+  selfDamageAmounts: 140000000a000000
+  isCartHp: 0
+  explosionDamages: 640000003200000019000000
   burnResistant: 0
   currentBurn: 0
   burnSpeed: 0
@@ -581,8 +589,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3fc12dfc22da57840a0a8c87d9cdd0f0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  isUnlocked: 1
-  unlockingUpgrade: {fileID: 0}
   actionName: Return Cargo
   myType: 1
   cost: 0
@@ -623,8 +629,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 13e289961f2267c409ab49fee8f89874, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  isUnlocked: 1
-  unlockingUpgrade: {fileID: 0}
   actionName: Get rid of cargo
   myType: 1
   cost: 0
@@ -637,6 +641,18 @@ MonoBehaviour:
   myTooltip:
     text: Cargo is slowing you down or need extra space? Just get rid of it! You
       won't get any rewards though.
+--- !u!114 &6145279009495250148
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3146471024428373951}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 42a2f1756d052d44ba1769b3301a1c66, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &3469176668768950665
 GameObject:
   m_ObjectHideFlags: 0

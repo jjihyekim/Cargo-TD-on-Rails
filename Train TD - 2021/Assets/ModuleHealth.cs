@@ -259,7 +259,7 @@ public class ModuleHealth : MonoBehaviour, IHealth, IActiveDuringCombat, IActive
         }
     }
 
-    void DealDamageToSlot(Slot slot, GameObject prefab, int damage) {
+    void DealDamageToSlot(Slot slot, GameObject prefab, float damage) {
         if(slot == null)
             return;
         
@@ -329,13 +329,14 @@ public class ModuleHealth : MonoBehaviour, IHealth, IActiveDuringCombat, IActive
 
     void SelfDamage() {
         var myModule = GetComponent<TrainBuilding>();
-        
-        DealDamage(selfDamageAmounts[0]);
+
+        var multiplier = TweakablesMaster.s.myTweakables.engineOverloadDamageMultiplier;
+        DealDamage(selfDamageAmounts[0] * multiplier);
         var prefab = LevelReferences.s.smallDamagePrefab;
         Instantiate(prefab, transform.position, Quaternion.identity);
         
-        DealDamageToSlot(GetNextSlot(true, myModule.mySlot), prefab, selfDamageAmounts[1]);
-        DealDamageToSlot(GetNextSlot(false, myModule.mySlot), prefab, selfDamageAmounts[1]);
+        DealDamageToSlot(GetNextSlot(true, myModule.mySlot), prefab, selfDamageAmounts[1] * multiplier);
+        DealDamageToSlot(GetNextSlot(false, myModule.mySlot), prefab, selfDamageAmounts[1] * multiplier);
     }
     
     private void Start() {

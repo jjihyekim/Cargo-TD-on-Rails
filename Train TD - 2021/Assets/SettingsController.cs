@@ -8,6 +8,7 @@ public class SettingsController : MonoBehaviour {
 
     private void Awake() {
         s = this;
+        settingsParent.SetActive(false);
     }
 
     public GameObject settingsParent;
@@ -18,6 +19,10 @@ public class SettingsController : MonoBehaviour {
         for (int i = 0; i < initRequiredSettings.Length; i++) {
             initRequiredSettings[i].Initialize();
         }
+        Invoke(nameof(PlayMusic), 0.01f);
+    }
+
+    void PlayMusic() {
         MusicPlayer.s.SwapMusicTracksAndPlay(false);
     }
 

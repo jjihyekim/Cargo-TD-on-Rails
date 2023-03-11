@@ -6,7 +6,7 @@ namespace MultiBuild {
 
     public static class Storage {
 
-        static string SettingsFilePath = "Assets/MultiBuild/MultiBuildSettings.asset";
+        static string SettingsFilePath = "Assets/Other/MultiBuild/MultiBuildSettings.asset";
 
         /// <summary>
         /// Try to load saved settings

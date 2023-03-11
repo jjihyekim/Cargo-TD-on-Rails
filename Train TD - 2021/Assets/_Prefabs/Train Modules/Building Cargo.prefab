@@ -433,6 +433,7 @@ GameObject:
   - component: {fileID: -2543070092906998890}
   - component: {fileID: -8640323134701063638}
   - component: {fileID: 7303852204085857890}
+  - component: {fileID: 2358423975557571384}
   m_Layer: 17
   m_Name: Building Cargo
   m_TagString: Untagged
@@ -507,8 +508,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   isBuildingReward: 0
-  buildingReward: 
-  powerupReward: 
+  myReward: 
 --- !u!114 &5592445795315755096
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -641,6 +641,18 @@ MonoBehaviour:
   myTooltip:
     text: 
   freeInStation: 0
+--- !u!114 &2358423975557571384
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3146471024428373951}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 42a2f1756d052d44ba1769b3301a1c66, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &3469176668768950665
 GameObject:
   m_ObjectHideFlags: 0

@@ -433,6 +433,7 @@ GameObject:
   - component: {fileID: 8139463446753786062}
   - component: {fileID: 5396383329872277354}
   - component: {fileID: -6243919623059924063}
+  - component: {fileID: 6278741018035588653}
   m_Layer: 17
   m_Name: Storage Fuel
   m_TagString: Untagged
@@ -542,7 +543,6 @@ MonoBehaviour:
   explodePrefab: {fileID: 1046195756885079355, guid: 14455273e5a26a947a26caf9a4dfdd38, type: 3}
   isDead: 0
   damageNearCartsOnDeath: 0
-  selfDamageMultiplier: 1
   selfDamage: 0
   selfDamageAmounts: 140000000a000000
   isCartHp: 0
@@ -639,6 +639,18 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: f68cc5d632aa0b042a9a11038cda16d6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &6278741018035588653
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3146471024428373951}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 42a2f1756d052d44ba1769b3301a1c66, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!1 &3469176668768950665

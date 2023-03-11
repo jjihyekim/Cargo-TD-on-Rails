@@ -71,6 +71,7 @@ public class MissionLoseFinisher : MonoBehaviour {
 
     public void BackToMenu() {
         loseUI.SetActive(false);
+        MissionWinFinisher.s.Cleanup();
         SettingsController.s.ResetRun();
         MusicPlayer.s.SwapMusicTracksAndPlay(false);
         //SceneLoader.s.BackToStarterMenuHardLoad();

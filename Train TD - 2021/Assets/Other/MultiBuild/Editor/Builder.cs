@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.IO;
 using UnityEditor.Build.Reporting;
+using UnityEngine;
 
 namespace MultiBuild {
 
@@ -125,6 +126,8 @@ namespace MultiBuild {
                         return false; // cancelled
                 }
             }
+            
+            Debug.Log("Build Completed! -Multibuild");
             return true;
         }
 

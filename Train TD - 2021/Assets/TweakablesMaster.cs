@@ -36,9 +36,9 @@ public class TweakablesMaster : MonoBehaviour {
             case ResourceTypes.ammo:
                 return 0;
             case ResourceTypes.scraps:
-                return myTweakables.scrapShopCostMultiplier;
+                //return myTweakables.scrapShopCostMultiplier;
             case ResourceTypes.fuel:
-                return myTweakables.fuelShopCostMultiplier;
+                //return myTweakables.fuelShopCostMultiplier;
             default:
                 return 1;
         }
@@ -48,9 +48,6 @@ public class TweakablesMaster : MonoBehaviour {
 
 [System.Serializable]
 public class Tweakables {
-    
-    public float scrapShopCostMultiplier = 1f;
-    public float fuelShopCostMultiplier = 1f;
 
     public float ammoEnemyRewardMultiplier = 1f;
     public float scrapEnemyRewardMultiplier = 1f;
@@ -69,6 +66,9 @@ public class Tweakables {
     public float gunSteamUseMultiplier = 1f;
     
     public float engineOverloadDamageMultiplier = 1f;
+
+    public float ammoStorageAmmoGenDelay = 40f;
+    public float tripleStorageAmmoGenDelay = 80f;
 
     public Tweakables Copy() {
         var serialized = SerializationUtility.SerializeValue(this, DataFormat.Binary);
