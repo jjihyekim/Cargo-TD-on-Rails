@@ -63,7 +63,11 @@ public class RepairAction : ModuleAction, IActiveDuringShopping, IActiveDuringCo
             actionName = $"Repair to full health";
         }
 
-        cost = Mathf.CeilToInt(_building.cost * hpMissingPercent * TweakablesMaster.s.myTweakables.hpRepairCostMultiplier);
+        //cost = Mathf.CeilToInt(_building.cost * hpMissingPercent * TweakablesMaster.s.myTweakables.hpRepairCostMultiplier);
+
+        var missingHp = (_health.maxHealth - _health.currentHealth);
+        var neededRepairCount = (missingHp / TweakablesMaster.s.myTweakables.hpRepairAmount);
+        cost = Mathf.CeilToInt( neededRepairCount* TweakablesMaster.s.myTweakables.hpRepairScrapCount);
         
         if (Mathf.Approximately(_health.currentHealth,_health.maxHealth)) {
             canEngage = false;
@@ -75,9 +79,9 @@ public class RepairAction : ModuleAction, IActiveDuringShopping, IActiveDuringCo
     public float GetCostPerHealth(float health) {
         var hpMissingPercent = (health/ _health.maxHealth);
 
-        var _cost = _building.cost * hpMissingPercent * TweakablesMaster.s.myTweakables.hpRepairCostMultiplier;
+        //var _cost = _building.cost * hpMissingPercent * TweakablesMaster.s.myTweakables.hpRepairCostMultiplier;
 
-        return _cost;
+        return 5;
     }
 
     public void ActivateForShopping() {

@@ -44,7 +44,7 @@ public abstract class ModuleAction : MonoBehaviour {
 			if (curCooldown <= 0) {
 				if (cost > 0) {
 					if (MoneyController.s.HasResource(myType, cost)) {
-						MoneyController.s.ModifyResource(myType, -cost);
+						MoneyController.s.ModifyResource(myType, -cost, transform);
 						curCooldown = cooldown;
 						_EngageAction();
 						
@@ -83,12 +83,12 @@ public abstract class ModuleAction : MonoBehaviour {
 
 		if (refundAmount > 0) {
 			if (MoneyController.s.HasResource(myType, refundAmount)) {
-				MoneyController.s.ModifyResource(myType, -refundAmount);
+				MoneyController.s.ModifyResource(myType, -refundAmount, transform);
 				curCooldown = cooldown;
 				_EngageAction();
 			}
 		} else {
-			MoneyController.s.ModifyResource(myType, -refundAmount);
+			MoneyController.s.ModifyResource(myType, -refundAmount, transform);
 			curCooldown = cooldown;
 			_EngageAction();
 		}

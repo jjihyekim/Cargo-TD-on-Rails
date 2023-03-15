@@ -185,7 +185,8 @@ public class SpeedController : MonoBehaviour, IShowOnDistanceRadar {
                 var excessEnginePower = (pressurePower / trainWeight);
                 acceleration += excessEnginePower.Remap(0,0.5f,0,0.2f);
             } else {
-                acceleration *= currentBreakPower;
+                if(currentBreakPower > 0)
+                    acceleration *= currentBreakPower;
             }
 
             if (currentBreakPower > 0) {

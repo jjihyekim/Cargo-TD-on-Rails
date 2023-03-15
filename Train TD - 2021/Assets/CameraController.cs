@@ -501,6 +501,6 @@ public class CameraController : MonoBehaviour {
     }
 
     public void ManualRotateDirectControl(float amount) {
-        rotTarget.x += amount/1.2f;
+        rotTarget.x += amount/1.5f;
     }
 }

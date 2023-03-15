@@ -44,9 +44,17 @@ public class ModuleAmmo : MonoBehaviour, IResupplyAble, IActiveDuringCombat, IAc
         UpdateModuleState();
     }
 
+    public GameObject myUINoAmmoWarningThing;
     void UpdateModuleState() {
         if (myGunModule != null) {
             myGunModule.hasAmmo = curAmmo >= AmmoUseWithMultipliers();
+
+            if (myUINoAmmoWarningThing == null) {
+                myUINoAmmoWarningThing = Instantiate(LevelReferences.s.noAmmoWarning,LevelReferences.s.uiDisplayParent);
+                myUINoAmmoWarningThing.GetComponent<UIElementFollowWorldTarget>().SetUp(GetComponent<TrainBuilding>().GetUITargetTransform(false));
+            }
+            
+            myUINoAmmoWarningThing.SetActive(!myGunModule.hasAmmo);
         }
 
         if (GetComponent<EngineModule>())
@@ -110,5 +118,11 @@ public class ModuleAmmo : MonoBehaviour, IResupplyAble, IActiveDuringCombat, IAc
     [Button]
     public void FillAmmoDebug() {
         Resupply(1000000);
+    }
+
+    private void OnDestroy() {
+        if (myUINoAmmoWarningThing != null) {
+            Destroy(myUINoAmmoWarningThing);
+        }
     }
 }

@@ -90,6 +90,7 @@ public class DataSaver {
 	public bool dontSave = false;
 
 	public bool saveInNextFrame = false;
+	[Button]
 	public void SaveActiveGame() {
 		if (!dontSave) {
 			saveInNextFrame = true;
@@ -136,6 +137,7 @@ public class DataSaver {
 		Debug.Log($"IO OP: file \"{file.GetType()}\" saved to \"{path}\"");
 	}
 
+	[Button]
 	public void Load() {
 		if (loadingComplete) {
 			return;
@@ -199,6 +201,40 @@ public class DataSaver {
 
 		public bool isInARun = false;
 		public RunState currentRun = new RunState(); // assumed to be never null
+
+		public XPProgress xpProgress = new XPProgress();
+		public TutorialProgress tutorialProgress = new TutorialProgress();
+	}
+
+	[Serializable]
+	public class XPProgress {
+		public int xp;
+	}
+	
+	[Serializable]
+	public class TutorialProgress {
+		public bool tutorialDone;
+		public bool cameraDone;
+		public bool cargoPutOnTrain;
+		public bool scrapsScrapped;
+		public bool mapTargetSelected;
+		public bool levelStarted;
+		
+		public bool shiftToGoFast;
+		public bool changeTracks;
+		public int reload;
+		public int repair;
+		public bool directControl;
+		public bool powerup;
+		
+		public bool trainSpeed;
+
+		public bool levelFinishedOnce;
+		public bool getRewards;
+		
+		public bool repairAtTheStation;
+		public bool moveThingsAround;
+		public bool putTheNewStuff;
 	}
 
 	[Serializable]
@@ -295,9 +331,9 @@ public class DataSaver {
 				public int health = -1;
 				[HideInInspector]
 				public int ammo = -1;
-				[HideInInspector]
+				//[HideInInspector]
 				public bool isBuildingCargo;
-				[HideInInspector]
+				//[HideInInspector]
 				public string cargoReward;
 
 				public void EmptyState() {

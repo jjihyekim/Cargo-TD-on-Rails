@@ -225,7 +225,8 @@ public class PlayerBuildingController : MonoBehaviour {
                 
                 
                 if(!nextBuildIsFree)
-                    MoneyController.s.ModifyResource(ResourceTypes.scraps, -newBuilding.cost);
+                    MoneyController.s.ModifyResource(ResourceTypes.scraps, -newBuilding.cost, newBuilding.transform);
+                
                 nextBuildIsFree = false;
                 var ammo = newBuilding.GetComponent<ReloadAction>();
                 if (ammo) {

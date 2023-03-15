@@ -83,10 +83,9 @@ public class Pauser : MonoBehaviour {
             }
         );
         
-        TimeController.s.UnPause();
-        
+        Unpause();
         SceneLoader.s.BackToStarterMenu();
-        FirstTimeTutorialController.s.SkipTutorial();
+        FirstTimeTutorialController.s.StopTutorial();
         SceneLoader.s.afterTransferCalls.Enqueue(()=> MissionWinFinisher.s.Cleanup());
     }
 }

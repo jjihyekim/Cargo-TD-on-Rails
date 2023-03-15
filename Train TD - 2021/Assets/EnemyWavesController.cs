@@ -97,20 +97,20 @@ public class EnemyWavesController : MonoBehaviour {
 
 			if (waves.Count < maxConcurrentWaves) {
 				//for (int i = 0; i < SceneLoader.s.currentLevel.dynamicSpawnEnemies.Length; i++) {
-					var enemy = SceneLoader.s.currentLevel.dynamicSpawnData;
+					var dynamicSpawnEnemy = SceneLoader.s.currentLevel.dynamicSpawnData;
 					
-					if (enemy.curTime <= 0) {
-						SpawnEnemy(enemy.enemyIdentifier, playerDistance - enemy.distanceFromTrain, true, Random.value > 0.5f);
-						enemy.curTime = enemy.spawnInterval;
+					if (dynamicSpawnEnemy.curTime <= 0) {
+						SpawnEnemy(dynamicSpawnEnemy.enemyIdentifier, playerDistance - dynamicSpawnEnemy.distanceFromTrain, true, Random.value > 0.5f);
+						dynamicSpawnEnemy.curTime = dynamicSpawnEnemy.spawnInterval;
 
-						enemy.curIncreaseInNumberCount += 1;
-						if (enemy.increaseInNumberInterval >= 0 && enemy.curIncreaseInNumberCount >= enemy.increaseInNumberInterval) {
-							enemy.enemyIdentifier.enemyCount += 1;
-							enemy.curIncreaseInNumberCount = 0;
+						dynamicSpawnEnemy.curIncreaseInNumberCount += 1;
+						if (dynamicSpawnEnemy.increaseInNumberInterval >= 0 && dynamicSpawnEnemy.curIncreaseInNumberCount >= dynamicSpawnEnemy.increaseInNumberInterval) {
+							dynamicSpawnEnemy.enemyIdentifier.enemyCount += 1;
+							dynamicSpawnEnemy.curIncreaseInNumberCount = 0;
 						}
 					}
 
-					enemy.curTime -= Time.deltaTime;
+					dynamicSpawnEnemy.curTime -= Time.deltaTime;
 				//}
 			}
 		} else {

@@ -19,32 +19,22 @@ MonoBehaviour:
     - enemyIdentifier:
         enemyUniqueName: Stealer
         enemyCount: 1
-      distanceOnPath: 0
+      distanceOnPath: 50
       isLeft: 0
     - enemyIdentifier:
         enemyUniqueName: Stealer
         enemyCount: 1
-      distanceOnPath: 0
+      distanceOnPath: 50
       isLeft: 0
     - enemyIdentifier:
         enemyUniqueName: Stealer
         enemyCount: 1
-      distanceOnPath: 45
+      distanceOnPath: 50
       isLeft: 0
     - enemyIdentifier:
-        enemyUniqueName: Stealer
-        enemyCount: 1
-      distanceOnPath: 45
-      isLeft: 0
-    - enemyIdentifier:
-        enemyUniqueName: Stealer
-        enemyCount: 1
-      distanceOnPath: 45
-      isLeft: 0
-    - enemyIdentifier:
-        enemyUniqueName: Stealer
-        enemyCount: 1
-      distanceOnPath: 45
+        enemyUniqueName: BuggyPneumatic
+        enemyCount: 6
+      distanceOnPath: 100
       isLeft: 0
     rewardPowerUpAtTheEnd: 0
     segmentLength: 200

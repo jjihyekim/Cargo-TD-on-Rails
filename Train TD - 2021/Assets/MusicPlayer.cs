@@ -106,7 +106,7 @@ public class MusicPlayer : MonoBehaviour {
 		PlayNextTrack();
 	}
 
-	public void SwapMusicTracksAndPlay(bool isGame) {
+	public void SwapMusicTracksAndPlay(bool isGame, bool forced = false) {
 		var changeMade = false;
 		if (isGame) {
 			if (currentTracks != gameMusicTracks) {
@@ -120,7 +120,7 @@ public class MusicPlayer : MonoBehaviour {
 			}
 		}
 
-		if (changeMade) {
+		if (changeMade || forced) {
 			//Stop();
 			CreateRandomClipOrder();
 			PlayNextTrack();

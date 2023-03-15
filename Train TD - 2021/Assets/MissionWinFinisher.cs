@@ -42,9 +42,13 @@ public class MissionWinFinisher : MonoBehaviour {
 		winUI.SetActive(false);
 	}
 
+
+	public bool isWon = false;
+	
 	public UnityEvent OnLevelFinished = new UnityEvent();
 	
 	public void MissionWon(bool isShowingPrevRewards = false) {
+		isWon = true;
 		SceneLoader.s.FinishLevel();
 		EnemyWavesController.s.Cleanup();
 		//EnemyHealth.winSelfDestruct?.Invoke(false);
@@ -133,7 +137,7 @@ public class MissionWinFinisher : MonoBehaviour {
 	}
 
 
-	public int maxTrainLengthForGettingCartReward = 8;
+	public int maxTrainLengthForGettingCartReward = 5;
 	void GenerateMissionRewards() {
 		var mySave = DataSaver.s.GetCurrentSave();
 		var playerStar = mySave.currentRun.map.GetPlayerStar();
@@ -144,11 +148,11 @@ public class MissionWinFinisher : MonoBehaviour {
 			var cargoObj = Instantiate(cargoDeliveredPrefab, cargoDeliveredParent);
 			cargoObj.GetComponent<MiniGUI_DeliveredCargo>().SetUp(cargo);
 			//rewardMoney += cargoObj.GetComponent<MiniGUI_DeliveredCargo>().SetUp(cargo);
-			if(cargo.isBuildingReward){
+			if(cargo.IsBuildingReward()){
 			
-				mySave.currentRun.unclaimedRewards.Add($"b{cargo.myReward}");
+				mySave.currentRun.unclaimedRewards.Add($"b{cargo.GetReward()}");
 			}else {
-				mySave.currentRun.unclaimedRewards.Add($"p{cargo.myReward}");
+				mySave.currentRun.unclaimedRewards.Add($"p{cargo.GetReward()}");
 			}
 			cargo.CargoSold();
 		}
@@ -175,6 +179,8 @@ public class MissionWinFinisher : MonoBehaviour {
 			mySave.currentRun.unclaimedRewards.Add($"c{1}");
 		
 		//mySave.currentRun.unclaimedRewards.Add($"p{DataHolder.s.powerUps[Random.Range(0, DataHolder.s.powerUps.Length)].name}");//power up -> boost
+
+		mySave.xpProgress.xp += 1;
 	}
 
 	void ShowAndGiveMissionRewards() {
@@ -292,7 +298,7 @@ public class MissionWinFinisher : MonoBehaviour {
 		}
 	}
 
-	private int unclaimedRewardCount = 0;
+	public int unclaimedRewardCount = 0;
 	public bool isShowingAlert = false;
 	public void ContinueToStarterMenu() {
 		if (!isShowingAlert) {
@@ -318,6 +324,7 @@ public class MissionWinFinisher : MonoBehaviour {
 	}
 
 	public void Cleanup() {
+		isWon = false;
 		for (int i = 0; i < gameObjectsToDisable.Length; i++) {
 			gameObjectsToDisable[i].SetActive(false);
 		}

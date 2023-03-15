@@ -8,11 +8,15 @@ public class MiniGUI_CharSelectPanel : MonoBehaviour {
 
 	public TMP_Text charNameText;
 	public TMP_Text charDescText;
-	
-	public void Setup(CharacterData data) {
+
+	public GameObject lockedOverlay;
+
+	public void Setup(CharacterData data, bool isLocked) {
 		myData = data;
 		charNameText.text = myData.uniqueName;
 		charDescText.text = myData.description;
+		
+		lockedOverlay.SetActive(isLocked);
 	}
 
 

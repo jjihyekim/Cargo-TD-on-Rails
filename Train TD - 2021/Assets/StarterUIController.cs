@@ -29,7 +29,6 @@ public class StarterUIController : MonoBehaviour {
 	public GameObject gameUI;
 	
 	
-	public bool levelSelected = false;
 	public int selectedLevelIndex = -1;
 
 
@@ -56,8 +55,8 @@ public class StarterUIController : MonoBehaviour {
 		starterUI.SetActive(false);
 		if (SceneLoader.s.isLevelInProgress) {
 			MissionWinFinisher.s.Cleanup();
-			FirstTimeTutorialController.s.SkipTutorial();
 		}
+		FirstTimeTutorialController.s.StopTutorial();
 		SceneLoader.s.OpenProfileScreen();
 		MusicPlayer.s.SwapMusicTracksAndPlay(false);
 	}
@@ -95,7 +94,7 @@ public class StarterUIController : MonoBehaviour {
 	}
 
 	public void StartLevel(bool legitStart = true) {
-		if (levelSelected) {
+		if (SceneLoader.s.IsLevelSelected()) {
 			var currentLevel = SceneLoader.s.currentLevel;
 			starterUI.SetActive(false);
 
@@ -169,14 +168,12 @@ public class StarterUIController : MonoBehaviour {
 		var level = playerStar.outgoingConnectionLevels[selectedLevelIndex];
 		SceneLoader.s.SetCurrentLevel(level);
 		//missionDistance.text = "Mission Length: " + level.missionDistance;
-		levelSelected = true;
 		OnLevelChanged?.Invoke();
 	}
 
 	public void SelectLevelAndStart_StarterUIStartOnly(ConstructedLevel data) {
 		SceneLoader.s.SetCurrentLevel(data);
 		//missionDistance.text = "Mission Length: " + data.missionDistance;
-		levelSelected = true;
 		OnLevelChanged?.Invoke();
 
 		starterUI.SetActive(false);

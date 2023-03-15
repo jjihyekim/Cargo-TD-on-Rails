@@ -14,96 +14,133 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   myCharacter:
     uniqueName: Tutorial
-    description: Just your average dude. Starts with some basic guns and a great
-      potential.
-    starterModules:
-    - moduleUniqueName: BasicNuclear
-      amount: 2
-    - moduleUniqueName: pneumatic
-      amount: 2
-    - moduleUniqueName: AVR
-      amount: 1
-    - moduleUniqueName: tripleStorage
-      amount: 1
-    - moduleUniqueName: ammoStorage
-      amount: 1
+    description: Tutorial character.
+    starterModules: []
     starterTrain:
       myCarts:
       - buildingStates:
         - uniqueName: BasicNuclear
           health: -1
           ammo: -1
+          isBuildingCargo: 0
+          cargoReward: 
         - uniqueName: 
           health: -1
           ammo: -2
+          isBuildingCargo: 0
+          cargoReward: 
         - uniqueName: 
           health: -1
           ammo: -2
+          isBuildingCargo: 0
+          cargoReward: 
         - uniqueName: 
           health: -1
           ammo: -2
+          isBuildingCargo: 0
+          cargoReward: 
+        - uniqueName: AVR
+          health: -1
+          ammo: -2
+          isBuildingCargo: 0
+          cargoReward: 
         - uniqueName: 
           health: -1
           ammo: -2
-        - uniqueName: 
-          health: -1
-          ammo: -2
+          isBuildingCargo: 0
+          cargoReward: 
         - uniqueName: pneumatic
           health: -1
           ammo: -1
+          isBuildingCargo: 0
+          cargoReward: 
         - uniqueName: pneumatic
           health: -1
           ammo: -1
+          isBuildingCargo: 0
+          cargoReward: 
       - buildingStates:
         - uniqueName: tripleStorage
           health: -1
           ammo: -1
+          isBuildingCargo: 0
+          cargoReward: 
         - uniqueName: 
           health: -1
           ammo: -2
+          isBuildingCargo: 0
+          cargoReward: 
         - uniqueName: 
           health: -1
           ammo: -2
+          isBuildingCargo: 0
+          cargoReward: 
         - uniqueName: 
           health: -1
           ammo: -2
+          isBuildingCargo: 0
+          cargoReward: 
         - uniqueName: ammoStorage
           health: -1
           ammo: -1
+          isBuildingCargo: 0
+          cargoReward: 
         - uniqueName: 
           health: -1
           ammo: -2
+          isBuildingCargo: 0
+          cargoReward: 
         - uniqueName: 
           health: -1
           ammo: -2
+          isBuildingCargo: 0
+          cargoReward: 
         - uniqueName: 
           health: -1
           ammo: -2
+          isBuildingCargo: 0
+          cargoReward: 
       - buildingStates:
+        - uniqueName: buildCargo
+          health: -1
+          ammo: -2
+          isBuildingCargo: 1
+          cargoReward: cannon
         - uniqueName: 
           health: -1
           ammo: -2
+          isBuildingCargo: 0
+          cargoReward: 
         - uniqueName: 
           health: -1
           ammo: -2
+          isBuildingCargo: 0
+          cargoReward: 
         - uniqueName: 
           health: -1
           ammo: -2
+          isBuildingCargo: 0
+          cargoReward: 
+        - uniqueName: buildCargo
+          health: -1
+          ammo: -2
+          isBuildingCargo: 1
+          cargoReward: gatling
         - uniqueName: 
           health: -1
           ammo: -2
+          isBuildingCargo: 0
+          cargoReward: 
         - uniqueName: 
           health: -1
           ammo: -2
+          isBuildingCargo: 0
+          cargoReward: 
         - uniqueName: 
           health: -1
           ammo: -2
-        - uniqueName: 
-          health: -1
-          ammo: -2
-        - uniqueName: 
-          health: -1
-          ammo: -2
+          isBuildingCargo: 0
+          cargoReward: 
     starterResources:
       money: 200
       scraps: 0

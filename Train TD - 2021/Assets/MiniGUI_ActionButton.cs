@@ -7,6 +7,7 @@ using UnityEngine.UI;
 
 public class MiniGUI_ActionButton : MonoBehaviour {
     private Slider _slider;
+    public Image bgImage;
     void Start() {
         _slider = GetComponentInChildren<Slider>();
     }
@@ -28,6 +29,10 @@ public class MiniGUI_ActionButton : MonoBehaviour {
     public void OverrideSliderValue(bool value) {
         _slider = GetComponentInChildren<Slider>();
         _slider.value = value ? 1 : 0;
+    }
+
+    public void SetBgColor(Color color) {
+        bgImage.color = color;
     }
 }
 

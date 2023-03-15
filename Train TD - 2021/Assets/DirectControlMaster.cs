@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
@@ -95,6 +96,21 @@ public class DirectControlMaster : MonoBehaviour {
 			onHitAlpha = 0;
 
 			CameraShakeController.s.rotationalShake = true;
+
+			currentMode = source.myMode;
+
+			switch (currentMode) {
+				case DirectControlAction.DirectControlMode.Gun:
+					gunCrosshair.gameObject.SetActive(true);
+					rocketCrosshairEverything.gameObject.SetActive(false);
+					break;
+				case DirectControlAction.DirectControlMode.LockOn:
+					gunCrosshair.gameObject.SetActive(false);
+					rocketCrosshairEverything.gameObject.SetActive(true);
+					break;
+			}
+
+			curRocketLockInTime = rocketLockOnTime;
 		}
 	}
 
@@ -123,11 +139,25 @@ public class DirectControlMaster : MonoBehaviour {
 
 	public LayerMask lookMask;
 
+	public Image gunCrosshair;
+	public GameObject rocketCrosshairEverything;
+	public Image rocketCrosshairMain;
+	public Image rocketCrosshairLock;
+	public TMP_Text rocketLockStatus;
+	public bool hasTarget = false;
+	
+	public float curRocketLockInTime;
+	public float rocketLockOnTime = 1f;
+
 	private float onHitAlpha = 0f;
 	public float onHitAlphaDecay = 2f;
 
 	public GameObject noAmmoInStorage;
 	public Transform noAmmoParent;
+
+	public DirectControlAction.DirectControlMode currentMode;
+
+	private bool reticleIsGreen = false;
 	private void Update() {
 		if (directControlInProgress) {
 			if (directControlTrainBuilding == null || directControlTrainBuilding.isDead || myGun == null) {
@@ -138,20 +168,92 @@ public class DirectControlMaster : MonoBehaviour {
 
 			var camTrans = MainCameraReference.s.cam.transform;
 			Ray ray = new Ray(camTrans.position, camTrans.forward);
-
-			if (Physics.Raycast(ray, out RaycastHit hit, 1000, lookMask)) {
+			RaycastHit hit;
+			bool didHit = false;
+			
+			if (Physics.Raycast(ray, out hit, 1000, lookMask)) {
 				myGun.LookAtLocation(hit.point);
+				didHit = true;
 				//Debug.DrawLine(ray.origin, hit.point);
 			} else {
 				myGun.LookAtLocation(ray.GetPoint(10));
 				//Debug.DrawLine(ray.origin, ray.GetPoint(10));
 			}
 
+			if (currentMode == DirectControlAction.DirectControlMode.LockOn) {
+				if (didHit && curCooldown < 1f) {
+					var possibleTarget = hit.collider.GetComponentInParent<PossibleTarget>();
+					if (possibleTarget == null) {
+						possibleTarget = hit.collider.GetComponent<PossibleTarget>();
+					}
+
+					if (possibleTarget != null && possibleTarget.myType == PossibleTarget.Type.enemy) {
+						curRocketLockInTime += Time.deltaTime;
+						curRocketLockInTime = Mathf.Clamp(curRocketLockInTime, 0, 1);
+						myGun.SetTarget(possibleTarget.targetTransform);
+						hasTarget = true;
+						if (curRocketLockInTime < rocketLockOnTime) {
+							rocketLockStatus.text = "Locking in";
+						} else {
+							rocketLockStatus.text = "Target Locked";
+							if (!reticleFlashed) {
+								flashCoroutine = FlashReticleOnLock();
+								StartCoroutine(flashCoroutine);
+								reticleFlashed = true;
+							}
+						}
+					} else {
+						curRocketLockInTime = 0;
+						myGun.UnsetTarget();
+						hasTarget = true;
+						if (curCooldown < 1f) {
+							rocketLockStatus.text = "No Targets";
+						} else {
+							rocketLockStatus.text = "Waiting";
+						}
+						
+						if(reticleIsGreen)
+							rocketCrosshairMain.color = Color.white;
+
+						reticleFlashed = false;
+					}
+				} else {
+					curRocketLockInTime = 0;
+					myGun.UnsetTarget();
+					hasTarget = true;
+					if (curCooldown < 1f) {
+						rocketLockStatus.text = "No Targets";
+					} else {
+						rocketLockStatus.text = "Waiting";
+					}
+					
+					if(reticleIsGreen)
+						rocketCrosshairMain.color = Color.white;
+					
+					reticleFlashed = false;
+				}
+			}
+
+
+			var lockInPercent = curRocketLockInTime / rocketLockOnTime;
+			rocketCrosshairLock.transform.rotation = Quaternion.Euler(0, 0,lockInPercent * 90);
+			rocketCrosshairLock.color = new Color(1, 1, 1, lockInPercent);
+			rocketCrosshairLock.transform.localScale = Vector3.one * Mathf.Lerp(1,0.5f,lockInPercent);
+
+
 			if (hasAmmo) {
-				if (directControlShootAction.action.IsPressed()) {
+				if (directControlShootAction.action.IsPressed() && 
+				    (currentMode != DirectControlAction.DirectControlMode.LockOn || (curRocketLockInTime >= rocketLockOnTime && hasTarget))
+				    ) {
 					if (curCooldown <= 0) {
 						myGun.ShootBarrage(false, OnShoot, OnHit);
 						curCooldown = myGun.GetFireDelay();
+
+						if (currentMode == DirectControlAction.DirectControlMode.LockOn) {
+							StopCoroutine(flashCoroutine);
+							reticleIsGreen = false;
+							StartCoroutine(FlashReticleOnShoot());
+						}
 					}
 				}
 			} else {
@@ -160,6 +262,8 @@ public class DirectControlMaster : MonoBehaviour {
 					if (!managedToReload) {
 						Instantiate(noAmmoInStorage, noAmmoParent);
 					}
+
+					curCooldown = myGun.GetFireDelay()*2;
 				}
 			}
 			
@@ -188,9 +292,38 @@ public class DirectControlMaster : MonoBehaviour {
 		}
 	}
 
+	private IEnumerator flashCoroutine;
+	private bool reticleFlashed = false;
+	IEnumerator FlashReticleOnLock() {
+		rocketCrosshairMain.color = Color.green;
+		yield return new WaitForSeconds(0.1f);
+		rocketCrosshairMain.color = Color.white;
+
+		if (!hasTarget)
+			yield break;
+		
+		yield return new WaitForSeconds(0.1f);
+		rocketCrosshairMain.color = Color.green;
+		yield return new WaitForSeconds(0.1f);
+		rocketCrosshairMain.color = Color.white;
+		
+		if (!hasTarget)
+			yield break;
+		
+		yield return new WaitForSeconds(0.1f);
+		rocketCrosshairMain.color = Color.green;
+		reticleIsGreen = true;
+	}
+	
+	IEnumerator FlashReticleOnShoot() {
+		rocketCrosshairMain.color = Color.red;
+		yield return new WaitForSeconds(0.5f);
+		rocketCrosshairMain.color = Color.white;
+	}
+
 	void OnShoot() {
 		//if (doShake) {
-		var range = Mathf.Clamp01(myGun.projectileDamage / 10f) + Mathf.Clamp01(myGun.projectileDamage / 10f);
+		var range = Mathf.Clamp01(myGun.projectileDamage / 10f) ;
 		range /= 2f;
 		
 		//print(range);

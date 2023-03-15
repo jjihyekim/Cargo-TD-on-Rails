@@ -77,15 +77,12 @@ public class Slot : MonoBehaviour/*, IPointerEnterHandler, IPointerExitHandler*/
 					case 1:
 					// top buildings occupy a "single" slot but can be rotated, hence occupying both
 					return myBuildings[0] == null && myBuildings[1] == null;
-					break;
 				case 2:
 					case 3:
 					return myBuildings[slot] == null;
-					break;
 				default:
 					Debug.LogError($"Illegal slot {slot}");
 					return false;
-					break;
 			}
 		}
 	}

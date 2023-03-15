@@ -82,6 +82,7 @@ public class ProfileSelectionMenu : MonoBehaviour {
     }
 
     public void StartGame() {
+        FirstTimeTutorialController.s.TutorialCheck();
         SceneLoader.s.BackToStarterMenu();
         SceneLoader.s.afterTransferCalls.Enqueue(() => DoTransfer());
     }

@@ -29,8 +29,10 @@ public class SteamPieceScript : MonoBehaviour
         //Invoke(nameof(ApplyJiggleForce), Random.Range(randomInterval.x, randomInterval.y));
     }
 
+    private int maxCount = 50;
     private void FixedUpdate() {
-        for (int i = 0; i < allPieces.Count; i++) {
+        var iterateCount = Mathf.Min(maxCount,allPieces.Count);
+        for (int i = 0; i < iterateCount; i++) {
             var forceVector = (transform.position - allPieces[i].transform.position);
             if (forceVector.sqrMagnitude < 0.1f) {
                 var forceStrength = repelForce / Mathf.Max(forceVector.sqrMagnitude, 0.01f);

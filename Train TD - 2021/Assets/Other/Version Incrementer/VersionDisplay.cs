@@ -39,7 +39,7 @@ public class VersionDisplay : MonoBehaviour {
 				return " ";
 			}
 		} catch (System.Exception e) {
-			Debug.LogError("Can't Get Version Number ");
+			Debug.LogError($"Can't Get Version Number {e}");
 		}
 		return " ";
 	}

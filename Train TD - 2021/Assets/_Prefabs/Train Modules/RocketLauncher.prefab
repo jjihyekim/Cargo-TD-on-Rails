@@ -699,6 +699,7 @@ GameObject:
   - component: {fileID: -2279841472330544923}
   - component: {fileID: 2021261769006623840}
   - component: {fileID: 8267175744800967737}
+  - component: {fileID: -1844933193761620584}
   m_Layer: 17
   m_Name: RocketLauncher
   m_TagString: Untagged
@@ -802,7 +803,6 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   canPenetrateArmor: 1
-  fuelUsePerShot: 0
   steamUsePerShot: 0
   needWarmUp: 0
   startWarmUpEvent:
@@ -868,10 +868,10 @@ MonoBehaviour:
   explodePrefab: {fileID: 1046195756885079355, guid: 14455273e5a26a947a26caf9a4dfdd38, type: 3}
   isDead: 0
   damageNearCartsOnDeath: 0
-  selfDamageMultiplier: 1
   selfDamage: 0
   selfDamageAmounts: 140000000a000000
   isCartHp: 0
+  invincibleTutorial: 0
   explosionDamages: 640000003200000019000000
   burnResistant: 0
   currentBurn: 0
@@ -916,6 +916,8 @@ MonoBehaviour:
   myTooltip:
     text: 
   isCombatMode: 1
+  isScrapPile: 0
+  isFuelPile: 0
 --- !u!114 &7605554476854228898
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1058,6 +1060,32 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f68cc5d632aa0b042a9a11038cda16d6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &-1844933193761620584
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2876656872020492522}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8f88ead1c80db9e4984329978c418b9e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  actionName: Direct Control
+  myType: 1
+  cost: 25
+  cooldown: 15
+  curCooldown: 0
+  canEngage: 1
+  canAfford: 1
+  isCooldownOver: 1
+  soundEffect: []
+  myTooltip:
+    text: 
+  directControlTransformSide: {fileID: 0}
+  directControlTransformTop: {fileID: 2380550012198998182}
+  myMode: 1
 --- !u!1 &2983896549083203264
 GameObject:
   m_ObjectHideFlags: 0
@@ -2066,6 +2094,37 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!1 &5105634952550977510
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2380550012198998182}
+  m_Layer: 17
+  m_Name: Direct Control Area
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &2380550012198998182
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5105634952550977510}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0.2312, z: 0.0961}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 7890482466283797653}
+  m_RootOrder: 3
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &5751531482346899715
 GameObject:
   m_ObjectHideFlags: 0
@@ -2447,6 +2506,7 @@ Transform:
   - {fileID: 908467215986138807}
   - {fileID: 4123972723722370779}
   - {fileID: 4048679246776914360}
+  - {fileID: 2380550012198998182}
   m_Father: {fileID: 2401890755843403906}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}

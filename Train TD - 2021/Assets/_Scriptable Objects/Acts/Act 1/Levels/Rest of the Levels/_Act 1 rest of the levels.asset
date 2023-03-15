@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: _Act 1 rest of the levels
   m_EditorClassIdentifier: 
   isBossLevel: 0
+  firstLevel: {fileID: 0}
   possibleLevels:
   - {fileID: 11400000, guid: 35c020389996ae741a6a17d19d582ca4, type: 2}
   - {fileID: 11400000, guid: 32ba59f0e626e8a438a85df40785b61c, type: 2}
@@ -59,3 +60,7 @@ MonoBehaviour:
     firstSpawnTime: 60
     spawnInterval: 30
     increaseInNumberInterval: 2
+  segmentCount: 4
+  firstEnemyInSegmentDistance: 75
+  lastEnemyAndSegmentEndDistance: 75
+  powerUpEnemyDistanceFromLastEnemy: 75

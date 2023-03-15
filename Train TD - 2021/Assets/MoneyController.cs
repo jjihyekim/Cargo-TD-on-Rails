@@ -192,7 +192,7 @@ public class MoneyController : MonoBehaviour {
         }
     }
 
-    public void ModifyResource(ResourceTypes type, float amount) {
+    public void ModifyResource(ResourceTypes type, float amount, Transform source = null) {
         if (amount != 0) {
             switch (type) {
                 case ResourceTypes.scraps:
@@ -211,9 +211,30 @@ public class MoneyController : MonoBehaviour {
                     break;
             }
 
+            if (amount < 0 && source != null) {
+                Instantiate(LevelReferences.s.GetResourceParticle(type), ResourceParticleSpawnLocation.GetSpawnLocation(type))
+                    .GetComponent<ResourceParticleScript>().SetUp(source);
+            }
+
             if (!SceneLoader.s.isLevelInProgress)
                 DataSaver.s.SaveActiveGame();
         }
+    }
+
+    public float GetResource(ResourceTypes type) {
+        switch (type) {
+            case ResourceTypes.scraps:
+                return scraps;
+            case ResourceTypes.ammo:
+                return ammo;
+            case ResourceTypes.fuel:
+                return fuel;
+            case ResourceTypes.money:
+                var currentRunMyResources = DataSaver.s.GetCurrentSave().currentRun.myResources;
+                return currentRunMyResources.money;
+        }
+
+        return 0;
     }
 
     public void ApplyStorageAmounts(int _maxScraps, int _maxAmmo, int _maxFuel) {
@@ -223,6 +244,41 @@ public class MoneyController : MonoBehaviour {
         myAmmo.SetMaxScrap(maxAmmo);
         maxFuel = _maxFuel;
         myFuel.SetMaxScrap(maxFuel);
+    }
+
+    public void LoseStorageMaxAmount(ResourceTypes type, int lostAmount, Transform source) {
+        switch (type) {
+            case ResourceTypes.scraps:
+                maxScraps -= lostAmount;
+                if (scraps > maxScraps) {
+                    scraps = maxScraps;
+                    Instantiate(LevelReferences.s.GetResourceLostParticle(type), source);
+                }
+                myScraps.SetMaxScrap(maxScraps);
+                myScraps.SetScrap(scraps);
+                break;
+            case ResourceTypes.ammo:
+                maxAmmo -= lostAmount;
+                if (ammo > maxAmmo) {
+                    ammo = maxAmmo;
+                    Instantiate(LevelReferences.s.GetResourceLostParticle(type), source);
+                }
+                myAmmo.SetMaxScrap(maxAmmo);
+                myAmmo.SetScrap(ammo);
+                break;
+            case ResourceTypes.fuel:
+                maxFuel -= lostAmount;
+                if (fuel > maxFuel) {
+                    fuel = maxFuel;
+                    Instantiate(LevelReferences.s.GetResourceLostParticle(type), source);
+                }
+                myFuel.SetMaxScrap(maxFuel);
+                myFuel.SetScrap(fuel);
+                break;
+            /*case ResourceTypes.money:
+                var currentRunMyResources = DataSaver.s.GetCurrentSave().currentRun.myResources;
+                return currentRunMyResources.money;*/
+        }
     }
 
 

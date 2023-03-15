@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: The Army
   m_EditorClassIdentifier: 
   isBossLevel: 0
+  firstLevel: {fileID: 0}
   possibleLevels:
   - {fileID: 11400000, guid: 1cecbdbf1dae52e46897a0611f5f2579, type: 2}
   - {fileID: 11400000, guid: 36cabfc8b0859ed4aa24e1fc1ca1574b, type: 2}
@@ -27,3 +28,7 @@ MonoBehaviour:
     firstSpawnTime: 200
     spawnInterval: 60
     increaseInNumberInterval: 4
+  segmentCount: 4
+  firstEnemyInSegmentDistance: 75
+  lastEnemyAndSegmentEndDistance: 75
+  powerUpEnemyDistanceFromLastEnemy: 75

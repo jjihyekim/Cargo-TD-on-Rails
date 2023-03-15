@@ -30,7 +30,8 @@ public class GunModule : MonoBehaviour, IComponentWithTarget, IActiveDuringComba
     public float fireDelay = 2f; // dont use this
     public float GetFireDelay() { return fireDelay * GetAttackSpeedMultiplier();}
     public int fireBarrageCount = 5;
-    public float fireBarrageDelay = 0.1f;
+    public float fireBarrageDelay = 0.1f;// dont use this
+    public float GetFireBarrageDelay() { return fireBarrageDelay * GetAttackSpeedMultiplier();}
     public float projectileDamage = 2f;
 
     public float rotateSpeed = 10f;
@@ -164,14 +165,15 @@ public class GunModule : MonoBehaviour, IComponentWithTarget, IActiveDuringComba
     private bool isShooting = false;
     IEnumerator ShootCycle() {
         while (true) {
-            yield return new WaitForSeconds(GetFireDelay());
-            while (!CanShoot || !hasAmmo) {
-                yield return null;
-            }
             if (isShooting) {
                 StartCoroutine(_ShootBarrage());
             } else {
                 break;
+            }
+            
+            yield return new WaitForSeconds(GetFireDelay());
+            while (!CanShoot || !hasAmmo) {
+                yield return null;
             }
         }
     }
@@ -203,6 +205,7 @@ public class GunModule : MonoBehaviour, IComponentWithTarget, IActiveDuringComba
                 var projectile = bullet.GetComponent<Projectile>();
                 projectile.myOriginObject = this.transform.root.gameObject;
                 projectile.damage = projectileDamage*GetDamageMultiplier();
+                projectile.target = target;
                 //projectile.isTargetSeeking = true;
                 projectile.canPenetrateArmor = canPenetrateArmor;
                 
@@ -223,7 +226,7 @@ public class GunModule : MonoBehaviour, IComponentWithTarget, IActiveDuringComba
                 if(gunShakeOnShoot)
                     StartCoroutine(ShakeGun());
             //}
-            yield return new WaitForSeconds(fireBarrageDelay);
+            yield return new WaitForSeconds(GetFireBarrageDelay());
         }
         
         if(!isFree)
@@ -330,8 +333,8 @@ public class GunModule : MonoBehaviour, IComponentWithTarget, IActiveDuringComba
                 StopAllCoroutines();
 
                 ActiveShootCycle = ShootCycle();
-                StartCoroutine(ActiveShootCycle);
                 isShooting = true;
+                StartCoroutine(ActiveShootCycle);
             }
         }
     }

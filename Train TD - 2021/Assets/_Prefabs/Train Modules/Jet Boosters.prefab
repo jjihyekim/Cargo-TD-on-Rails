@@ -794,6 +794,7 @@ GameObject:
   - component: {fileID: 1998424467055819187}
   - component: {fileID: 7322172539440479892}
   - component: {fileID: -1581095640621918555}
+  - component: {fileID: -6235564173471422993}
   m_Layer: 17
   m_Name: Jet Boosters
   m_TagString: Untagged
@@ -869,7 +870,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: afb08d649479059448083408d2f118e9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  enginePower: 600
+  enginePower: 500
   isNuclear: 0
   hasFuel: 1
   baseFuelUsePerSecond: 1
@@ -909,6 +910,7 @@ MonoBehaviour:
   selfDamage: 0
   selfDamageAmounts: c800000096000000
   isCartHp: 0
+  invincibleTutorial: 0
   explosionDamages: 640000003200000019000000
   burnResistant: 0
   currentBurn: 0
@@ -953,6 +955,8 @@ MonoBehaviour:
   myTooltip:
     text: 
   isCombatMode: 1
+  isScrapPile: 0
+  isFuelPile: 0
 --- !u!114 &8099302677170761538
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1081,8 +1085,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ffd4c45972e0fc54a84560b4d5de93b9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxAmmo: 3
+  maxAmmo: 6
   ammoPerBarrage: 1
+  myUINoAmmoWarningThing: {fileID: 0}
 --- !u!114 &-1581095640621918555
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1106,6 +1111,30 @@ MonoBehaviour:
   soundEffect: []
   myTooltip:
     text: 
+--- !u!114 &-6235564173471422993
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4191698785256518694}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d8b3a4bd1ddc40646b537648a04bdd51, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  actionName: Move Action
+  myType: 1
+  cost: 25
+  cooldown: 15
+  curCooldown: 0
+  canEngage: 1
+  canAfford: 1
+  isCooldownOver: 1
+  soundEffect: []
+  myTooltip:
+    text: 
+  freeInStation: 0
 --- !u!1 &4343252447848858155
 GameObject:
   m_ObjectHideFlags: 0

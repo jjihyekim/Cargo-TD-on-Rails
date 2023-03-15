@@ -72,8 +72,10 @@ public class MissionLoseFinisher : MonoBehaviour {
     public void BackToMenu() {
         loseUI.SetActive(false);
         MissionWinFinisher.s.Cleanup();
-        SettingsController.s.ResetRun();
+        DataSaver.s.GetCurrentSave().currentRun = null;
+        DataSaver.s.GetCurrentSave().isInARun = false;
+        DataSaver.s.SaveActiveGame();
         MusicPlayer.s.SwapMusicTracksAndPlay(false);
-        //SceneLoader.s.BackToStarterMenuHardLoad();
+        SceneLoader.s.ForceReloadScene();
     }
 }

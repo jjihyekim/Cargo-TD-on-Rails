@@ -45,6 +45,10 @@ public class TooltipOnHoverOver : MonoBehaviour {
 		}
 	}
 
+	private void OnDisable() {
+		HideTooltip();
+	}
+
 	void HideTooltip() {
 		if (displayingTooltip) {
 			displayingTooltip = false;

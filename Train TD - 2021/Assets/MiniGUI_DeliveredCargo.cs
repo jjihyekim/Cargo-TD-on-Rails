@@ -11,15 +11,10 @@ public class MiniGUI_DeliveredCargo : MonoBehaviour {
 
     public int SetUp(CargoModule data) {
         myCargo = data;
-        if (myCargo.isBuildingReward) {
-            icon.sprite = DataHolder.s.GetBuilding(myCargo.myReward).Icon;
-        } else {
-            icon.sprite = DataHolder.s.GetPowerUp(myCargo.myReward).icon;
-        }
-        //icon.sprite = myCargo.GetComponent<TrainBuilding>().Icon;
+        
+        icon.sprite = data.GetRewardIcon();
         
         var reward = myCargo.GetReward();
-        
         cargoMoney.text = reward.ToString();
 
         return -1;

@@ -9,11 +9,14 @@ public class ModuleStorage : MonoBehaviour, IActiveDuringCombat, IActiveDuringSh
     public int amount = 100;
     public float generationPerSecond = 0.1f;
 
+    private TrainBuilding myBuilding;
     private void OnEnable() {
         var train = GetComponentInParent<Train>();
         
         if(train != null)
             train.ReCalculateStorageAmounts();
+
+        myBuilding = GetComponent<TrainBuilding>();
     }
 
 
@@ -21,7 +24,7 @@ public class ModuleStorage : MonoBehaviour, IActiveDuringCombat, IActiveDuringSh
     private float curAmount = 0;
 
     private void Update() {
-        if (SceneLoader.s.isLevelInProgress) {
+        if (SceneLoader.s.isLevelInProgress && !myBuilding.isDestroyed) {
             curAmount += generationPerSecond * Time.deltaTime;
             if (curAmount > chunkAmount) {
                 curAmount -= chunkAmount;
@@ -36,10 +39,16 @@ public class ModuleStorage : MonoBehaviour, IActiveDuringCombat, IActiveDuringSh
         
         if(train != null)
             train.ReCalculateStorageAmounts();
+        
+        OnModuleDestroyed();
     }
 
     public void ActivateForCombat() {
         this.enabled = true;
+
+        if (myType == ResourceTypes.ammo) {
+            curAmount = amount;
+        }
     }
 
     public void ActivateForShopping() {
@@ -48,5 +57,15 @@ public class ModuleStorage : MonoBehaviour, IActiveDuringCombat, IActiveDuringSh
 
     public void Disable() {
         this.enabled = false;
+    }
+
+    public void OnModuleDestroyed() {
+        MoneyController.s.LoseStorageMaxAmount(myType, amount, transform);
+    }
+
+    public void OnModuleUnDestroyed() {
+        var train = GetComponentInParent<Train>();
+        if(train != null)
+            train.ReCalculateStorageAmounts();
     }
 }

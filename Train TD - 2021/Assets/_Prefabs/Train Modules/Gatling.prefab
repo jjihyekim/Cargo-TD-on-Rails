@@ -378,7 +378,7 @@ MonoBehaviour:
   fireDelay: 0.5
   fireBarrageCount: 5
   fireBarrageDelay: 0.1
-  projectileDamage: 3.5
+  projectileDamage: 2
   rotateSpeed: 10
   gunActive: 1
   CanShoot: 0
@@ -457,6 +457,7 @@ MonoBehaviour:
   selfDamage: 0
   selfDamageAmounts: 140000000a000000
   isCartHp: 0
+  invincibleTutorial: 0
   explosionDamages: 640000003200000019000000
   burnResistant: 0
   currentBurn: 0
@@ -501,6 +502,8 @@ MonoBehaviour:
   myTooltip:
     text: 
   isCombatMode: 1
+  isScrapPile: 0
+  isFuelPile: 0
 --- !u!114 &-5567612607224715663
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -541,8 +544,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ffd4c45972e0fc54a84560b4d5de93b9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxAmmo: 20
+  maxAmmo: 15
   ammoPerBarrage: 1
+  myUINoAmmoWarningThing: {fileID: 0}
 --- !u!114 &-2809547468729876337
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -667,6 +671,7 @@ MonoBehaviour:
     text: Control this weapon manually. During this the weapon won't use any ammo!
   directControlTransformSide: {fileID: 4913015029762491401}
   directControlTransformTop: {fileID: 8549683253437126415}
+  myMode: 0
 --- !u!114 &-63388595086290384
 MonoBehaviour:
   m_ObjectHideFlags: 0

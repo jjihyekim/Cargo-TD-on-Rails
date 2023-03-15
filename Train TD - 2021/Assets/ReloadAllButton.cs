@@ -2,7 +2,6 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
-using UnityEngine;
 using UnityEngine.UI;
 
 public class ReloadAllButton : MonoBehaviour
@@ -52,8 +51,12 @@ public class ReloadAllButton : MonoBehaviour
         var canAfford = MoneyController.s.HasResource(ResourceTypes.ammo, cost) || isFree;
         _button.interactable = cost > 0 && canAfford;
         costText.color = canAfford ? regularColor : cantAffordColor;
-        
-        costText.text = isFree ? "Free" : cost.ToString();
+
+        if (canAfford) {
+            costText.text = isFree ? "Free" : cost.ToString();
+        } else {
+            costText.text = isFree ? "Full" : cost.ToString();
+        }
     }
 
 

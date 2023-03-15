@@ -28,11 +28,8 @@ public class Projectile : MonoBehaviour {
 
     public bool canPenetrateArmor = false;
 
-    public Transform target {
-        get {
-            return source.target;
-        }
-    }
+    public Transform target;
+    
     public GunModule source;
 
     public GenericCallback onHitCallback;

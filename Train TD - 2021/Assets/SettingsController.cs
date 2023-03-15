@@ -23,7 +23,7 @@ public class SettingsController : MonoBehaviour {
     }
 
     void PlayMusic() {
-        MusicPlayer.s.SwapMusicTracksAndPlay(false);
+        MusicPlayer.s.SwapMusicTracksAndPlay(false, true);
     }
 
     
@@ -54,10 +54,9 @@ public class SettingsController : MonoBehaviour {
             MissionWinFinisher.s.Cleanup();
         }
         MenuToggle.HideAllToggleMenus();
-        
-        PlayerPrefs.SetInt("finishedTutorial", 0);
-        FirstTimeTutorialController.s.ReDoTutorial();
         Pauser.s.Unpause();
+        
+        FirstTimeTutorialController.s.ReDoTutorial();
         //ResetRun();
     }
 

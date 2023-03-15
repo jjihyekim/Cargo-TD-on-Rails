@@ -30,7 +30,7 @@ public class MiniGUI_PlayerActionInfo : MonoBehaviour {
     }
 
     public ResourceTypes myType;
-    public int cost;
+    public float cost;
 
     void Update() {
         var mousePos = Mouse.current.position.ReadValue();
@@ -77,11 +77,11 @@ public class MiniGUI_PlayerActionInfo : MonoBehaviour {
         powerUpInfo.SetActive(false);
     }
 
-    public void ShowRepairInfo(int _cost, ResourceTypes type) {
+    public void ShowRepairInfo(float _cost,float amount, ResourceTypes type) {
         cost = _cost;
         panel.SetActive(true);
         repairInfo.SetActive(true);
-        amountText.text = $"{cost}/s";
+        amountText.text = $"{cost}->{amount}hp";
         myType = type;
         
         Update();

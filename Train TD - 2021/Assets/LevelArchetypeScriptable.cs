@@ -32,7 +32,7 @@ public class LevelArchetypeScriptable : ScriptableObject {
     };
 
     private float allOneSideChance = 0.5f;
-    private int segmentCount = 4;
+    public int segmentCount = 4;
 
     public ConstructedLevel GenerateLevel() {
         var level = new ConstructedLevel();
@@ -105,9 +105,9 @@ public class LevelArchetypeScriptable : ScriptableObject {
     }
 
 
-    private int firstEnemyInSegmentDistance = 40;
-    private int lastEnemyAndSegmentEndDistance = 50;
-    private int powerUpEnemyDistanceFromLastEnemy = 40;
+    public int firstEnemyInSegmentDistance = 50;
+    public int lastEnemyAndSegmentEndDistance = 50;
+    public int powerUpEnemyDistanceFromLastEnemy = 50;
     LevelSegment GenerateSegment(int type) { // 0 -> random 1 -> all left 2 -> all right 
         var segment =  possibleLevels[Random.Range(0, possibleLevels.Length)].GetData().Copy();
 

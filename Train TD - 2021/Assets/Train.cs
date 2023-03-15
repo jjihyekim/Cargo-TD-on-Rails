@@ -170,8 +170,8 @@ public class Train : MonoBehaviour {
             var cargo = building.GetComponent<CargoModule>();
             if (cargo != null) {
                 //buildingState.cargoCost = cargo.moneyCost;
-                buildingState.isBuildingCargo = cargo.isBuildingReward;
-                buildingState.cargoReward = cargo.myReward;
+                buildingState.isBuildingCargo = cargo.IsBuildingReward();
+                buildingState.cargoReward = cargo.GetReward();
             } else {
                 buildingState.isBuildingCargo = false;
                 buildingState.cargoReward = "";
@@ -246,8 +246,7 @@ public class Train : MonoBehaviour {
 
         var cargoModule = buildingScript.GetComponent<CargoModule>();
         if (cargoModule != null) {
-            cargoModule.isBuildingReward = buildingState.isBuildingCargo;
-            cargoModule.myReward = buildingState.cargoReward;
+            cargoModule.SetCargo(buildingState.cargoReward, buildingState.isBuildingCargo);
         }
     }
 
@@ -401,16 +400,18 @@ public class Train : MonoBehaviour {
             var modules = GetComponentsInChildren<ModuleStorage>();
 
             for (int i = 0; i < modules.Length; i++) {
-                switch (modules[i].myType) {
-                    case ResourceTypes.ammo:
-                        maxAmmo += modules[i].amount;
-                        break;
-                    case ResourceTypes.fuel:
-                        maxFuel += modules[i].amount;
-                        break;
-                    case ResourceTypes.scraps:
-                        maxScraps += modules[i].amount;
-                        break;
+                if (!modules[i].GetComponent<TrainBuilding>().isDestroyed) {
+                    switch (modules[i].myType) {
+                        case ResourceTypes.ammo:
+                            maxAmmo += modules[i].amount;
+                            break;
+                        case ResourceTypes.fuel:
+                            maxFuel += modules[i].amount;
+                            break;
+                        case ResourceTypes.scraps:
+                            maxScraps += modules[i].amount;
+                            break;
+                    }
                 }
             }
 

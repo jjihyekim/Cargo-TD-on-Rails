@@ -72,7 +72,6 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   canPenetrateArmor: 0
-  fuelUsePerShot: 0
   steamUsePerShot: 0
   needWarmUp: 0
   startWarmUpEvent:
@@ -85,6 +84,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   gunShakeOnShoot: 0
+  beingDirectControlled: 0
 --- !u!114 &1026018813153492515
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -132,7 +132,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   type: 2
-  amount: 4
+  amount: 0
 --- !u!1 &7774662325720271931
 GameObject:
   m_ObjectHideFlags: 0

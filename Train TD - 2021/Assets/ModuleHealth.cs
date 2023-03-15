@@ -42,13 +42,17 @@ public class ModuleHealth : MonoBehaviour, IHealth, IActiveDuringCombat, IActive
     }
 
     private HPLowStates hpState;
+
+    public bool invincibleTutorial = false;
     [Button]
     public void DealDamage(float damage) {
         Assert.IsTrue(damage > 0);
         if(isImmune)
             return;
 
-        if (!isDead) {
+        myBuilding = GetComponent<TrainBuilding>();
+        if (!isDead && (myBuilding == null || !myBuilding.isDestroyed)) {
+            PlayerActionsController.s.UpdateBuildingsRepairableColors();
             currentHealth -= damage;
 
             var hpPercent = currentHealth / maxHealth;
@@ -59,7 +63,10 @@ public class ModuleHealth : MonoBehaviour, IHealth, IActiveDuringCombat, IActive
                 if (repairable != null) {
                     GetDestroyed();
                 } else {
-                    Die();
+                    if(!invincibleTutorial)
+                        Die();
+                    else 
+                        currentHealth = 1;
                 }
             }
 
@@ -410,6 +417,11 @@ public class ModuleHealth : MonoBehaviour, IHealth, IActiveDuringCombat, IActive
             GetComponent<TargetPicker>().enabled = false;
         }
 
+        var storageModule = GetComponentsInChildren<ModuleStorage>();
+        for (int i = 0; i < storageModule.Length; i++) {
+            storageModule[i].OnModuleDestroyed();
+        }
+
         var colliders = GetComponentsInChildren<Collider>();
         for (int i = 0; i < colliders.Length; i++) {
             colliders[i].enabled = false;
@@ -444,6 +456,11 @@ public class ModuleHealth : MonoBehaviour, IHealth, IActiveDuringCombat, IActive
             GetComponent<TargetPicker>().enabled = true;
         }
         
+        var storageModule = GetComponentsInChildren<ModuleStorage>();
+        for (int i = 0; i < storageModule.Length; i++) {
+            storageModule[i].OnModuleUnDestroyed();
+        }
+
         var colliders = GetComponentsInChildren<Collider>();
         for (int i = 0; i < colliders.Length; i++) {
             colliders[i].enabled = true;

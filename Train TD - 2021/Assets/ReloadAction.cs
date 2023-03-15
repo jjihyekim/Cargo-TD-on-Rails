@@ -30,8 +30,12 @@ public class ReloadAction : ModuleAction, IActiveDuringCombat, IActiveDuringShop
 			cost = Mathf.FloorToInt(possibleToPay);
 		else 
 			cost = (int)costWithoutAffordability;*/
-		cost = 1;
-		
+
+		if (percent > 0.1f) {
+			cost = 1;
+		}else {
+			cost = 0;
+		}
 
 		canEngage = percent > 0.1f;
 	}

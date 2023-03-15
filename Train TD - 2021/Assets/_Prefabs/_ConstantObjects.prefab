@@ -1033,6 +1033,27 @@ MonoBehaviour:
           buildingCargos: []
           powerUpCargos: []
           scrapPileCount: 0
+          fuelPilecount: 0
+      xpProgress:
+        xp: 0
+      tutorialProgress:
+        tutorialDone: 0
+        cameraDone: 0
+        cargoPutOnTrain: 0
+        scrapsScrapped: 0
+        mapTargetSelected: 0
+        levelStarted: 0
+        shiftToGoFast: 0
+        changeTracks: 0
+        reload: 0
+        repair: 0
+        directControl: 0
+        powerup: 0
+        trainSpeed: 0
+        getRewards: 0
+        repairAtTheStation: 0
+        moveThingsAround: 0
+        putTheNewStuff: 0
     - saveName: unnamed
       isActiveSave: 0
       isRealSaveFile: 0
@@ -1115,6 +1136,27 @@ MonoBehaviour:
           buildingCargos: []
           powerUpCargos: []
           scrapPileCount: 0
+          fuelPilecount: 0
+      xpProgress:
+        xp: 0
+      tutorialProgress:
+        tutorialDone: 0
+        cameraDone: 0
+        cargoPutOnTrain: 0
+        scrapsScrapped: 0
+        mapTargetSelected: 0
+        levelStarted: 0
+        shiftToGoFast: 0
+        changeTracks: 0
+        reload: 0
+        repair: 0
+        directControl: 0
+        powerup: 0
+        trainSpeed: 0
+        getRewards: 0
+        repairAtTheStation: 0
+        moveThingsAround: 0
+        putTheNewStuff: 0
     - saveName: unnamed
       isActiveSave: 0
       isRealSaveFile: 0
@@ -1197,6 +1239,27 @@ MonoBehaviour:
           buildingCargos: []
           powerUpCargos: []
           scrapPileCount: 0
+          fuelPilecount: 0
+      xpProgress:
+        xp: 0
+      tutorialProgress:
+        tutorialDone: 0
+        cameraDone: 0
+        cargoPutOnTrain: 0
+        scrapsScrapped: 0
+        mapTargetSelected: 0
+        levelStarted: 0
+        shiftToGoFast: 0
+        changeTracks: 0
+        reload: 0
+        repair: 0
+        directControl: 0
+        powerup: 0
+        trainSpeed: 0
+        getRewards: 0
+        repairAtTheStation: 0
+        moveThingsAround: 0
+        putTheNewStuff: 0
     loadingComplete: 0
     dontSave: 0
     saveInNextFrame: 0
@@ -1267,7 +1330,6 @@ MonoBehaviour:
   - {fileID: 1944673793999917900, guid: ba29916364ff95b4fbde4de152374781, type: 3}
   - {fileID: 1944673793999917900, guid: fe303064230d8754b8cf128cb5e90af2, type: 3}
   - {fileID: 1944673793999917900, guid: 5248b9d7c0e5e0746a821b4ca1ee9431, type: 3}
-  - {fileID: 1944673793999917900, guid: 386e278be9a163a41b58c19e1683fe2b, type: 3}
   - {fileID: 1944673793999917900, guid: 3f2fce884d4397342b6ed9393f603486, type: 3}
   - {fileID: 1944673793999917900, guid: 326a02377fc214b4497d74e4650644fd, type: 3}
   - {fileID: 1944673793999917900, guid: 526049ba670f7764783345211dabcca4, type: 3}
@@ -1314,9 +1376,9 @@ MonoBehaviour:
   - uniqueName: PowerUpCarrier
     data: {fileID: 8567764965066828291, guid: f967fbf18add4a842a78d52f285eedf0, type: 3}
   characters:
-  - {fileID: 11400000, guid: 059b7d277410e644482aaf682aef739f, type: 2}
   - {fileID: 11400000, guid: 2ee611f29a603744199eea6d9a3668ca, type: 2}
   - {fileID: 11400000, guid: 72517930d567d1e47828c0af9641b34e, type: 2}
+  - {fileID: 11400000, guid: 059b7d277410e644482aaf682aef739f, type: 2}
   cities:
   - {fileID: 11400000, guid: 0d188d5e11ddb9a40ad5c80faa6f299f, type: 2}
   - {fileID: 11400000, guid: 165b7fcbc45535f4ba349a69363afb7a, type: 2}
@@ -1370,6 +1432,51 @@ MonoBehaviour:
   moneyBackColor: {r: 0.7830189, g: 0.64343905, b: 0, a: 1}
   repairPrefab: {fileID: 172524484023753321, guid: 63ac6f74862b66b49b9d837b5a27adf3, type: 3}
   sellPrefab: {fileID: 172524484023753321, guid: 5c944d37062c8b04d8a0fa76e4e24049, type: 3}
+--- !u!1 &1881823425043155332
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1163408593793314432}
+  - component: {fileID: 5757758899766866855}
+  m_Layer: 0
+  m_Name: Fuel Particle Spawn Location
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1163408593793314432
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1881823425043155332}
+  m_LocalRotation: {x: -0, y: -0, z: -0.000000022351742, w: 1}
+  m_LocalPosition: {x: 0.87900025, y: -0.47399998, z: 1.1029999}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 8932406454104516284}
+  m_RootOrder: 2
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &5757758899766866855
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1881823425043155332}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: daf1257bdb342e44cae8b154825e0f23, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  myType: 0
 --- !u!1 &3640201124203540823
 GameObject:
   m_ObjectHideFlags: 0
@@ -1446,6 +1553,51 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0.0000076293945, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!1 &4245288985003723459
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1235133153342445070}
+  - component: {fileID: 9193144034125698665}
+  m_Layer: 0
+  m_Name: Ammo Particle Spawn Location
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1235133153342445070
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4245288985003723459}
+  m_LocalRotation: {x: -0, y: -0, z: -0.000000022351742, w: 1}
+  m_LocalPosition: {x: 0.70800006, y: -0.45899987, z: 1.1230003}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 8932406454104516284}
+  m_RootOrder: 1
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &9193144034125698665
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4245288985003723459}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: daf1257bdb342e44cae8b154825e0f23, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  myType: 2
 --- !u!1 &4339708061541558218
 GameObject:
   m_ObjectHideFlags: 0
@@ -1580,7 +1732,10 @@ Transform:
   m_LocalPosition: {x: 13.886057, y: 9.067591, z: -8.358666}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children: []
+  m_Children:
+  - {fileID: 8519595574426808504}
+  - {fileID: 1235133153342445070}
+  - {fileID: 1163408593793314432}
   m_Father: {fileID: 1066860337956249593}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -1836,3 +1991,48 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
+--- !u!1 &8708347668803577665
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8519595574426808504}
+  - component: {fileID: 7593920107848596760}
+  m_Layer: 0
+  m_Name: Scrap Particle Spawn Location
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8519595574426808504
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8708347668803577665}
+  m_LocalRotation: {x: -0, y: -0, z: -0.000000022351742, w: 1}
+  m_LocalPosition: {x: 0.5389997, y: -0.44999984, z: 1.1360004}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 8932406454104516284}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &7593920107848596760
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8708347668803577665}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: daf1257bdb342e44cae8b154825e0f23, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  myType: 1

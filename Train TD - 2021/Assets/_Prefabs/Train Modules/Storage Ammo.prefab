@@ -509,7 +509,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   myType: 2
   amount: 3
-  generationPerSecond: 0.02
+  generationPerSecond: 0.025
 --- !u!114 &5592445795315755096
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -546,6 +546,7 @@ MonoBehaviour:
   selfDamage: 0
   selfDamageAmounts: 140000000a000000
   isCartHp: 0
+  invincibleTutorial: 0
   explosionDamages: 640000003200000019000000
   burnResistant: 0
   currentBurn: 0
@@ -579,8 +580,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   tooltip:
-    text: Stores 3 Ammo. Generates 1 ammo every 50 seconds.
-  info: Max ammo +3, +1 ammo per 50 sec
+    text: Stores 3 Ammo. Generates 1 ammo every 60 seconds.
+  info: Max ammo +3, +1 ammo per 40 sec
 --- !u!114 &7842641300107787819
 MonoBehaviour:
   m_ObjectHideFlags: 0

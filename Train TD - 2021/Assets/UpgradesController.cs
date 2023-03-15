@@ -56,9 +56,9 @@ public class UpgradesController : MonoBehaviour {
 	void InitializeShop(DataSaver.RunState state) {
 		state.shopState = new ShopState();
 
-		state.shopState.scrapPileCount = Random.Range(1, 5);
+		state.shopState.scrapPileCount = Random.Range(2, 7);
 		state.shopState.fuelPilecount = Random.Range(0, 1);
-		var buildingCargoCount = Random.Range(2, 4);
+		var buildingCargoCount = Random.Range(3, 4);
 		var powerupCargoCount = Random.Range(0, 2);
 
 		for (int i = 0; i < buildingCargoCount; i++) {
@@ -73,18 +73,18 @@ public class UpgradesController : MonoBehaviour {
 	}
 
 	public void RemoveCargoFromShopArea(CargoModule module) {
-		if (module.isBuildingReward) {
-			DataSaver.s.GetCurrentSave().currentRun.shopState.buildingCargos.Remove(module.myReward);
+		if (module.IsBuildingReward()) {
+			DataSaver.s.GetCurrentSave().currentRun.shopState.buildingCargos.Remove(module.GetReward());
 		} else {
-			DataSaver.s.GetCurrentSave().currentRun.shopState.powerUpCargos.Remove(module.myReward);
+			DataSaver.s.GetCurrentSave().currentRun.shopState.powerUpCargos.Remove(module.GetReward());
 		}
 	}
 
 	public void AddCargoToShopArea(CargoModule module) {
-		if (module.isBuildingReward) {
-			DataSaver.s.GetCurrentSave().currentRun.shopState.buildingCargos.Add(module.myReward);
+		if (module.IsBuildingReward()) {
+			DataSaver.s.GetCurrentSave().currentRun.shopState.buildingCargos.Add(module.GetReward());
 		} else {
-			DataSaver.s.GetCurrentSave().currentRun.shopState.powerUpCargos.Add(module.myReward);
+			DataSaver.s.GetCurrentSave().currentRun.shopState.powerUpCargos.Add(module.GetReward());
 		}
 	}
 
@@ -128,8 +128,7 @@ public class UpgradesController : MonoBehaviour {
 			var thingy = Instantiate(buildingCargo, shopableComponentsParent);
 			thingy.transform.position = location.transform.position;
 			thingy.transform.rotation = location.transform.rotation;
-			thingy.GetComponent<CargoModule>().myReward =currentRun.shopState.buildingCargos[i];
-			thingy.GetComponent<CargoModule>().isBuildingReward = true;
+			thingy.GetComponent<CargoModule>().SetCargo(currentRun.shopState.buildingCargos[i], true);
 			thingy.GetComponent<TrainBuilding>().CompleteBuilding(false, false);
 			location.GetComponentInChildren<Slot>().AddBuilding(thingy.GetComponent<TrainBuilding>(),0);
 		}
@@ -142,8 +141,7 @@ public class UpgradesController : MonoBehaviour {
 			var thingy = Instantiate(powerupCargo, shopableComponentsParent);
 			thingy.transform.position = location.transform.position;
 			thingy.transform.rotation = location.transform.rotation;
-			thingy.GetComponent<CargoModule>().myReward = currentRun.shopState.powerUpCargos[i];
-			thingy.GetComponent<CargoModule>().isBuildingReward = false;
+			thingy.GetComponent<CargoModule>().SetCargo(currentRun.shopState.powerUpCargos[i], false);
 			thingy.GetComponent<TrainBuilding>().CompleteBuilding(false, false);
 			location.GetComponentInChildren<Slot>().AddBuilding(thingy.GetComponent<TrainBuilding>(),0);
 		}

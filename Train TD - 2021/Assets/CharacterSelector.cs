@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 
 public class CharacterSelector : MonoBehaviour {
     public static CharacterSelector s;
@@ -13,7 +14,9 @@ public class CharacterSelector : MonoBehaviour {
     public GameObject charSelectUI;
     public Transform charsParent;
     public GameObject charPanelPrefab;
-    
+
+
+    public UnityEvent OnCharacterSelected = new UnityEvent();
 
     public void CheckAndShowCharSelectionScreen() {
         if (!DataSaver.s.GetCurrentSave().isInARun) {
@@ -29,7 +32,7 @@ public class CharacterSelector : MonoBehaviour {
         var allChars = DataHolder.s.characters;
         for (int i = 0; i < allChars.Length; i++) {
             var panel = Instantiate(charPanelPrefab, charsParent).GetComponent<MiniGUI_CharSelectPanel>();
-            panel.Setup(allChars[i].myCharacter);
+            panel.Setup(allChars[i].myCharacter, !XPProgressionController.s.IsCharacterUnlocked(i));
         }
     }
 
@@ -77,5 +80,7 @@ public class CharacterSelector : MonoBehaviour {
         DataSaver.s.SaveActiveGame();
         MusicPlayer.s.SwapMusicTracksAndPlay(false);
         characterChangeInProgress = false;
+        
+        OnCharacterSelected?.Invoke();
     }
 }

@@ -11,6 +11,7 @@ public class MiniGUI_ProfileDisplay : MonoBehaviour {
     public TMP_Text scrapsText;
     public TMP_Text moneyText;
     public TMP_Text ammoText;
+    public TMP_Text xpText;
     public TMP_Text profileName;
     public TMP_Text playTime;
 
@@ -35,6 +36,8 @@ public class MiniGUI_ProfileDisplay : MonoBehaviour {
             fuelText.text = $"{MoneyController.s.fuel:F0}/{MoneyController.s.maxFuel:F0}";
             scrapsText.text = $"{MoneyController.s.scraps:F0}/{MoneyController.s.maxScraps:F0}";
             ammoText.text = $"{MoneyController.s.ammo:F0}/{MoneyController.s.maxAmmo:F0}";
+
+            xpText.text = mySave.xpProgress.xp.ToString();
 
             for (int i = 0; i < mySave.currentRun.powerUps.Count; i++) {
                 myProfilePowerUpDisplays[i].UpdatePowerUpDisplay(mySave.currentRun.powerUps[i]);

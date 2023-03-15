@@ -53,7 +53,9 @@ public class Tweakables {
     public float scrapEnemyRewardMultiplier = 1f;
     public float fuelEnemyRewardMultiplier = 1f;
 
-    public float hpRepairCostMultiplier = 0.25f;
+    //public float hpRepairCostMultiplier = 0.25f;
+    public float hpRepairScrapCount = 1;
+    public float hpRepairAmount = 50;
     
     public float enemyDamageMutliplier = 2.2f;
     public float playerDamageMultiplier = 2f;

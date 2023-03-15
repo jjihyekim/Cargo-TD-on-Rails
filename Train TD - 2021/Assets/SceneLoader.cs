@@ -90,6 +90,11 @@ public class SceneLoader : MonoBehaviour {
             Destroy(gameObject);
         }
     }
+
+
+    public bool IsLevelSelected() {
+        return _currentLevel != null;
+    }
     
     public void SetCurrentLevel(ConstructedLevel levelData) {
         _currentLevel = levelData.Copy();
@@ -173,6 +178,7 @@ public class SceneLoader : MonoBehaviour {
     }
 
     public void ForceReloadScene() {
+        _gameState = GameState.profileMenu;
         LoadScene(mainScene,true);
     }
 

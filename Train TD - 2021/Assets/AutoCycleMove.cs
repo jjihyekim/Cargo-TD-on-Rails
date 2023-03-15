@@ -16,13 +16,13 @@ public class AutoCycleMove : MonoBehaviour
     private Vector3 initialPos;
 
     private void Start() {
-        initialPos = transform.position;
+        initialPos = transform.localPosition;
     }
 
 
     // Update is called once per frame
     void Update() {
-        transform.position = initialPos + new Vector3(
+        transform.localPosition = initialPos + new Vector3(
             xCurve.Evaluate(curTime) * xMagnitude,
             yCurve.Evaluate(curTime) * yMagnitude,
             zCurve.Evaluate(curTime) * zMagnitude

@@ -8,393 +8,437 @@ using UnityEngine.UI;
 public class FirstTimeTutorialController : MonoBehaviour {
     public static FirstTimeTutorialController s;
 
-    public LevelDataScriptable tutorialLevel;
-    public CharacterDataScriptable tutorialCharacter;
-
+    private DataSaver.TutorialProgress _progress => DataSaver.s.GetCurrentSave().tutorialProgress;
+    
     public bool tutorialEngaged = false;
+    public GameObject tutorialUI;
 
-    public Button mapButton;
+    [Space]
+    public GameObject cameraHint; 
+    
+    public bool cameraWASDMoved = false;
+    public bool cameraZoomed = false;
+    public bool cameraRRotated = false;
+    
+    [Space]
+    public GameObject getCargoHint;
+    public GameObject cargoIsHere;
+    public GameObject activateMoveMode;
+    public GameObject putOnTheTrain;
+    
+    [Space] 
+    public GameObject getScrapsHint;
+    public GameObject activateScrappingMode;
+
+
+    [Space] 
+    public GameObject openMapHint;
+    public GameObject mapHere;
+    public GameObject selectACity;
+
+
+    [Space] 
+    public GameObject goGoGoHint;
+
+
+    [Space] 
+    public GameObject lookAtTheRadarHint;
+    
+    
+    [Space] 
+    public GameObject pressShiftHint;
+    public float shiftHoldTime = 0;
+    
+    
+    [Space] 
+    public GameObject useRepairTool;
+    public GameObject useReloadTool;
+    
+    
+    [Space] 
+    public GameObject directControlHint;
+    
+    
+    [Space] 
+    public GameObject getRewardsHint;
+    
+    
+    [Space] 
+    public GameObject buildYourNewThingsHint;
     private void Awake() {
         s = this;
         tutorialUI.SetActive(false);
+        enabled = false;
     }
 
-    private void Start() {
-        if (PlayerPrefs.GetInt("finishedTutorial", 0) == 0) {
-            Debug.LogError("Tutorial Disabled!");
-            //Invoke(nameof(EngageFirstTimeTutorial),0.01f);
-        } else {
-            this.enabled = false;
+    public void TutorialCheck() {
+        if (!_progress.tutorialDone && !tutorialEngaged) {
+            EngageFirstTimeTutorial();
         }
     }
 
     public void ReDoTutorial() {
+        TutorialComplete();
         DataSaver.s.GetCurrentSave().isInARun = false;
-        EngageFirstTimeTutorial();
+        DataSaver.s.GetCurrentSave().tutorialProgress = new DataSaver.TutorialProgress();
+        StarterUIController.s.BackToProfileSelection();
     }
 
-    public void EngageFirstTimeTutorial() {
-        CharacterSelector.s.SelectCharacter(tutorialCharacter.myCharacter);
-        SceneLoader.s.afterTransferCalls.Enqueue(() => DoStartTutorial());
-    }
-
-    void DoStartTutorial() {
-        throw new NotImplementedException();
-        /*StarterUIController.s.OpenStarterUI();
-        StarterUIController.s.SelectLevelAndStart_StarterUIStartOnly(tutorialLevel.GetData() );
+    void EngageFirstTimeTutorial() {
         tutorialEngaged = true;
+        this.enabled = true;
 
-        mapButton.interactable = false;
-        StartCoroutine(TutorialProcess());*/
+        DataSaver.s.GetCurrentSave().tutorialProgress = new DataSaver.TutorialProgress();
+        
+        tutorialUI.SetActive(true);
+        
+        cameraHint.SetActive(false);
+        getCargoHint.SetActive(false);
+        getScrapsHint.SetActive(false);
+        openMapHint.SetActive(false);
+        goGoGoHint.SetActive(false);
+        lookAtTheRadarHint.SetActive(false);
+        pressShiftHint.SetActive(false);
+        useRepairTool.SetActive(false);
+        useReloadTool.SetActive(false);
+        directControlHint.SetActive(false);
+        getRewardsHint.SetActive(false);
+        buildYourNewThingsHint.SetActive(false);
+        
+        PlayerBuildingController.s.completeBuildingEvent.AddListener(OnPlayerBuildOnTrain);
+        CharacterSelector.s.OnCharacterSelected.AddListener(ShowCameraControls);
+        if (DataSaver.s.GetCurrentSave().isInARun) {
+            ShowCameraControls();
+        }
+
+        Train.s.trainUpdated.AddListener(GetTrainStuffBeforeLevelBegins);
     }
 
 
-    public bool cameraWASDMoved = false;
-    public bool cameraZoomed = false;
-    public bool cameraMiddleMouseRotated = false;
-    public bool cameraRRotated = false;
-    public bool cameraMovesetComplete = false;
+    void ShowCameraControls() {
+        if (!_progress.cameraDone) {
+            CameraController.s.rotateAction.action.performed += CameraRRotated;
+            cameraHint.SetActive(true);
+        } else {
+            cameraHint.SetActive(false);
+            ShowGetCargoControls();
+        }
+    }
 
-    public bool makeMissionNeverEnd = true;
+    void ShowGetCargoControls() {
+        if (!_progress.cargoPutOnTrain) {
+            getCargoHint.SetActive(true);
+        } else {
+            getCargoHint.SetActive(false);
+            ShowSellScrap();
+        }
+    }
+
+    void ShowSellScrap() {
+        if (!_progress.scrapsScrapped) {
+            getScrapsHint.SetActive(true);
+        } else {
+            getScrapsHint.SetActive(false);
+            OpenMap();
+        }
+    }
+
+    void OpenMap() {
+        if (!_progress.mapTargetSelected) {
+            openMapHint.SetActive(true);
+        } else {
+            openMapHint.SetActive(false);
+            ShowGoGoGo();
+        }
+    }
+
+    void ShowGoGoGo() {
+        if (!_progress.levelStarted) {
+            goGoGoHint.SetActive(true);
+        } else {
+            goGoGoHint.SetActive(false);
+        }
+    }
+
+    void GetTrainStuffBeforeLevelBegins() {
+        Invoke(nameof(OneFrameLater),1f);
+    }
+
+    void OneFrameLater() {
+        var sellModules = Train.s.GetComponentsInChildren<SellAction>();
+        for (int i = 0; i < sellModules.Length; i++) {
+            sellModules[i].sellEvent.AddListener(PlayerSoldSomethingOnTrain);
+        }
+    }
+
+    private ModuleHealth[] _healths;
+    private ModuleAmmo[] _ammos;
+    void GetTrainStuff() {
+        _healths = Train.s.GetComponentsInChildren<ModuleHealth>();
+        _ammos = Train.s.GetComponentsInChildren<ModuleAmmo>();
+    }
+    
+    void LookAtTheRadar() {
+        lookAtTheRadarHint.SetActive(true);
+        Invoke(nameof(PressShift), 5f);
+    }
+
+    void PressShift() {
+        lookAtTheRadarHint.SetActive(false);
+        pressShiftHint.SetActive(true);
+    }
+
+    void CameraRRotated(InputAction.CallbackContext obj) {
+        cameraRRotated = true;
+        CameraController.s.rotateAction.action.performed -= CameraRRotated;
+    }
+
+    private ModuleHealth cargoHealth;
+
+    public GameObject soldSomethingOnTrain;
+    void PlayerSoldSomethingOnTrain() {
+        soldSomethingOnTrain.SetActive(true);
+        CancelInvoke(nameof(DisableSoldOnTrain));
+        Invoke(nameof(DisableSoldOnTrain), 20f);
+    }
+
+    void DisableSoldOnTrain() {
+        soldSomethingOnTrain.SetActive(false);
+    }
+
+    private bool addedListeners = false;
+
+    void OnRepaired() {
+        _progress.repair += 1;
+    }
+
+    void OnReloaded() {
+        _progress.reload += 1;
+    }
     private void Update() {
         if (tutorialEngaged) {
-            if (makeMissionNeverEnd) {
-                if (SpeedController.s.missionDistance - SpeedController.s.currentDistance < 50) {
-                    SpeedController.s.IncreaseMissionEndDistance(50);
-                }
-            }
-
-            if (MoneyController.s.fuel < 5) {
-                MoneyController.s.ModifyResource(ResourceTypes.fuel, 5);
-            }
-
-            if (MoneyController.s.scraps < 50) {
-                MoneyController.s.ModifyResource(ResourceTypes.scraps, 10);
-            }
-
-            if (!cameraMovesetComplete) {
+            if (!_progress.cameraDone) {
                 if (CameraController.s.moveAction.action.ReadValue<Vector2>().magnitude > 0) {
                     cameraWASDMoved = true;
                 }
                 if (Mathf.Abs(CameraController.s.zoomAction.action.ReadValue<float>()) > 0) {
                     cameraZoomed = true;
                 }
-                if (Mathf.Abs(CameraController.s.rotateCameraAction.action.ReadValue<float>()) > 0) {
-                    cameraMiddleMouseRotated = true;
-                }
 
-                if (cameraWASDMoved && cameraZoomed /*&& cameraMiddleMouseRotated*/ && cameraRRotated) {
-                    cameraMovesetComplete = true;
+                if (cameraWASDMoved && cameraZoomed && cameraRRotated) {
+                    _progress.cameraDone = true;
                     Invoke(nameof(DisableCameraMovesetHint), 2f);
                 }
             }
 
 
-            if (supplySpawned && !supplyDestroyed) {
-                if (EnemyWavesController.s.waves.Count <= 0) {
-                    supplyDestroyed = true;
+            if (!_progress.cargoPutOnTrain && _progress.cameraDone) {
+                if (PlayerActionsController.s.currentMode != PlayerActionsController.ActionModes.shopMove && !PlayerBuildingController.s.isBuilding) {
+                    activateMoveMode.SetActive(true);
+                } else {
+                    activateMoveMode.SetActive(false);
+                }
+
+                if (PlayerBuildingController.s.isBuilding) {
+                    activateMoveMode.SetActive(false);
+                    putOnTheTrain.SetActive(true);
+                } else {
+                    putOnTheTrain.SetActive(false);
                 }
             }
-            
-            if (regularEnemySpawned && !regularEnemyDestroyed) {
-                if (EnemyWavesController.s.waves.Count <= 0) {
-                    regularEnemyDestroyed = true;
+
+            if (waitToShowScrap) {
+                if (PlayerActionsController.s.currentMode != PlayerActionsController.ActionModes.shopMove && !PlayerBuildingController.s.isBuilding) {
+                    ShowSellScrap();
+                    waitToShowScrap = false;
                 }
             }
+
+
+            if (!_progress.scrapsScrapped && _progress.cargoPutOnTrain && _progress.cameraDone && !waitToShowScrap) {
+                if (PlayerActionsController.s.currentMode != PlayerActionsController.ActionModes.shopSell) {
+                    activateScrappingMode.SetActive(true);
+                } else {
+                    activateScrappingMode.SetActive(false);
+                }
+                
+                if (MoneyController.s.scraps > 0) {
+                    getScrapsHint.SetActive(false);
+                    _progress.scrapsScrapped = true;
+                    OpenMap();
+                }
+            }
+
+            if (!_progress.mapTargetSelected && _progress.scrapsScrapped && _progress.cargoPutOnTrain) {
+                if (SceneLoader.s.IsLevelSelected()) {
+                    openMapHint.SetActive(false);
+                    _progress.mapTargetSelected = true;
+                    ShowGoGoGo();
+                }
+
+                if (WorldMapCreator.s.worldMapOpen) {
+                    selectACity.SetActive(true);
+                    mapHere.SetActive(false);
+                } else {
+                    selectACity.SetActive(false);
+                    mapHere.SetActive(true);
+                }
+            }
+
+            if (!_progress.levelStarted && _progress.mapTargetSelected && _progress.scrapsScrapped && _progress.cargoPutOnTrain) {
+                if (SceneLoader.s.isLevelInProgress) {
+                    _progress.levelStarted = true;
+                    goGoGoHint.SetActive(false);
+                    GetTrainStuff();
+                    
+                    if(!_progress.shiftToGoFast)
+                        Invoke(nameof(LookAtTheRadar), 5f);
+                    if(!_progress.powerup)
+                        PlayerActionsController.s.OnGetPowerUp.AddListener(OnPowerUpGet);
+                }
+            }
+
+            if (SceneLoader.s.isLevelInProgress){
+                if (!addedListeners) {
+                    PlayerActionsController.s.OnRepaired.AddListener(OnRepaired);
+                    PlayerActionsController.s.OnReloaded.AddListener(OnReloaded);
+                    addedListeners = true;
+                }
+                
+                if (pressShiftHint.activeSelf) {
+                    if (shiftHoldTime < 1f) {
+                        if (TimeController.s.fastForwardKey.action.ReadValue<float>() > 0f) {
+                            shiftHoldTime += Time.deltaTime;
+                        }
+                    } else {
+                        _progress.shiftToGoFast = true;
+                        pressShiftHint.SetActive(false);
+                    }
+                }
+
+
+                bool isHealthLow = false;
+                if (_progress.repair < 10) {
+                    for (int i = 0; i < _healths.Length; i++) {
+                        if (_healths[i].GetHealthPercent() < 0.5f) {
+                            isHealthLow = true;
+                            break;
+                        }
+                    }
+                }
+
+                useRepairTool.SetActive(isHealthLow);
+
+                bool isAmmoLow = false;
+                if (_progress.reload < 2) {
+                    for (int i = 0; i < _ammos.Length; i++) {
+                        if (_ammos[i].curAmmo < 2) {
+                            isAmmoLow = true;
+                            break;
+                        }
+                    }
+                }
+
+                useReloadTool.SetActive(isAmmoLow);
+                
+                if (!_progress.directControl) {
+                    if (SpeedController.s.currentDistance > SpeedController.s.missionDistance/2f) {
+                        directControlHint.SetActive(true);
+                    } else {
+                        directControlHint.SetActive(false);
+                    }
+
+                    if (DirectControlMaster.s.directControlInProgress || _progress.directControl) {
+                        _progress.directControl = true;
+                        directControlHint.SetActive(false);
+                    }
+                }
+            }
+
+            if (SceneLoader.s.isLevelFinished()) {
+                useReloadTool.SetActive(false);
+                useRepairTool.SetActive(false);
+                directControlHint.SetActive(false);
+                powerUpHint.SetActive(false);
+                _progress.levelFinishedOnce = true;
+                if (!_progress.getRewards && MissionWinFinisher.s.isWon) {
+                    getRewardsHint.SetActive(true);
+
+                    var remainingRewards = MissionWinFinisher.s.unclaimedRewardCount;
+                    if (remainingRewards <= 0) {
+                        _progress.getRewards = true;
+                    }
+                }
+            }
+
+            if (SceneLoader.s.isStarterMenu() && _progress.levelFinishedOnce) {
+                if (!_progress.putTheNewStuff) {
+                    buildYourNewThingsHint.SetActive(true);
+                }
+            }
+        }
+    }
+
+    [Space] 
+    public GameObject powerUpHint;
+    void OnPowerUpGet() {
+        PlayerActionsController.s.OnGetPowerUp.RemoveListener(OnPowerUpGet);
+        _progress.powerup = true;
+        powerUpHint.SetActive(true);
+        Invoke(nameof(HidePowerup), 10f);
+    }
+
+    void HidePowerup() {
+        powerUpHint.SetActive(false);
+    }
+
+    private bool waitToShowScrap = false;
+    void OnPlayerBuildOnTrain() {
+        if (!_progress.cargoPutOnTrain) {
+            var cargoModule = Train.s.GetComponentsInChildren<CargoModule>();
+
+            if (cargoModule.Length > 0) {
+                getCargoHint.SetActive(false);
+                _progress.cargoPutOnTrain = true;
+                waitToShowScrap = true;
+
+                for (int i = 0; i < cargoModule.Length; i++) {
+                    cargoModule[i].GetComponent<ModuleHealth>().invincibleTutorial = true;
+                }
+            }
+        }
+
+        if (!_progress.putTheNewStuff && _progress.levelFinishedOnce) {
+            _progress.putTheNewStuff = true;
+            TutorialComplete();
         }
     }
 
     void DisableCameraMovesetHint() {
-        variousTutorialScreens[0].SetActive(false);
+        cameraHint.SetActive(false);
+        ShowGetCargoControls();
     }
-
-    private void CamRotateActionDone(InputAction.CallbackContext obj) {
-        CameraController.s.rotateAction.action.performed -= CamRotateActionDone;
-        cameraRRotated = true;
-    }
-
-
-    public bool gunBuildingComplete = false;
-    public bool currentlyBuildingGun = false;
-    public bool cargoBuildingComplete = false;
-    public bool currentlyBuildingCargo = false;
-    public bool tryingToBuildGun = false;
-    public bool tryingToBuildCargo = false;
-
-
-    void GunMenuOpened() {
-        if (!gunBuildingComplete) {
-            variousTutorialScreens[1].SetActive(false);
-            variousTutorialScreens[2].SetActive(true); // click on AVC
-        }
-    }
-
-    void GunMenuClosed() {
-        if (!currentlyBuildingGun) {
-            variousTutorialScreens[1].SetActive(true);
-            variousTutorialScreens[2].SetActive(false);
-        }
-    }
-
-    void BuildingMenuOpened() {
-        if (!cargoBuildingComplete) {
-            variousTutorialScreens[4].SetActive(false);
-            variousTutorialScreens[5].SetActive(true); // click on cargos
-        }
-    }
-
-    void BuildingMenuClosed() {
-        if (!currentlyBuildingCargo) {
-            variousTutorialScreens[4].SetActive(true);
-            variousTutorialScreens[5].SetActive(false);
-        }
-    }
-
-    void BuildingDone() {
-        var avcCount = 0;
-        var cargoComboCount = 0;
-        var cargoAmmoCount = 0;
-        var slots = Train.s.GetComponentsInChildren<Slot>();
-        for (int i = 0; i < slots.Length; i++) {
-            for (int j = 0; j < slots[i].myBuildings.Length; j++) {
-                var trainBuilding = slots[i].myBuildings[j];
-                if (trainBuilding != null) {
-                    if (trainBuilding.uniqueName == AVC.uniqueName) {
-                        avcCount += 1;
-                    } else if (trainBuilding.uniqueName == cargoCombo.uniqueName) {
-                        cargoComboCount += 1;
-                    }else if (trainBuilding.uniqueName == cargoAmmo.uniqueName) {
-                        cargoAmmoCount += 1;
-                    }
-                }
-            }
-        }
-        
-        currentlyBuildingCargo = false;
-        currentlyBuildingGun = false;
-        
-        if (avcCount >= 2) {
-            gunBuildingComplete = true;
-        } else {
-            if (tryingToBuildGun && !gunBuildingComplete) {
-                variousTutorialScreens[3].SetActive(false);
-                GunMenuClosed();
-            }
-        }
-
-        if (cargoComboCount > 0 && cargoAmmoCount > 0) {
-            cargoBuildingComplete = true;
-        } else {
-            if (tryingToBuildCargo && !cargoBuildingComplete) {
-                variousTutorialScreens[6].SetActive(false);
-                BuildingMenuClosed();
-            }
-        }
-
-    }
-
-    public TrainBuilding AVC;
-    public TrainBuilding cargoCombo;
-    public TrainBuilding cargoAmmo;
-
-    void OnPlayerIsBuilding() {
-        var building = PlayerBuildingController.s.tempBuilding;
-
-        if (building.uniqueName == AVC.uniqueName) {
-            currentlyBuildingGun = true;
-            
-            variousTutorialScreens[1].SetActive(false);
-            variousTutorialScreens[2].SetActive(false);
-            variousTutorialScreens[3].SetActive(true); // build gun behind engine
-
-            // let player build in these slots
-            var backSlot = Train.s.carts[0].GetComponent<Cart>().backSlot;
-            if (backSlot.myBuildings[2] != null && backSlot.myBuildings[2].uniqueName == DummyTrainModule.uniqueName) 
-                backSlot.myBuildings[2] = null;
-            
-            if (backSlot.myBuildings[3] != null && backSlot.myBuildings[3].uniqueName == DummyTrainModule.uniqueName) 
-                backSlot.myBuildings[3] = null;
-
-        }else if (building.uniqueName == cargoCombo.uniqueName || building.uniqueName == cargoAmmo.uniqueName) {
-            currentlyBuildingCargo = true;
-            
-            variousTutorialScreens[4].SetActive(false);
-            variousTutorialScreens[5].SetActive(false);
-            variousTutorialScreens[6].SetActive(true); // build cargo in the middle cart
-
-
-            var backSlot = Train.s.carts[1].GetComponent<Cart>().backSlot;
-            var frontSlot = Train.s.carts[1].GetComponent<Cart>().frontSlot;
-
-            for (int i = 0; i < backSlot.myBuildings.Length; i++) {
-                if (backSlot.myBuildings[i] != null && backSlot.myBuildings[i].uniqueName == DummyTrainModule.uniqueName) {
-                    backSlot.myBuildings[i] = null;
-                }
-            }
-            for (int i = 0; i < frontSlot.myBuildings.Length; i++) {
-                if (frontSlot.myBuildings[i] != null && frontSlot.myBuildings[i].uniqueName == DummyTrainModule.uniqueName) {
-                    frontSlot.myBuildings[i] = null;
-                }
-            }
-
-        }
-    }
-
-
-    public MenuToggle gunMenuToggle;
-    public MenuToggle buildingMenuToggle;
-    public TrainBuilding DummyTrainModule;
-    public string supplyEnemyName;
-    public string regularEnemyName;
-
-    public bool supplySpawned = false;
-    public bool supplyDestroyed = false;
-    
-    public bool regularEnemySpawned = false;
-    public bool regularEnemyDestroyed = false;
-
-    void FillEmptyTrainSlotsWithDummy() {
-        var slots = Train.s.GetComponentsInChildren<Slot>();
-        DummyTrainModule.canSelect = false;
-        for (int i = 0; i < slots.Length; i++) {
-            for (int j = 0; j < slots[i].myBuildings.Length; j++) {
-                if (slots[i].myBuildings[j] == null) {
-                    slots[i].myBuildings[j] = DummyTrainModule;
-                }
-            }
-
-            DummyTrainModule.mySlot = slots[i];
-        }
-    }
-
-
-    public GameObject tutorialUI;
-    public GameObject[] variousTutorialScreens;
-
-    IEnumerator TutorialProcess() {
-        //FillEmptyTrainSlotsWithDummy();
-
-        CameraController.s.rotateAction.action.performed += CamRotateActionDone;
-        PlayerBuildingController.s.startBuildingEvent.AddListener(OnPlayerIsBuilding);
-        PlayerBuildingController.s.completeBuildingEvent.AddListener(BuildingDone);
-
-        for (int i = 0; i < variousTutorialScreens.Length; i++) {
-            variousTutorialScreens[i].SetActive(false);
-        }
-
-        tutorialUI.SetActive(true);
-
-        yield return new WaitForSeconds(5f);
-
-        variousTutorialScreens[0].SetActive(true);
-
-        yield return new WaitUntil(() => cameraMovesetComplete);
-        yield return new WaitForSeconds(2.5f);
-
-        variousTutorialScreens[1].SetActive(true); // click on gun build menu
-        gunMenuToggle.PanelEnabledEvent.AddListener(GunMenuOpened);
-        gunMenuToggle.PanelDisabledEvent.AddListener(GunMenuClosed);
-
-        tryingToBuildGun = true;
-
-        yield return new WaitUntil(() => gunBuildingComplete);
-
-        tryingToBuildGun = false;
-
-        variousTutorialScreens[1].SetActive(false);
-        variousTutorialScreens[2].SetActive(false);
-        variousTutorialScreens[3].SetActive(false);
-        gunMenuToggle.PanelEnabledEvent.RemoveListener(GunMenuOpened);
-        gunMenuToggle.PanelDisabledEvent.RemoveListener(GunMenuClosed);
-
-        // send supply enemies
-
-        variousTutorialScreens[7].SetActive(true); // wait till enemy arrives
-
-        var enemyData = new EnemyOnPathData() {
-            distanceOnPath = (int)SpeedController.s.currentDistance + 30,
-            enemyIdentifier = new EnemyIdentifier() { enemyCount = 1, enemyUniqueName = supplyEnemyName },
-        };
-
-        EnemyWavesController.s.SpawnEnemy(enemyData);
-        supplySpawned = true;
-
-        yield return new WaitForSeconds(15f);
-        
-        variousTutorialScreens[7].SetActive(false);
-
-        variousTutorialScreens[4].SetActive(true); // click on cargo build menu also say you have no ammo
-        buildingMenuToggle.PanelEnabledEvent.AddListener(BuildingMenuOpened);
-        buildingMenuToggle.PanelDisabledEvent.AddListener(BuildingMenuClosed);
-
-        tryingToBuildCargo = true;
-
-        yield return new WaitUntil(() => cargoBuildingComplete);
-        
-        
-        tryingToBuildCargo = false;
-
-        buildingMenuToggle.PanelEnabledEvent.RemoveListener(BuildingMenuOpened);
-        buildingMenuToggle.PanelDisabledEvent.RemoveListener(BuildingMenuClosed);
-        PlayerBuildingController.s.startBuildingEvent.RemoveListener(OnPlayerIsBuilding);
-        PlayerBuildingController.s.completeBuildingEvent.RemoveListener(BuildingDone);
-
-        variousTutorialScreens[4].SetActive(false);
-        variousTutorialScreens[5].SetActive(false);
-        variousTutorialScreens[6].SetActive(false);
-
-        yield return new WaitForSeconds(3f);
-        variousTutorialScreens[8].SetActive(true); // have some free ammo
-        LevelReferences.s.SpawnResourceAtLocation(ResourceTypes.ammo, 50, Vector3.left);
-
-
-        yield return new WaitForSeconds(8f);
-        variousTutorialScreens[8].SetActive(false); 
-        variousTutorialScreens[9].SetActive(true); // reload guns
-
-        yield return new WaitUntil(() => supplyDestroyed);
-        
-        variousTutorialScreens[9].SetActive(false);
-        variousTutorialScreens[10].SetActive(true); // nice now kill regular enemy
-        
-        var regularEnemyData = new EnemyOnPathData() {
-            distanceOnPath = (int)SpeedController.s.currentDistance + 30,
-            enemyIdentifier = new EnemyIdentifier() { enemyCount = 2, enemyUniqueName = regularEnemyName },
-        };
-
-        EnemyWavesController.s.SpawnEnemy(regularEnemyData);
-        regularEnemySpawned = true;
-
-        yield return new WaitUntil(() => regularEnemyDestroyed);
-        
-        
-        variousTutorialScreens[10].SetActive(false); // nice now kill regular enemy
-        variousTutorialScreens[11].SetActive(true); // repair train, and select next destination on the map once you arrive!
-
-        makeMissionNeverEnd = false;
-
-        yield return new WaitUntil(() => SpeedController.s.currentDistance + 1 >= SpeedController.s.missionDistance);
-
-        TutorialComplete();
-    }
-
-    public CharacterDataScriptable defaultStartCharacter;
 
     void TutorialComplete() {
         tutorialEngaged = false;
-        mapButton.interactable = true;
-        PlayerPrefs.SetInt("finishedTutorial", 1);
-        /*CharacterSelector.s.SelectCharacter(defaultStartCharacter.myCharacter);
-        MusicPlayer.s.SwapMusicTracksAndPlay(false);*/
-        
+        DataSaver.s.GetCurrentSave().tutorialProgress.tutorialDone = true;
         tutorialUI.SetActive(false);
-        SettingsController.s.ResetRun();
+        if (addedListeners) {
+            PlayerActionsController.s.OnRepaired.RemoveListener(OnRepaired);
+            PlayerActionsController.s.OnReloaded.RemoveListener(OnReloaded);
+        }
     }
     
     public void SkipTutorial (){
         if (tutorialEngaged) {
-            StopAllCoroutines();
             TutorialComplete();
+        }
+    }
+
+    public void StopTutorial() {
+        if (tutorialEngaged) {
+            tutorialUI.SetActive(false);
+            tutorialEngaged = false;
         }
     }
 }

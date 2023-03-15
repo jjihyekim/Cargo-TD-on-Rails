@@ -29972,6 +29972,7 @@ GameObject:
   - component: {fileID: -8062254177491749771}
   - component: {fileID: 7680171318465439623}
   - component: {fileID: 8165811245893185045}
+  - component: {fileID: -9099922627863483469}
   m_Layer: 17
   m_Name: NuclearEngineModule
   m_TagString: Untagged
@@ -30047,7 +30048,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: afb08d649479059448083408d2f118e9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  enginePower: 400
+  enginePower: 300
   isNuclear: 1
   hasFuel: 1
   baseFuelUsePerSecond: 1
@@ -30087,6 +30088,7 @@ MonoBehaviour:
   selfDamage: 0
   selfDamageAmounts: a000000050000000
   isCartHp: 0
+  invincibleTutorial: 0
   explosionDamages: 90010000c800000064000000
   burnResistant: 1
   currentBurn: 0
@@ -30131,6 +30133,8 @@ MonoBehaviour:
   myTooltip:
     text: 
   isCombatMode: 1
+  isScrapPile: 0
+  isFuelPile: 0
 --- !u!114 &8099302677170761538
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -30236,6 +30240,30 @@ MonoBehaviour:
       will generate steam for free! If it explodes it will damage nearby buildings
       and carts.
   info: Nuclear Engine Module
+--- !u!114 &-9099922627863483469
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4191698785256518694}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d8b3a4bd1ddc40646b537648a04bdd51, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  actionName: Move Action
+  myType: 1
+  cost: 25
+  cooldown: 15
+  curCooldown: 0
+  canEngage: 1
+  canAfford: 1
+  isCooldownOver: 1
+  soundEffect: []
+  myTooltip:
+    text: 
+  freeInStation: 0
 --- !u!1 &4423568369807129282
 GameObject:
   m_ObjectHideFlags: 0

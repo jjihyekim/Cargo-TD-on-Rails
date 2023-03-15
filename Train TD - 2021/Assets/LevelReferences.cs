@@ -77,6 +77,47 @@ public class LevelReferences : MonoBehaviour {
 
     public EnemyIdentifier powerUpSpawnerEnemy;
 
+
+    public GameObject resourceParticleScraps;
+    public GameObject resourceParticleAmmo;
+    public GameObject resourceParticleFuel;
+    
+    
+    public GameObject resourceLostParticleScraps;
+    public GameObject resourceLostParticleAmmo;
+    public GameObject resourceLostParticleFuel;
+
+
+    public GameObject noAmmoWarning;
+
+    public GameObject GetResourceParticle(ResourceTypes types) {
+        switch (types) {
+            case ResourceTypes.ammo:
+                return resourceParticleAmmo;
+            case ResourceTypes.fuel:
+                return resourceParticleFuel;
+            case ResourceTypes.scraps:
+                return resourceParticleScraps;
+            case ResourceTypes.money:
+            default:
+                return null;
+        }
+    }
+    
+    public GameObject GetResourceLostParticle(ResourceTypes types) {
+        switch (types) {
+            case ResourceTypes.ammo:
+                return resourceLostParticleAmmo;
+            case ResourceTypes.fuel:
+                return resourceLostParticleFuel;
+            case ResourceTypes.scraps:
+                return resourceLostParticleScraps;
+            case ResourceTypes.money:
+            default:
+                return null;
+        }
+    }
+    
     private void Awake() {
         s = this;
         

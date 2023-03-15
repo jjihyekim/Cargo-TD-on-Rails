@@ -5,8 +5,12 @@ using UnityEngine;
 
 public class CargoModule : MonoBehaviour, IActiveDuringCombat, IActiveDuringShopping {
 
-    public bool isBuildingReward;
-    public string myReward;
+    [SerializeField]
+    private bool isBuildingReward;
+    [SerializeField]
+    private string myReward;
+
+    public SpriteRenderer[] icons;
     
     public void ActivateForCombat() {
         this.enabled = true;
@@ -28,7 +32,30 @@ public class CargoModule : MonoBehaviour, IActiveDuringCombat, IActiveDuringShop
         Destroy(gameObject);
     }
 
+    public bool IsBuildingReward() {
+        return isBuildingReward;
+    }
+    
     public string GetReward() {
         return myReward;
+    }
+
+    public Sprite GetRewardIcon() {
+        if (isBuildingReward) {
+            return DataHolder.s.GetBuilding(myReward).Icon;
+        } else {
+            return DataHolder.s.GetPowerUp(myReward).icon;
+        }
+    }
+
+    public void SetCargo(string cargo, bool isBuildingCargo) {
+        isBuildingReward = isBuildingCargo;
+        myReward = cargo;
+
+        var icon = GetRewardIcon();
+        
+        for (int i = 0; i < icons.Length; i++) {
+            icons[i].sprite = icon;
+        }
     }
 }

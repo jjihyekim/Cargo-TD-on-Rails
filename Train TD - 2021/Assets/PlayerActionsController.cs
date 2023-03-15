@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.InputSystem;
 
 public class PlayerActionsController : MonoBehaviour {
@@ -53,6 +54,9 @@ public class PlayerActionsController : MonoBehaviour {
     public MiniGUI_ActionButton shopMoveActionButton;
     public MiniGUI_ActionButton shopSellActionButton;
 
+
+    public UnityEvent OnReloaded = new UnityEvent();
+    public UnityEvent OnRepaired = new UnityEvent();
     private void Start() {
         StarterUIController.s.OnLevelStarted.AddListener(OnLevelStart);
         DeselectObject();
@@ -76,7 +80,6 @@ public class PlayerActionsController : MonoBehaviour {
         shopReloadActionButton.OnButtonPressed.AddListener(EnterReloadMode);
         shopMoveActionButton.OnButtonPressed.AddListener(EnterShopMoveMode);
         shopSellActionButton.OnButtonPressed.AddListener(EnterShopSellMode);
-        
         
         UpdatePowerUpButtons();
     }
@@ -140,6 +143,7 @@ public class PlayerActionsController : MonoBehaviour {
 
     [ColorUsage(true, true)] public Color nonSelectedColor =Color.black;
     [ColorUsage(true, true)] public Color repairCurrentlyRepairingColor = Color.green;
+    [ColorUsage(true, true)] public Color repairAlmostFullHPColor = Color.green;
     [ColorUsage(true, true)] public Color repairFullHPColor = Color.green;
     [ColorUsage(true, true)] public Color repairNoHpColor = Color.blue;
     [ColorUsage(true, true)] public Color reloadColor = Color.blue;
@@ -174,6 +178,7 @@ public class PlayerActionsController : MonoBehaviour {
             return;
         if (currentMode != ActionModes.repair) {
             EnterAMode(ActionModes.repair);
+            repairActionButton.SetBgColor(GetRepairColor(null));
             var trainBuildings = Train.s.GetComponentsInChildren<TrainBuilding>();
 
             for (int i = 0; i < trainBuildings.Length; i++) {
@@ -193,6 +198,16 @@ public class PlayerActionsController : MonoBehaviour {
             return;
         if (currentMode != ActionModes.shopRepair) {
             EnterAMode(ActionModes.shopRepair);
+            shopRepairActionButton.SetBgColor(GetRepairColor(null));
+            UpdateBuildingsRepairableColors();
+            HealthBarShow();
+        } else {
+            LeaveAllModes();
+        }
+    }
+
+    public void UpdateBuildingsRepairableColors() {
+        if (currentMode == ActionModes.repair || currentMode == ActionModes.shopRepair) {
             var trainBuildings = Train.s.GetComponentsInChildren<TrainBuilding>();
 
             for (int i = 0; i < trainBuildings.Length; i++) {
@@ -200,20 +215,25 @@ public class PlayerActionsController : MonoBehaviour {
                     SetBuildingColor(trainBuildings[i], GetRepairColor(trainBuildings[i]));
                 }
             }
-            HealthBarShow();
-        } else {
-            LeaveAllModes();
         }
     }
 
     Color GetRepairColor(TrainBuilding building) {
+        if (building == null) {
+            return repairAlmostFullHPColor;
+        }
+        
         if (currentlyRepairing.Contains(building)) {
             return repairCurrentlyRepairingColor;
         } else {
             var healthModule = building.GetComponent<ModuleHealth>();
             var hpPercent = healthModule.currentHealth / healthModule.maxHealth;
 
-            return Color.Lerp(repairNoHpColor, repairFullHPColor, hpPercent);
+            if (hpPercent < 0.95f) {
+                return Color.Lerp(repairNoHpColor, repairAlmostFullHPColor, hpPercent);
+            } else {
+                return Color.Lerp(repairAlmostFullHPColor, repairFullHPColor, hpPercent);
+            }
         }
     }
 
@@ -227,6 +247,8 @@ public class PlayerActionsController : MonoBehaviour {
             return;
         if (currentMode != ActionModes.reload) {
             EnterAMode(ActionModes.reload);
+            reloadActionButton.SetBgColor(reloadColor);
+            shopReloadActionButton.SetBgColor(reloadColor);
             var trainBuildings = Train.s.GetComponentsInChildren<TrainBuilding>();
 
             for (int i = 0; i < trainBuildings.Length; i++) {
@@ -250,6 +272,7 @@ public class PlayerActionsController : MonoBehaviour {
             return;
         if (currentMode != ActionModes.directControl) {
             EnterAMode(ActionModes.directControl);
+            directActionButton.SetBgColor(directControlColor);
             var trainBuildings = Train.s.GetComponentsInChildren<TrainBuilding>();
 
             for (int i = 0; i < trainBuildings.Length; i++) {
@@ -271,6 +294,7 @@ public class PlayerActionsController : MonoBehaviour {
             return;
         if (currentMode != ActionModes.shopMove) {
             EnterAMode(ActionModes.shopMove);
+            shopMoveActionButton.SetBgColor(moveColor);
             var trainBuildings = Train.s.GetComponentsInChildren<TrainBuilding>();
 
             for (int i = 0; i < trainBuildings.Length; i++) {
@@ -299,6 +323,7 @@ public class PlayerActionsController : MonoBehaviour {
             return;
         if (currentMode != ActionModes.shopSell) {
             EnterAMode(ActionModes.shopSell);
+            shopSellActionButton.SetBgColor(sellColor);
             var trainBuildings = Train.s.GetComponentsInChildren<TrainBuilding>();
 
             for (int i = 0; i < trainBuildings.Length; i++) {
@@ -351,8 +376,8 @@ public class PlayerActionsController : MonoBehaviour {
                 break;
             case PowerUpScriptable.PowerUpType.buildGun:
                 throw new NotImplementedException();
-                ClickPowerUpButtonDelete(button);
-                break;
+                /*ClickPowerUpButtonDelete(button);
+                break;*/
         }
     }
 
@@ -410,7 +435,7 @@ public class PlayerActionsController : MonoBehaviour {
         return false;
     }
     
-    void ApplyPowerUp(TrainBuilding building) {
+    /*void ApplyPowerUp(TrainBuilding building) {
         switch (activePowerUp.myType) {
             case PowerUpScriptable.PowerUpType.boost: {
                 var action = building.GetComponent<IBoostAction>();
@@ -437,7 +462,7 @@ public class PlayerActionsController : MonoBehaviour {
                 Debug.LogError("This powerup should never check whether it can apply to places!");
                 break;
         }
-    }
+    }*/
     
 
     void EnterAMode(ActionModes toEnter) {
@@ -447,10 +472,12 @@ public class PlayerActionsController : MonoBehaviour {
 
         currentMode = toEnter;
         PlayerModuleSelector.s.canSelectModules = false;
+        PlayerModuleSelector.s.DeselectObject();
     }
 
     public float reEnterTimer = 0;
     public ActionModes lastMode;
+
     void LeaveAllModes() {
         PlayerModuleSelector.s.canSelectModules = true;
         ResetMaterials();
@@ -458,10 +485,36 @@ public class PlayerActionsController : MonoBehaviour {
         costInfo.Deactivate();
         costInfoStayOn = false;
         DeselectObject();
-        
+
         AmmoBarReset();
         HealthBarReset();
         reEnterTimer = 0.2f;
+
+
+        directActionButton.SetBgColor(Color.white);
+        reloadActionButton.SetBgColor(Color.white);
+        repairActionButton.SetBgColor(Color.white);
+        shopRepairActionButton.SetBgColor(Color.white);
+        shopReloadActionButton.SetBgColor(Color.white);
+        shopMoveActionButton.SetBgColor(Color.white);
+        shopSellActionButton.SetBgColor(Color.white);
+    }
+
+
+    void TryRepairBuilding(TrainBuilding building) {
+        var repairModule = building.GetComponent<RepairAction>();
+        var healthModule =building.GetComponent<ModuleHealth>();
+
+        var missingHealth = healthModule.maxHealth - healthModule.currentHealth;
+        
+        if (missingHealth > 5 && MoneyController.s.HasResource(ResourceTypes.scraps, GetRepairCost())) {
+            MoneyController.s.ModifyResource(ResourceTypes.scraps, -GetRepairCost(), repairModule.transform);
+            repairModule.Repair(GetRepairAmount());
+        }else if (missingHealth <= 5 && missingHealth > 0) {
+            repairModule.Repair(GetRepairAmount());
+        }
+
+        UpdateBuildingsRepairableColors();
     }
 
     public MiniGUI_PlayerActionInfo costInfo;
@@ -473,17 +526,25 @@ public class PlayerActionsController : MonoBehaviour {
             if (activeBuilding != null) {
                 switch (currentMode) {
                     case ActionModes.reload:
-                        if (IsReloadable(activeBuilding)) {
-                            activeBuilding.GetComponent<ReloadAction>().EngageAction();
+                        if (IsReloadable(activeBuilding) && activeBuilding.GetComponent<ReloadAction>().canEngage) {
+                            if (SceneLoader.s.isLevelInProgress) {
+                                activeBuilding.GetComponent<ReloadAction>().EngageAction();
+                            } else {
+                                activeBuilding.GetComponent<ReloadAction>().EngageForFree();
+                            }
+
+                            OnReloaded?.Invoke();
                         }
                         break;
                     case ActionModes.repair:
                         if (IsRepairable(activeBuilding)) {
-                            if (!currentlyRepairing.Contains(activeBuilding)) { 
+                            OnRepaired?.Invoke();
+                            TryRepairBuilding(activeBuilding);
+                            /*if (!currentlyRepairing.Contains(activeBuilding)) { 
                                 StartRepairing(activeBuilding);
                             } else { 
                                 StopRepairing(activeBuilding);
-                            }
+                            }*/
                         }
                         break;
                     case ActionModes.directControl:
@@ -550,20 +611,20 @@ public class PlayerActionsController : MonoBehaviour {
         if (isSuccess) {
             Destroy(movingBuilding.gameObject);
             Train.s.SaveTrainState();
-
         } else {
             movingBuilding.SetHighlightState(false);
             movingBuilding.mySlot.TemporaryRemoveReversal();
         }
 
-        Invoke(nameof(EnterShopMoveMode), 0.1f);
+        //Invoke(nameof(EnterShopMoveMode), 0.1f);
+        EnterShopMoveMode();
 
         return false;
     }
 
     void GetTheFinishedBuilding(TrainBuilding newBuilding) {
         var state = new DataSaver.TrainState.CartState.BuildingState();
-        Train.ApplyBuildingToState(movingBuilding,state);
+        Train.ApplyBuildingToState(movingBuilding, state);
         Train.ApplyStateToBuilding(newBuilding, state);
         
         if (!SceneLoader.s.isLevelStarted()) {
@@ -578,11 +639,25 @@ public class PlayerActionsController : MonoBehaviour {
                 }
             }
         }
+        
+        SetBuildingColor(newBuilding, moveColor);
     }
 
     private float repairTimer;
-    public float repairDelay = 2;
-    public int repairAmount = 20;
+    /*public float repairDelay = 2;
+    public int repairAmount = 20;*/
+    /*public int GetRepairDelay() {
+        return (int)(repairDelay * TweakablesMaster.s.myTweakables.hpRepairDelayMultiplier);
+    }*/
+    /*public int GetRepairAmount() {
+        return (int)(repairAmount * TweakablesMaster.s.myTweakables.hpRepairAmountMultiplier);
+    }*/
+    public int GetRepairCost() {
+        return (int)(TweakablesMaster.s.myTweakables.hpRepairScrapCount);
+    }
+    public int GetRepairAmount() {
+        return (int)(TweakablesMaster.s.myTweakables.hpRepairAmount);
+    }
     private List<TrainBuilding> stopRepairingList = new List<TrainBuilding>();
     void Update() {
         if (reEnterTimer > 0) {
@@ -595,21 +670,22 @@ public class PlayerActionsController : MonoBehaviour {
             CastRayToSelectBuilding();
         }
 
-        if (currentlyRepairing.Count > 0) {
+        /*if (currentlyRepairing.Count > 0) {
             if (repairTimer <= 0) {
+                currentlyRepairing.RemoveAll(s => s == null);
                 for (int i = 0; i < currentlyRepairing.Count; i++) {
                     var repairModule = currentlyRepairing[i].GetComponent<RepairAction>();
                     var healthModule = currentlyRepairing[i].GetComponent<ModuleHealth>();
                     var missingHealth = healthModule.maxHealth - healthModule.currentHealth;
-                    var currentRepairAmount = Mathf.Min(missingHealth, repairAmount);
+                    var currentRepairAmount = Mathf.Min(missingHealth, GetRepairAmount());
 
                     if (currentRepairAmount > 0) {
                         var cost = repairModule.GetCostPerHealth(currentRepairAmount);
 
                         if (MoneyController.s.HasResource(ResourceTypes.scraps, cost)) {
-                            MoneyController.s.ModifyResource(ResourceTypes.scraps, -cost);
+                            MoneyController.s.ModifyResource(ResourceTypes.scraps, -cost, repairModule.transform);
 
-                            repairModule.Repair(repairAmount);
+                            repairModule.Repair(GetRepairAmount());
                         }
                     } else {
                         stopRepairingList.Add(currentlyRepairing[i]);
@@ -621,10 +697,10 @@ public class PlayerActionsController : MonoBehaviour {
                 }
                 stopRepairingList.Clear();
                 
-                repairTimer = repairDelay;
+                repairTimer = GetRepairDelay();
             } 
         }
-        repairTimer -= Time.deltaTime;
+        repairTimer -= Time.deltaTime;*/
     }
 
 
@@ -718,12 +794,12 @@ public class PlayerActionsController : MonoBehaviour {
     }
 
 
-    int GetRepairCostPerSecond(TrainBuilding building) {
+    /*float GetRepairCostPerSecond(TrainBuilding building) {
         var repairModule = building.GetComponent<RepairAction>();
-        var cost = repairModule.GetCostPerHealth(repairAmount);
+        var cost = repairModule.GetCostPerHealth(GetRepairAmount())/GetRepairDelay();
 
-        return Mathf.RoundToInt(cost);
-    }
+        return cost;
+    }*/
 
     int GetTotalRepairCost(TrainBuilding building) {
         var repairModule = building.GetComponent<RepairAction>();
@@ -750,8 +826,11 @@ public class PlayerActionsController : MonoBehaviour {
                             costInfo.Deactivate();
                             return;
                         } else {
-                            var repairCostPerSecond = GetRepairCostPerSecond(building);
-                            costInfo.ShowRepairInfo(repairCostPerSecond, ResourceTypes.scraps);
+                            //var repairCostPerSecond = GetRepairCostPerSecond(building);
+                            costInfo.ShowRepairInfo(
+                                TweakablesMaster.s.myTweakables.hpRepairScrapCount, 
+                                TweakablesMaster.s.myTweakables.hpRepairAmount,
+                                ResourceTypes.scraps);
                         }
                         break;
                     case ActionModes.directControl:
@@ -812,6 +891,8 @@ public class PlayerActionsController : MonoBehaviour {
         }
     }
 
+
+    public UnityEvent OnGetPowerUp = new UnityEvent();
     public void GetPowerUp(PowerUpScriptable powerUpScriptable) {
         var myPowerups = DataSaver.s.GetCurrentSave().currentRun.powerUps;
         for (int i = 0; i < myPowerups.Count; i++) {
@@ -826,6 +907,8 @@ public class PlayerActionsController : MonoBehaviour {
         if (!SceneLoader.s.isLevelInProgress) {
             DataSaver.s.SaveActiveGame();
         }
+        
+        OnGetPowerUp?.Invoke();
     }
 
 

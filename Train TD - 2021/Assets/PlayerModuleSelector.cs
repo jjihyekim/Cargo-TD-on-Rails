@@ -16,6 +16,7 @@ public class PlayerModuleSelector : MonoBehaviour {
     public InputActionReference scroll;
 
     public MiniGUI_ModuleActionSelection activeActionSelection;
+    public MiniGUI_BuildingInfoCard buildingInfoCard;
     public bool isActionSelectionActive = false;
 
 
@@ -47,7 +48,7 @@ public class PlayerModuleSelector : MonoBehaviour {
         click.action.Disable();
         scroll.action.Disable();
         click.action.performed -= ActivateActionDisplayOnActiveObject;
-        if(activeActionSelection != null)
+        if(/*activeActionSelection != null*/buildingInfoCard != null)
             HideModuleActionSelector();
         DeselectObject();
     }
@@ -59,7 +60,7 @@ public class PlayerModuleSelector : MonoBehaviour {
             return;
         }
 
-        if (!activeActionSelection.IsMouseOverMenu()) { // we dont want to hide menu in case the player clicks on it
+        if (!/*activeActionSelection.IsMouseOverMenu()*/buildingInfoCard.IsMouseOverMenu()) { // we dont want to hide menu in case the player clicks on it
             // we dont want to hide menu in case the player clicks on it
             if (isActionSelectionActive) {
                 HideModuleActionSelector();
@@ -67,16 +68,20 @@ public class PlayerModuleSelector : MonoBehaviour {
             }
             
             if (activeBuilding != null) {
-                activeActionSelection.gameObject.SetActive(true);
-                activeActionSelection.SetUp(activeBuilding);
+                /*activeActionSelection.gameObject.SetActive(true);
+                activeActionSelection.SetUp(activeBuilding);*/
+                buildingInfoCard.transform.parent.gameObject.SetActive(true);
+                buildingInfoCard.SetUp(activeBuilding);
                 isActionSelectionActive = true;
                 
                 /*if(PlayerPrefs.GetInt("SnapToPlayer", 1) == 1)
                     CameraController.s.SnapToTrainModule(activeBuilding);*/
                 
             } else if (activeEnemy != null) {
-                activeActionSelection.gameObject.SetActive(true);
-                activeActionSelection.SetUp(activeEnemy);
+                /*activeActionSelection.gameObject.SetActive(true);
+                activeActionSelection.SetUp(activeEnemy);*/
+                buildingInfoCard.transform.parent.gameObject.SetActive(true);
+                buildingInfoCard.SetUp(activeEnemy);
                 isActionSelectionActive = true;
                 
                 /*if(PlayerPrefs.GetInt("SnapToEnemies", 1) == 1)
@@ -92,21 +97,24 @@ public class PlayerModuleSelector : MonoBehaviour {
             SelectBuilding(activeBuilding, false);
         }
         activeBuilding = building;
-        activeActionSelection.SetUp(activeBuilding);
+        //activeActionSelection.SetUp(activeBuilding);
+        buildingInfoCard.SetUp(activeBuilding);
         SelectBuilding(building, true);
 
         timerForNotCheckingForCursorMove = 0.5f;
     }
 
     public void HideModuleActionSelector() {
-        activeActionSelection.gameObject.SetActive(false);
+        /*activeActionSelection.gameObject.SetActive(false);*/
+        buildingInfoCard.transform.parent.gameObject.SetActive(false);
         isActionSelectionActive = false;
         
         CameraController.s.UnSnap();
     }
 
     public void ShowModuleActionSelector() {
-        activeActionSelection.gameObject.SetActive(true);
+        /*activeActionSelection.gameObject.SetActive(true);*/
+        buildingInfoCard.transform.parent.gameObject.SetActive(true);
         isActionSelectionActive = true;
     }
 
@@ -125,9 +133,10 @@ public class PlayerModuleSelector : MonoBehaviour {
                 CameraController.s.canZoom = true;
             }*/
 
-            if (isActionSelectionActive && timerForNotCheckingForCursorMove <= 0) { // hide the menu if the cursor moves away from it
+            /*if (isActionSelectionActive && timerForNotCheckingForCursorMove <= 0) { // hide the menu if the cursor moves away from it
                 var mousePos = Mouse.current.position.ReadValue();
                 var rectPos = RectTransformUtility.WorldToScreenPoint(OverlayCamsReference.s.uiCam, activeActionSelection.transform.position);
+                //var rectPos = RectTransformUtility.WorldToScreenPoint(OverlayCamsReference.s.uiCam, buildingInfoCard.transform.position);
                 
                 //print(Mathf.Abs(mousePos.x - rectPos.x));
                 if (Mathf.Abs(mousePos.x - rectPos.x) > 380) {
@@ -138,7 +147,7 @@ public class PlayerModuleSelector : MonoBehaviour {
                 }
             } else {
                 timerForNotCheckingForCursorMove -= Time.deltaTime;
-            }
+            }*/
         }
     }
     
@@ -221,7 +230,8 @@ public class PlayerModuleSelector : MonoBehaviour {
                         nextIndex = (nextIndex + 1) % slotCount;
                         if (activeSlot.myBuildings[nextIndex] != null) {
                             SelectObject(activeSlot, nextIndex);
-                            activeActionSelection.SetUp(activeBuilding);
+                            /*activeActionSelection.SetUp(activeBuilding);*/
+                            buildingInfoCard.SetUp(activeBuilding);
                             break;
                         }
                     }
@@ -235,7 +245,8 @@ public class PlayerModuleSelector : MonoBehaviour {
                         nextIndex = (nextIndex + (slotCount-1)) % slotCount; // +2 actually makes us go -1 because modulo 3
                         if (activeSlot.myBuildings[nextIndex] != null) {
                             SelectObject(activeSlot, nextIndex);
-                            activeActionSelection.SetUp(activeBuilding);
+                            /*activeActionSelection.SetUp(activeBuilding);*/
+                            buildingInfoCard.SetUp(activeBuilding);
                             break;
                         }
                     }

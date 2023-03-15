@@ -7,6 +7,11 @@ public class DirectControlAction : ModuleAction, IActiveDuringCombat {
     public Transform directControlTransformTop;
 
 
+    public enum DirectControlMode {
+        Gun, LockOn
+    }
+
+    public DirectControlMode myMode;
     public Transform GetDirectControlTransform() {
         if (GetComponent<TrainBuilding>().IsPointingSide()) {
             return directControlTransformSide;
@@ -26,3 +31,4 @@ public class DirectControlAction : ModuleAction, IActiveDuringCombat {
         this.enabled = false;
     }
 }
+
