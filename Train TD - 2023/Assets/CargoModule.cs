@@ -10,6 +10,8 @@ public class CargoModule : MonoBehaviour, IActiveDuringCombat, IActiveDuringShop
     [SerializeField]
     private string myReward;
 
+    public bool isLeftCargo;
+
     public SpriteRenderer[] icons;
     
     public void ActivateForCombat() {
@@ -42,15 +44,16 @@ public class CargoModule : MonoBehaviour, IActiveDuringCombat, IActiveDuringShop
 
     public Sprite GetRewardIcon() {
         if (isBuildingReward) {
-            return DataHolder.s.GetBuilding(myReward).Icon;
+            return DataHolder.s.GetCart(myReward).Icon;
         } else {
             return DataHolder.s.GetPowerUp(myReward).icon;
         }
     }
 
-    public void SetCargo(string cargo, bool isBuildingCargo) {
-        isBuildingReward = isBuildingCargo;
-        myReward = cargo;
+    public void SetCargo(DataSaver.TrainState.CartState.CargoState cargoState) {
+        isBuildingReward = cargoState.isBuildingCargo;
+        myReward = cargoState.cargoReward;
+        isLeftCargo = cargoState.isLeftCargo;
 
         var icon = GetRewardIcon();
         

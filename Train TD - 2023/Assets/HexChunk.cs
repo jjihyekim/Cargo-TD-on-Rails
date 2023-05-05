@@ -11,7 +11,11 @@ public class HexChunk : MonoBehaviour {
     //public HexCell[,] myCells;
     public List<GameObject> myCells = new List<GameObject>();
 
-    public List<GameObject> foreignObjects = new List<GameObject>();
+	List<GameObject> foreignObjects = new List<GameObject>();
+	public void AddForeignObject(GameObject obj) {
+	    foreignObjects.Add(obj);
+	    obj.transform.SetParent(transform);
+    }
 
 
     private float gridScale = 1f;

@@ -51,7 +51,7 @@ public class ModuleAmmo : MonoBehaviour, IResupplyAble, IActiveDuringCombat, IAc
 
             if (myUINoAmmoWarningThing == null) {
                 myUINoAmmoWarningThing = Instantiate(LevelReferences.s.noAmmoWarning,LevelReferences.s.uiDisplayParent);
-                myUINoAmmoWarningThing.GetComponent<UIElementFollowWorldTarget>().SetUp(GetComponent<TrainBuilding>().GetUITargetTransform(false));
+                myUINoAmmoWarningThing.GetComponent<UIElementFollowWorldTarget>().SetUp(GetComponentInParent<Cart>().GetUITargetTransform());
             }
             
             myUINoAmmoWarningThing.SetActive(!myGunModule.hasAmmo);
@@ -70,15 +70,21 @@ public class ModuleAmmo : MonoBehaviour, IResupplyAble, IActiveDuringCombat, IAc
     }
 
     public void SetAmmo(float ammo) {
-        curAmmo = ammo;
-        myGunModule = GetComponent<GunModule>();
-        UpdateModuleState();
+        if (PlayStateMaster.s.isShop()) {
+            Resupply(maxAmmo);
+        } else {
+            curAmmo = ammo;
+            myGunModule = GetComponent<GunModule>();
+            UpdateModuleState();
+        }
     }
 
     private bool giveBackAmmoListenerAdded = false;
 
     public void ActivateForCombat() {
         this.enabled = true;
+
+       Resupply(maxAmmo);
 
         myGunModule = GetComponent<GunModule>();
         if (!listenerAdded && myGunModule != null) {
@@ -91,7 +97,7 @@ public class ModuleAmmo : MonoBehaviour, IResupplyAble, IActiveDuringCombat, IAc
         if (!giveBackAmmoListenerAdded) {
             giveBackAmmoListenerAdded = true;
             GetComponent<ModuleHealth>().dieEvent.AddListener(GiveBackStoredAmmo);
-            GetComponent<SellAction>()?.sellEvent.AddListener(GiveBackStoredAmmo);
+            //GetComponent<SellAction>()?.sellEvent.AddListener(GiveBackStoredAmmo);
         }
     }
 
@@ -106,13 +112,13 @@ public class ModuleAmmo : MonoBehaviour, IResupplyAble, IActiveDuringCombat, IAc
         if (giveBackAmmoListenerAdded) {
             giveBackAmmoListenerAdded = false;
             GetComponent<ModuleHealth>().dieEvent.RemoveListener(GiveBackStoredAmmo);
-            GetComponent<SellAction>()?.sellEvent.RemoveListener(GiveBackStoredAmmo);
+            //GetComponent<SellAction>()?.sellEvent.RemoveListener(GiveBackStoredAmmo);
         }
     }
     
     
     void GiveBackStoredAmmo() {
-        GetComponent<ReloadAction>().GiveBackCurrentStoredAmmo();
+        //GetComponent<ReloadAction>().GiveBackCurrentStoredAmmo();
     }
 
     [Button]

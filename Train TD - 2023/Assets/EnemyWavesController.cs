@@ -32,11 +32,11 @@ public class EnemyWavesController : MonoBehaviour {
 
 	public void SetUpLevel() {
 		Cleanup();
-		pursuerTimerObject.SetUp(SceneLoader.s.currentLevel.dynamicSpawnData);
+		pursuerTimerObject.SetUp(PlayStateMaster.s.currentLevel.dynamicSpawnData);
 
 		pursuerTimerObject.gameObject.SetActive(false);
 
-		var curDynamicSpawn = SceneLoader.s.currentLevel.dynamicSpawnData;
+		var curDynamicSpawn = PlayStateMaster.s.currentLevel.dynamicSpawnData;
 		curDynamicSpawn.curTime = curDynamicSpawn.firstSpawnTime;
 	}
 
@@ -82,7 +82,7 @@ public class EnemyWavesController : MonoBehaviour {
 	}
 
 	void Update() {
-		if (SceneLoader.s.isLevelInProgress && enemiesInitialized) {
+		if (PlayStateMaster.s.isCombatInProgress() && enemiesInitialized) {
 			pursuerTimerObject.gameObject.SetActive(true);
 
 			var playerDistance = SpeedController.s.currentDistance;
@@ -97,7 +97,7 @@ public class EnemyWavesController : MonoBehaviour {
 
 			if (waves.Count < maxConcurrentWaves) {
 				//for (int i = 0; i < SceneLoader.s.currentLevel.dynamicSpawnEnemies.Length; i++) {
-					var dynamicSpawnEnemy = SceneLoader.s.currentLevel.dynamicSpawnData;
+					var dynamicSpawnEnemy = PlayStateMaster.s.currentLevel.dynamicSpawnData;
 					
 					if (dynamicSpawnEnemy.curTime <= 0) {
 						SpawnEnemy(dynamicSpawnEnemy.enemyIdentifier, playerDistance - dynamicSpawnEnemy.distanceFromTrain, true, Random.value > 0.5f);

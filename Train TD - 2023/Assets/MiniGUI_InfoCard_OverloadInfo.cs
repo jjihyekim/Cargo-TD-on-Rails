@@ -9,8 +9,8 @@ public class MiniGUI_InfoCard_OverloadInfo : MonoBehaviour, IBuildingInfoCard {
 
     [ReadOnly] public EngineModule engineModule;
 
-    public void SetUp(TrainBuilding building) {
-        engineModule = building.GetComponent<EngineModule>();
+    public void SetUp(Cart building) {
+        engineModule = building.GetComponentInChildren<EngineModule>();
 
         if (engineModule == null) {
             gameObject.SetActive(false);

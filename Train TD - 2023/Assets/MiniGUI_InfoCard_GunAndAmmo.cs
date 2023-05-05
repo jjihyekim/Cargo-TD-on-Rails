@@ -16,8 +16,8 @@ public class MiniGUI_InfoCard_GunAndAmmo : MonoBehaviour, IBuildingInfoCard {
     [ReadOnly] public ModuleAmmo ammoModule;
     [ReadOnly] public bool doesUseAmmo;
     
-    public void SetUp(TrainBuilding building) {
-        var gunModule = building.GetComponent<GunModule>();
+    public void SetUp(Cart building) {
+        var gunModule = building.GetComponentInChildren<GunModule>();
         
         if (gunModule == null) {
             gameObject.SetActive(false);
@@ -31,7 +31,7 @@ public class MiniGUI_InfoCard_GunAndAmmo : MonoBehaviour, IBuildingInfoCard {
 
         armorPenet.isOn = gunModule.canPenetrateArmor;
         
-        ammoModule = building.GetComponent<ModuleAmmo>();
+        ammoModule = building.GetComponentInChildren<ModuleAmmo>();
         doesUseAmmo = ammoModule != null;
         usesAmmo.isOn = doesUseAmmo;
         ammoUse.gameObject.SetActive(doesUseAmmo);

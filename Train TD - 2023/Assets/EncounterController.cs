@@ -175,8 +175,8 @@ public class EncounterController : MonoBehaviour {
         DataSaver.s.GetCurrentSave().currentRun.shopInitialized = false;
         MapController.s.FinishTravelingToStar();
         DataSaver.s.SaveActiveGame();
-        SceneLoader.s.BackToStarterMenu();
-        SceneLoader.s.afterTransferCalls.Enqueue(() => DoComplete());
+        PlayStateMaster.s.EnterShopState();
+        PlayStateMaster.s.afterTransferCalls.Enqueue(() => DoComplete());
     }
     
     
@@ -187,7 +187,7 @@ public class EncounterController : MonoBehaviour {
         var pos = train.transform.position;
         
         
-        float timer = fadeDurations + SceneLoader.s.fadeTime;
+        float timer = fadeDurations + PlayStateMaster.s.fadeTime;
         
         float v = 0;
 

@@ -19,16 +19,12 @@ public class SettingsController : MonoBehaviour {
         for (int i = 0; i < initRequiredSettings.Length; i++) {
             initRequiredSettings[i].Initialize();
         }
-        Invoke(nameof(PlayMusic), 0.01f);
     }
 
-    void PlayMusic() {
-        MusicPlayer.s.SwapMusicTracksAndPlay(false, true);
-    }
 
     
     public void ResetRun() {
-        if (SceneLoader.s.isLevelInProgress) {
+        if (PlayStateMaster.s.isCombatInProgress()) {
             MissionWinFinisher.s.Cleanup();
         }
 
@@ -43,14 +39,14 @@ public class SettingsController : MonoBehaviour {
         if (FirstTimeTutorialController.s.tutorialEngaged) {
             FirstTimeTutorialController.s.SkipTutorial();
         } else {
-            SceneLoader.s.BackToStarterMenu();
+            PlayStateMaster.s.EnterShopState();
         }
         
         Pauser.s.Unpause();
     }
     
     public void ResetRunAndReplayTutorial() {
-        if (SceneLoader.s.isLevelInProgress) {
+        if (PlayStateMaster.s.isCombatInProgress()) {
             MissionWinFinisher.s.Cleanup();
         }
         MenuToggle.HideAllToggleMenus();

@@ -89,6 +89,8 @@ public class DataSaver {
 
 	public bool dontSave = false;
 
+	public float saveLockTimer = 0;
+
 	public bool saveInNextFrame = false;
 	[Button]
 	public void SaveActiveGame() {
@@ -107,9 +109,21 @@ public class DataSaver {
 	}
 
 	public void Update() {
-		if (saveInNextFrame) {
+		if (saveInNextFrame && saveLockTimer <= 0) {
 			DoSaveActiveGame();
 			saveInNextFrame = false;
+			saveLockTimer = 2;
+		}
+
+		if (saveLockTimer > 0) {
+			saveLockTimer -= Time.deltaTime;
+		}
+	}
+
+	public void CheckAndDoSave() {
+		if (saveInNextFrame) {
+			saveInNextFrame = false;
+			DoSaveActiveGame();
 		}
 	}
 
@@ -262,12 +276,11 @@ public class DataSaver {
 			character = characterData;
 			myTrain = characterData.starterTrain.Copy();
 
-			for (int i = 0; i < myTrain.myCarts.Count; i++) {
-				for (int j = 0; j < myTrain.myCarts[i].buildingStates.Length; j++) {
-					var build = myTrain.myCarts[i].buildingStates[j];
+			shopInitialized = false;
 
-					build.ammo = -2;
-				}
+			for (int i = 0; i < myTrain.myCarts.Count; i++) {
+				var build = myTrain.myCarts[i];
+				build.ammo = -2;
 			}
 
 			/*for (int i = 0; i < characterData.starterUpgrades.Length; i++) {
@@ -290,13 +303,7 @@ public class DataSaver {
 
 	[Serializable]
 	public class RunResources {
-		public int money = 200;
 		public int scraps = 200;
-		public int maxScraps = 400;
-		public int ammo = 50;
-		public int maxAmmo = 100;
-		public int fuel = 25;
-		public int maxFuel = 100;
 		
 		public static string GetTypeInNiceString(ResourceTypes types) {
 			return types.ToString();
@@ -304,13 +311,7 @@ public class DataSaver {
 
 		public RunResources Copy() {
 			var copy = new RunResources();
-			copy.money = money;
 			copy.scraps = scraps;
-			copy.maxScraps = maxScraps;
-			copy.ammo = ammo;
-			copy.maxAmmo = maxAmmo;
-			copy.fuel = fuel;
-			copy.maxFuel = maxFuel;
 			return copy;
 		}
 	}
@@ -322,55 +323,49 @@ public class DataSaver {
 
 		[Serializable]
 		public class CartState {
+			[ValueDropdown("GetAllModuleNames")]
+			public string uniqueName = "";
+
+			// dont forget to update the copy function
+			public int health = -1;
+			public int ammo = -1;
+
+			public CargoState cargoState;
+			
 			[Serializable]
-			public class BuildingState {
-				[ValueDropdown("GetAllModuleNames")]
-				public string uniqueName = "";
-
-				[HideInInspector]
-				public int health = -1;
-				[HideInInspector]
-				public int ammo = -1;
-				//[HideInInspector]
+			public class CargoState { // dont forget to update the copy function
 				public bool isBuildingCargo;
-				//[HideInInspector]
 				public string cargoReward;
-
-				public void EmptyState() {
-					uniqueName = "";
-					health = -1;
-					ammo = -1;
-					/*cargoCost = -1;
-					cargoReward = -1;*/
-				}
-				
-				private static IEnumerable GetAllModuleNames() {
-					var buildings = GameObject.FindObjectOfType<DataHolder>().buildings;
-					var buildingNames = new List<string>();
-					buildingNames.Add("");
-					for (int i = 0; i < buildings.Length; i++) {
-						buildingNames.Add(buildings[i].uniqueName);
-					}
-					return buildingNames;
-				}
+				public bool isLeftCargo;
 			}
-			//public string cartType = "cart";
-			public BuildingState[] buildingStates;
 
-			public CartState() {
-				buildingStates = new BuildingState[8];
-				for (int i = 0; i < buildingStates.Length; i++) {
-					buildingStates[i] = new BuildingState();
+			public void EmptyState() {
+				uniqueName = "";
+				health = -1;
+				ammo = -1;
+				/*cargoCost = -1;
+				cargoReward = -1;*/
+			}
+			
+			private static IEnumerable GetAllModuleNames() {
+				var buildings = GameObject.FindObjectOfType<DataHolder>().buildings;
+				var buildingNames = new List<string>();
+				buildingNames.Add("");
+				for (int i = 0; i < buildings.Length; i++) {
+					buildingNames.Add(buildings[i].uniqueName);
 				}
+				return buildingNames;
 			}
 
 			public CartState Copy() {
 				var copyState = new CartState();
-				//copyState.cartType = cartType;
-				for (int i = 0; i < buildingStates.Length; i++) {
-					copyState.buildingStates[i] = buildingStates[i];
-				}
-
+				copyState.uniqueName = uniqueName;
+				copyState.health = health;
+				copyState.ammo = ammo;
+				copyState.cargoState = new CargoState();
+				copyState.cargoState.cargoReward = cargoState.cargoReward;
+				copyState.cargoState.isBuildingCargo = cargoState.isBuildingCargo;
+				copyState.cargoState.isLeftCargo = cargoState.isLeftCargo;
 				return copyState;
 			}
 		}
@@ -389,5 +384,5 @@ public class DataSaver {
 
 [Serializable]
 public enum ResourceTypes {
-	fuel, scraps, ammo, money
+	scraps
 }

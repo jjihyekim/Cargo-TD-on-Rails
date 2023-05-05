@@ -75,6 +75,7 @@ public class MapController : MonoBehaviour {
 
 	    DataSaver.s.GetCurrentSave().currentRun.map = starMapState;
 	    Debug.Log($"Star map instantiation complete");
+	    DataSaver.s.SaveActiveGame();
 
 	    //ApplyStarMapFromSave(true);
     }
@@ -334,7 +335,7 @@ public class MapController : MonoBehaviour {
 	    targetStarInfoScreenBudget.Initialize(targetStar, level, callback); //WORLDMAP
 	    
 	    //targetStarInfoScreen.SetSelectable(!SceneLoader.s.isLevelStarted() && level != null);
-	    targetStarInfoScreenBudget.SetSelectable(!SceneLoader.s.isLevelStarted() && level!=null); //WORLDMAP
+	    targetStarInfoScreenBudget.SetSelectable(!PlayStateMaster.s.isCombatStarted() && level!=null); //WORLDMAP
     }
 
     public void SelectStar() {
@@ -355,7 +356,7 @@ public class MapController : MonoBehaviour {
 	    
 	    selectedStarInfoScreen.Initialize(_playerStar, targetStar, level);
 	    
-	    StarterUIController.s.SelectLevel(targetStar);
+	    ShopStateController.s.SelectLevel(targetStar);
 	    AskForCargo(false);
     }
 
@@ -364,7 +365,7 @@ public class MapController : MonoBehaviour {
     public void StartTravelingToStar() {
 	    if (isAskingCargo || Train.s.GetCargoCount() > 0 ) {
 		    travelToStarWaiting = true;
-		    StarterUIController.s.StartLevel();
+		    ShopStateController.s.StartLevel();
 		    AskForCargo(false);
 	    } else {
 		    AskForCargo(true);

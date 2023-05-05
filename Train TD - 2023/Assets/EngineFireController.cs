@@ -57,7 +57,7 @@ public class EngineFireController : MonoBehaviour {
 	    }
 	    
 
-	    if (SceneLoader.s.isLevelInProgress) {
+	    if (PlayStateMaster.s.isCombatInProgress()) {
 		    var speedTier = 0;
 		    if (LevelReferences.s.speed > slowSoundMaxSpeed)
 			    speedTier += 1;
@@ -97,7 +97,7 @@ public class EngineFireController : MonoBehaviour {
     void UpdateEngineParticleSystemValues() {
 	    var emissionModule = _particleSystem.emission;
 	    var mainModule = _particleSystem.main;
-	    if (!SceneLoader.s.isLevelStarted() || !fireActive) {
+	    if (!PlayStateMaster.s.isCombatStarted() || !fireActive) {
 		    emissionModule.enabled = false;
 	    } else if(lastSpeed > 0.2f && lastEnginePowerPlayerControl > 0) {
 		    emissionModule.enabled = true;
@@ -122,7 +122,7 @@ public class EngineFireController : MonoBehaviour {
 		    }*/
 	    } else {
 		    emissionModule.enabled = false;
-		    if (SceneLoader.s.isLevelFinished() && !isLevelFinishTriggered) {
+		    if (PlayStateMaster.s.isCombatFinished() && !isLevelFinishTriggered) {
 			    isLevelFinishTriggered = true;
 			    _audio.clip = speedSounds[0];
 			    _particleSystem.Stop();

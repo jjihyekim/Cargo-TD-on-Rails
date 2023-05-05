@@ -37,6 +37,10 @@ public class Outline : MonoBehaviour {
     set {
       outlineColor = value;
       needsUpdate = true;
+      if (Application.isPlaying) {
+        UpdateMaterialProperties();
+        needsUpdate = false;
+      }
     }
   }
 

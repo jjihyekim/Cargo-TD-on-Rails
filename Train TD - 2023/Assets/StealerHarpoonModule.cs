@@ -138,12 +138,6 @@ public class StealerHarpoonModule : MonoBehaviour {
                         
                         MoneyController.s.ModifyResource(storageType, -cargoStealPerInterval);
                         switch (storageType) {
-                            case ResourceTypes.ammo:
-                                enemyStorage.ammoReward += cargoStealPerInterval;
-                                break;
-                            case ResourceTypes.fuel:
-                                enemyStorage.fuelReward += cargoStealPerInterval;
-                                break;
                             case ResourceTypes.scraps:
                                 enemyStorage.scrapReward += cargoStealPerInterval;
                                 break;

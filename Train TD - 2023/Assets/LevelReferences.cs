@@ -66,6 +66,8 @@ public class LevelReferences : MonoBehaviour {
     public LayerMask groundLayer;
     public LayerMask enemyLayer;
     public LayerMask buildingLayer;
+    public LayerMask cartSnapLocationsLayer;
+    public LayerMask gateMask;
 
     public SingleUnityLayer playerBulletLayer;
     public SingleUnityLayer enemyBulletLayer;
@@ -92,13 +94,8 @@ public class LevelReferences : MonoBehaviour {
 
     public GameObject GetResourceParticle(ResourceTypes types) {
         switch (types) {
-            case ResourceTypes.ammo:
-                return resourceParticleAmmo;
-            case ResourceTypes.fuel:
-                return resourceParticleFuel;
             case ResourceTypes.scraps:
                 return resourceParticleScraps;
-            case ResourceTypes.money:
             default:
                 return null;
         }
@@ -106,13 +103,8 @@ public class LevelReferences : MonoBehaviour {
     
     public GameObject GetResourceLostParticle(ResourceTypes types) {
         switch (types) {
-            case ResourceTypes.ammo:
-                return resourceLostParticleAmmo;
-            case ResourceTypes.fuel:
-                return resourceLostParticleFuel;
             case ResourceTypes.scraps:
                 return resourceLostParticleScraps;
-            case ResourceTypes.money:
             default:
                 return null;
         }
@@ -137,12 +129,6 @@ public class LevelReferences : MonoBehaviour {
         GameObject prefab = null;
 
         switch (type) {
-            case ResourceTypes.ammo:
-                prefab = ammoPile;
-                break;
-            case ResourceTypes.fuel:
-                prefab = fuelPile;
-                break;
             case ResourceTypes.scraps:
                 prefab = scrapPile;
                 break;

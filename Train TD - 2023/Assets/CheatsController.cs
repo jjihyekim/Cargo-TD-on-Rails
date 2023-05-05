@@ -41,8 +41,8 @@ public class CheatsController : MonoBehaviour
     }
 
     void QuickStart() {
-        ProfileSelectionMenu.s.QuickStartGame();
-        StarterUIController.s.QuickStart();
+        MainMenu.s.QuickStartGame();
+        ShopStateController.s.QuickStart();
     }
 
     private void Update() {
@@ -62,13 +62,8 @@ public class CheatsController : MonoBehaviour
     }
 
     [Button]
-    void DebugAddPowerUp() {
-        PlayerActionsController.s.GetPowerUp(debugPowerUp);
-    }
-
-    [Button]
     public void EngageEncounter() {
-        StarterUIController.s.DebugEngageEncounter(debugEncounter.title);
+        ShopStateController.s.DebugEngageEncounter(debugEncounter.title);
     }
 
     private void OnEnable() {
@@ -84,19 +79,19 @@ public class CheatsController : MonoBehaviour
 
     private void EngageCheat(InputAction.CallbackContext obj) {
 
-        if (!SceneLoader.s.isLevelStarted()) {
+        if (!PlayStateMaster.s.isCombatStarted()) {
             if (WorldMapCreator.s.worldMapOpen) {
                 MapController.s.DebugTravelToSelectStar();
                 
             } else {
-                if (SceneLoader.s.isProfileMenu())
-                    ProfileSelectionMenu.s.StartGame();
+                if (PlayStateMaster.s.isMainMenu())
+                    MainMenu.s.StartGame();
 
-                StarterUIController.s.QuickStart();
+                ShopStateController.s.QuickStart();
 
                 //DataSaver.s.GetCurrentSave().currentRun.money += 10000;
             }
-        } else if (!SceneLoader.s.isLevelFinished()) {
+        } else if (!PlayStateMaster.s.isCombatFinished()) {
             //MoneyController.s.AddScraps(1000);
 
             MissionWinFinisher.s.MissionWon();

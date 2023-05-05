@@ -28,4 +28,8 @@ public class DataSaverMono : MonoBehaviour
     private void Update() {
         myDataSaver.Update();
     }
+
+    private void OnApplicationQuit() {
+        myDataSaver.CheckAndDoSave();
+    }
 }

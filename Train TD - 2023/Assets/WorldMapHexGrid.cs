@@ -48,6 +48,8 @@ public class WorldMapHexGrid : MonoBehaviour {
 	IEnumerator _CreateGridsOverAFewFrames(GenericCallback callback) {
 		var pauseInterval = 1000;
 		var n = 0;
+		var totalIntervalsCount = (gridSize.x * gridSize.y * gridCount)/pauseInterval;
+		var percentIncrease = (1f / 3f) / totalIntervalsCount;
 		if (biomeOverride < 0) {
 			var targetBiome = DataSaver.s.GetCurrentSave().currentRun.map.GetPlayerStar().biome;
 			if (targetBiome < 0 || targetBiome > biomes.Length) {
@@ -76,6 +78,7 @@ public class WorldMapHexGrid : MonoBehaviour {
 					n++;
 					
 					if (n % pauseInterval == 0) {
+						WorldMapCreator.s.worldMapGenerationProgress += percentIncrease;
 						yield return null;
 					}
 				}
@@ -143,6 +146,9 @@ public class WorldMapHexGrid : MonoBehaviour {
 		//refreshHeightAdjustment = true;
 
 		var pauseInterval = cells.Length / 5;
+		
+		var totalIntervalsCount = (cells.Length)/pauseInterval;
+		var percentIncrease = (1f / 3f) / totalIntervalsCount;
 		for (int i = 0; i < cells.Length; i++) {
 			var currentCell = cells[i];
 			var y = 0f;
@@ -219,6 +225,7 @@ public class WorldMapHexGrid : MonoBehaviour {
 			//currentCell.gameObject.isStatic = true;
 			
 			if (i % pauseInterval == 0) {
+				WorldMapCreator.s.worldMapGenerationProgress += percentIncrease;
 				yield return null;
 			}
 		}

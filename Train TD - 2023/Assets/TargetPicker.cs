@@ -9,17 +9,6 @@ public class TargetPicker : MonoBehaviour, IActiveDuringCombat {
     public float rotationSpan = 60f;
     public float range = 5f;
 
-    public DirectionalRotationSpanAndRangeOverride myOverride;
-
-
-    [Serializable]
-    public class DirectionalRotationSpanAndRangeOverride {
-        public bool isOverride = false;
-        public List<TrainBuilding.Rots> rotations;
-        public float rotationSpanOverride;
-        //public float range;
-    }
-
     private Transform origin;
 
     public List<PossibleTarget.Type> myPossibleTargets;
@@ -27,15 +16,6 @@ public class TargetPicker : MonoBehaviour, IActiveDuringCombat {
     private void Start() {
         targeter = GetComponent<IComponentWithTarget>();
         origin = targeter.GetRangeOrigin();
-
-
-        if (myOverride != null && myOverride.isOverride) {
-            var module = GetComponent<TrainBuilding>();
-            if (myOverride.rotations.Contains(module.myRotation)) {
-                rotationSpan = myOverride.rotationSpanOverride;
-                //range = myOverride.range;
-            }
-        }
     }
 
     private void Update() {

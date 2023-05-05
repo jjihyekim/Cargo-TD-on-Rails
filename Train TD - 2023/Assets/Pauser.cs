@@ -36,7 +36,7 @@ public class Pauser : MonoBehaviour {
     }
 
     void TogglePause() {
-        if (SceneLoader.s.isLevelInProgress) {
+        if (PlayStateMaster.s.isCombatInProgress()) {
             isPaused = !isPaused;
             
             if (isPaused) {
@@ -69,7 +69,7 @@ public class Pauser : MonoBehaviour {
         AnalyticsResult analyticsResult = Analytics.CustomEvent(
             "LevelAbandoned",
             new Dictionary<string, object> {
-                { "Level", SceneLoader.s.currentLevel.levelName },
+                { "Level", PlayStateMaster.s.currentLevel.levelName },
                 { "distance", Mathf.RoundToInt(SpeedController.s.currentDistance / 10) *10},
                 { "time", Mathf.RoundToInt(SpeedController.s.currentTime/10) * 10},
                 
@@ -79,13 +79,12 @@ public class Pauser : MonoBehaviour {
                 { "buildingsDestroyed", ModuleHealth.buildingsDestroyed },
                 
                 { "enemiesLeftAlive", EnemyHealth.enemySpawned - EnemyHealth.enemyKilled},
-                { "emptyTrainSlots", Train.s.GetEmptySlotCount() },
             }
         );
         
         Unpause();
-        SceneLoader.s.BackToStarterMenu();
+        PlayStateMaster.s.EnterShopState();
         FirstTimeTutorialController.s.StopTutorial();
-        SceneLoader.s.afterTransferCalls.Enqueue(()=> MissionWinFinisher.s.Cleanup());
+        PlayStateMaster.s.afterTransferCalls.Enqueue(()=> MissionWinFinisher.s.Cleanup());
     }
 }

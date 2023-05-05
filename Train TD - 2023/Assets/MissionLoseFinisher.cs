@@ -23,7 +23,7 @@ public class MissionLoseFinisher : MonoBehaviour {
     public string[] loseTips;
 
     public void MissionLost() {
-        SceneLoader.s.FinishLevel();
+        PlayStateMaster.s.FinishCombat();
         
         for (int i = 0; i < scriptsToDisable.Length; i++) {
             scriptsToDisable[i].enabled = false;
@@ -40,14 +40,13 @@ public class MissionLoseFinisher : MonoBehaviour {
         AnalyticsResult analyticsResult = Analytics.CustomEvent(
             "LevelLost",
             new Dictionary<string, object> {
-                { "Level", SceneLoader.s.currentLevel.levelName },
+                { "Level", PlayStateMaster.s.currentLevel.levelName },
                 { "distance", Mathf.RoundToInt(SpeedController.s.currentDistance / 10) *10},
                 { "time", Mathf.RoundToInt(SpeedController.s.currentTime/10) * 10},
                 
                 {"character", myChar.uniqueName},
 				
                 { "remainingScraps", MoneyController.s.scraps },
-                { "remainingMoney", MoneyController.s.money },
                 
                 { "enemiesLeftAlive", EnemyHealth.enemySpawned - EnemyHealth.enemyKilled},
             }
@@ -56,8 +55,6 @@ public class MissionLoseFinisher : MonoBehaviour {
         
         Debug.Log("Mission Lost Analytics: " + analyticsResult);
         
-        
-        PlayerBuildingController.s.LogCurrentLevelBuilds(false);
         MusicPlayer.s.Stop();
         DirectControlMaster.s.DisableDirectControl();
     }

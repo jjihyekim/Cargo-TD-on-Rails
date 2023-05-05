@@ -26,7 +26,7 @@ public class DirectControlMaster : MonoBehaviour {
 
 	[Space]
 	public ModuleHealth directControlTrainBuilding;
-	public DirectControlAction directControlAction;
+	//public DirectControlAction directControlAction;
 	private GunModule myGun;
 	public ModuleAmmo myAmmo;
 	public GameObject exitToReload;
@@ -61,13 +61,13 @@ public class DirectControlMaster : MonoBehaviour {
 		cancelDirectControlAction.action.performed -= DisableDirectControl;
 	}
 	
-	public void AssumeDirectControl(DirectControlAction source) {
+	/*public void AssumeDirectControl(DirectControlAction source) {
 		if (!directControlInProgress) {
 			CameraController.s.ActivateDirectControl(source.GetDirectControlTransform());
 			directControlAction = source;
 
-			directControlTrainBuilding = directControlAction.GetComponent<ModuleHealth>();
-			myGun = directControlAction.GetComponent<GunModule>();
+			/*directControlTrainBuilding = directControlAction.GetComponent<ModuleHealth>();
+			myGun = directControlAction.GetComponent<GunModule>();#1#
 			myAmmo = myGun.GetComponent<ModuleAmmo>();
 			ammoSlider.gameObject.SetActive(myAmmo != null);
 			if (myAmmo != null) {
@@ -78,7 +78,7 @@ public class DirectControlMaster : MonoBehaviour {
 				hasAmmo = true;
 			}
 			
-			myTargetPicker = directControlAction.GetComponent<TargetPicker>();
+			//myTargetPicker = directControlAction.GetComponent<TargetPicker>();
 
 			myGun.DeactivateGun();
 			myTargetPicker.enabled = false;
@@ -90,8 +90,8 @@ public class DirectControlMaster : MonoBehaviour {
 			DirectControlGameObject.SetActive(true);
 			directControlInProgress = true;
 
-			PlayerModuleSelector.s.DeselectObject();
-			PlayerModuleSelector.s.DisableModuleSelecting();
+			//PlayerModuleSelector.s.DeselectObject();
+			//PlayerModuleSelector.s.DisableModuleSelecting();
 
 			onHitAlpha = 0;
 
@@ -99,7 +99,7 @@ public class DirectControlMaster : MonoBehaviour {
 
 			currentMode = source.myMode;
 
-			switch (currentMode) {
+			/*switch (currentMode) {
 				case DirectControlAction.DirectControlMode.Gun:
 					gunCrosshair.gameObject.SetActive(true);
 					rocketCrosshairEverything.gameObject.SetActive(false);
@@ -108,11 +108,11 @@ public class DirectControlMaster : MonoBehaviour {
 					gunCrosshair.gameObject.SetActive(false);
 					rocketCrosshairEverything.gameObject.SetActive(true);
 					break;
-			}
+			}#1#
 
 			curRocketLockInTime = rocketLockOnTime;
 		}
-	}
+	}*/
 
 	private void DisableDirectControl(InputAction.CallbackContext obj) {
 		if (directControlInProgress) {
@@ -127,7 +127,7 @@ public class DirectControlMaster : MonoBehaviour {
 			DirectControlGameObject.SetActive(false);
 			directControlInProgress = false;
 
-			PlayerModuleSelector.s.EnableModuleSelecting();
+			//PlayerModuleSelector.s.EnableModuleSelecting();
 			
 			CameraShakeController.s.rotationalShake = false;
 		}
@@ -155,7 +155,7 @@ public class DirectControlMaster : MonoBehaviour {
 	public GameObject noAmmoInStorage;
 	public Transform noAmmoParent;
 
-	public DirectControlAction.DirectControlMode currentMode;
+	//public DirectControlAction.DirectControlMode currentMode;
 
 	private bool reticleIsGreen = false;
 	private void Update() {
@@ -180,7 +180,7 @@ public class DirectControlMaster : MonoBehaviour {
 				//Debug.DrawLine(ray.origin, ray.GetPoint(10));
 			}
 
-			if (currentMode == DirectControlAction.DirectControlMode.LockOn) {
+			if (/*currentMode == DirectControlAction.DirectControlMode.LockOn*/ false) {
 				if (didHit && curCooldown < 1f) {
 					var possibleTarget = hit.collider.GetComponentInParent<PossibleTarget>();
 					if (possibleTarget == null) {
@@ -243,25 +243,25 @@ public class DirectControlMaster : MonoBehaviour {
 
 			if (hasAmmo) {
 				if (directControlShootAction.action.IsPressed() && 
-				    (currentMode != DirectControlAction.DirectControlMode.LockOn || (curRocketLockInTime >= rocketLockOnTime && hasTarget))
+				    (/*currentMode != DirectControlAction.DirectControlMode.LockOn*/ false || (curRocketLockInTime >= rocketLockOnTime && hasTarget))
 				    ) {
 					if (curCooldown <= 0) {
 						myGun.ShootBarrage(false, OnShoot, OnHit);
 						curCooldown = myGun.GetFireDelay();
 
-						if (currentMode == DirectControlAction.DirectControlMode.LockOn) {
+						/*if (currentMode == DirectControlAction.DirectControlMode.LockOn) {
 							StopCoroutine(flashCoroutine);
 							reticleIsGreen = false;
 							StartCoroutine(FlashReticleOnShoot());
-						}
+						}*/
 					}
 				}
 			} else {
 				if (directControlShootAction.action.triggered) {
-					var managedToReload = myAmmo.GetComponent<ReloadAction>().EngageAction();
+					/*var managedToReload = myAmmo.GetComponent<ReloadAction>().EngageAction();
 					if (!managedToReload) {
 						Instantiate(noAmmoInStorage, noAmmoParent);
-					}
+					}*/
 
 					curCooldown = myGun.GetFireDelay()*2;
 				}

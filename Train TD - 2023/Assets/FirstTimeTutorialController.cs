@@ -72,6 +72,7 @@ public class FirstTimeTutorialController : MonoBehaviour {
     }
 
     public void TutorialCheck() {
+        return;
         if (!_progress.tutorialDone && !tutorialEngaged) {
             EngageFirstTimeTutorial();
         }
@@ -81,7 +82,7 @@ public class FirstTimeTutorialController : MonoBehaviour {
         TutorialComplete();
         DataSaver.s.GetCurrentSave().isInARun = false;
         DataSaver.s.GetCurrentSave().tutorialProgress = new DataSaver.TutorialProgress();
-        StarterUIController.s.BackToProfileSelection();
+        ShopStateController.s.BackToMainMenu();
     }
 
     void EngageFirstTimeTutorial() {
@@ -105,8 +106,8 @@ public class FirstTimeTutorialController : MonoBehaviour {
         getRewardsHint.SetActive(false);
         buildYourNewThingsHint.SetActive(false);
         
-        PlayerBuildingController.s.completeBuildingEvent.AddListener(OnPlayerBuildOnTrain);
-        CharacterSelector.s.OnCharacterSelected.AddListener(ShowCameraControls);
+        //PlayerBuildingController.s.completeBuildingEvent.AddListener(OnPlayerBuildOnTrain);
+        PlayStateMaster.s.OnCharacterSelected.AddListener(ShowCameraControls);
         if (DataSaver.s.GetCurrentSave().isInARun) {
             ShowCameraControls();
         }
@@ -165,10 +166,10 @@ public class FirstTimeTutorialController : MonoBehaviour {
     }
 
     void OneFrameLater() {
-        var sellModules = Train.s.GetComponentsInChildren<SellAction>();
+        /*var sellModules = Train.s.GetComponentsInChildren<SellAction>();
         for (int i = 0; i < sellModules.Length; i++) {
             sellModules[i].sellEvent.AddListener(PlayerSoldSomethingOnTrain);
-        }
+        }*/
     }
 
     private ModuleHealth[] _healths;
@@ -233,34 +234,34 @@ public class FirstTimeTutorialController : MonoBehaviour {
 
 
             if (!_progress.cargoPutOnTrain && _progress.cameraDone) {
-                if (PlayerActionsController.s.currentMode != PlayerActionsController.ActionModes.shopMove && !PlayerBuildingController.s.isBuilding) {
+                /*if (PlayerActionsController.s.currentMode != PlayerActionsController.ActionModes.shopMove && !PlayerBuildingController.s.isBuilding) {
                     activateMoveMode.SetActive(true);
                 } else {
                     activateMoveMode.SetActive(false);
-                }
+                }*/
 
-                if (PlayerBuildingController.s.isBuilding) {
+                /*if (PlayerBuildingController.s.isBuilding) {
                     activateMoveMode.SetActive(false);
                     putOnTheTrain.SetActive(true);
                 } else {
                     putOnTheTrain.SetActive(false);
-                }
+                }*/
             }
 
             if (waitToShowScrap) {
-                if (PlayerActionsController.s.currentMode != PlayerActionsController.ActionModes.shopMove && !PlayerBuildingController.s.isBuilding) {
+                /*if (PlayerActionsController.s.currentMode != PlayerActionsController.ActionModes.shopMove && !PlayerBuildingController.s.isBuilding) {
                     ShowSellScrap();
                     waitToShowScrap = false;
-                }
+                }*/
             }
 
 
             if (!_progress.scrapsScrapped && _progress.cargoPutOnTrain && _progress.cameraDone && !waitToShowScrap) {
-                if (PlayerActionsController.s.currentMode != PlayerActionsController.ActionModes.shopSell) {
+                /*if (PlayerActionsController.s.currentMode != PlayerActionsController.ActionModes.shopSell) {
                     activateScrappingMode.SetActive(true);
                 } else {
                     activateScrappingMode.SetActive(false);
-                }
+                }*/
                 
                 if (MoneyController.s.scraps > 0) {
                     getScrapsHint.SetActive(false);
@@ -270,7 +271,7 @@ public class FirstTimeTutorialController : MonoBehaviour {
             }
 
             if (!_progress.mapTargetSelected && _progress.scrapsScrapped && _progress.cargoPutOnTrain) {
-                if (SceneLoader.s.IsLevelSelected()) {
+                if (PlayStateMaster.s.IsLevelSelected()) {
                     openMapHint.SetActive(false);
                     _progress.mapTargetSelected = true;
                     ShowGoGoGo();
@@ -286,22 +287,22 @@ public class FirstTimeTutorialController : MonoBehaviour {
             }
 
             if (!_progress.levelStarted && _progress.mapTargetSelected && _progress.scrapsScrapped && _progress.cargoPutOnTrain) {
-                if (SceneLoader.s.isLevelInProgress) {
+                if (PlayStateMaster.s.isCombatInProgress()) {
                     _progress.levelStarted = true;
                     goGoGoHint.SetActive(false);
                     GetTrainStuff();
                     
                     if(!_progress.shiftToGoFast)
                         Invoke(nameof(LookAtTheRadar), 5f);
-                    if(!_progress.powerup)
-                        PlayerActionsController.s.OnGetPowerUp.AddListener(OnPowerUpGet);
+                    /*if(!_progress.powerup)
+                        PlayerActionsController.s.OnGetPowerUp.AddListener(OnPowerUpGet);*/
                 }
             }
 
-            if (SceneLoader.s.isLevelInProgress){
+            if (PlayStateMaster.s.isCombatInProgress()){
                 if (!addedListeners) {
-                    PlayerActionsController.s.OnRepaired.AddListener(OnRepaired);
-                    PlayerActionsController.s.OnReloaded.AddListener(OnReloaded);
+                    /*PlayerActionsController.s.OnRepaired.AddListener(OnRepaired);
+                    PlayerActionsController.s.OnReloaded.AddListener(OnReloaded);*/
                     addedListeners = true;
                 }
                 
@@ -355,7 +356,7 @@ public class FirstTimeTutorialController : MonoBehaviour {
                 }
             }
 
-            if (SceneLoader.s.isLevelFinished()) {
+            if (PlayStateMaster.s.isCombatFinished()) {
                 useReloadTool.SetActive(false);
                 useRepairTool.SetActive(false);
                 directControlHint.SetActive(false);
@@ -371,7 +372,7 @@ public class FirstTimeTutorialController : MonoBehaviour {
                 }
             }
 
-            if (SceneLoader.s.isStarterMenu() && _progress.levelFinishedOnce) {
+            if (PlayStateMaster.s.isShop() && _progress.levelFinishedOnce) {
                 if (!_progress.putTheNewStuff) {
                     buildYourNewThingsHint.SetActive(true);
                 }
@@ -382,7 +383,7 @@ public class FirstTimeTutorialController : MonoBehaviour {
     [Space] 
     public GameObject powerUpHint;
     void OnPowerUpGet() {
-        PlayerActionsController.s.OnGetPowerUp.RemoveListener(OnPowerUpGet);
+        //PlayerActionsController.s.OnGetPowerUp.RemoveListener(OnPowerUpGet);
         _progress.powerup = true;
         powerUpHint.SetActive(true);
         Invoke(nameof(HidePowerup), 10f);
@@ -423,10 +424,10 @@ public class FirstTimeTutorialController : MonoBehaviour {
         tutorialEngaged = false;
         DataSaver.s.GetCurrentSave().tutorialProgress.tutorialDone = true;
         tutorialUI.SetActive(false);
-        if (addedListeners) {
+        /*if (addedListeners) {
             PlayerActionsController.s.OnRepaired.RemoveListener(OnRepaired);
             PlayerActionsController.s.OnReloaded.RemoveListener(OnReloaded);
-        }
+        }*/
     }
     
     public void SkipTutorial (){

@@ -6,7 +6,7 @@ public class TravelWithFrontCart : MonoBehaviour
 {
     // Update is called once per frame
     void Update() {
-        if(SceneLoader.s.isLevelFinished())
+        if(PlayStateMaster.s.isCombatFinished())
             transform.position = Train.s.trainFront.position;
     }
 }

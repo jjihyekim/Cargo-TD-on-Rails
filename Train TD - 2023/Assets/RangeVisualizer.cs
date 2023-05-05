@@ -11,7 +11,7 @@ public class RangeVisualizer : MonoBehaviour {
     public LineRenderer rangeEdgeRenderer;
     public LineRenderer targetingRenderer;
 
-    private TrainBuilding trainBuilding;
+    private Cart _cart;
 
 
     public static void SetAllRangeVisualiserState(bool state) {
@@ -41,14 +41,12 @@ public class RangeVisualizer : MonoBehaviour {
         targetingRenderer.gameObject.SetActive(false);
         
         targeter = targetPicker.GetComponent<IComponentWithTarget>();
-        trainBuilding = GetComponentInParent<TrainBuilding>();
+        _cart = GetComponentInParent<Cart>();
         targetingRenderer.positionCount = 2;
         //ChangeVisualizerStatus(false);
         DrawRangeEdge();
 
         SetVisualiserAllShowState(allVisualiserState);
-
-        trainBuilding.rotationChangedEvent += DrawRangeEdge;
     }
 
 
@@ -61,12 +59,6 @@ public class RangeVisualizer : MonoBehaviour {
                 var origin = targeter.GetRangeOrigin();
                 if (origin != null) {
                     var rotationSpan = targetPicker.rotationSpan;
-                    if (targetPicker.myOverride != null && targetPicker.myOverride.isOverride) {
-                        if (targetPicker.myOverride.rotations.Contains(trainBuilding.myRotation)) {
-                            rotationSpan = targetPicker.myOverride.rotationSpanOverride;
-                        }
-                    }
-                    
                     
                     var radians = Mathf.Deg2Rad * rotationSpan;
                     var scaleAdjustment = (1f / origin.lossyScale.x);

@@ -19,7 +19,7 @@ public class DataHolder : MonoBehaviour {
     }
 
 
-    public TrainBuilding[] buildings;
+    public Cart[] buildings;
     public EnemyHolder[] enemies;
     public CharacterDataScriptable[] characters;
     public CityDataScriptable[] cities;
@@ -98,14 +98,14 @@ public class DataHolder : MonoBehaviour {
         return null;
     }
 
-    public TrainBuilding GetBuilding(string buildingName) {
+    public Cart GetCart(string buildingName) {
         for (int i = 0; i < buildings.Length; i++) {
             if (PreProcess(buildings[i].uniqueName) == PreProcess(buildingName)) {
                 return buildings[i];
             }
         }
 
-        Debug.LogError($"Can't find building {buildingName}");
+        Debug.LogError($"Can't find building <{buildingName}>");
         return null;
     }
     

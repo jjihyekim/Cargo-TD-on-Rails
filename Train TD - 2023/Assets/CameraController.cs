@@ -298,20 +298,21 @@ public class CameraController : MonoBehaviour {
         if (isSnappedToTrain) {
             if (snappedMoveTimer <= 0) {
                 if (Mathf.Abs(value.x) > 0.1f) {
-                    var nextBuilding = GetNextBuildingInSameSlot(value.x > 0, snappedTrainBuilding.mySlot, snappedTrainBuilding.mySlotIndex);
+                    //var nextBuilding = GetNextBuilding(value.x > 0, snappedTrainBuilding.mySlot, snappedTrainBuilding.mySlotIndex);
+                    var nextBuilding = GetNextBuilding();
                     if (nextBuilding != null) {
                         SnapToTrainModule(nextBuilding);
-                        PlayerModuleSelector.s.ActivateActionDisplayOnTrainBuilding(snappedTrainBuilding);
+                        //PlayerModuleSelector.s.ActivateActionDisplayOnTrainBuilding(snappedCart);
                     }
                     snappedMoveTimer = delay;
                 }
 
                 if (Mathf.Abs(value.y) > 0.1f) {
-                    var nextBuilding = GetNextBuildingInTheNextSlot(value.y > 0, snappedTrainBuilding.mySlot, snappedTrainBuilding.mySlot.GetCart().index);
-                    
+                    //var nextBuilding = GetNextBuilding(value.y > 0, snappedTrainBuilding.mySlot, snappedTrainBuilding.mySlot.GetCart().index);
+                    var nextBuilding = GetNextBuilding();
                     if (nextBuilding != null) {
                         SnapToTrainModule(nextBuilding);
-                        PlayerModuleSelector.s.ActivateActionDisplayOnTrainBuilding(snappedTrainBuilding);
+                        //PlayerModuleSelector.s.ActivateActionDisplayOnTrainBuilding(snappedCart);
                     }
                     
                     snappedMoveTimer = delay;
@@ -329,72 +330,10 @@ public class CameraController : MonoBehaviour {
         snappedMoveTimer -= Time.unscaledDeltaTime;
     }
 
-    TrainBuilding GetNextBuildingInSameSlot(bool isForward, Slot activeSlot, int activeIndex) {
-        var slotCount = activeSlot.myBuildings.Length;
-        if (isForward) {
-            var nextIndex = activeIndex;
-            for (int i = 0; i < slotCount; i++) {
-                nextIndex = (nextIndex + 1) % slotCount;
-
-                var nextBuilding = activeSlot.myBuildings[nextIndex];
-                if (nextBuilding != null && nextBuilding != snappedTrainBuilding && nextBuilding.canSelect) {
-                    return activeSlot.myBuildings[nextIndex];
-                }
-            }
-        } else {
-            var nextIndex = activeIndex;
-            for (int i = 0; i < slotCount; i++) {
-                nextIndex = (nextIndex + (slotCount-1)) % slotCount; // +2 actually makes us go -1 because modulo 3
-
-                var nextBuilding = activeSlot.myBuildings[nextIndex];
-                if (nextBuilding != null && nextBuilding != snappedTrainBuilding && nextBuilding.canSelect) {
-                    return activeSlot.myBuildings[nextIndex];
-                }
-            }
-        }
-        
-        return null;
+    private Cart GetNextBuilding() {
+        throw new NotImplementedException();
     }
     
-    TrainBuilding GetNextBuildingInTheNextSlot(bool isForward, Slot activeSlot, int slotIndex) {
-        var cartCount = Train.s.carts.Count;
-        if (isForward) {
-            var nextIndex = slotIndex;
-            for (int i = 0; i < cartCount; i++) {
-                
-                if (!activeSlot.isFrontSlot) {
-                    activeSlot = activeSlot.GetCart().frontSlot;
-                } else {
-                    nextIndex = (nextIndex + (cartCount-1)) % cartCount; // +2 actually makes us go -1 because modulo 3
-                    activeSlot = Train.s.carts[nextIndex].GetComponent<Cart>().backSlot;
-                }
-
-                var buildingInSlot = GetNextBuildingInSameSlot(true, activeSlot, -1);
-
-                if (buildingInSlot != null && buildingInSlot.canSelect) {
-                    return buildingInSlot;
-                }
-            }
-        } else {
-            var nextIndex = slotIndex;
-            for (int i = 0; i < cartCount; i++) {
-                
-                if (activeSlot.isFrontSlot) {
-                    activeSlot = activeSlot.GetCart().backSlot;
-                } else {
-                    nextIndex = (nextIndex + 1) % cartCount;
-                    activeSlot = Train.s.carts[nextIndex].GetComponent<Cart>().frontSlot;
-                }
-
-                var buildingInSlot = GetNextBuildingInSameSlot(true, activeSlot, -1);
-
-                if (buildingInSlot != null && buildingInSlot.canSelect) {
-                    return buildingInSlot;
-                }
-            }
-        }
-        return null;
-    }
 
     /*public bool SnapToNearestCart() {
         var carts = Train.s.carts;
@@ -415,16 +354,10 @@ public class CameraController : MonoBehaviour {
         return minDist < minSnapDistance;
     }*/
 
-    public TrainBuilding snappedTrainBuilding;
+    public Cart snappedCart;
     public Vector3 snapOffset;
-    public void SnapToTrainModule(TrainBuilding module) {
-        if (module.myRotation == TrainBuilding.Rots.right && isRight) {
-            FlipCamera(new InputAction.CallbackContext());
-        }else if (module.myRotation == TrainBuilding.Rots.left && !isRight) {
-            FlipCamera(new InputAction.CallbackContext());
-        }
-
-        snappedTrainBuilding = module;
+    public void SnapToTrainModule(Cart module) {
+        snappedCart = module;
         snapTarget = module.transform;
         snapOffset = Vector3.down * 0.75f;
         isSnappedToTransform = true;

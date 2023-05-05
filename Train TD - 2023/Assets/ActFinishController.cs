@@ -35,22 +35,15 @@ public class ActFinishController : MonoBehaviour {
             DataSaver.s.GetCurrentSave().currentRun = null;
             DataSaver.s.GetCurrentSave().isInARun = false;
             DataSaver.s.SaveActiveGame();
-            StarterUIController.s.BackToProfileSelection();
+            ShopStateController.s.BackToMainMenu();
             return;
         }
         
-        SceneLoader.s.BackToStarterMenu(true);
-        SceneLoader.s.afterTransferCalls.Enqueue(() => FinishTransfer());
+        PlayStateMaster.s.EnterNewAct();
+        DataSaver.s.SaveActiveGame();
     }
 
-    void FinishTransfer() {
-        DataSaver.s.GetCurrentSave().currentRun.currentAct += 1;
-        MapController.s.GenerateStarMap();
-        WorldMapCreator.s.GenerateWorldMap();
-        HexGrid.s.RefreshGrid();
-
-        DataSaver.s.SaveActiveGame();
-        MusicPlayer.s.SwapMusicTracksAndPlay(false);
+    public void CloseActUI() {
         MissionWinFinisher.s.Cleanup();
         
         act1WinUI.SetActive(false);

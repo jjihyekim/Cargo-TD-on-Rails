@@ -16,10 +16,7 @@ public class WorldMapCreator : MonoBehaviour {
 	}
 
 	public TMP_Text mapText;
-	private void Start() {
-		if(DataSaver.s.GetCurrentSave().isInARun)
-			GenerateWorldMap();
-	}
+	
 
 	public bool worldMapOpen = false;
 
@@ -113,13 +110,13 @@ public class WorldMapCreator : MonoBehaviour {
 			
 			CameraController.s.EnterMapMode();
 			mapText.text = "Train";
-			StarterUIController.s.SetStarterUIStatus(false);
+			ShopStateController.s.SetStarterUIStatus(false);
 
 			Train.s.transform.position = playerTrainTargetTransform.transform.position;
 			Train.s.transform.localScale = playerTrainTargetTransform.transform.localScale;
 
 			MiniGUI_HealthBar.showHealthBars = false;
-			PlayerModuleSelector.s.DisableModuleSelecting();
+			//PlayerModuleSelector.s.DisableModuleSelecting();
 			worldMapOpen = true;
 
 			mapIcon.sprite = backToTrainIcon;
@@ -130,12 +127,12 @@ public class WorldMapCreator : MonoBehaviour {
 		if (worldMapOpen) {
 			CameraController.s.ExitMapMode();
 			mapText.text = "Map";
-			StarterUIController.s.SetStarterUIStatus(true);
+			ShopStateController.s.SetStarterUIStatus(true);
 
 			Train.s.ResetTrainPosition();
 
 			MiniGUI_HealthBar.showHealthBars = true;
-			PlayerModuleSelector.s.EnableModuleSelecting();
+			//PlayerModuleSelector.s.EnableModuleSelecting();
 			worldMapOpen = false;
 			targetStarInfoScreenBudget.SetActive(false);
 
@@ -154,7 +151,9 @@ public class WorldMapCreator : MonoBehaviour {
 		GenerateWorldMap();
 	}
 
+	public float worldMapGenerationProgress = 0;
 	public void GenerateWorldMap() {
+		worldMapGenerationProgress = 0;
 		ReturnToRegularMap();
 
 		ResetMapPos();
@@ -168,6 +167,7 @@ public class WorldMapCreator : MonoBehaviour {
 	}
 
 	void AfterGridWasMade() {
+		worldMapGenerationProgress = 1 / 3f;
 		hexGrid.ApplyHeights(OnceApplyHeightsIsDone);
 	}
 
@@ -180,6 +180,8 @@ public class WorldMapCreator : MonoBehaviour {
 		}
 		
 		hexGrid.MeshCombine();
+		
+		worldMapGenerationProgress = 1;
 	}
 
 	public LayerMask castleSnapGroundLayerMask;

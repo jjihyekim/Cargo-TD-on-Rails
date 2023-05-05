@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class RepairableIfDestroyed : MonoBehaviour, IClickableInfo {
-    private TrainBuilding myBuilding;
+    private Cart myBuilding;
     private Tooltip myTooltip;
     void Start() {
-        myBuilding = GetComponent<TrainBuilding>();
+        myBuilding = GetComponent<Cart>();
         myTooltip = new Tooltip() { text = "Repair this to at least half health to restore functionality." };
     }
 

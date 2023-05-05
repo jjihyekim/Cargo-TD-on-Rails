@@ -13,7 +13,7 @@ public class MiniGUI_InfoCard_Cargo : MonoBehaviour, IBuildingInfoCard {
 
     [ReadOnly] public CargoModule cargoModule;
     
-    public void SetUp(TrainBuilding building) {
+    public void SetUp(Cart building) {
         cargoModule = building.GetComponent<CargoModule>();
         
         if (cargoModule == null) {
@@ -26,14 +26,4 @@ public class MiniGUI_InfoCard_Cargo : MonoBehaviour, IBuildingInfoCard {
         cargoRewardName.text = cargoModule.GetReward();
         cargoRewardIcon.sprite = cargoModule.GetRewardIcon();
     }
-
-
-    public void ShowMoreInfoAboutCargoReward() {
-        if (cargoModule.IsBuildingReward()) {
-            GetComponentInParent<MiniGUI_BuildingInfoCard>().ShowInfoAboutCargo(DataHolder.s.GetBuilding(cargoModule.GetReward()));
-        } else {
-            GetComponentInParent<MiniGUI_BuildingInfoCard>().ShowInfoAboutCargo(DataHolder.s.GetPowerUp(cargoModule.GetReward()));
-        }
-    }
-
 }

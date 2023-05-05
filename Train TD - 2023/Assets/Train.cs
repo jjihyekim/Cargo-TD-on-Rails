@@ -16,7 +16,7 @@ public class Train : MonoBehaviour {
 
     public int cartCount;
     
-    public List<Transform> carts = new List<Transform>();
+    public List<Cart> carts = new List<Cart>();
     public List<Vector3> cartDefPositions = new List<Vector3>();
 
     public bool trainWeightDirty = false;
@@ -37,14 +37,9 @@ public class Train : MonoBehaviour {
             return trainWeight;
         } else {
             trainWeight = 0;
-            var cartComponents = GetComponentsInChildren<Cart>();
-            var trainBuildingComponents = GetComponentsInChildren<TrainBuilding>();
 
-            for (int i = 0; i < cartComponents.Length; i++) {
-                trainWeight += cartComponents[i].weight;
-            }
-            for (int i = 0; i < trainBuildingComponents.Length; i++) {
-                trainWeight += trainBuildingComponents[i].weight;
+            for (int i = 0; i < carts.Count; i++) {
+                trainWeight += carts[i].weight;
             }
 
             var cargoComponents = GetComponentsInChildren<CargoModule>();
@@ -55,16 +50,6 @@ public class Train : MonoBehaviour {
         }
     }
 
-    public int GetEmptySlotCount() {
-        var slots = GetComponentsInChildren<Slot>();
-        int emptyCount = 0;
-        for (int i = 0; i < slots.Length; i++) {
-            if (slots[i].isCompletelyEmpty())
-                emptyCount += 1;
-        }
-
-        return emptyCount;
-    }
 
     private void Awake() {
         s = this;
@@ -74,6 +59,11 @@ public class Train : MonoBehaviour {
     private void Start() {
         //UpdateBasedOnLevelData();
         LevelReferences.s.train = this;
+    }
+
+    [Button]
+    public void ReDrawCurrentTrain() {
+        DrawTrain(GetTrainState());
     }
 
     public void DrawTrainBasedOnSaveData() {
@@ -87,7 +77,7 @@ public class Train : MonoBehaviour {
         suppressRedraw = false;
         trainWeightDirty = true;
 
-        carts = new List<Transform>();
+        carts = new List<Cart>();
         cartDefPositions = new List<Vector3>();
         
         if(trainFront != null)
@@ -99,8 +89,10 @@ public class Train : MonoBehaviour {
             cartCount = trainState.myCarts.Count;
 
             for (int i = 0; i < cartCount; i++) {
-                var cart = Instantiate(DataHolder.s.cartPrefab, transform);
-                carts.Add(cart.transform);
+                var cartState = trainState.myCarts[i];
+                var cart = Instantiate(DataHolder.s.GetCart(cartState.uniqueName).gameObject, transform).GetComponent<Cart>();
+                ApplyStateToCart(cart, cartState);
+                carts.Add(cart);
                 cartDefPositions.Add(cart.transform.localPosition);
             }
 
@@ -113,13 +105,8 @@ public class Train : MonoBehaviour {
             trainBack.gameObject.name = "Train Back";
         }
         
-        carts.Reverse();
-        cartDefPositions.Reverse();
-        
         UpdateCartPositions();
-
-        AddBuildingsToTrain(trainState);
-        ReCalculateStorageAmounts();
+        
         trainUpdatedThroughNonBuildingActions?.Invoke();
         trainUpdated?.Invoke();
 
@@ -128,7 +115,7 @@ public class Train : MonoBehaviour {
 
 
     public void SaveTrainState() {
-        if (!SceneLoader.s.isLevelInProgress) {
+        if (!PlayStateMaster.s.isCombatInProgress()) {
             Invoke(nameof(OneFrameLater), 0.01f);
         }
     }
@@ -142,42 +129,28 @@ public class Train : MonoBehaviour {
 
         for (int i = 0; i < carts.Count; i++) {
             var cartScript = carts[i].GetComponent<Cart>();
-            var cartState = new DataSaver.TrainState.CartState();
-
-            for (int j = 0; j < cartScript.frontSlot.myBuildings.Length; j++) {
-                var buildingState = cartState.buildingStates[j];
-                var building = cartScript.frontSlot.myBuildings[j];
-                ApplyBuildingToState(building, buildingState);
-            }
-            
-            for (int j = 0; j < cartScript.backSlot.myBuildings.Length; j++) {
-                var buildingState = cartState.buildingStates[j+4];
-                var building = cartScript.backSlot.myBuildings[j];
-                ApplyBuildingToState(building, buildingState);
-            }
-
-            trainState.myCarts.Add(cartState);
+            trainState.myCarts.Add(GetStateFromCart(cartScript));
         }
 
         return trainState;
     }
 
-    public static void ApplyBuildingToState(TrainBuilding building, DataSaver.TrainState.CartState.BuildingState buildingState) {
-        if (building != null) {
-            buildingState.uniqueName = building.uniqueName;
-            buildingState.health = building.GetCurrentHealth();
+    public static void ApplyCartToState(Cart cart, DataSaver.TrainState.CartState buildingState) {
+        if (cart != null) {
+            buildingState.uniqueName = cart.uniqueName;
+            buildingState.health = cart.GetCurrentHealth();
 
-            var cargo = building.GetComponent<CargoModule>();
+            var cargo = cart.GetComponentInChildren<CargoModule>();
             if (cargo != null) {
-                //buildingState.cargoCost = cargo.moneyCost;
-                buildingState.isBuildingCargo = cargo.IsBuildingReward();
-                buildingState.cargoReward = cargo.GetReward();
+                buildingState.cargoState = new DataSaver.TrainState.CartState.CargoState();
+                buildingState.cargoState.isBuildingCargo = cargo.IsBuildingReward();
+                buildingState.cargoState.cargoReward = cargo.GetReward();
+                buildingState.cargoState.isLeftCargo = cargo.isLeftCargo;
             } else {
-                buildingState.isBuildingCargo = false;
-                buildingState.cargoReward = "";
+                buildingState.cargoState = null;
             }
 
-            var ammo = building.GetComponent<ModuleAmmo>();
+            var ammo = cart.GetComponentInChildren<ModuleAmmo>();
             
             if (ammo != null) {
                 buildingState.ammo = (int)ammo.curAmmo;
@@ -189,105 +162,59 @@ public class Train : MonoBehaviour {
         }
     }
 
-    void AddBuildingsToTrain(DataSaver.TrainState trainState) {
-        for (int i = 0; i < trainState.myCarts.Count; i++) {
-            var cartState = trainState.myCarts[i];
-
-            var cart = carts[i].GetComponent<Cart>();
-
-            var skipCount = 0;
-            for (int j = 0; j < cartState.buildingStates.Length; j++) {
-                if (skipCount > 0) { // we skip the next three duplicates if the prev building was an entire slot building
-                    skipCount -= 1;
-                    continue;
-                }
-
-                if (cartState.buildingStates[j].uniqueName.Length > 0) {
-                    var slot = j < 4 ? cart.frontSlot : cart.backSlot;
-                    var buildingScript = DataHolder.s.GetBuilding(cartState.buildingStates[j].uniqueName);
-                    if (buildingScript != null) {
-                        AddBuildingToSlot(slot, j % 4,buildingScript, cartState.buildingStates[j]);
-                        if (buildingScript.occupiesEntireSlot) {
-                            skipCount = 3;
-                        } else if (j%4 == 0) {//we skip the second top slot as it is just for forward/backward slot
-                            skipCount = 1;
-                        }
-                    }
-                }
-            }
-        }
+    public static DataSaver.TrainState.CartState GetStateFromCart(Cart cart) {
+        var state = new DataSaver.TrainState.CartState();
+        ApplyCartToState(cart,state);
+        return state;
     }
-
-    private static void AddBuildingToSlot(Slot slot, int slotIndex, TrainBuilding buildingScript, DataSaver.TrainState.CartState.BuildingState buildingState) {
-        var newBuilding = Instantiate(buildingScript.gameObject).GetComponent<TrainBuilding>();
-        slot.AddBuilding(newBuilding, slotIndex);
-        
-        ApplyStateToBuilding(newBuilding, buildingState);
-
-        newBuilding.CompleteBuilding(false);
-    }
-
-    public static void ApplyStateToBuilding(TrainBuilding buildingScript, DataSaver.TrainState.CartState.BuildingState buildingState) {
-        if (buildingState.health > 0) {
-            buildingScript.SetCurrentHealth(buildingState.health);
+    
+    public static void ApplyStateToCart(Cart cart, DataSaver.TrainState.CartState cartState) {
+        if (cartState.health > 0) {
+            cart.SetCurrentHealth(cartState.health);
         }
 
-        if (buildingState.ammo >= 0) {
-            var ammo = buildingScript.GetComponent<ModuleAmmo>();
-            ammo.SetAmmo(buildingState.ammo);
-        }else if (buildingState.ammo == -2) {
-            var ammo = buildingScript.GetComponent<ModuleAmmo>();
+        if (cartState.ammo >= 0) {
+            var ammo = cart.GetComponentInChildren<ModuleAmmo>();
+            ammo.SetAmmo(cartState.ammo);
+        }else if (cartState.ammo == -2) {
+            var ammo = cart.GetComponentInChildren<ModuleAmmo>();
             if (ammo != null) {
                 ammo.SetAmmo(ammo.maxAmmo);
             } else {
-                buildingState.ammo = -1;
+                cartState.ammo = -1;
             }
         }
 
-        var cargoModule = buildingScript.GetComponent<CargoModule>();
+        var cargoModule = cart.GetComponentInChildren<CargoModule>();
         if (cargoModule != null) {
-            cargoModule.SetCargo(buildingState.cargoReward, buildingState.isBuildingCargo);
+            cargoModule.SetCargo(cartState.cargoState);
         }
-    }
-
-    public Transform AddTrainCartAtIndex(int index) {
-        cartCount += 1;
-        var cart = Instantiate(DataHolder.s.cartPrefab, transform);
-        
-        cart.name = $"Cart {index }";
-        carts.Insert(index, cart.transform);
-        cartDefPositions.Add(cart.transform.localPosition);
-        
-        UpdateCartPositions();
-
-        return cart.transform;
     }
 
     void UpdateCartPositions() {
         if(carts.Count == 0)
             return;
-        carts.Reverse();
-        cartDefPositions.Reverse();
-        var startPlace = transform.localPosition + Vector3.back * DataHolder.s.cartLength * cartCount / 2f;
+        
+        var totalLength = 0f;
+        for (int i = 0; i < carts.Count; i++) {
+            totalLength += carts[i].length;
+        }
+        
+        var currentSpot = transform.localPosition - Vector3.back * (totalLength / 2f);
 
         for (int i = 0; i < carts.Count; i++) {
             var cart = carts[i];
-            
-            cart.localPosition = startPlace + Vector3.forward * i * DataHolder.s.cartLength;
-            var index = carts.Count - i - 1; // because we start counting from back
+            cart.transform.localPosition = currentSpot;
+            currentSpot += -Vector3.forward * cart.length;
+            var index = i;
             cart.name = $"Cart {index }";
-            var cartScript = cart.GetComponent<Cart>();
-            cartScript.index = index ;
             cartDefPositions[i] = cart.transform.localPosition;
         }
         
-        trainFront.transform.localPosition = carts[carts.Count-1].localPosition + trainFrontOffset;
-        trainBack.transform.localPosition = carts[0].localPosition + trainFrontOffset;
-        
-        
-        carts.Reverse();
-        cartDefPositions.Reverse();
+        trainFront.transform.localPosition = carts[carts.Count-1].transform.localPosition + trainFrontOffset;
+        trainBack.transform.localPosition = carts[0].transform.localPosition + trainFrontOffset;
     }
+    
 
     private bool suppressRedraw = false;
     public void CartDestroyed(Cart cart) {
@@ -296,10 +223,10 @@ public class Train : MonoBehaviour {
         
         StopShake();
 
-        var index = carts.IndexOf(cart.transform);
+        var index = carts.IndexOf(cart);
 
         if (index > -1) {
-            carts.Remove(cart.transform);
+            carts.Remove(cart);
             UpdateCartPositions();
         } /*else {
             Debug.Log($"Cart with illegal index {index} {cart} {cart.gameObject.name}");
@@ -307,17 +234,11 @@ public class Train : MonoBehaviour {
         
         RestartShake();
         
-        if(carts.Count <= 0 && SceneLoader.s.isLevelInProgress)
+        if(carts.Count <= 0 && PlayStateMaster.s.isCombatInProgress())
             MissionLoseFinisher.s.MissionLost();
         
         // draw train already calls this
         //trainUpdatedThroughNonBuildingActions?.Invoke();
-    }
-
-    public UnityEvent onLevelStateChanged = new UnityEvent();
-    
-    public void LevelStateChanged() {
-        onLevelStateChanged?.Invoke();
     }
 
 
@@ -331,7 +252,7 @@ public class Train : MonoBehaviour {
     public bool doShake = true;
     private float shakeBlock = 0f;
     private void Update() {
-        if (SceneLoader.s.isLevelInProgress && doShake) {
+        if (PlayStateMaster.s.isCombatInProgress() && doShake) {
             if (curDistance < 0) {
                 StartCoroutine(ShakeWave());
                 StartCoroutine(RestoreWave(restoreDelay));
@@ -347,13 +268,27 @@ public class Train : MonoBehaviour {
                 _RestartShake();
             }
         }
+
+    }
+
+
+    public void RemoveCart(Cart cart) {
+        carts.Remove(cart);
+        cart.myLocation = UpgradesController.CartLocation.world;
+        cart.transform.SetParent(null);
+    }
+
+    public void AddCartAtIndex(int index, Cart cart) {
+        carts.Insert(index, cart);
+        cart.myLocation = UpgradesController.CartLocation.train;
+        cart.transform.SetParent(transform);
     }
 
     public void StopShake() {
         if (doShake) {
             StopAllCoroutines();
             for (int i = 0; i < carts.Count; i++) {
-                carts[i].localPosition = cartDefPositions[i];
+                carts[i].transform.localPosition = cartDefPositions[i];
             }
             doShake = false;
         }
@@ -364,8 +299,9 @@ public class Train : MonoBehaviour {
             Invoke(nameof(_RestartShake), 0.01f); // one frame later so that any transform changes have been applied
     }
 
-    public void SwapCarts(Cart cart1, Cart cart2) {
-        StopShake();
+    public void SwapBuildings(/*Cart cart1, Cart cart2*/) {
+        throw new NotImplementedException();
+        /*StopShake();
 
         (cart1.transform.position, cart2.transform.position) = (cart2.transform.position, cart1.transform.position);
 
@@ -375,13 +311,13 @@ public class Train : MonoBehaviour {
         carts[cart1Index] = cart2.transform;
         carts[cart2Index] = cart1.transform;
 
-        RestartShake();
+        RestartShake();*/
     }
 
     void _RestartShake() {
         if (!doShake) {
             for (int i = 0; i < carts.Count; i++) {
-                cartDefPositions[i] = carts[i].localPosition;
+                cartDefPositions[i] = carts[i].transform.localPosition;
             }
 
             doShake = true;
@@ -389,50 +325,8 @@ public class Train : MonoBehaviour {
     }
 
 
-    public void ReCalculateStorageAmounts() {
-        if (DataSaver.s.GetCurrentSave().isInARun) {
-            var charMinAmounts = DataSaver.s.GetCurrentSave().currentRun.character.starterResources;
-            var maxScraps = 0;
-            var maxFuel = 0;
-            var maxAmmo = 0;
-
-
-            var modules = GetComponentsInChildren<ModuleStorage>();
-
-            for (int i = 0; i < modules.Length; i++) {
-                if (!modules[i].GetComponent<TrainBuilding>().isDestroyed) {
-                    switch (modules[i].myType) {
-                        case ResourceTypes.ammo:
-                            maxAmmo += modules[i].amount;
-                            break;
-                        case ResourceTypes.fuel:
-                            maxFuel += modules[i].amount;
-                            break;
-                        case ResourceTypes.scraps:
-                            maxScraps += modules[i].amount;
-                            break;
-                    }
-                }
-            }
-
-            maxScraps = Mathf.Max(maxScraps, charMinAmounts.maxScraps);
-            maxFuel = Mathf.Max(maxFuel, charMinAmounts.maxFuel);
-            maxAmmo = Mathf.Max(maxAmmo, charMinAmounts.maxAmmo);
-
-
-            var mySave = DataSaver.s.GetCurrentSave().currentRun.myResources;
-
-            mySave.maxFuel = maxFuel;
-            mySave.maxScraps = maxScraps;
-            mySave.maxAmmo = maxAmmo;
-
-            MoneyController.s.ApplyStorageAmounts(maxScraps, maxAmmo,maxFuel);
-        }
-    }
-
-
     IEnumerator ShakeWave() {
-        if (SceneLoader.s.isLevelInProgress) {
+        if (PlayStateMaster.s.isCombatInProgress()) {
             var curShakePos = 0f;
 
             var cartCount = carts.Count;
@@ -443,7 +337,7 @@ public class Train : MonoBehaviour {
                 curCart = Mathf.Clamp(curCart, 0, cartCount - 1);
 
                 if (curCart != lastCart) {
-                    carts[curCart].localPosition = cartDefPositions[curCart] + new Vector3(
+                    carts[curCart].transform.localPosition = cartDefPositions[curCart] + new Vector3(
                         Random.Range(-shakeOffsetMax.x, shakeOffsetMax.x),
                         Random.Range(-shakeOffsetMax.y, shakeOffsetMax.y),
                         Random.Range(-shakeOffsetMax.z, shakeOffsetMax.z)
@@ -459,7 +353,7 @@ public class Train : MonoBehaviour {
     }
     
     IEnumerator RestoreWave(float delay) {
-        if (SceneLoader.s.isLevelInProgress) {
+        if (PlayStateMaster.s.isCombatInProgress()) {
             yield return new WaitForSeconds(delay);
             
             var curShakePos = 0f;
@@ -472,7 +366,7 @@ public class Train : MonoBehaviour {
                 curCart = Mathf.Clamp(curCart, 0, cartCount - 1);
 
                 if (curCart != lastCart) {
-                    carts[curCart].localPosition = cartDefPositions[curCart];
+                    carts[curCart].transform.localPosition = cartDefPositions[curCart];
                 }
 
                 curShakePos += LevelReferences.s.speed * Time.deltaTime;
@@ -483,7 +377,7 @@ public class Train : MonoBehaviour {
     
     
     IEnumerator ShakeAndRestoreWave() {
-        if (SceneLoader.s.isLevelInProgress) {
+        if (PlayStateMaster.s.isCombatInProgress()) {
             var curShakePos = 0f;
 
             var cartCount = carts.Count;
@@ -495,9 +389,9 @@ public class Train : MonoBehaviour {
 
                 if (curCart != lastCart) {
                     if (lastCart >= 0)
-                        carts[lastCart].localPosition = cartDefPositions[lastCart];
+                        carts[lastCart].transform.localPosition = cartDefPositions[lastCart];
 
-                    carts[curCart].localPosition = cartDefPositions[curCart] + new Vector3(
+                    carts[curCart].transform.localPosition = cartDefPositions[curCart] + new Vector3(
                         Random.Range(-shakeOffsetMax.x, shakeOffsetMax.x),
                         Random.Range(-shakeOffsetMax.y, shakeOffsetMax.y),
                         Random.Range(-shakeOffsetMax.z, shakeOffsetMax.z)
@@ -511,7 +405,7 @@ public class Train : MonoBehaviour {
             }
 
             if (lastCart != -1) {
-                carts[lastCart].localPosition = cartDefPositions[lastCart];
+                carts[lastCart].transform.localPosition = cartDefPositions[lastCart];
             }
         }
     }
@@ -527,7 +421,7 @@ public class Train : MonoBehaviour {
     public void TrainUpdated() {
         trainUpdated?.Invoke();
     }
-
+    
 
     public void UpdateTrainCartsBasedOnRotation(float rotationStartZ, float rotationEndZ, float maxXOffset, float arcLength, bool isGoingLeft) {// rotation angle is 45 degrees
         StopShake();
@@ -537,8 +431,8 @@ public class Train : MonoBehaviour {
             for (int i = 0; i < carts.Count; i++) {
                 var curCart = carts[i];
 
-                if (curCart.position.z > rotationEndZ) { // pass the curve in the flat area
-                    var pos = curCart.position;
+                if (curCart.transform.position.z > rotationEndZ) { // pass the curve in the flat area
+                    var pos = curCart.transform.position;
                     var posDelta = (pos.z - rotationEndZ);
                     pos.x = 1-Mathf.Cos(45 * Mathf.Deg2Rad);
                     pos.x *= maxXOffset;
@@ -548,8 +442,8 @@ public class Train : MonoBehaviour {
                     curCart.transform.position = pos;
                     curCart.transform.rotation = Quaternion.Euler(0,45*(isGoingLeft ? -1 : 1),0);
 
-                }else if (curCart.position.z > rotationStartZ) { // in the curve
-                    var pos = curCart.position;
+                }else if (curCart.transform.position.z > rotationStartZ) { // in the curve
+                    var pos = curCart.transform.position;
                     var posDelta = (pos.z - rotationStartZ)/arcLength;
 
                     var angle = posDelta * 45f;
@@ -565,7 +459,7 @@ public class Train : MonoBehaviour {
             for (int i = 0; i < carts.Count; i++) {
                 var curCart = carts[i];
                 
-                var pos = curCart.position;
+                var pos = curCart.transform.position;
                 var angleDelta = Mathf.Clamp(pos.z, rotationStartZ, rotationEndZ);
                 var angle = (angleDelta/arcLength) * 45f;
                 var absAngle = Mathf.Abs(angle);
@@ -607,8 +501,8 @@ public class Train : MonoBehaviour {
             for (int i = 0; i < carts.Count; i++) {
                 var curCart = carts[i];
 
-                if (curCart.position.z < rotationStartZ) { // pass the curve in the flat area in the waaay back
-                    var pos = curCart.position;
+                if (curCart.transform.position.z < rotationStartZ) { // pass the curve in the flat area in the waaay back
+                    var pos = curCart.transform.position;
                     var posDelta = (pos.z - rotationEndZ);
                     pos.x = 1-Mathf.Cos(45 * Mathf.Deg2Rad);
                     pos.x *= maxXOffset;
@@ -618,8 +512,8 @@ public class Train : MonoBehaviour {
                     curCart.transform.position = pos;
                     curCart.transform.rotation = Quaternion.Euler(0,45*(isGoingLeft ? -1 : 1),0);
 
-                }else if (curCart.position.z < rotationEndZ) { // in the curve
-                    var pos = curCart.position;
+                }else if (curCart.transform.position.z < rotationEndZ) { // in the curve
+                    var pos = curCart.transform.position;
                     var posDelta = (pos.z - rotationEndZ)/arcLength;
 
                     var angle = posDelta * 45f;
@@ -630,7 +524,7 @@ public class Train : MonoBehaviour {
                     curCart.transform.position = pos;
                     curCart.transform.rotation = Quaternion.Euler(0,angle*(isGoingLeft ? -1 : 1),0);
                 } else {// rest of the carts are flat
-                    var pos = curCart.position;
+                    var pos = curCart.transform.position;
                     pos.x = 0;
 
                     curCart.transform.position = pos;
@@ -639,5 +533,33 @@ public class Train : MonoBehaviour {
             }
         }
 
+    }
+    
+    
+    public Cart GetNextBuilding(bool isForward, Cart building) {
+        throw new NotImplementedException();
+        /*if (isForward) {
+            if (slot.isFrontSlot) {
+                var nextCart = slot.GetCart().index - 1;
+                if (nextCart > 0) {
+                    return Train.s.carts[nextCart].GetComponent<Cart>().backSlot;
+                } else {
+                    return null;
+                }
+            } else {
+                return slot.GetCart().frontSlot;
+            }
+        } else {
+            if (!slot.isFrontSlot) {
+                var nextCart = slot.GetCart().index + 1;
+                if (nextCart < Train.s.carts.Count) {
+                    return Train.s.carts[nextCart].GetComponent<Cart>().frontSlot;
+                } else {
+                    return null;
+                }
+            } else {
+                return slot.GetCart().backSlot;
+            }
+        }*/
     }
 }

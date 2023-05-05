@@ -14,7 +14,7 @@ public class PossibleTarget : MonoBehaviour, IActiveDuringCombat {
     public Transform targetTransform;
     private void OnEnable() {
         if (targetTransform == null) {
-            var building = GetComponent<TrainBuilding>();
+            var building = GetComponent<Cart>();
 
             if (building != null) {
                 targetTransform = building.GetShootingTargetTransform();

@@ -25,8 +25,7 @@ public class RubbleFollowFloor : MonoBehaviour {
     
     private void OnCollisionEnter(Collision other) {
         if (other.transform.parent != null && other.transform.parent.CompareTag("Ground")) {
-            transform.SetParent(other.transform);
-            other.gameObject.GetComponentInParent<HexChunk>().foreignObjects.Add(gameObject);
+            other.gameObject.GetComponentInParent<HexChunk>().AddForeignObject(gameObject);
         }
     }
 

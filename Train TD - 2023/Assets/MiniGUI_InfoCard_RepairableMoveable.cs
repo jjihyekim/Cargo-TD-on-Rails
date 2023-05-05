@@ -9,11 +9,9 @@ public class MiniGUI_InfoCard_RepairableMoveable : MonoBehaviour, IBuildingInfoC
 
     public Toggle repairable;
     public Toggle fragile;
-    public Toggle moveable;
     
-    public void SetUp(TrainBuilding building) {
-        repairable.isOn = building.GetComponent<RepairAction>() != null;
-        fragile.isOn = building.GetComponent<RepairableIfDestroyed>() == null;
-        moveable.isOn = building.GetComponent<MoveModuleAction>() != null;
+    public void SetUp(Cart building) {
+        //repairable.isOn = building.GetComponent<RepairAction>() != null;
+        fragile.isOn = building.GetComponentInChildren<RepairableIfDestroyed>() == null;
     }
 }

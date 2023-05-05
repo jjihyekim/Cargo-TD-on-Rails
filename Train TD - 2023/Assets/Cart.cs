@@ -1,89 +1,136 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Sirenix.OdinInspector;
 using UnityEngine;
-using UnityEngine.Events;
+using Random = UnityEngine.Random;
 
 public class Cart : MonoBehaviour {
-    public Transform center;
+    public bool isMainEngine = false;
+    public bool isCargo = false;
 
-    public int index;
+    public UpgradesController.CartLocation myLocation = UpgradesController.CartLocation.train;
 
-    public float damageModifier = 1f;
-    public float attackSpeedModifier = 1f;
+    public float length = 1.4f;
+    [HideInInspector]
+    public bool canSelect = true;
 
+    public string displayName = "Unnamed But Nice in game name";
+    public string uniqueName = "unnamed";
+
+    public Sprite Icon;
+
+    public AudioClip[] moduleBuiltSound;
+
+    [ReadOnly] 
+    public Train myTrain;
+
+
+    public int localShopCost = 100;
+    public int cost = 50;
     public int weight = 50;
     
-    public GameObject fullCart;
-    public GameObject halfCartBehindCut;
-    public GameObject halfCartFrontCut;
-    public GameObject cutCart;
 
+    public bool isBuilt = false;
 
-    public Slot frontSlot;
-    public Slot backSlot;
+    [Space] 
+    public bool isDestroyed = false;
 
     public Transform uiTargetTransform;
+    public Transform shootingTargetTransform;
+    public Transform modulesParent;
 
-    public BoxCollider myCollider;
 
+    [NonSerialized] public GameObject currentlyRepairingUIThing;
     private void Start() {
-        SlotsAreUpdated();
+        SetComponentCombatShopMode();
+        PlayStateMaster.s.OnCombatEntered.AddListener(SetComponentCombatShopMode);
+        PlayStateMaster.s.OnShopEntered.AddListener(SetComponentCombatShopMode);
+        SetUpOutlines();
     }
 
-    public void SlotsAreUpdated() {
-        if (frontSlot.isSlotNeedToBeCut() && backSlot.isSlotNeedToBeCut()) {
-            fullCart.SetActive(false);
-            halfCartBehindCut.SetActive(false);
-            halfCartFrontCut.SetActive(false);
-            cutCart.SetActive(true);
+    public Transform GetShootingTargetTransform() {
+        return shootingTargetTransform;
+    }
 
-        }else if (frontSlot.isSlotNeedToBeCut()) {
-            fullCart.SetActive(false);
-            halfCartBehindCut.SetActive(false);
-            halfCartFrontCut.SetActive(true);
-            cutCart.SetActive(false);
-            
-        }else if (backSlot.isSlotNeedToBeCut()) {
-            fullCart.SetActive(false);
-            halfCartBehindCut.SetActive(true);
-            halfCartFrontCut.SetActive(false);
-            cutCart.SetActive(false);
-            
-        } else {
-            fullCart.SetActive(true);
-            halfCartBehindCut.SetActive(false);
-            halfCartFrontCut.SetActive(false);
-            cutCart.SetActive(false);
-            
-        }
+    public Transform GetUITargetTransform() {
+        return uiTargetTransform;
+    }
 
-        var isThereAnyBuildingOnCart = false;
-        for (int i = 0; i < frontSlot.myBuildings.Length; i++) {
-            if (frontSlot.myBuildings[i] != null && !frontSlot.myBuildings[i].isDestroyed)
-                isThereAnyBuildingOnCart = true;
-        }
-        for (int i = 0; i < backSlot.myBuildings.Length; i++) {
-            if (backSlot.myBuildings[i] != null&& !backSlot.myBuildings[i].isDestroyed)
-                isThereAnyBuildingOnCart = true;
-        }
+    public void SetComponentCombatShopMode() {
+        var duringCombat = GetComponents<IActiveDuringCombat>();
+        var duringShopping = GetComponents<IActiveDuringShopping>();
+        
+        for (int i = 0; i < duringCombat.Length; i++) { duringCombat[i].Disable(); }
+        for (int i = 0; i < duringShopping.Length; i++) { duringShopping[i].Disable(); }
 
-        if (isThereAnyBuildingOnCart) {
-            GetComponent<PossibleTarget>().enabled = false;
-            myCollider.enabled = false;
-        } else {
-            GetComponent<PossibleTarget>().enabled = true;
-            myCollider.enabled = true;
+        if (PlayStateMaster.s.isCombatStarted()) {
+            for (int i = 0; i < duringCombat.Length; i++) {
+                duringCombat[i].ActivateForCombat();
+            }
+        } else if (PlayStateMaster.s.isShop()) {
+            for (int i = 0; i < duringShopping.Length; i++) {
+                duringShopping[i].ActivateForShopping();
+            }
+        }
+    }
+
+    
+    private void OnDestroy() {
+        if(myTrain != null)
+            myTrain.CartDestroyed(this);
+        
+        if(currentlyRepairingUIThing != null)
+            Destroy(currentlyRepairingUIThing);
+        
+        PlayStateMaster.s.OnCombatEntered.RemoveListener(SetComponentCombatShopMode);
+        PlayStateMaster.s.OnShopEntered.RemoveListener(SetComponentCombatShopMode);
+    }
+
+
+    [ReadOnly]
+    public List<Outline> _outlines = new List<Outline>();
+
+    void SetUpOutlines() {
+        if (_outlines.Count == 0) {
+
+            var outlines = GetComponentsInChildren<Outline>(true);
+            for (int i = 0; i < outlines.Length; i++) {
+                if(outlines[i] != null)
+                    _outlines.Add(outlines[i]);
+            }
+        }
+    }
+
+    public void SetHighlightState(bool isHighlighted) {
+        if (_outlines.Count == 0) {
+            SetUpOutlines();
         }
         
-        Train.s.TrainUpdated();
-    }
-
-    private void OnDestroy() {
-        var train = GetComponentInParent<Train>();
-
-        if (train != null) {
-            train.CartDestroyed(this);
+        foreach (var outline in _outlines) {
+            if (outline != null) {
+                outline.enabled = isHighlighted;
+            }
         }
     }
+
+    public int GetCurrentHealth() {
+        return (int)GetComponent<ModuleHealth>().currentHealth;
+    }
+
+    public void SetCurrentHealth(float health) {
+        GetComponent<ModuleHealth>().SetHealth(health);
+    }
+    
+}
+
+
+public interface IActiveDuringCombat {
+    public void ActivateForCombat();
+    public void Disable();
+}
+public interface IActiveDuringShopping {
+    public void ActivateForShopping();
+    public void Disable();
+    
 }

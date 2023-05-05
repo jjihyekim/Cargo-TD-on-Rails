@@ -12,7 +12,7 @@ public class EncounterReward : MonoBehaviour {
     public bool randomizeAmount = true;
     readonly float randomPercent = 0.1f;
 
-    public TrainBuilding building;
+    public Cart building;
 
 
     public int damageTrain = 0;

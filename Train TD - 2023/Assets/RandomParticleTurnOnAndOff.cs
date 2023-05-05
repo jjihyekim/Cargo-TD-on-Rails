@@ -1,6 +1,8 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 public class RandomParticleTurnOnAndOff : MonoBehaviour {
 
@@ -8,9 +10,14 @@ public class RandomParticleTurnOnAndOff : MonoBehaviour {
 
     public Vector2 stayOfftime = new Vector2(2f, 4f);
     
-    void Start()
+    void OnEnable()
     {
         Invoke("TurnOn",Random.Range(0.2f,4f));
+    }
+
+    private void OnDisable() {
+        CancelInvoke();
+        GetComponent<ParticleSystem>().Stop();
     }
 
     public void TurnOff() {

@@ -11,8 +11,8 @@ public class MiniGUI_InfoCard_HealthAndWeight : MonoBehaviour, IBuildingInfoCard
     public TMP_Text weight;
 
     [ReadOnly] public ModuleHealth healthModule;
-    public void SetUp(TrainBuilding building) {
-	    healthModule = building.GetComponent<ModuleHealth>();
+    public void SetUp(Cart building) {
+	    healthModule = building.GetComponentInChildren<ModuleHealth>();
         
         if (healthModule == null) {
             gameObject.SetActive(false);

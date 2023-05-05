@@ -29,13 +29,10 @@ public class MiniGUI_ProfileDisplay : MonoBehaviour {
 
     private void Update() {
         if (mySave.isInARun) {
-            moneyText.text = MoneyController.s.money.ToString();
             profileName.text = mySave.currentRun.character.uniqueName;
             playTime.text = SpeedController.GetNiceTime(mySave.currentRun.playtime);
             
-            fuelText.text = $"{MoneyController.s.fuel:F0}/{MoneyController.s.maxFuel:F0}";
-            scrapsText.text = $"{MoneyController.s.scraps:F0}/{MoneyController.s.maxScraps:F0}";
-            ammoText.text = $"{MoneyController.s.ammo:F0}/{MoneyController.s.maxAmmo:F0}";
+            scrapsText.text = $"{MoneyController.s.scraps:F0}";
 
             xpText.text = mySave.xpProgress.xp.ToString();
 

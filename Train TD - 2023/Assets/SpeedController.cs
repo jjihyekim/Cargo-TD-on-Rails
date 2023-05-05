@@ -47,15 +47,13 @@ public class SpeedController : MonoBehaviour, IShowOnDistanceRadar {
     public Color engineDisabledColor;
     public GameObject engineDisabledWarning;
 
-    public ScrapBoxScript mySteamShower;
-
     public float steam;
     public float maxSteam;
 
     public List<EngineModule> engines = new List<EngineModule>();
 
-    public void UpdateBasedOnLevelData() {
-        var myLevel = SceneLoader.s.currentLevel;
+    public void SetUpOnMissionStart() {
+        var myLevel = PlayStateMaster.s.currentLevel;
         missionDistance = 500;
         
         
@@ -64,13 +62,15 @@ public class SpeedController : MonoBehaviour, IShowOnDistanceRadar {
 
         maxSteam = engines.Count*100;
         steam = maxSteam/2f;
-        mySteamShower.SetMaxScrap(maxSteam);
 
 
         currentDistance = 0;
         LevelReferences.s.speed = 0;
         internalRealSpeed = 0;
         targetSpeed = 0;
+        
+        
+        DistanceAndEnemyRadarController.s.RegisterUnit(this);
     }
 
     public void IncreaseMissionEndDistance(float amount) {
@@ -83,20 +83,11 @@ public class SpeedController : MonoBehaviour, IShowOnDistanceRadar {
         HexGrid.s.ResetDistance();
     }
 
-    private void Start() {
-        StarterUIController.s.OnLevelStarted.AddListener(SpeedControllerRegisterTrain);
-    }
-
-    void SpeedControllerRegisterTrain() {
-        DistanceAndEnemyRadarController.s.RegisterUnit(this);
-    }
-
     public void AddEngine(EngineModule engineModule) {
         engines.Add(engineModule);
         maxSteam = engines.Count*100;
-        mySteamShower.SetMaxScrap(maxSteam);
 
-        if (!SceneLoader.s.isLevelInProgress) {
+        if (!PlayStateMaster.s.isCombatInProgress()) {
             steam = maxSteam/2f;
         }
     }
@@ -104,8 +95,7 @@ public class SpeedController : MonoBehaviour, IShowOnDistanceRadar {
     public void RemoveEngine(EngineModule engineModule) {
         engines.Remove(engineModule);
         maxSteam = engines.Count*100;
-        mySteamShower.SetMaxScrap(maxSteam);
-        if (!SceneLoader.s.isLevelInProgress) {
+        if (!PlayStateMaster.s.isCombatInProgress()) {
             steam = maxSteam/2f;
         }
     }
@@ -136,7 +126,7 @@ public class SpeedController : MonoBehaviour, IShowOnDistanceRadar {
     public float internalRealSpeed;
     public int activeEngines = 0;
     private void Update() {
-        if (SceneLoader.s.isLevelInProgress) {
+        if (PlayStateMaster.s.isCombatInProgress()) {
             fuelPower = 0;
             nuclearPower = 0;
             for (int i = 0; i < engines.Count; i++) {
@@ -169,7 +159,6 @@ public class SpeedController : MonoBehaviour, IShowOnDistanceRadar {
             if(currentBreakPower <= 0) // dont use steam if breaking
                 steam -= steamUsePerSecond*Time.deltaTime;
             
-            mySteamShower.SetScrap(steam);
 
             steam = Mathf.Clamp(steam, 0, maxSteam);
 
@@ -225,7 +214,7 @@ public class SpeedController : MonoBehaviour, IShowOnDistanceRadar {
                 MissionWinFinisher.s.MissionWon();
                 CalculateStopAcceleration();
             }
-        } else if (SceneLoader.s.isLevelFinished()) {
+        } else if (PlayStateMaster.s.isCombatFinished()) {
             LevelReferences.s.speed = Mathf.MoveTowards(LevelReferences.s.speed, 0, stopAcceleration * Time.deltaTime);
             if (stopAcceleration <= 0) {
                 CalculateStopAcceleration();

@@ -50,7 +50,7 @@ public class TimeController : MonoBehaviour {
 
     public void ProcessFastForward() {
         //print(fastForwardKey.action.ReadValue<float>());
-        if (fastForwardKey.action.ReadValue<float>() > 0f) {
+        if (fastForwardKey.action.IsPressed()) {
             currentTimeScale = 8f;
             if (!isPaused) {
                 Time.timeScale = currentTimeScale;

@@ -38,7 +38,7 @@ public class MiniGUI_HealthBar : MonoBehaviour{
         if (myModuleAmmo != null) {
             isAmmoBar = true;
 
-            var refillType = myModuleAmmo.GetComponent<ReloadAction>().myType;
+            /*var refillType = myModuleAmmo.GetComponent<ReloadAction>().myType;
             switch (refillType) {
                 case ResourceTypes.ammo:
                     ammoFiller.color = bulletAmmoColor;
@@ -46,15 +46,13 @@ public class MiniGUI_HealthBar : MonoBehaviour{
                 case ResourceTypes.fuel:
                     ammoFiller.color = fuelAmmoColor;
                     break;
-            }
+            }*/
         }
         ammoSlider.gameObject.SetActive(isAmmoBar);
 
-        if (moduleHealth.GetComponent<TrainBuilding>()) {
-            GetComponent<UIElementFollowWorldTarget>().SetUp(moduleHealth.GetComponent<TrainBuilding>().GetUITargetTransform(true));
-        } else {
-            GetComponent<UIElementFollowWorldTarget>().SetUp(moduleHealth.GetComponent<Cart>().uiTargetTransform);
-        }
+        if (moduleHealth.GetComponent<Cart>()) {
+            GetComponent<UIElementFollowWorldTarget>().SetUp(moduleHealth.GetComponent<Cart>().GetUITargetTransform());
+        } 
 
         Update();
     }

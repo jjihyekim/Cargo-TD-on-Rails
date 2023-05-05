@@ -14,58 +14,8 @@ public class SceneLoader : MonoBehaviour {
     
     [SerializeField]
     private SceneReference initialScene;
-
-    public bool isLevelInProgress {
-        get {
-            return myGameState == GameState.levelInProgress;
-        }
-    }
     
-    [SerializeField]
-    private ConstructedLevel _currentLevel;
-
-    public ConstructedLevel currentLevel {
-        get {
-            return _currentLevel;
-        }
-    }
-
-    public enum GameState {
-        profileMenu, starterMenu, levelInProgress, levelFinished
-    }
-
-    [SerializeField] private GameState _gameState;
-
     public bool autoOpenProfiles;
-    
-    public GameState myGameState {
-        get {
-            return _gameState;
-        }
-    }
-
-    public bool isLevelStarted() {
-        return myGameState == GameState.levelInProgress || myGameState == GameState.levelFinished;
-    }
-    public bool isLevelFinished() {
-        return myGameState == GameState.levelFinished;
-    }
-    
-    public bool isStarterMenu() {
-        return myGameState == GameState.starterMenu;
-    }
-    
-    public bool isProfileMenu() {
-        return myGameState == GameState.profileMenu;
-    }
-
-    public void StartLevel() {
-        _gameState = GameState.levelInProgress;
-    }
-
-    public void FinishLevel() {
-        _gameState = GameState.levelFinished;
-    }
     
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
     static void Init()
@@ -75,7 +25,6 @@ public class SceneLoader : MonoBehaviour {
     }
     
     private void Awake() {
-        ClearLevel();
         if (s == null) {
             s = this;
             DontDestroyOnLoad(gameObject);
@@ -92,93 +41,14 @@ public class SceneLoader : MonoBehaviour {
     }
 
 
-    public bool IsLevelSelected() {
-        return _currentLevel != null;
-    }
     
-    public void SetCurrentLevel(ConstructedLevel levelData) {
-        _currentLevel = levelData.Copy();
-
-        if (MiniGUI_DebugLevelName.s != null) {
-            MiniGUI_DebugLevelName.s.SetLevelName(_currentLevel.levelName);
-        }
-    }
-
-    void ClearLevel() {
-        _currentLevel = null;
-    }
+    
 
     public GameObject loadingScreen;
     public GameObject loadingText;
     public CanvasGroup canvasGroup;
 
-
-    public void OpenProfileScreen(bool hardLoad = false) {
-        StopAllCoroutines();
-        _gameState = GameState.profileMenu;
-        if (hardLoad) {
-            LoadScene(mainScene);
-        } else {
-            StartCoroutine(OnlyFade(false, () => DoOpenProfileMenu()));
-        }
-    }
-
-    void DoOpenProfileMenu() {
-        ProfileSelectionMenu.s.OpenProfileMenu();
-    }
-
-    public void BackToStarterMenu(bool showLoading = false) {
-        _gameState = GameState.starterMenu;
-        
-        StopAllCoroutines();
-        afterTransferCalls.Clear();
-        StartCoroutine(OnlyFade(showLoading, () => DoTransfer()));
-        //LoadScene(mainScene, true);
-    }
-
-    public void DebugQuickBackToStarterMenu() {
-        _gameState = GameState.starterMenu;
-        StopAllCoroutines();
-        afterTransferCalls.Clear();
-        loadingScreen.SetActive(false);
-        isLoading = false;
-        DoTransfer();
-    }
-
-
-    public Queue<Action> afterTransferCalls = new Queue<Action>(); // must add stuff to this AFTER calling back to menu!
-    void DoTransfer() {
-        ClearLevel();
-        
-        while (afterTransferCalls.TryDequeue(out Action result)) {
-            result(); 
-        }
-        
-        WorldMapCreator.s.ReturnToRegularMap();
-        StarterUIController.s.OpenStarterUI();
-    }
-
-    public float fadeTime = 0.2f;
-    IEnumerator OnlyFade(bool showLoading, Action toCallInTheMiddle) {
-        isLoading = true;
-        loadingProgress = 0;
-        if(!showLoading)
-            loadingText.SetActive(false);
-        loadingScreen.SetActive(true);
-        yield return StartCoroutine(FadeLoadingScreen(currentFadeValue,1, fadeTime-0.01f));
-
-        yield return null; // one frame pause
-        
-        toCallInTheMiddle();
-
-        yield return StartCoroutine(FadeLoadingScreen(1,0, fadeTime));
-        loadingScreen.SetActive(false);
-        loadingText.SetActive(true);
-        isLoading = false;
-    }
-
     public void ForceReloadScene() {
-        _gameState = GameState.profileMenu;
         LoadScene(mainScene,true);
     }
 

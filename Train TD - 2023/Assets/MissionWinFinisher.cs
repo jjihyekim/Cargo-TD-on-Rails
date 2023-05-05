@@ -49,7 +49,7 @@ public class MissionWinFinisher : MonoBehaviour {
 	
 	public void MissionWon(bool isShowingPrevRewards = false) {
 		isWon = true;
-		SceneLoader.s.FinishLevel();
+		PlayStateMaster.s.FinishCombat();
 		EnemyWavesController.s.Cleanup();
 		//EnemyHealth.winSelfDestruct?.Invoke(false);
 		ShowAlert(false);
@@ -76,8 +76,6 @@ public class MissionWinFinisher : MonoBehaviour {
 		// save our resources
 		mySave.currentRun.myResources.scraps = Mathf.FloorToInt(MoneyController.s.scraps);
 		mySave.currentRun.myTrain = Train.s.GetTrainState();
-		mySave.currentRun.myResources.fuel = Mathf.FloorToInt(MoneyController.s.fuel);
-		mySave.currentRun.myResources.ammo = Mathf.FloorToInt(MoneyController.s.ammo);
 		
 		DataSaver.s.SaveActiveGame();
 		
@@ -86,13 +84,13 @@ public class MissionWinFinisher : MonoBehaviour {
 		winUI.SetActive(true);
 
 
-		if (SceneLoader.s.currentLevel != null)  { // if level is null that means we are getting unclaimed rewards. hence no need to send data again.
+		if (PlayStateMaster.s.currentLevel != null)  { // if level is null that means we are getting unclaimed rewards. hence no need to send data again.
 			
 			//send analytics
 			AnalyticsResult analyticsResult = Analytics.CustomEvent(
 				"LevelWon",
 				new Dictionary<string, object> {
-					{ "Level", SceneLoader.s.currentLevel.levelName },
+					{ "Level", PlayStateMaster.s.currentLevel.levelName },
 
 					{ "character", DataSaver.s.GetCurrentSave().currentRun.character.uniqueName },
 
@@ -100,14 +98,11 @@ public class MissionWinFinisher : MonoBehaviour {
 					{ "buildingsDestroyed", ModuleHealth.buildingsDestroyed },
 
 					{ "enemiesLeftAlive", EnemyHealth.enemySpawned - EnemyHealth.enemyKilled },
-					{ "emptyTrainSlots", Train.s.GetEmptySlotCount() },
 					{ "winTime", SpeedController.s.currentTime },
 				}
 			);
 			
 			Debug.Log("Mission Won Analytics: " + analyticsResult);
-			
-			PlayerBuildingController.s.LogCurrentLevelBuilds(true);
 		}
 		
 
@@ -119,12 +114,10 @@ public class MissionWinFinisher : MonoBehaviour {
 	}
 
 	void ChangeRangeShowState(bool state) {
-		foreach (var slot in Train.s.GetComponentsInChildren<Slot>()) {
-			var ranges = slot.GetComponentsInChildren<RangeVisualizer>();
+		var ranges = Train.s.GetComponentsInChildren<RangeVisualizer>();
 
-			for (int i = 0; i < ranges.Length; i++) {
-				ranges[i].ChangeVisualizerEdgeShowState(state);
-			}
+		for (int i = 0; i < ranges.Length; i++) {
+			ranges[i].ChangeVisualizerEdgeShowState(state);
 		}
 	}
 
@@ -194,15 +187,7 @@ public class MissionWinFinisher : MonoBehaviour {
 			switch (cur[0]) {
 				case 's':
 					if (int.TryParse(cur.Substring(1), out var scrap)) {
-						Instantiate(scrapRewardPrefab, rewardsParent).GetComponent<MiniGUI_ScrapsReward>().SetUpReward(scrap, i);
-						unclaimedRewardCount += 1;
-					} else {
-						Debug.LogError($"Can't parse reward: {cur}");
-					}
-					break;
-				case 'm':
-					if (int.TryParse(cur.Substring(1), out var money)) {
-						Instantiate(moneyRewardPrefab, rewardsParent).GetComponent<MiniGUI_MoneyReward>().SetUpReward(money, i);
+						//Instantiate(scrapRewardPrefab, rewardsParent).GetComponent<MiniGUI_ScrapsReward>().SetUpReward(scrap, i);
 						unclaimedRewardCount += 1;
 					} else {
 						Debug.LogError($"Can't parse reward: {cur}");
@@ -210,13 +195,13 @@ public class MissionWinFinisher : MonoBehaviour {
 					break;
 				case 'u':
 					var upgradeNames = cur.Substring(1).Split(',');
-					Instantiate(upgradeRewardPrefab, rewardsParent).GetComponent<MiniGUI_BuildingReward>().SetUpReward(upgradeNames, i);
+					//Instantiate(upgradeRewardPrefab, rewardsParent).GetComponent<MiniGUI_BuildingReward>().SetUpReward(upgradeNames, i);
 					unclaimedRewardCount += 1;
 					
 					break;
 				case 'c':
 					if (int.TryParse(cur.Substring(1), out var cartCount)) {
-						Instantiate(cartRewardPrefab, rewardsParent).GetComponent<MiniGUI_CartReward>().SetUpReward(cartCount, i);
+						//Instantiate(cartRewardPrefab, rewardsParent).GetComponent<MiniGUI_CartReward>().SetUpReward(cartCount, i);
 						unclaimedRewardCount += 1;
 					} else {
 						Debug.LogError($"Can't parse reward: {cur}");
@@ -225,7 +210,7 @@ public class MissionWinFinisher : MonoBehaviour {
 				
 				case 'p':
 					var powerUpName = cur.Substring(1);
-					Instantiate(powerUpRewardPrefab, rewardsParent).GetComponent<MiniGUI_PowerUpReward>().SetUpReward(DataHolder.s.GetPowerUp(powerUpName), i);
+					//Instantiate(powerUpRewardPrefab, rewardsParent).GetComponent<MiniGUI_PowerUpReward>().SetUpReward(DataHolder.s.GetPowerUp(powerUpName), i);
 					break;
 				
 				case 'r':
@@ -233,7 +218,7 @@ public class MissionWinFinisher : MonoBehaviour {
 					break;
 				case 'b':
 					var buildingName = cur.Substring(1);
-					Instantiate(singleModuleRewardPrefab, rewardsParent).GetComponent<MiniGUI_SingleBuildingReward>().SetUpReward(buildingName, i);
+					//Instantiate(singleModuleRewardPrefab, rewardsParent).GetComponent<MiniGUI_SingleBuildingReward>().SetUpReward(buildingName, i);
 					break;
 				default:
 					Debug.LogError($"Unknown reward: {cur}");
@@ -300,7 +285,7 @@ public class MissionWinFinisher : MonoBehaviour {
 
 	public int unclaimedRewardCount = 0;
 	public bool isShowingAlert = false;
-	public void ContinueToStarterMenu() {
+	public void ContinueToClearOutOfCombat() {
 		if (!isShowingAlert) {
 			if (unclaimedRewardCount > 0) {
 				ShowAlert(true);
@@ -318,8 +303,7 @@ public class MissionWinFinisher : MonoBehaviour {
 			ActFinishController.s.OpenActWinUI();
 		} else {
 			//Cleanup();
-			SceneLoader.s.BackToStarterMenu();
-			SceneLoader.s.afterTransferCalls.Enqueue(() => Cleanup());
+			PlayStateMaster.s.ClearOutOfCombat();
 		}
 	}
 
@@ -328,11 +312,6 @@ public class MissionWinFinisher : MonoBehaviour {
 		for (int i = 0; i < gameObjectsToDisable.Length; i++) {
 			gameObjectsToDisable[i].SetActive(false);
 		}
-
-		EnemyWavesController.s.Cleanup();
-		MapController.s.Cleanup();
-		UpgradesController.s.DrawShopOptions();
-		DistanceAndEnemyRadarController.s.ClearRadar();
 		
 		ChangeRangeShowState(true);
 		cameraSwitcher.Disengage();

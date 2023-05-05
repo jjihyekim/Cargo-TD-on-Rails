@@ -62,7 +62,7 @@ public class FeedbackSender : MonoBehaviour {
     }
 
     public void ShowMenu() {
-        if (SceneLoader.s.isLevelInProgress) {
+        if (PlayStateMaster.s.isCombatInProgress()) {
             Pauser.s.Pause();
         }
         
@@ -164,8 +164,8 @@ public class FeedbackSender : MonoBehaviour {
 
     string GetMetadataText() {
         var metadata = $"Total playtime on this save: {GetSaveTime()}";
-        metadata += $"\nGame State: {SceneLoader.s.myGameState}";
-        metadata += $"\nLevel Name: {SceneLoader.s.currentLevel.levelName}";
+        metadata += $"\nGame State: {PlayStateMaster.s.myGameState}";
+        metadata += $"\nLevel Name: {PlayStateMaster.s.currentLevel.levelName}";
         metadata += $"\nCurrent Distance: {SpeedController.s.currentDistance}";
 
         return metadata;

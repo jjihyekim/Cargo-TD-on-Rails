@@ -108,9 +108,7 @@ public class GunModule : MonoBehaviour, IComponentWithTarget, IActiveDuringComba
     }
 
 
-    private Cart myCart = null;
     private void Start() {
-        myCart = GetComponentInParent<Cart>();
 
         for (int i = 0; i < rotateTransforms.Length; i++) {
             var curRotate = rotateTransforms[i].transform;
@@ -123,10 +121,7 @@ public class GunModule : MonoBehaviour, IComponentWithTarget, IActiveDuringComba
 
     float GetAttackSpeedMultiplier() {
         var boost = 1f;
-        if (myCart != null) {
-            boost /= myCart.attackSpeedModifier;
-        } 
-        
+
         if (beingDirectControlled) {
             boost /= DirectControlMaster.s.directControlFireRateBoost;
         }
@@ -143,10 +138,6 @@ public class GunModule : MonoBehaviour, IComponentWithTarget, IActiveDuringComba
     float GetDamageMultiplier() {
         var dmgMul = 1f;
         
-        if (myCart != null) {
-            dmgMul *= myCart.damageModifier;
-        }
-
         if (isPlayer) {
             dmgMul *= TweakablesMaster.s.myTweakables.playerDamageMultiplier;
         } else {
@@ -214,7 +205,8 @@ public class GunModule : MonoBehaviour, IComponentWithTarget, IActiveDuringComba
 
                 projectile.onHitCallback = onHitCallback;
 
-                if(myCart != null)
+                //if(myCart != null)
+                if(isPlayer)
                     LogShotData(projectileDamage*GetDamageMultiplier());
 
                 if (isPlayer && !isFree) {

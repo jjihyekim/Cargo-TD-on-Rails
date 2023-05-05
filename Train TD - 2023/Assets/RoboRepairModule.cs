@@ -9,20 +9,18 @@ public class RoboRepairModule : MonoBehaviour, IActiveDuringCombat {
     public float repairAmount = 25;
     public float steamUsePerRepair = 0.5f;
     
-    private Cart myCart;
     private Train myTrain;
-    private TrainBuilding myBuilding;
+    private Cart myBuilding;
     private void Start() {
-        myCart = GetComponentInParent<Cart>();
         myTrain = GetComponentInParent<Train>();
-        myBuilding = GetComponent<TrainBuilding>();
+        myBuilding = GetComponent<Cart>();
         
-        if (myCart == null || myTrain == null)
+        if (myTrain == null)
             this.enabled = false;
     }
 
     void Update() {
-        if (SceneLoader.s.isLevelInProgress) {
+        if (PlayStateMaster.s.isCombatInProgress()) {
             if (curRepairDelay <= 0 && !myBuilding.isDestroyed) {
                 if(BreadthFirstRepairSearch())
                     SpeedController.s.UseSteam(steamUsePerRepair);
@@ -35,11 +33,9 @@ public class RoboRepairModule : MonoBehaviour, IActiveDuringCombat {
 
 
     bool BreadthFirstRepairSearch() {
-        if(myCart == null)
-            myCart = GetComponentInParent<Cart>();
         if(myTrain == null)
             myTrain = GetComponentInParent<Train>();
-        var carts = new List<Cart>();
+        /*var carts = new List<Cart>();
         for (int i = 0; i < myTrain.carts.Count; i++) {
 
             if (inBounds(myCart.index - i, myTrain.carts)) {
@@ -64,7 +60,7 @@ public class RoboRepairModule : MonoBehaviour, IActiveDuringCombat {
             if (RepairDamageInCart(carts[i], true)) {
                 return true;
             }
-        }
+        }*/
 
         return false;
     }
@@ -74,7 +70,7 @@ public class RoboRepairModule : MonoBehaviour, IActiveDuringCombat {
         return (index >= 0) && (index < array.Count);
     }
 
-    bool RepairDamageInCart(Cart target, bool repairImperfect) {
+    /*bool RepairDamageInCart(Cart target, bool repairImperfect) {
         var healths = target.GetComponentsInChildren<ModuleHealth>();
 
         if (healths.Length > 0) {
@@ -91,12 +87,11 @@ public class RoboRepairModule : MonoBehaviour, IActiveDuringCombat {
         }
 
         return false;
-    }
+    }*/
 
     public void ActivateForCombat() {
-        myCart = GetComponentInParent<Cart>();
         myTrain = GetComponentInParent<Train>();
-        myBuilding = GetComponent<TrainBuilding>();
+        myBuilding = GetComponent<Cart>();
         this.enabled = true;
     }
 

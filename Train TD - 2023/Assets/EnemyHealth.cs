@@ -128,14 +128,8 @@ public class EnemyHealth : MonoBehaviour, IHealth {
 
 		for (int i = 0; i < extraRewards.Length; i++) {
 			switch (extraRewards[i].type) {
-				case ResourceTypes.ammo:
-					scrapReward += extraRewards[i].amount;
-					break;
-				case ResourceTypes.fuel:
-					fuelReward += extraRewards[i].amount;
-					break;
 				case ResourceTypes.scraps:
-					ammoReward += extraRewards[i].amount;
+					scrapReward += extraRewards[i].amount;
 					break;
 			}
 		}
@@ -144,17 +138,9 @@ public class EnemyHealth : MonoBehaviour, IHealth {
 			LevelReferences.s.SpawnResourceAtLocation(ResourceTypes.scraps, 
 				scrapReward*TweakablesMaster.s.myTweakables.scrapEnemyRewardMultiplier, 
 				aliveObject.transform.position);
-			
-			LevelReferences.s.SpawnResourceAtLocation(ResourceTypes.fuel, 
-				fuelReward*TweakablesMaster.s.myTweakables.fuelEnemyRewardMultiplier, 
-				aliveObject.transform.position + Vector3.forward/2f);
-			
-			LevelReferences.s.SpawnResourceAtLocation(ResourceTypes.ammo, 
-				ammoReward*TweakablesMaster.s.myTweakables.ammoEnemyRewardMultiplier, 
-				aliveObject.transform.position + Vector3.left/2f);
 
 			if (rewardPowerUp) {
-				PlayerActionsController.s.GetPowerUp(EnemyWavesController.s.powerUpScriptables.Dequeue());
+				//PlayerActionsController.s.GetPowerUp(EnemyWavesController.s.powerUpScriptables.Dequeue());
 			}
 		}
 

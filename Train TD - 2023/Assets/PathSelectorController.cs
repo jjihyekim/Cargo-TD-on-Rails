@@ -18,18 +18,15 @@ public class PathSelectorController : MonoBehaviour {
 	private List<MiniGUI_TrackPath> _tracks = new List<MiniGUI_TrackPath>();
 	private List<MiniGUI_TrackLever> _levers = new List<MiniGUI_TrackLever>();
 
-	private void Start() {
-		StarterUIController.s.OnLevelChanged.AddListener(UpdatePathData);
-	}
 
 	public ManualHorizontalLayoutGroup layoutGroup;
 
 	public int currentSegment = 0;
 
-	private ConstructedLevel activeLevel => SceneLoader.s.currentLevel;
+	private ConstructedLevel activeLevel => PlayStateMaster.s.currentLevel;
 	
-	void UpdatePathData() {
-		if (SceneLoader.s.currentLevel == null) {
+	public void SetUpPath() {
+		if (activeLevel == null) {
 			return;
 		}
 

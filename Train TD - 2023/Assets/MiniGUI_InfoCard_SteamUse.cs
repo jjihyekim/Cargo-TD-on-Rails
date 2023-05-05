@@ -11,10 +11,10 @@ public class MiniGUI_InfoCard_SteamUse : MonoBehaviour, IBuildingInfoCard {
     [ReadOnly] public GunModule gunModule;
     [ReadOnly] public RoboRepairModule roboRepairModule;
 
-    public void SetUp(TrainBuilding building) {
-        engineModule = building.GetComponent<EngineModule>();
-        gunModule = building.GetComponent<GunModule>();
-        roboRepairModule = building.GetComponent<RoboRepairModule>();
+    public void SetUp(Cart building) {
+        engineModule = building.GetComponentInChildren<EngineModule>();
+        gunModule = building.GetComponentInChildren<GunModule>();
+        roboRepairModule = building.GetComponentInChildren<RoboRepairModule>();
 
         if (!(engineModule != null || gunModule != null || roboRepairModule != null)) {
             gameObject.SetActive(false);

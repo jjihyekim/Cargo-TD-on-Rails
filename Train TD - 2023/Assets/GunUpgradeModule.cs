@@ -3,21 +3,22 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class GunUpgradeModule : MonoBehaviour, IActiveDuringCombat {
+public class unUpgradeModule : MonoBehaviour, IActiveDuringCombat {
     private float curResupplyDelay = 0.5f;
     public float resupplyDelay = 2;
     public int resupplyAmount = 25;
     
-    private Cart myCart;
+    //private Cart myCart;
     private Train myTrain;
 
     public GameObject resupplyPrefab;
     private void Start() {
-        myCart = GetComponentInParent<Cart>();
+        //myCart = GetComponentInParent<Cart>();
         myTrain = GetComponentInParent<Train>();
+        Debug.LogError($"{this} is not implemented");
 
-        if (myCart == null || myTrain == null)
-            this.enabled = false;
+        /*if (myCart == null || myTrain == null)
+            this.enabled = false;*/
     }
 
     void Update() {
@@ -31,7 +32,8 @@ public class GunUpgradeModule : MonoBehaviour, IActiveDuringCombat {
 
 
     void BreadthFirstResupplySearch() {
-        var carts = new List<Cart>();
+        throw new NotImplementedException();
+        /*var carts = new List<Cart>();
         for (int i = 0; i < myTrain.carts.Count; i++) {
 
             if (inBounds(myCart.index - i, myTrain.carts)) {
@@ -56,7 +58,7 @@ public class GunUpgradeModule : MonoBehaviour, IActiveDuringCombat {
             if (ResupplyInCart(carts[i], true)) {
                 return;
             }
-        }
+        }*/
     }
     
     private bool inBounds <T>(int index, List<T> array) 
@@ -64,7 +66,7 @@ public class GunUpgradeModule : MonoBehaviour, IActiveDuringCombat {
         return (index >= 0) && (index < array.Count);
     }
 
-    bool ResupplyInCart(Cart target, bool resupplyImperfect) {
+    /*bool ResupplyInCart(Cart target, bool resupplyImperfect) {
         var resupplyAbles = target.GetComponentsInChildren<IResupplyAble>();
 
         if (resupplyAbles.Length > 0) {
@@ -81,7 +83,7 @@ public class GunUpgradeModule : MonoBehaviour, IActiveDuringCombat {
         }
 
         return false;
-    }
+    }*/
     
     public void ActivateForCombat() {
         this.enabled = true;

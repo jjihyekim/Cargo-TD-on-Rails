@@ -6,5 +6,4 @@ public class UpgradePreviewArea : MonoBehaviour
 {
     public Camera previewCam;
     public Cart previewCart;
-    public Slot[] previewSlots;
 }

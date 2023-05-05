@@ -9,8 +9,8 @@ public class MiniGUI_InfoCard_StorageInfo : MonoBehaviour, IBuildingInfoCard {
 
     [ReadOnly] public ModuleStorage storageModule;
 
-    public void SetUp(TrainBuilding building) {
-        storageModule = building.GetComponent<ModuleStorage>();
+    public void SetUp(Cart building) {
+        storageModule = building.GetComponentInChildren<ModuleStorage>();
 
         if (storageModule == null) {
             gameObject.SetActive(false);

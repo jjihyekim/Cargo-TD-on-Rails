@@ -17,19 +17,12 @@ public class MiniGUI_BuildingInfoCard : MonoBehaviour
     
     public Transform infoCardsParent;
 
-
-    public Button GetBackToMainAfterCargoButton;
-
-    private TrainBuilding cargoBuilding;
-
     public Transform sourceTransform;
 
-    public void SetUp(TrainBuilding building, bool overrideCargo = true) {
-        GetBackToMainAfterCargoButton.gameObject.SetActive(false);
-        if (overrideCargo)
-            cargoBuilding = building;
+    public void SetUp(Cart building) {
+        Show();
 
-        var gunModule = building.GetComponent<GunModule>();
+        var gunModule = building.GetComponentInChildren<GunModule>();
         if (gunModule != null) {
             armorPenetrationIcon.gameObject.SetActive(gunModule.canPenetrateArmor);
         } else {
@@ -39,8 +32,9 @@ public class MiniGUI_BuildingInfoCard : MonoBehaviour
         icon.sprite = building.Icon;
         moduleName.text = building.displayName;
 
-        moduleDescription.text = building.GetComponent<ClickableEntityInfo>().GetTooltip().text;
+        moduleDescription.text = building.GetComponentInChildren<ClickableEntityInfo>().GetTooltip().text;
 
+        sourceTransform = building.GetUITargetTransform();
 
         if (building.uniqueName == "scrapPile" || building.uniqueName == "fuelPile") {
             infoCardsParent.gameObject.SetActive(false);
@@ -51,29 +45,26 @@ public class MiniGUI_BuildingInfoCard : MonoBehaviour
                 infoCards[i].SetUp(building);
             }
         }
-
-        if (overrideCargo) {
-            sourceTransform = building.GetUITargetTransform(false);
-            GetComponentInParent<UIElementFollowWorldTarget>().SetUp(sourceTransform);
-        }
+        GetComponentInParent<UIElementFollowWorldTarget>().SetUp(sourceTransform);
     }
 
     public void SetUp(PowerUpScriptable powerUp) {
-        GetBackToMainAfterCargoButton.gameObject.SetActive(false);
-        
+        Show();
         armorPenetrationIcon.gameObject.SetActive(false);
 
         icon.sprite = powerUp.icon;
         moduleName.text = powerUp.name;
+        
+        //sourceTransform = powerUp.GetUITargetTransform();
 
         moduleDescription.text = powerUp.description;
         
         infoCardsParent.gameObject.SetActive(false);
+        GetComponentInParent<UIElementFollowWorldTarget>().SetUp(sourceTransform);
     }
     
     public void SetUp(EnemyHealth enemy) {
-        GetBackToMainAfterCargoButton.gameObject.SetActive(false);
-        
+        Show();
         armorPenetrationIcon.gameObject.SetActive(false);
 
         icon.sprite = enemy.GetComponentInParent<EnemyWave>().GetIcon();
@@ -89,20 +80,14 @@ public class MiniGUI_BuildingInfoCard : MonoBehaviour
         GetComponentInParent<UIElementFollowWorldTarget>().SetUp(sourceTransform);
     }
 
+    public void Show() {
+        transform.parent.gameObject.SetActive(true);
+    }
 
-    public void ShowInfoAboutCargo(TrainBuilding building) {
-        SetUp(building, false);
-        GetBackToMainAfterCargoButton.gameObject.SetActive(true);
+    public void Hide() {
+        transform.parent.gameObject.SetActive(false);
     }
     
-    public void ShowInfoAboutCargo(PowerUpScriptable powerUp) {
-        SetUp(powerUp);
-        GetBackToMainAfterCargoButton.gameObject.SetActive(true);
-    }
-
-    public void GetBackToMainAfterCargo() {
-        SetUp(cargoBuilding);
-    }
     
     public RectTransform reticle;
     public List<RectTransform> extraRects = new List<RectTransform>();
@@ -125,14 +110,14 @@ public class MiniGUI_BuildingInfoCard : MonoBehaviour
         return isOverRect;
     }
     
-    private void Update() {
+    /*private void Update() {
         if (sourceTransform == null) {
             PlayerModuleSelector.s.HideModuleActionSelector();
             return;
         }
-    }
+    }*/
 }
 
 public interface IBuildingInfoCard {
-    public void SetUp(TrainBuilding building);
+    public void SetUp(Cart building);
 }

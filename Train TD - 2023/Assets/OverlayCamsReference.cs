@@ -12,7 +12,6 @@ public class OverlayCamsReference : MonoBehaviour {
     }
 
     public Camera uiCam;
-    public Camera fancy2duiCam;
     public Camera tooltipCam;
 
     
@@ -20,10 +19,8 @@ public class OverlayCamsReference : MonoBehaviour {
 
     private void Start() {
         var camData = MainCameraReference.s.cam.GetUniversalAdditionalCameraData();
-        if (!camData.cameraStack.Contains(uiCam)) {
-            camData.cameraStack.Add(uiCam);
-            camData.cameraStack.Add(fancy2duiCam);
-            camData.cameraStack.Add(tooltipCam);
-        }
+        camData.cameraStack.Clear();
+        camData.cameraStack.Add(uiCam);
+        camData.cameraStack.Add(tooltipCam);
     }
 }

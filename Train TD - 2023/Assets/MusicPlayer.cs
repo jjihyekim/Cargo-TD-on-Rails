@@ -35,7 +35,7 @@ public class MusicPlayer : MonoBehaviour {
 	public AudioClip curTrackClip;
 	public float curTrackTime;
 
-	public bool isPlaying = true;
+	public bool isPlaying = false;
 	public bool isPaused = false;
 	public float realVolume = -1f;
 
@@ -106,7 +106,15 @@ public class MusicPlayer : MonoBehaviour {
 		PlayNextTrack();
 	}
 
-	public void SwapMusicTracksAndPlay(bool isGame, bool forced = false) {
+	public void PlayMenuMusic() {
+		SwapMusicTracksAndPlay(false);
+	}
+
+	public void PlayCombatMusic() {
+		SwapMusicTracksAndPlay(true);
+	}
+	
+	public void SwapMusicTracksAndPlay(bool isGame) {
 		var changeMade = false;
 		if (isGame) {
 			if (currentTracks != gameMusicTracks) {
@@ -120,7 +128,7 @@ public class MusicPlayer : MonoBehaviour {
 			}
 		}
 
-		if (changeMade || forced) {
+		if (changeMade || !isPlaying) {
 			//Stop();
 			CreateRandomClipOrder();
 			PlayNextTrack();
@@ -132,7 +140,7 @@ public class MusicPlayer : MonoBehaviour {
 			trackNameAndTime = $"{curTrackClip.name} - {curTrackTime:0}/{curTrackClip.length:0}";
 			curTrackTime += Time.deltaTime;
 
-			if (TimeController.s != null && SceneLoader.s.isLevelInProgress) {
+			if (TimeController.s != null && PlayStateMaster.s.isCombatInProgress()) {
 				if (TimeController.s.isPaused && !isPaused) {
 					PauseUnPauseOnGamePause(TimeController.s.isPaused);
 				} else if(!TimeController.s.isPaused && isPaused) {

@@ -11,7 +11,7 @@ public class TrackTrainBackCart : MonoBehaviour {
 		if (locationTarget == null)
 			enabled = false;
 		
-		if (SceneLoader.s.isLevelFinished()) {
+		if (PlayStateMaster.s.isCombatFinished()) {
 			transform.position = locationTarget.position;
 			transform.LookAt(Train.s.trainBack);
 		}

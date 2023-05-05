@@ -22,8 +22,7 @@ public class ModuleHealth : MonoBehaviour, IHealth, IActiveDuringCombat, IActive
     
     public GameObject explodePrefab;
     public bool isDead = false;
-    
-    
+
     public static int buildingsBuild;
     public static int buildingsDestroyed;
 
@@ -33,7 +32,7 @@ public class ModuleHealth : MonoBehaviour, IHealth, IActiveDuringCombat, IActive
     private float selfDamageTimer;
     public int[] selfDamageAmounts = new[] { 20, 10 };
 
-    private TrainBuilding myBuilding;
+    private Cart myBuilding;
     public bool isCartHp = false;
 
     private GameObject activeHPCriticalIndicatorEffects;
@@ -44,15 +43,17 @@ public class ModuleHealth : MonoBehaviour, IHealth, IActiveDuringCombat, IActive
     private HPLowStates hpState;
 
     public bool invincibleTutorial = false;
+
+    public PhysicalHealthBar myBar;
+    
     [Button]
     public void DealDamage(float damage) {
         Assert.IsTrue(damage > 0);
         if(isImmune)
             return;
 
-        myBuilding = GetComponent<TrainBuilding>();
+        myBuilding = GetComponent<Cart>();
         if (!isDead && (myBuilding == null || !myBuilding.isDestroyed)) {
-            PlayerActionsController.s.UpdateBuildingsRepairableColors();
             currentHealth -= damage;
 
             var hpPercent = currentHealth / maxHealth;
@@ -75,6 +76,8 @@ public class ModuleHealth : MonoBehaviour, IHealth, IActiveDuringCombat, IActive
             if (currentHealth < 0) {
                 currentHealth = 0;
             }
+            
+            myBar.UpdateHealth(currentHealth/maxHealth);
         }
     }
 
@@ -82,7 +85,7 @@ public class ModuleHealth : MonoBehaviour, IHealth, IActiveDuringCombat, IActive
         var hpPercent = currentHealth / maxHealth;
         if(isDead)
             return;
-        myBuilding = GetComponent<TrainBuilding>();
+        myBuilding = GetComponent<Cart>();
         if (myBuilding == null) { // carts have module health but not trainbuilding
             return;
         }
@@ -151,7 +154,7 @@ public class ModuleHealth : MonoBehaviour, IHealth, IActiveDuringCombat, IActive
             }
         }
         
-        myBuilding = GetComponent<TrainBuilding>();
+        myBuilding = GetComponent<Cart>();
         if (myBuilding.isDestroyed && currentHealth > maxHealth / 2) {
             GetUnDestroyed();
         }
@@ -163,11 +166,11 @@ public class ModuleHealth : MonoBehaviour, IHealth, IActiveDuringCombat, IActive
     [ShowIf("damageNearCartsOnDeath")]
     public int[] explosionDamages = new[] { 100, 50, 25 };
     void DamageNearCartsOnDeath() {
-        var myModule = GetComponent<TrainBuilding>();
+        var myModule = GetComponent<Cart>();
 
-        var forwardWave = myModule.mySlot;
+        var forwardWave = myModule;
         for (int i = 0; i < 3; i++) {
-            forwardWave = GetNextSlot(true, forwardWave);
+            forwardWave = Train.s.GetNextBuilding(true, forwardWave);
             if(forwardWave == null)
                 break;
             
@@ -186,12 +189,12 @@ public class ModuleHealth : MonoBehaviour, IHealth, IActiveDuringCombat, IActive
                     prefab = LevelReferences.s.smallDamagePrefab;
                     break;
             }
-            DealDamageToSlot(forwardWave, prefab, explosionDamages[i]);
+            DealDamageToBuilding(forwardWave, prefab, explosionDamages[i]);
         }
         
-        var backwardsWave = myModule.mySlot;
+        var backwardsWave = myModule;
         for (int i = 0; i < 3; i++) {
-            backwardsWave = GetNextSlot(false, backwardsWave);
+            backwardsWave = Train.s.GetNextBuilding(false, myModule);
             if(backwardsWave == null)
                 break;
             
@@ -210,7 +213,7 @@ public class ModuleHealth : MonoBehaviour, IHealth, IActiveDuringCombat, IActive
                     prefab = LevelReferences.s.smallDamagePrefab;
                     break;
             }
-            DealDamageToSlot(backwardsWave, prefab, explosionDamages[i]);
+            DealDamageToBuilding(backwardsWave, prefab, explosionDamages[i]);
         }
 
 
@@ -240,51 +243,15 @@ public class ModuleHealth : MonoBehaviour, IHealth, IActiveDuringCombat, IActive
         }
     }
 
-    Slot GetNextSlot(bool isForward, Slot slot) {
-        if (isForward) {
-            if (slot.isFrontSlot) {
-                var nextCart = slot.GetCart().index - 1;
-                if (nextCart > 0) {
-                    return Train.s.carts[nextCart].GetComponent<Cart>().backSlot;
-                } else {
-                    return null;
-                }
-            } else {
-                return slot.GetCart().frontSlot;
-            }
-        } else {
-            if (!slot.isFrontSlot) {
-                var nextCart = slot.GetCart().index + 1;
-                if (nextCart < Train.s.carts.Count) {
-                    return Train.s.carts[nextCart].GetComponent<Cart>().frontSlot;
-                } else {
-                    return null;
-                }
-            } else {
-                return slot.GetCart().backSlot;
-            }
-        }
-    }
 
-    void DealDamageToSlot(Slot slot, GameObject prefab, float damage) {
-        if(slot == null)
+    private void DealDamageToBuilding(Cart building, GameObject prefab, float damage) {
+        if (building == null)
             return;
-        
-        var buildings = slot.myBuildings;
-        for (int i = 0; i < buildings.Length; i++) {
-            if (buildings[i] != null) {
-                var hp = buildings[i].GetComponent<ModuleHealth>();
-                if (hp != null) {
-                    hp.DealDamage(damage);
-                    Instantiate(prefab, hp.transform.position, Quaternion.identity);
-                }
-                
-                if(buildings[i].occupiesEntireSlot) // skip the entire rest of the slot.
-                    return;
-                if (i == 0) {//skip the other top slot
-                    i++;
-                }
-            }
+
+        var hp = building.GetComponent<ModuleHealth>();
+        if (hp != null) {
+            hp.DealDamage(damage);
+            Instantiate(prefab, hp.transform.position, Quaternion.identity);
         }
     }
 
@@ -317,7 +284,7 @@ public class ModuleHealth : MonoBehaviour, IHealth, IActiveDuringCombat, IActive
         burnSpeed = Mathf.Lerp(burnSpeed,0,burnReduction*Time.deltaTime);
 
 
-        if (SceneLoader.s.isLevelInProgress) {
+        if (PlayStateMaster.s.isCombatInProgress()) {
             if (selfDamage) {
                 selfDamageTimer -= Time.deltaTime;
                 if (selfDamageTimer <= 0) {
@@ -335,15 +302,15 @@ public class ModuleHealth : MonoBehaviour, IHealth, IActiveDuringCombat, IActive
     }
 
     void SelfDamage() {
-        var myModule = GetComponent<TrainBuilding>();
+        var myModule = GetComponent<Cart>();
 
         var multiplier = TweakablesMaster.s.myTweakables.engineOverloadDamageMultiplier;
         DealDamage(selfDamageAmounts[0] * multiplier);
         var prefab = LevelReferences.s.smallDamagePrefab;
         Instantiate(prefab, transform.position, Quaternion.identity);
         
-        DealDamageToSlot(GetNextSlot(true, myModule.mySlot), prefab, selfDamageAmounts[1] * multiplier);
-        DealDamageToSlot(GetNextSlot(false, myModule.mySlot), prefab, selfDamageAmounts[1] * multiplier);
+        DealDamageToBuilding(Train.s.GetNextBuilding(true, myModule), prefab, selfDamageAmounts[1] * multiplier);
+        DealDamageToBuilding(Train.s.GetNextBuilding(false, myModule), prefab, selfDamageAmounts[1] * multiplier);
     }
     
     private void Start() {
@@ -353,7 +320,9 @@ public class ModuleHealth : MonoBehaviour, IHealth, IActiveDuringCombat, IActive
             buildingsBuild += 1;
         }
 
-        myBuilding = GetComponent<TrainBuilding>();
+        myBuilding = GetComponent<Cart>();
+        
+        myBar.UpdateHealth(currentHealth/maxHealth);
     }
 
     [NonSerialized]
@@ -366,7 +335,7 @@ public class ModuleHealth : MonoBehaviour, IHealth, IActiveDuringCombat, IActive
         }*/
 
         if (isCartHp) {
-            var buildings = GetComponentsInChildren<TrainBuilding>();
+            var buildings = GetComponentsInChildren<Cart>();
             for (int i = 0; i < buildings.Length; i++) {
                 buildings[i].GetComponent<ModuleHealth>().Die();
             }
@@ -382,13 +351,10 @@ public class ModuleHealth : MonoBehaviour, IHealth, IActiveDuringCombat, IActive
         }
 
         // in case of death give some of the cost back
-        var trainBuilding = GetComponent<TrainBuilding>();
+        var trainBuilding = GetComponent<Cart>();
         if(trainBuilding)
             LevelReferences.s.SpawnResourceAtLocation(ResourceTypes.scraps, trainBuilding.cost * 0.25f, transform.position);
-
-        var cart = GetComponent<Cart>();
-        if(cart)
-            LevelReferences.s.SpawnResourceAtLocation(ResourceTypes.scraps,  25f, transform.position);
+        
         
         dieEvent?.Invoke();
         
@@ -417,10 +383,6 @@ public class ModuleHealth : MonoBehaviour, IHealth, IActiveDuringCombat, IActive
             GetComponent<TargetPicker>().enabled = false;
         }
 
-        var storageModule = GetComponentsInChildren<ModuleStorage>();
-        for (int i = 0; i < storageModule.Length; i++) {
-            storageModule[i].OnModuleDestroyed();
-        }
 
         var colliders = GetComponentsInChildren<Collider>();
         for (int i = 0; i < colliders.Length; i++) {
@@ -428,9 +390,7 @@ public class ModuleHealth : MonoBehaviour, IHealth, IActiveDuringCombat, IActive
         }
 
         SetBuildingShaderAlive(false);
-        
-        GetComponentInParent<Cart>().SlotsAreUpdated();
-        
+
         Instantiate(explodePrefab, transform.position, transform.rotation);
         SoundscapeController.s.PlayModuleExplode();
         
@@ -456,10 +416,6 @@ public class ModuleHealth : MonoBehaviour, IHealth, IActiveDuringCombat, IActive
             GetComponent<TargetPicker>().enabled = true;
         }
         
-        var storageModule = GetComponentsInChildren<ModuleStorage>();
-        for (int i = 0; i < storageModule.Length; i++) {
-            storageModule[i].OnModuleUnDestroyed();
-        }
 
         var colliders = GetComponentsInChildren<Collider>();
         for (int i = 0; i < colliders.Length; i++) {
@@ -467,8 +423,6 @@ public class ModuleHealth : MonoBehaviour, IHealth, IActiveDuringCombat, IActive
         }
 
         SetBuildingShaderAlive(true);
-        
-        GetComponentInParent<Cart>().SlotsAreUpdated();
     }
     
     void SetBuildingShaderHealth(float value) {
@@ -534,12 +488,12 @@ public class ModuleHealth : MonoBehaviour, IHealth, IActiveDuringCombat, IActive
     }
 
     public Transform GetUITransform() {
-        myBuilding = GetComponent<TrainBuilding>();
-        if (myBuilding != null) {
+        myBuilding = GetComponent<Cart>();
+        /*if (myBuilding != null) {
             return myBuilding.GetUITargetTransform(false);
-        } else {
+        } else {*/
             return transform;
-        }
+        //}
     }
 
     public void ActivateForCombat() {

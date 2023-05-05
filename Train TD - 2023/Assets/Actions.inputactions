@@ -76,6 +76,42 @@
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
+                },
+                {
+                    "name": "ClickCart",
+                    "type": "Button",
+                    "id": "2122082d-79f5-4622-b6e9-0df7b8b4cf31",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "ShowDetailsCart",
+                    "type": "Button",
+                    "id": "09b81cea-af1b-4eb2-bdc8-791ff06ccf58",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "FastForward",
+                    "type": "Button",
+                    "id": "f9c9dc34-5c44-4237-9239-125fb992b1a0",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "Zoom",
+                    "type": "Value",
+                    "id": "9d7e187d-d717-4c7c-8b98-6b099dc37ee8",
+                    "expectedControlType": "Axis",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": true
                 }
             ],
             "bindings": [
@@ -243,160 +279,70 @@
                     "action": "Shoot",
                     "isComposite": false,
                     "isPartOfComposite": false
-                }
-            ]
-        },
-        {
-            "name": "Building",
-            "id": "86278b5a-e0f9-4805-9f80-609aaf621979",
-            "actions": [
-                {
-                    "name": "RotateBuilding",
-                    "type": "Value",
-                    "id": "5a83233c-9acc-4222-8dad-ea17a92fa209",
-                    "expectedControlType": "Axis",
-                    "processors": "",
-                    "interactions": "",
-                    "initialStateCheck": true
                 },
-                {
-                    "name": "CancelBuilding",
-                    "type": "Button",
-                    "id": "c28ca3c2-585d-44b9-9bc8-55c423525295",
-                    "expectedControlType": "Button",
-                    "processors": "",
-                    "interactions": "",
-                    "initialStateCheck": false
-                },
-                {
-                    "name": "Multi Build",
-                    "type": "Value",
-                    "id": "191b25a8-6cb8-4159-9d13-84c0e3bf1e54",
-                    "expectedControlType": "",
-                    "processors": "",
-                    "interactions": "",
-                    "initialStateCheck": true
-                }
-            ],
-            "bindings": [
                 {
                     "name": "",
-                    "id": "eb93e739-22f9-4e76-bfcd-00f5acfb2bd8",
-                    "path": "<Mouse>/scroll/y",
+                    "id": "075e244e-d990-48ed-b1dd-f9992a03ea80",
+                    "path": "<Mouse>/leftButton",
                     "interactions": "",
                     "processors": "",
-                    "groups": "Keyboard",
-                    "action": "RotateBuilding",
+                    "groups": "",
+                    "action": "ClickCart",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
                 {
                     "name": "",
-                    "id": "761d51ac-ed78-42b3-95a1-d45dee50136d",
-                    "path": "<Mouse>/rightButton",
+                    "id": "f9b3f6c0-d815-4254-b8cd-2496f9b8d4a1",
+                    "path": "<Gamepad>/buttonSouth",
                     "interactions": "",
                     "processors": "",
-                    "groups": "Keyboard",
-                    "action": "CancelBuilding",
+                    "groups": "",
+                    "action": "ClickCart",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
                 {
                     "name": "",
-                    "id": "0e6528e6-2351-426f-89b4-869c5a863d60",
+                    "id": "853fcb1a-7f98-4509-a435-09b832097baf",
                     "path": "<Keyboard>/shift",
                     "interactions": "",
                     "processors": "",
-                    "groups": "Keyboard",
-                    "action": "Multi Build",
+                    "groups": "",
+                    "action": "FastForward",
                     "isComposite": false,
                     "isPartOfComposite": false
-                }
-            ]
-        },
-        {
-            "name": "Non-Building",
-            "id": "6f586780-e18d-4447-afdb-896f6babee12",
-            "actions": [
-                {
-                    "name": "Zoom",
-                    "type": "Value",
-                    "id": "70531623-7b98-4dc4-9dc0-16a4b3a1e5ce",
-                    "expectedControlType": "Axis",
-                    "processors": "",
-                    "interactions": "",
-                    "initialStateCheck": true
                 },
-                {
-                    "name": "Fast Forward",
-                    "type": "Value",
-                    "id": "ba92de64-0f21-4341-93ca-fc8ffef63d2a",
-                    "expectedControlType": "Button",
-                    "processors": "",
-                    "interactions": "",
-                    "initialStateCheck": true
-                },
-                {
-                    "name": "SelectBuildingsOrEnemies",
-                    "type": "Button",
-                    "id": "bef9d661-35bf-4525-9840-6da950dac743",
-                    "expectedControlType": "Button",
-                    "processors": "",
-                    "interactions": "",
-                    "initialStateCheck": false
-                },
-                {
-                    "name": "Deselect",
-                    "type": "Button",
-                    "id": "e193612c-ce1f-4773-b778-fe27595dd425",
-                    "expectedControlType": "Button",
-                    "processors": "",
-                    "interactions": "",
-                    "initialStateCheck": false
-                }
-            ],
-            "bindings": [
                 {
                     "name": "",
-                    "id": "bb1c7368-6a51-4fc3-81dd-0680b17bc455",
+                    "id": "1f981d4e-49e0-46f1-b934-c067bcf85e14",
                     "path": "<Mouse>/scroll/y",
                     "interactions": "",
                     "processors": "",
-                    "groups": "Keyboard",
+                    "groups": "",
                     "action": "Zoom",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
                 {
                     "name": "",
-                    "id": "dfb7089c-89ac-43d1-8b83-fcbd6adca533",
-                    "path": "<Keyboard>/shift",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "Keyboard",
-                    "action": "Fast Forward",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
-                    "id": "f99c9cdd-1ebf-470f-9731-d4c08df8f295",
-                    "path": "<Mouse>/leftButton",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "Keyboard",
-                    "action": "SelectBuildingsOrEnemies",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
-                    "id": "a5022ccb-c1a2-464f-baef-cefa7f2f14d8",
+                    "id": "d83c227b-c912-40eb-a759-daef57b5a835",
                     "path": "<Mouse>/rightButton",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "Deselect",
+                    "action": "ShowDetailsCart",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "93588ad2-ac33-4c58-a13a-f0dee37b0a81",
+                    "path": "<Gamepad>/buttonNorth",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "ShowDetailsCart",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

@@ -9,8 +9,8 @@ public class MiniGUI_InfoCard_RoboRepair : MonoBehaviour, IBuildingInfoCard {
 
     [ReadOnly] public RoboRepairModule roboRepairModule;
 
-    public void SetUp(TrainBuilding building) {
-        roboRepairModule = building.GetComponent<RoboRepairModule>();
+    public void SetUp(Cart building) {
+        roboRepairModule = building.GetComponentInChildren<RoboRepairModule>();
 
         if (roboRepairModule == null) {
             gameObject.SetActive(false);

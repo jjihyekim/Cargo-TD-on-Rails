@@ -98,15 +98,6 @@ public class SoundscapeController : MonoBehaviour {
 
     public void PlayNoMoreResource(ResourceTypes type) {
         switch (type) {
-            case ResourceTypes.ammo:
-                PlayClipWithExtraOptions(noMoreAmmo[Random.Range(0, noMoreAmmo.Length)], noMoreAmmoDelay);
-                break;
-            case ResourceTypes.fuel:
-                PlayClipWithExtraOptions(noMoreFuel[Random.Range(0, noMoreFuel.Length)], noMoreFuelDelay);
-                break;
-            case ResourceTypes.money:
-                Debug.LogError("Cannot have no moniez");
-                break;
             case ResourceTypes.scraps:
                 PlayClipWithExtraOptions(noMoreScrap[Random.Range(0, noMoreScrap.Length)], noMoreScrapDelay);
                 break;
