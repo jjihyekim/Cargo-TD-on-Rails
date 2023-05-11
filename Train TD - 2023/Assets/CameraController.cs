@@ -96,29 +96,31 @@ public class CameraController : MonoBehaviour {
 
     public UnityEvent AfterCameraPosUpdate = new UnityEvent();
     private void LateUpdate() {
-        if (directControlActive) {
-            ProcessDirectControl(moveAction.action.ReadValue<Vector2>());
-        } else {
-            var mousePos = Mouse.current.position.ReadValue();
-            if (canEdgeMove)
-                ProcessScreenCorners(mousePos);
+        if (!Pauser.s.isPaused) {
+            if (directControlActive) {
+                ProcessDirectControl(moveAction.action.ReadValue<Vector2>());
+            } else {
+                var mousePos = Mouse.current.position.ReadValue();
+                if (canEdgeMove)
+                    ProcessScreenCorners(mousePos);
 
-            if (!isSnappedToTransform)
-                ProcessMovementInput(moveAction.action.ReadValue<Vector2>(), wasdSpeed);
-            else
-                ProcessMovementSnapped(moveAction.action.ReadValue<Vector2>(), snappedwasdDelay);
+                if (!isSnappedToTransform)
+                    ProcessMovementInput(moveAction.action.ReadValue<Vector2>(), wasdSpeed);
+                else
+                    ProcessMovementSnapped(moveAction.action.ReadValue<Vector2>(), snappedwasdDelay);
 
-            if (canZoom)
-                ProcessZoom(zoomAction.action.ReadValue<float>());
+                if (canZoom)
+                    ProcessZoom(zoomAction.action.ReadValue<float>());
 
-            ProcessMiddleMouseRotation(rotateCameraAction.action.ReadValue<float>(), mousePos);
+                ProcessMiddleMouseRotation(rotateCameraAction.action.ReadValue<float>(), mousePos);
 
-            LerpCameraTarget();
+                LerpCameraTarget();
+            }
+
+
+            SetMainCamPos();
+            AfterCameraPosUpdate?.Invoke();
         }
-        
-
-        SetMainCamPos();
-        AfterCameraPosUpdate?.Invoke();
     }
 
     private Vector2 mousePosLastFrame;

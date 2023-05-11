@@ -45,7 +45,7 @@ public class EnemyHealth : MonoBehaviour, IHealth {
 		SetBuildingShaderHealth(currentHealth / maxHealth);
 	}
 
-	public void Heal(float heal) {
+	public void Repair(float heal) {
 		currentHealth += heal;
 
 		if (currentHealth > maxHealth) {
@@ -228,7 +228,7 @@ public class EnemyHealth : MonoBehaviour, IHealth {
 
 public interface IHealth {
 	public void DealDamage(float damage);
-	public void Heal(float heal);
+	public void Repair(float heal);
 	public void BurnDamage(float damage);
 	public bool IsPlayer();
 	public GameObject GetGameObject();

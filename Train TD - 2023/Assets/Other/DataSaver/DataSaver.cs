@@ -280,7 +280,7 @@ public class DataSaver {
 
 			for (int i = 0; i < myTrain.myCarts.Count; i++) {
 				var build = myTrain.myCarts[i];
-				build.ammo = -2;
+				//build.ammo = -2;
 			}
 
 			/*for (int i = 0; i < characterData.starterUpgrades.Length; i++) {
@@ -328,7 +328,6 @@ public class DataSaver {
 
 			// dont forget to update the copy function
 			public int health = -1;
-			public int ammo = -1;
 
 			public CargoState cargoState;
 			
@@ -342,7 +341,6 @@ public class DataSaver {
 			public void EmptyState() {
 				uniqueName = "";
 				health = -1;
-				ammo = -1;
 				/*cargoCost = -1;
 				cargoReward = -1;*/
 			}
@@ -361,7 +359,7 @@ public class DataSaver {
 				var copyState = new CartState();
 				copyState.uniqueName = uniqueName;
 				copyState.health = health;
-				copyState.ammo = ammo;
+				//copyState.ammo = ammo;
 				copyState.cargoState = new CargoState();
 				copyState.cargoState.cargoReward = cargoState.cargoReward;
 				copyState.cargoState.isBuildingCargo = cargoState.isBuildingCargo;

@@ -57,12 +57,20 @@ public class Pauser : MonoBehaviour {
         pauseMenu.SetActive(true);
         TimeController.s.Pause();
         isPaused = true;
+        
+        if (CameraController.s.directControlActive) {
+            Cursor.lockState = CursorLockMode.None;
+        }
     }
 
     public void Unpause() {
         pauseMenu.SetActive(false);
         TimeController.s.UnPause();
         isPaused = false;
+        
+        if (CameraController.s.directControlActive) {
+            Cursor.lockState = CursorLockMode.Locked;
+        }
     }
 
     public void AbandonMission() {

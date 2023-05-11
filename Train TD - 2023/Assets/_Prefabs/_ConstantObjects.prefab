@@ -327,7 +327,7 @@ MonoBehaviour:
   m_BlockingObjects: 0
   m_BlockingMask:
     serializedVersion: 2
-    m_Bits: 16183
+    m_Bits: 15159
 --- !u!1 &1104735771
 GameObject:
   m_ObjectHideFlags: 0
@@ -814,7 +814,6 @@ MonoBehaviour:
           myCarts:
           - uniqueName: 
             health: -1
-            ammo: -1
             cargoState:
               isBuildingCargo: 0
               cargoReward: 
@@ -877,7 +876,6 @@ MonoBehaviour:
           myCarts:
           - uniqueName: 
             health: -1
-            ammo: -1
             cargoState:
               isBuildingCargo: 0
               cargoReward: 
@@ -940,7 +938,6 @@ MonoBehaviour:
           myCarts:
           - uniqueName: 
             health: -1
-            ammo: -1
             cargoState:
               isBuildingCargo: 0
               cargoReward: 
@@ -988,6 +985,7 @@ MonoBehaviour:
         putTheNewStuff: 0
     loadingComplete: 0
     dontSave: 0
+    saveLockTimer: 0
     saveInNextFrame: 0
 --- !u!114 &1066860337956249595
 MonoBehaviour:
@@ -1032,6 +1030,7 @@ MonoBehaviour:
   - {fileID: 2506377382935208666, guid: 8c79e4186a27f7946b92f387744ddc4a, type: 3}
   - {fileID: 2506377382935208666, guid: 1c23873aadb7b9c4b9b573b6cf8d6868, type: 3}
   - {fileID: 2506377382935208666, guid: 8f3fe7d03f92ca64c8158283265f694b, type: 3}
+  - {fileID: 2506377382935208666, guid: 82af73b6829e2814688ecfd1a21ba143, type: 3}
   enemies:
   - uniqueName: BuggyAVC
     data: {fileID: 5297413553918262561, guid: 845f1cf4e800d8e45b607240c9e6190c, type: 3}
@@ -1505,7 +1504,9 @@ MonoBehaviour:
   m_RequiresDepthTextureOption: 2
   m_RequiresOpaqueTextureOption: 2
   m_CameraType: 0
-  m_Cameras: []
+  m_Cameras:
+  - {fileID: 0}
+  - {fileID: 0}
   m_RendererIndex: -1
   m_VolumeLayerMask:
     serializedVersion: 2

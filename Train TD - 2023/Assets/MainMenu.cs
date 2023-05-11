@@ -87,8 +87,7 @@ public class MainMenu : MonoBehaviour {
     }
 
     public void QuickStartGame() {
-        //SceneLoader.s.DebugQuickBackToStarterMenu();
-        //DoTransfer();
+        PlayStateMaster.s.EnterShopState();
     }
 
     public void ExitMainMenu() {

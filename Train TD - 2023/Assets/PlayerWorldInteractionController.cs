@@ -52,6 +52,11 @@ public class PlayerWorldInteractionController : MonoBehaviour {
     public Color directControlColor = Color.magenta;
     
     private void Update() {
+        if (DirectControlMaster.s.directControlInProgress) {
+            if (selectedCart != null)
+                SelectBuilding(selectedCart, false);
+            return;
+        }
         if (!isDragStarted) {
             CastRayToOutlineCart();
         }
@@ -289,12 +294,35 @@ public class PlayerWorldInteractionController : MonoBehaviour {
         }
     }
 
+    public float repairAmountPerClick = 50f;
+
     void CheckAndDoClick() {
-        
+        if (selectedCart != null) {
+            if (clickCart.action.WasPerformedThisFrame()) {
+                switch (currentSelectMode) {
+                    case SelectMode.cart:
+                        selectedCart.GetHealthModule().Repair(repairAmountPerClick);
+                        break;
+                    case SelectMode.reload:
+                        selectedCart.GetComponentInChildren<ModuleAmmo>().Reload();
+                        break;
+                    case SelectMode.directControl:
+                        DirectControlMaster.s.AssumeDirectControl(selectedCart.GetComponentInChildren<DirectControllable>());
+                        break;
+                }
+                holdOverTimer = -1000;
+            }
+        }
     }
 
     public float holdOverTimer;
     public float infoShowTime = 3f;
+
+    public enum SelectMode {
+        cart, reload, directControl
+    }
+
+    public SelectMode currentSelectMode = SelectMode.cart;
 
     public MiniGUI_BuildingInfoCard infoCard;
     void CastRayToOutlineCart() {
@@ -302,16 +330,31 @@ public class PlayerWorldInteractionController : MonoBehaviour {
         Ray ray = LevelReferences.s.mainCam.ScreenPointToRay(GetMousePos());
 
         if (Physics.Raycast(ray, out hit, 100f, LevelReferences.s.buildingLayer)) {
-            var cart = hit.collider.gameObject.GetComponentInParent<Cart>();
+            var lastSelectMode = currentSelectMode;
+            currentSelectMode = SelectMode.cart;
             
-            if (cart != selectedCart) {
+            var directControllable = hit.collider.GetComponentInParent<DirectControllable>();
+            if (directControllable != null) {
+                currentSelectMode = SelectMode.directControl;
+            }
+            
+            var reloadable = hit.collider.GetComponentInParent<Reloadable>();
+            if (reloadable != null) {
+                currentSelectMode = SelectMode.reload;
+            }
+            
+            var cart = hit.collider.GetComponentInParent<Cart>();
+            
+            if (cart != selectedCart || lastSelectMode != currentSelectMode) {
                 if (selectedCart != null)
                     SelectBuilding(selectedCart, false);
                 
                 selectedCart = cart;
 
                 SelectBuilding(selectedCart, true);
-                
+
+                holdOverTimer = 0;
+
             } else {
                 holdOverTimer += Time.deltaTime;
 
@@ -353,7 +396,17 @@ public class PlayerWorldInteractionController : MonoBehaviour {
         }
         
         if (PlayStateMaster.s.isCombatInProgress()) {
-            myColor = repairColor;
+            switch (currentSelectMode) {
+                case SelectMode.cart:
+                    myColor = repairColor;
+                    break;
+                case SelectMode.reload:
+                    myColor = reloadColor;
+                    break;
+                case SelectMode.directControl:
+                    myColor = directControlColor;
+                    break;
+            }
         }
 
         outline.OutlineColor = myColor;

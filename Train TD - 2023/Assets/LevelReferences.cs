@@ -30,6 +30,8 @@ public class LevelReferences : MonoBehaviour {
     public GameObject mortarMiniHitPrefab;
     public GameObject waveDisplayPrefab;
     public GameObject partHealthPrefab;
+    public GameObject repairEffectPrefab;
+    public GameObject reloadEffectPrefab;
     public GameObject damageNumbersPrefab;
     public Transform uiDisplayParent;
 
@@ -118,6 +120,7 @@ public class LevelReferences : MonoBehaviour {
     const int maxMoneyPileCount = 5;
 
     public void SpawnResourceAtLocation(ResourceTypes type, float amount, Vector3 location) {
+        return;
         SpawnResourceAtLocation(type, Mathf.RoundToInt(amount), location);
     }
     public void SpawnResourceAtLocation(ResourceTypes type, int amount, Vector3 location, bool customCollectTarget = false, Transform customCollectTargetTransform = null) {
@@ -132,6 +135,10 @@ public class LevelReferences : MonoBehaviour {
             case ResourceTypes.scraps:
                 prefab = scrapPile;
                 break;
+        }
+
+        if (prefab == null) {
+            return;
         }
 
         while(amount > 0) {

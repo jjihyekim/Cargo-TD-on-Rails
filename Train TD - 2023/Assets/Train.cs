@@ -150,13 +150,13 @@ public class Train : MonoBehaviour {
                 buildingState.cargoState = null;
             }
 
-            var ammo = cart.GetComponentInChildren<ModuleAmmo>();
+            /*var ammo = cart.GetComponentInChildren<ModuleAmmo>();
             
             if (ammo != null) {
                 buildingState.ammo = (int)ammo.curAmmo;
             } else {
                 buildingState.ammo = -1;
-            }
+            }*/
         } else {
             buildingState.EmptyState();
         }
@@ -173,7 +173,7 @@ public class Train : MonoBehaviour {
             cart.SetCurrentHealth(cartState.health);
         }
 
-        if (cartState.ammo >= 0) {
+        /*if (cartState.ammo >= 0) {
             var ammo = cart.GetComponentInChildren<ModuleAmmo>();
             ammo.SetAmmo(cartState.ammo);
         }else if (cartState.ammo == -2) {
@@ -183,7 +183,7 @@ public class Train : MonoBehaviour {
             } else {
                 cartState.ammo = -1;
             }
-        }
+        }*/
 
         var cargoModule = cart.GetComponentInChildren<CargoModule>();
         if (cargoModule != null) {

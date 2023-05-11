@@ -37,7 +37,7 @@ public class GunModule : MonoBehaviour, IComponentWithTarget, IActiveDuringComba
     public float rotateSpeed = 10f;
 
     public bool gunActive = true;
-    public bool CanShoot = false;
+    public bool IsBarrelPointingCorrectly = false;
     public bool hasAmmo = true;
 
     public bool isPlayer = false;
@@ -70,15 +70,16 @@ public class GunModule : MonoBehaviour, IComponentWithTarget, IActiveDuringComba
         if (gunActive) {
             if (target != null) {
                 // Look at target
-                LookAtLocation(target.position);
-
                 if (rotateTransforms.Length == 0) {
-                    CanShoot = true;
+                    IsBarrelPointingCorrectly = true;
+                } else {
+                    LookAtLocation(target.position);
                 }
             } else {
-
                 // look at center of targeting area
                 LookAtLocation(GetRangeOrigin().position + GetRangeOrigin().forward * 5);
+
+                IsBarrelPointingCorrectly = false;
             }
         }
 
@@ -101,7 +102,9 @@ public class GunModule : MonoBehaviour, IComponentWithTarget, IActiveDuringComba
                 //print(lookRotation);
                 rotateTransform.rotation = Quaternion.Lerp(rotateTransform.rotation, lookRotation, rotateSpeed * Time.deltaTime);
                 if (Quaternion.Angle(rotateTransform.rotation, lookRotation) < 5) {
-                    CanShoot = true;
+                    IsBarrelPointingCorrectly = true;
+                }else {
+                    IsBarrelPointingCorrectly = false;
                 }
             }
         //}
@@ -109,7 +112,6 @@ public class GunModule : MonoBehaviour, IComponentWithTarget, IActiveDuringComba
 
 
     private void Start() {
-
         for (int i = 0; i < rotateTransforms.Length; i++) {
             var curRotate = rotateTransforms[i].transform;
             var anchor = new GameObject("Turret Rotate Anchor");
@@ -122,10 +124,6 @@ public class GunModule : MonoBehaviour, IComponentWithTarget, IActiveDuringComba
     float GetAttackSpeedMultiplier() {
         var boost = 1f;
 
-        if (beingDirectControlled) {
-            boost /= DirectControlMaster.s.directControlFireRateBoost;
-        }
-        
         if (isPlayer) {
             boost /= TweakablesMaster.s.myTweakables.playerFirerateBoost;
         } else {
@@ -144,10 +142,6 @@ public class GunModule : MonoBehaviour, IComponentWithTarget, IActiveDuringComba
             dmgMul *= TweakablesMaster.s.myTweakables.enemyDamageMutliplier;
         }
 
-        if (beingDirectControlled) {
-            dmgMul *= DirectControlMaster.s.directControlDamageBoost;
-        }
-
         return dmgMul;
     }
 
@@ -156,6 +150,10 @@ public class GunModule : MonoBehaviour, IComponentWithTarget, IActiveDuringComba
     private bool isShooting = false;
     IEnumerator ShootCycle() {
         while (true) {
+            while (!IsBarrelPointingCorrectly || !hasAmmo) {
+                yield return null;
+            }
+            
             if (isShooting) {
                 StartCoroutine(_ShootBarrage());
             } else {
@@ -163,9 +161,6 @@ public class GunModule : MonoBehaviour, IComponentWithTarget, IActiveDuringComba
             }
             
             yield return new WaitForSeconds(GetFireDelay());
-            while (!CanShoot || !hasAmmo) {
-                yield return null;
-            }
         }
     }
 
@@ -185,6 +180,10 @@ public class GunModule : MonoBehaviour, IComponentWithTarget, IActiveDuringComba
                 yield break;
             }
         }
+        
+        
+        if(!isFree)
+            barrageShot?.Invoke();
 
         for (int i = 0; i < fireBarrageCount; i++) {
             //if (!isPlayer || AreThereEnoughMaterialsToShoot() || isFree) {
@@ -220,9 +219,6 @@ public class GunModule : MonoBehaviour, IComponentWithTarget, IActiveDuringComba
             //}
             yield return new WaitForSeconds(GetFireBarrageDelay());
         }
-        
-        if(!isFree)
-            barrageShot?.Invoke();
     }
 
     private bool stopUpdateRotation = false;

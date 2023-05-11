@@ -58,8 +58,8 @@ public class Cart : MonoBehaviour {
     }
 
     public void SetComponentCombatShopMode() {
-        var duringCombat = GetComponents<IActiveDuringCombat>();
-        var duringShopping = GetComponents<IActiveDuringShopping>();
+        var duringCombat = GetComponentsInChildren<IActiveDuringCombat>();
+        var duringShopping = GetComponentsInChildren<IActiveDuringShopping>();
         
         for (int i = 0; i < duringCombat.Length; i++) { duringCombat[i].Disable(); }
         for (int i = 0; i < duringShopping.Length; i++) { duringShopping[i].Disable(); }
@@ -112,6 +112,10 @@ public class Cart : MonoBehaviour {
                 outline.enabled = isHighlighted;
             }
         }
+    }
+
+    public ModuleHealth GetHealthModule() {
+        return GetComponent<ModuleHealth>();
     }
 
     public int GetCurrentHealth() {

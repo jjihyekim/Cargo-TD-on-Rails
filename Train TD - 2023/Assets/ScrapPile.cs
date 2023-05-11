@@ -57,7 +57,7 @@ public class ScrapPile : MonoBehaviour {
                 var curDist = Vector3.Distance(transform.position, cart.transform.position);
                 if (curDist < distance) {
                     distance = curDist;
-                    //target = cart.GetComponent<Cart>().center;
+                    target = cart.GetComponent<Cart>().uiTargetTransform;
                 }
             }
         }

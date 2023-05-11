@@ -41,8 +41,14 @@ public class CheatsController : MonoBehaviour
     }
 
     void QuickStart() {
+        WorldMapCreator.s.QuickStartNoWorldMap();
         MainMenu.s.QuickStartGame();
+        PlayStateMaster.s.OnShopEntered.AddListener(OnShopStateEntered);
+    }
+
+    void OnShopStateEntered() {
         ShopStateController.s.QuickStart();
+        PlayStateMaster.s.OnShopEntered.RemoveListener(OnShopStateEntered);
     }
 
     private void Update() {

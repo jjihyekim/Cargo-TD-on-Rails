@@ -45,6 +45,7 @@ public class ModuleHealth : MonoBehaviour, IHealth, IActiveDuringCombat, IActive
     public bool invincibleTutorial = false;
 
     public PhysicalHealthBar myBar;
+
     
     [Button]
     public void DealDamage(float damage) {
@@ -123,22 +124,27 @@ public class ModuleHealth : MonoBehaviour, IHealth, IActiveDuringCombat, IActive
         }
     }
 
-    public void Heal(float heal) {
+    public void Repair(float heal) {
         Assert.IsTrue(heal > 0);
-        currentHealth += heal;
 
-        if (myBuilding.isDestroyed && currentHealth > maxHealth / 2) {
-            GetUnDestroyed();
-        }
-        
-        if (currentHealth > maxHealth) {
-            currentHealth = maxHealth;
-        }
-        
-        
-        UpdateHPCriticalIndicators();
+        if (currentHealth < maxHealth) {
+            currentHealth += heal;
 
-        SetBuildingShaderHealth(currentHealth / maxHealth);
+            Instantiate(LevelReferences.s.repairEffectPrefab, GetUITransform());
+
+            if (myBuilding.isDestroyed && currentHealth > maxHealth / 2) {
+                GetUnDestroyed();
+            }
+
+            if (currentHealth > maxHealth) {
+                currentHealth = maxHealth;
+            }
+
+
+            UpdateHPCriticalIndicators();
+
+            SetBuildingShaderHealth(currentHealth / maxHealth);
+        }
     }
 
     public void SetHealth(float health) {
@@ -315,8 +321,8 @@ public class ModuleHealth : MonoBehaviour, IHealth, IActiveDuringCombat, IActive
     
     private void Start() {
         if (GetComponentInParent<Train>() != null) {
-            healthBar = Instantiate(LevelReferences.s.partHealthPrefab, LevelReferences.s.uiDisplayParent).GetComponent<MiniGUI_HealthBar>();
-            healthBar.SetUp(this, GetComponent<ModuleAmmo>());
+            //healthBar = Instantiate(LevelReferences.s.partHealthPrefab, LevelReferences.s.uiDisplayParent).GetComponent<MiniGUI_HealthBar>();
+            //healthBar.SetUp(this, GetComponent<ModuleAmmo>());
             buildingsBuild += 1;
         }
 
@@ -344,7 +350,6 @@ public class ModuleHealth : MonoBehaviour, IHealth, IActiveDuringCombat, IActive
         isDead = true;
         Instantiate(explodePrefab, transform.position, transform.rotation);
         SoundscapeController.s.PlayModuleExplode();
-        Destroy(healthBar.gameObject);
 
         if (GetComponentInParent<Train>() != null) {
             buildingsDestroyed += 1;
@@ -489,11 +494,11 @@ public class ModuleHealth : MonoBehaviour, IHealth, IActiveDuringCombat, IActive
 
     public Transform GetUITransform() {
         myBuilding = GetComponent<Cart>();
-        /*if (myBuilding != null) {
-            return myBuilding.GetUITargetTransform(false);
-        } else {*/
+        if (myBuilding != null) {
+            return myBuilding.GetUITargetTransform();
+        } else {
             return transform;
-        //}
+        }
     }
 
     public void ActivateForCombat() {
