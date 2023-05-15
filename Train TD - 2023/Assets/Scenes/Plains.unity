@@ -18926,7 +18926,7 @@ MonoBehaviour:
   debugPowerUp: {fileID: 11400000, guid: e4f6feee71538644289ba169a701ac18, type: 2}
   infiniteLevel: 0
   debugNoRegularSpawns: 0
-  instantEnterPlayMode: 1
+  instantEnterPlayMode: 0
   playerIsImmune: 0
   debugEnemy:
     enemyUniqueName: BossTeleporter
@@ -24302,6 +24302,7 @@ GameObject:
   - component: {fileID: 661588735}
   - component: {fileID: 661588734}
   - component: {fileID: 661588736}
+  - component: {fileID: 661588737}
   m_Layer: 0
   m_Name: _Music player
   m_TagString: Untagged
@@ -24456,6 +24457,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b0dd1938bdd84ae4fa0ee77c472dd242, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  speaker: {fileID: 661588737}
   gameMusicTracks:
     Guid:
       Data1: 482004292
@@ -24471,6 +24473,27 @@ MonoBehaviour:
       Data4: 243352148
     Path: event:/Music/MenuMusic
   isPaused: 0
+--- !u!114 &661588737
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 661588732}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f147790a286391c4786c6011fe2fba05, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  clip:
+    Guid:
+      Data1: 1214803733
+      Data2: 1251403609
+      Data3: 2056448144
+      Data4: 243352148
+    Path: event:/Music/MenuMusic
+  pauseOnGamePause: 1
+  playOnAwake: 1
 --- !u!1 &663426824
 GameObject:
   m_ObjectHideFlags: 0

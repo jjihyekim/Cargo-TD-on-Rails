@@ -8,13 +8,15 @@ public class FMODMusicPlayer : MonoBehaviour
 {
     public static FMODMusicPlayer s;
 
+    [Header("Speaker")]
+    public FMODAudioSource speaker;
+
     [Header("Music Tracks")]
     public EventReference gameMusicTracks, menuMusicTracks;
 
     private EventReference currentTracks;   // the current track that is loaded
-    private EventInstance musicPlayerInstance;  // the FMOD instance that plays the background music
 
-    [Header("Playing Status")]
+    [field: Header("Playing Status")]
     public bool isPaused;
 
     private void Awake()
@@ -30,18 +32,12 @@ public class FMODMusicPlayer : MonoBehaviour
         SwapMusicTracksAndPlay(false);
     }
 
-    private void OnDisable()
-    {
-        musicPlayerInstance.stop(FMOD.Studio.STOP_MODE.IMMEDIATE);
-    }
-
     /// <summary>
     /// Based on "isGame" parameter, load game/menu tracks, and play them automatically
     /// </summary>
     /// <param name="isGame"></param>
     public void SwapMusicTracksAndPlay(bool isGame)
     {
-        Debug.Log("Switch to " + isGame.ToString());
         var changeMade = false;
         if (isGame)
         {
@@ -81,21 +77,18 @@ public class FMODMusicPlayer : MonoBehaviour
     /// </summary>
     private void PlayTracks()
     {
-        musicPlayerInstance.stop(FMOD.Studio.STOP_MODE.ALLOWFADEOUT);
-        musicPlayerInstance.release();
-        musicPlayerInstance = AudioManager.instance.CreateFmodEventInstance(currentTracks);
-        musicPlayerInstance.start();
+        speaker.LoadClip(currentTracks, true);
     }
     void PauseUnPauseOnGamePause(bool paused)
     {
         if (!paused)
         {
-            musicPlayerInstance.setPaused(false);
+            speaker.UnPause();
             isPaused = false;
         }
         else
         {
-            musicPlayerInstance.setPaused(true);
+            speaker.Pause();
             isPaused = true;
         }
     }

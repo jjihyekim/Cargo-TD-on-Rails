@@ -29,7 +29,7 @@ public class AudioManager : MonoBehaviour
         RuntimeManager.PlayOneShot(sound, worldPos);
     }
 
-    public EventInstance CreateFmodEventInstance(EventReference eventRef)
+    public static EventInstance CreateFmodEventInstance(EventReference eventRef)
     {
         EventInstance eventInst = RuntimeManager.CreateInstance(eventRef);
         // Debug.Log(eventRef.ToString() + " is instantitated");

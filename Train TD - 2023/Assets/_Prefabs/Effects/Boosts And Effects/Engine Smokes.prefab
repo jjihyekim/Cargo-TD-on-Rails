@@ -4893,6 +4893,7 @@ GameObject:
   - component: {fileID: 2082310754415610797}
   - component: {fileID: 2345586699297905595}
   - component: {fileID: 8578716657350242314}
+  - component: {fileID: 2665438742438051529}
   m_Layer: 0
   m_Name: Sound
   m_TagString: Untagged
@@ -5036,11 +5037,32 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8684303600756054474}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 7dab8b9b2a6dacd4aac23ee92482402a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &2665438742438051529
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8684303600756054474}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f147790a286391c4786c6011fe2fba05, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  clip:
+    Guid:
+      Data1: 1806450141
+      Data2: 1139007964
+      Data3: -1708750695
+      Data4: -884200142
+    Path: event:/Train/LocomotiveFX
+  pauseOnGamePause: 1
+  playOnAwake: 1
 --- !u!1 &9082847109121117575
 GameObject:
   m_ObjectHideFlags: 0
@@ -5094,11 +5116,4 @@ MonoBehaviour:
   lastSpeedTier: 0
   isLevelFinishTriggered: 0
   fireActive: 1
-  locomotiveSoundRef:
-    Guid:
-      Data1: 1806450141
-      Data2: 1139007964
-      Data3: -1708750695
-      Data4: -884200142
-    Path: event:/Train/LocomotiveFX
-  engineSpeed: 0.146
+  speaker: {fileID: 2665438742438051529}

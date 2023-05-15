@@ -38,7 +38,8 @@ public class EngineFireController : MonoBehaviour {
 	    if (soundSource == this)
 		    soundSource = null;
 
-		locomotiveFxInstance.stop(FMOD.Studio.STOP_MODE.IMMEDIATE);
+		// stop locomotive sound when object is disabled
+		speaker.Stop(FMOD.Studio.STOP_MODE.IMMEDIATE);
     }
 
     void Start() {
@@ -47,9 +48,8 @@ public class EngineFireController : MonoBehaviour {
 	    _engine = GetComponentInParent<EngineModule>();
 	    UpdateEngineParticleSystemValues();
 
-		// instantiate FMOD engine sound and start playing
-		locomotiveFxInstance = AudioManager.instance.CreateFmodEventInstance(locomotiveSoundRef);
-		locomotiveFxInstance.start();
+		// istart playing locomotive sound at start
+		speaker.Play();
     }
 
     private float lastSpeed = 0;
@@ -155,15 +155,13 @@ public class EngineFireController : MonoBehaviour {
 	    fireActive = true;
     }
 
-    [Header("FMOD Locomotive Sound")]
-    public EventReference locomotiveSoundRef;
-	public EventInstance locomotiveFxInstance;
-
+	[Header("FMOD Locomotive Sound")]
+	public FMODAudioSource speaker;
 	/// <summary>
 	/// Updates the engine sound based on train speed
 	/// </summary>
 	private void UpdateEngineSound()
 	{
-		locomotiveFxInstance.setParameterByName("LocomotiveSpeed", LevelReferences.s.speed * 0.15f);
+		speaker.SetParamByName("LocomotiveSpeed", LevelReferences.s.speed * 0.15f);
     }
 }
