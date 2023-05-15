@@ -32,6 +32,7 @@ public class AudioManager : MonoBehaviour
     public EventInstance CreateFmodEventInstance(EventReference eventRef)
     {
         EventInstance eventInst = RuntimeManager.CreateInstance(eventRef);
+        // Debug.Log(eventRef.ToString() + " is instantitated");
         return eventInst;
     }
 }

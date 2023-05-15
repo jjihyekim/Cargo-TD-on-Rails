@@ -5091,12 +5091,14 @@ MonoBehaviour:
   minDelay: 0.05
   speedDelayEffect: 0.5
   currentDelay: 0.4
-  slowSoundMaxSpeed: 2
-  mediumSoundMaxSpeed: 5
-  speedSounds:
-  - {fileID: 8300000, guid: 37623fcfd3d6cd342808b4a9c25f0aa2, type: 3}
-  - {fileID: 8300000, guid: f54e9dbc97d9b434f8b500fa8c1e660e, type: 3}
-  - {fileID: 8300000, guid: 4a2813cb2ff539743bc1e20b2868978d, type: 3}
   lastSpeedTier: 0
   isLevelFinishTriggered: 0
   fireActive: 1
+  locomotiveSoundRef:
+    Guid:
+      Data1: 1806450141
+      Data2: 1139007964
+      Data3: -1708750695
+      Data4: -884200142
+    Path: event:/Train/LocomotiveFX
+  engineSpeed: 0.146

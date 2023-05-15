@@ -6,6 +6,8 @@ using FMODUnity;
 
 public class FMODMusicPlayer : MonoBehaviour
 {
+    public static FMODMusicPlayer s;
+
     [Header("Music Tracks")]
     public EventReference gameMusicTracks, menuMusicTracks;
 
@@ -15,9 +17,22 @@ public class FMODMusicPlayer : MonoBehaviour
     [Header("Playing Status")]
     public bool isPaused;
 
+    private void Awake()
+    {
+        if (s != null)
+            Debug.LogError("FMODMusicPlayer should be a singleton class, but multiple instances are found!");
+        s = this;
+
+    }
+
     private void Start()
     {
-        SwapMusicTracksAndPlay(true);
+        SwapMusicTracksAndPlay(false);
+    }
+
+    private void OnDisable()
+    {
+        musicPlayerInstance.stop(FMOD.Studio.STOP_MODE.IMMEDIATE);
     }
 
     /// <summary>
@@ -26,6 +41,7 @@ public class FMODMusicPlayer : MonoBehaviour
     /// <param name="isGame"></param>
     public void SwapMusicTracksAndPlay(bool isGame)
     {
+        Debug.Log("Switch to " + isGame.ToString());
         var changeMade = false;
         if (isGame)
         {
@@ -46,12 +62,19 @@ public class FMODMusicPlayer : MonoBehaviour
 
         if (changeMade)
         {
-            //Stop();
-            //CreateRandomClipOrder();
-            //PlayNextTrack();
             PlayTracks();
         }
     }
+    public void PlayMenuMusic()
+    {
+        SwapMusicTracksAndPlay(false);
+    }
+
+    public void PlayCombatMusic()
+    {
+        SwapMusicTracksAndPlay(true);
+    }
+
 
     /// <summary>
     /// Stop the currently-playing track. Start playing the tracks loaded in the "currentTracks" variable.
