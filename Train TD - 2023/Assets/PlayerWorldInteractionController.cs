@@ -27,7 +27,7 @@ public class PlayerWorldInteractionController : MonoBehaviour {
     public InputActionReference showDetailClick;
 
 
-    
+    public bool canSelect = true;
     
     protected void OnEnable()
     {
@@ -50,27 +50,34 @@ public class PlayerWorldInteractionController : MonoBehaviour {
     public Color repairColor = Color.green;
     public Color reloadColor = Color.yellow;
     public Color directControlColor = Color.magenta;
-    
+
     private void Update() {
+        if (!canSelect) {
+            if (selectedCart != null)
+                SelectBuilding(selectedCart, false);
+
+            return;
+        }
+
         if (DirectControlMaster.s.directControlInProgress) {
             if (selectedCart != null)
                 SelectBuilding(selectedCart, false);
             return;
         }
+
         if (!isDragStarted) {
             CastRayToOutlineCart();
         }
 
-        if (PlayStateMaster.s.isShop()) {
+        if (PlayStateMaster.s.isCombatInProgress()) {
+            CheckAndDoClick();
+        } else {
             CheckAndDoDrag();
             CheckGate();
         }
-
-        if (PlayStateMaster.s.isCombatInProgress()) {
-            CheckAndDoClick();
-        }
+        
     }
-    
+
 
 
     Vector2 GetMousePos() {
@@ -133,8 +140,12 @@ public class PlayerWorldInteractionController : MonoBehaviour {
                     } else {
                         UpgradesController.s.ChangeCartLocation(selectedCart, UpgradesController.CartLocation.world);
                     }
-
-                    UpgradesController.s.UpdateCartShopHighlights();
+                    
+                    if (PlayStateMaster.s.isShop()) {
+                        UpgradesController.s.UpdateCartShopHighlights();
+                    } else {
+                        UpgradesController.s.UpdateCargoHighlights();
+                    }
                 }
             }
 
@@ -154,10 +165,17 @@ public class PlayerWorldInteractionController : MonoBehaviour {
                         selectedCart.GetComponent<Rigidbody>().isKinematic = false;
                         selectedCart.GetComponent<Rigidbody>().useGravity = true;
                     }
+
+                    if (PlayStateMaster.s.isShop()) {
+                        UpgradesController.s.UpdateCartShopHighlights();
+                        UpgradesController.s.SnapDestinationCargos(selectedCart);
+                    } else {
+                        UpgradesController.s.UpdateCargoHighlights();
+                    }
                     
-                    UpgradesController.s.UpdateCartShopHighlights();
-                    UpgradesController.s.SnapDestinationCargos(selectedCart);
+                    
                     UpgradesController.s.SaveCartStateWithDelay();
+                    
 
                     Train.s.SaveTrainState();
                 }
@@ -181,14 +199,18 @@ public class PlayerWorldInteractionController : MonoBehaviour {
                 isSnapping = false;
             }
 
-            if (!selectedCart.isCargo) { // we dont want cargo to snap to flea market locations
+            if (!selectedCart.isCargo || !PlayStateMaster.s.isShop()) { // we dont want cargo to snap to flea market locations
                 RaycastHit hit;
                 Ray ray = LevelReferences.s.mainCam.ScreenPointToRay(GetMousePos());
 
                 if (Physics.Raycast(ray, out hit, 100f, LevelReferences.s.cartSnapLocationsLayer)) {
                     var snapLocation = hit.collider.gameObject.GetComponentInParent<SnapCartLocation>();
 
-                    if (snapLocation != null && snapLocation != currentSnapLoc) {
+                    var snapLocationValidAndNew = snapLocation != null && snapLocation != currentSnapLoc;
+                    var snapLocationCanAcceptCart = !snapLocation.onlySnapCargo || selectedCart.isCargo;
+                    var canSnap = snapLocationValidAndNew && snapLocationCanAcceptCart;
+
+                    if (canSnap) {
                         isSnapping = true;
                         selectedCart.transform.SetParent(snapLocation.snapTransform);
                         currentSnapLoc = snapLocation;
@@ -207,8 +229,11 @@ public class PlayerWorldInteractionController : MonoBehaviour {
             }
         }
 
-
-        UpgradesController.s.UpdateCartShopHighlights();
+        if (PlayStateMaster.s.isShop()) {
+            UpgradesController.s.UpdateCartShopHighlights();
+        } else {
+            UpgradesController.s.UpdateCargoHighlights();
+        }
     }
 
     private void SnapToTrain() {
@@ -295,6 +320,7 @@ public class PlayerWorldInteractionController : MonoBehaviour {
     }
 
     public float repairAmountPerClick = 50f;
+    public float reloadAmountPerClick = 2;
 
     void CheckAndDoClick() {
         if (selectedCart != null) {
@@ -304,7 +330,7 @@ public class PlayerWorldInteractionController : MonoBehaviour {
                         selectedCart.GetHealthModule().Repair(repairAmountPerClick);
                         break;
                     case SelectMode.reload:
-                        selectedCart.GetComponentInChildren<ModuleAmmo>().Reload();
+                        selectedCart.GetComponentInChildren<ModuleAmmo>().Reload(reloadAmountPerClick);
                         break;
                     case SelectMode.directControl:
                         DirectControlMaster.s.AssumeDirectControl(selectedCart.GetComponentInChildren<DirectControllable>());
@@ -344,6 +370,10 @@ public class PlayerWorldInteractionController : MonoBehaviour {
             }
             
             var cart = hit.collider.GetComponentInParent<Cart>();
+
+            if (cart.isDestroyed) {
+                currentSelectMode = SelectMode.cart;
+            }
             
             if (cart != selectedCart || lastSelectMode != currentSelectMode) {
                 if (selectedCart != null)

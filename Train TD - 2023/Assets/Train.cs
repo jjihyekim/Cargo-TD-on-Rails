@@ -138,12 +138,11 @@ public class Train : MonoBehaviour {
     public static void ApplyCartToState(Cart cart, DataSaver.TrainState.CartState buildingState) {
         if (cart != null) {
             buildingState.uniqueName = cart.uniqueName;
-            buildingState.health = cart.GetCurrentHealth();
+            //buildingState.health = cart.GetCurrentHealth();
 
             var cargo = cart.GetComponentInChildren<CargoModule>();
             if (cargo != null) {
                 buildingState.cargoState = new DataSaver.TrainState.CartState.CargoState();
-                buildingState.cargoState.isBuildingCargo = cargo.IsBuildingReward();
                 buildingState.cargoState.cargoReward = cargo.GetReward();
                 buildingState.cargoState.isLeftCargo = cargo.isLeftCargo;
             } else {
@@ -169,9 +168,9 @@ public class Train : MonoBehaviour {
     }
     
     public static void ApplyStateToCart(Cart cart, DataSaver.TrainState.CartState cartState) {
-        if (cartState.health > 0) {
+        /*if (cartState.health > 0) {
             cart.SetCurrentHealth(cartState.health);
-        }
+        }*/
 
         /*if (cartState.ammo >= 0) {
             var ammo = cart.GetComponentInChildren<ModuleAmmo>();
@@ -191,7 +190,7 @@ public class Train : MonoBehaviour {
         }
     }
 
-    void UpdateCartPositions() {
+    public void UpdateCartPositions() {
         if(carts.Count == 0)
             return;
         
@@ -202,12 +201,20 @@ public class Train : MonoBehaviour {
         
         var currentSpot = transform.localPosition - Vector3.back * (totalLength / 2f);
 
+        if (cartDefPositions.Count != carts.Count) {
+            cartDefPositions.Clear();
+            for (int i = 0; i < carts.Count; i++) {
+                cartDefPositions.Add(Vector3.zero);
+            }
+        }
+
         for (int i = 0; i < carts.Count; i++) {
             var cart = carts[i];
             cart.transform.localPosition = currentSpot;
             currentSpot += -Vector3.forward * cart.length;
             var index = i;
             cart.name = $"Cart {index }";
+            cart.trainIndex = index;
             cartDefPositions[i] = cart.transform.localPosition;
         }
         
@@ -251,24 +258,28 @@ public class Train : MonoBehaviour {
 
     public bool doShake = true;
     private float shakeBlock = 0f;
+
     private void Update() {
-        if (PlayStateMaster.s.isCombatInProgress() && doShake) {
-            if (curDistance < 0) {
-                StartCoroutine(ShakeWave());
-                StartCoroutine(RestoreWave(restoreDelay));
-                curDistance += Random.Range(shakeDistance.x, shakeDistance.y);
+        if (PlayStateMaster.s.isCombatInProgress()) {
+            
+            if (doShake) {
+                if (curDistance < 0) {
+                    StartCoroutine(ShakeWave());
+                    StartCoroutine(RestoreWave(restoreDelay));
+                    curDistance += Random.Range(shakeDistance.x, shakeDistance.y);
+                } else {
+                    curDistance -= LevelReferences.s.speed * Time.deltaTime;
+                }
             } else {
-                curDistance -= LevelReferences.s.speed * Time.deltaTime;
+                shakeBlock -= Time.deltaTime;
+                if (shakeBlock <= 0) {
+                    _RestartShake();
+                }
             }
+            
+        } else {
+            doShake = false;
         }
-
-        if (!doShake) {
-            shakeBlock -= Time.deltaTime;
-            if (shakeBlock <= 0) {
-                _RestartShake();
-            }
-        }
-
     }
 
 
@@ -316,6 +327,8 @@ public class Train : MonoBehaviour {
 
     void _RestartShake() {
         if (!doShake) {
+            UpdateCartPositions();
+            
             for (int i = 0; i < carts.Count; i++) {
                 cartDefPositions[i] = carts[i].transform.localPosition;
             }

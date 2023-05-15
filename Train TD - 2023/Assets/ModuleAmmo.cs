@@ -42,11 +42,20 @@ public class ModuleAmmo : MonoBehaviour, IActiveDuringCombat, IActiveDuringShopp
     }
     
     [Button]
-    public void Reload() {
-        Instantiate(LevelReferences.s.reloadEffectPrefab, transform);
-        curAmmo = maxAmmo;
-        UpdateModuleState();
-        OnReload?.Invoke();
+    public void Reload(float amount = -1, bool showEffect = true) {
+        if (curAmmo < maxAmmo) {
+            if (amount < 0) {
+                amount = maxAmmo;
+            }
+
+            if (showEffect)
+                Instantiate(LevelReferences.s.reloadEffectPrefab, transform);
+
+            curAmmo += amount;
+            curAmmo = Mathf.Clamp(curAmmo, 0, maxAmmo);
+            UpdateModuleState();
+            OnReload?.Invoke();
+        }
     }
 
     public UnityEvent OnUse;
@@ -82,7 +91,7 @@ public class ModuleAmmo : MonoBehaviour, IActiveDuringCombat, IActiveDuringShopp
     public void ActivateForCombat() {
         this.enabled = true;
 
-        Reload();
+        Reload(-1,false);
 
         myGunModules = GetComponentsInChildren<GunModule>();
         if (!listenerAdded) {

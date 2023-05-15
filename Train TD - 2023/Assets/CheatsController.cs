@@ -67,10 +67,10 @@ public class CheatsController : MonoBehaviour
         EnemyWavesController.s.DebugEnemySpawn(debugEnemy, distance);
     }
 
-    [Button]
+    /*[Button]
     public void EngageEncounter() {
         ShopStateController.s.DebugEngageEncounter(debugEncounter.title);
-    }
+    }*/
 
     private void OnEnable() {
         cheatButton.action.Enable();
@@ -99,8 +99,11 @@ public class CheatsController : MonoBehaviour
             }
         } else if (!PlayStateMaster.s.isCombatFinished()) {
             //MoneyController.s.AddScraps(1000);
+            
+            
+            SpeedController.s.TravelToMissionEndDistance();
 
-            MissionWinFinisher.s.MissionWon();
+            //MissionWinFinisher.s.MissionWon();
 
             /*var train = Train.s;
             var healths = train.GetComponentsInChildren<ModuleHealth>();
@@ -108,9 +111,7 @@ public class CheatsController : MonoBehaviour
             foreach (var gModuleHealth in healths) {
                 gModuleHealth.DealDamage(gModuleHealth.currentHealth/2);
             }*/
-        } else {
-            MissionWinFinisher.s.DebugRedoRewards();
-        }
+        } 
 
     }
 }

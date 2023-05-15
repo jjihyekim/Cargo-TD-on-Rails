@@ -109,28 +109,30 @@ public class PathSelectorController : MonoBehaviour {
 
 
 	private void Update() {
-		if (nextSegmentChangeDistance > 0 && SpeedController.s.currentDistance > nextSegmentChangeDistance-HexGrid.s.gridSize.x -1) {
-			_tracks[currentSegment].LockTrackState();
-			_levers[currentSegment].LockTrackState();
-			
-			
-			LevelSegment upcomingSegment;
-			if (_levers[currentSegment].currentState) {
-				upcomingSegment = activeLevel.mySegmentsA[currentSegment+1];
-			}else {
-				upcomingSegment = activeLevel.mySegmentsB[currentSegment+1];
-			}
-			
-			EnemyWavesController.s.SpawnEnemiesOnSegment(nextSegmentChangeDistance, upcomingSegment);
+		if (PlayStateMaster.s.isCombatInProgress()) {
+			if (nextSegmentChangeDistance > 0 && SpeedController.s.currentDistance > nextSegmentChangeDistance - HexGrid.s.gridSize.x - 1) {
+				_tracks[currentSegment].LockTrackState();
+				_levers[currentSegment].LockTrackState();
 
-			if (currentSegment < _tracks.Count - 1) {
-				nextSegmentChangeDistance += upcomingSegment.segmentLength;
-				HexGrid.s.DoTrackSwitchAtDistance(nextSegmentChangeDistance);
-			} else {
-				nextSegmentChangeDistance += 10000000;
-			}
 
-			currentSegment += 1;
+				LevelSegment upcomingSegment;
+				if (_levers[currentSegment].currentState) {
+					upcomingSegment = activeLevel.mySegmentsA[currentSegment + 1];
+				} else {
+					upcomingSegment = activeLevel.mySegmentsB[currentSegment + 1];
+				}
+
+				EnemyWavesController.s.SpawnEnemiesOnSegment(nextSegmentChangeDistance, upcomingSegment);
+
+				if (currentSegment < _tracks.Count - 1) {
+					nextSegmentChangeDistance += upcomingSegment.segmentLength;
+					HexGrid.s.DoTrackSwitchAtDistance(nextSegmentChangeDistance);
+				} else {
+					nextSegmentChangeDistance += 10000000;
+				}
+
+				currentSegment += 1;
+			}
 		}
 	}
 

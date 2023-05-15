@@ -722,7 +722,7 @@ GameObject:
   - component: {fileID: 2645679663010677097}
   - component: {fileID: 3316194403589672847}
   m_Layer: 11
-  m_Name: Ammo
+  m_Name: physical ammo
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -737,7 +737,7 @@ Transform:
   m_GameObject: {fileID: 3484742311080754802}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0.102999985, z: 0}
-  m_LocalScale: {x: 0.12281977, y: 0.2567811, z: 0.13593598}
+  m_LocalScale: {x: 0.12281977, y: 0.01711874, z: 0.13593598}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1395666379674075585}
@@ -855,10 +855,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 18996d5ea2f25f044bf2ff70dbf1fb54, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ammoBox: {fileID: 3484742311080754802}
-  currentAmmoBox: {fileID: 0}
+  ammoChunk: {fileID: 3484742311080754802}
+  ammoChunkHeight: 0.01711874
+  allAmmoChunks: []
+  velocity: []
   noAmmoPos: {fileID: 7228994314959930037}
-  fullAmmoPos: {fileID: 6494216064634705291}
   reloadSpawnPos: {fileID: 1650063500131326081}
   moduleAmmo: {fileID: 0}
 --- !u!1 &4606199406098519782
@@ -1386,7 +1387,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7353689250308290952}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: -0.118, z: 0}
+  m_LocalPosition: {x: 0, y: 0.0115, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []

@@ -260,15 +260,15 @@ public class DataSaver {
 		public int currentAct = 1;
 		
 		public StarMapState map = new StarMapState();
-		public List<TrainModuleHolder> trainBuildings = new List<TrainModuleHolder>();
 
 		public float playtime;
 		public RunResources myResources = new RunResources();
 
 		public List<string> powerUps = new List<string>();
 
-		public List<string> unclaimedRewards = new List<string>();
 
+		public bool isInEndRunArea = false;
+		
 		public bool shopInitialized = false;
 		public UpgradesController.ShopState shopState;
 		
@@ -281,15 +281,6 @@ public class DataSaver {
 			for (int i = 0; i < myTrain.myCarts.Count; i++) {
 				var build = myTrain.myCarts[i];
 				//build.ammo = -2;
-			}
-
-			/*for (int i = 0; i < characterData.starterUpgrades.Length; i++) {
-				upgrades.Add(characterData.starterUpgrades[i].upgradeUniqueName);
-			}*/
-
-			for (int i = 0; i < characterData.starterModules.Length; i++) {
-				var mod = characterData.starterModules[i];
-				trainBuildings.Add(new TrainModuleHolder(){moduleUniqueName = mod.moduleUniqueName, amount = mod.amount});
 			}
 
 			myResources = characterData.starterResources.Copy();
@@ -326,21 +317,28 @@ public class DataSaver {
 			[ValueDropdown("GetAllModuleNames")]
 			public string uniqueName = "";
 
-			// dont forget to update the copy function
-			public int health = -1;
-
 			public CargoState cargoState;
 			
 			[Serializable]
 			public class CargoState { // dont forget to update the copy function
-				public bool isBuildingCargo;
+				[ValueDropdown("GetAllModuleNames")]
 				public string cargoReward;
 				public bool isLeftCargo;
+				
+				private static IEnumerable GetAllModuleNames() {
+					var buildings = GameObject.FindObjectOfType<DataHolder>().buildings;
+					var buildingNames = new List<string>();
+					buildingNames.Add("");
+					for (int i = 0; i < buildings.Length; i++) {
+						buildingNames.Add(buildings[i].uniqueName);
+					}
+					return buildingNames;
+				}
 			}
 
 			public void EmptyState() {
 				uniqueName = "";
-				health = -1;
+				//health = -1;
 				/*cargoCost = -1;
 				cargoReward = -1;*/
 			}
@@ -358,11 +356,10 @@ public class DataSaver {
 			public CartState Copy() {
 				var copyState = new CartState();
 				copyState.uniqueName = uniqueName;
-				copyState.health = health;
+				//copyState.health = health;
 				//copyState.ammo = ammo;
 				copyState.cargoState = new CargoState();
 				copyState.cargoState.cargoReward = cargoState.cargoReward;
-				copyState.cargoState.isBuildingCargo = cargoState.isBuildingCargo;
 				copyState.cargoState.isLeftCargo = cargoState.isLeftCargo;
 				return copyState;
 			}

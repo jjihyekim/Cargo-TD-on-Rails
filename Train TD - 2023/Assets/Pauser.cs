@@ -91,8 +91,7 @@ public class Pauser : MonoBehaviour {
         );
         
         Unpause();
-        PlayStateMaster.s.EnterShopState();
         FirstTimeTutorialController.s.StopTutorial();
-        PlayStateMaster.s.afterTransferCalls.Enqueue(()=> MissionWinFinisher.s.Cleanup());
+        MissionLoseFinisher.s.MissionLost();
     }
 }

@@ -18,7 +18,7 @@ public class ModuleHealth : MonoBehaviour, IHealth, IActiveDuringCombat, IActive
 
 
     [ReadOnly]
-    public MiniGUI_HealthBar healthBar;
+    public MiniGUI_CartUIBar myUIBar;
     
     public GameObject explodePrefab;
     public bool isDead = false;
@@ -32,8 +32,7 @@ public class ModuleHealth : MonoBehaviour, IHealth, IActiveDuringCombat, IActive
     private float selfDamageTimer;
     public int[] selfDamageAmounts = new[] { 20, 10 };
 
-    private Cart myBuilding;
-    public bool isCartHp = false;
+    private Cart myCart;
 
     private GameObject activeHPCriticalIndicatorEffects;
     private enum HPLowStates {
@@ -53,16 +52,15 @@ public class ModuleHealth : MonoBehaviour, IHealth, IActiveDuringCombat, IActive
         if(isImmune)
             return;
 
-        myBuilding = GetComponent<Cart>();
-        if (!isDead && (myBuilding == null || !myBuilding.isDestroyed)) {
+        myCart = GetComponent<Cart>();
+        if (!isDead && (myCart == null || !myCart.isDestroyed)) {
             currentHealth -= damage;
 
             var hpPercent = currentHealth / maxHealth;
             SetBuildingShaderHealth(hpPercent);
             
             if(currentHealth <= 0) {
-                var repairable = GetComponent<RepairableIfDestroyed>();
-                if (repairable != null) {
+                if (myCart.isRepairable) {
                     GetDestroyed();
                 } else {
                     if(!invincibleTutorial)
@@ -86,12 +84,12 @@ public class ModuleHealth : MonoBehaviour, IHealth, IActiveDuringCombat, IActive
         var hpPercent = currentHealth / maxHealth;
         if(isDead)
             return;
-        myBuilding = GetComponent<Cart>();
-        if (myBuilding == null) { // carts have module health but not trainbuilding
+        myCart = GetComponent<Cart>();
+        if (myCart == null) { // carts have module health but not trainbuilding
             return;
         }
 
-        if (myBuilding.isDestroyed) {
+        if (myCart.isDestroyed) {
             if (hpState != HPLowStates.destroyed) {
                 if(activeHPCriticalIndicatorEffects != null)
                     activeHPCriticalIndicatorEffects.GetComponent<SmartDestroy>().Engage();
@@ -132,7 +130,7 @@ public class ModuleHealth : MonoBehaviour, IHealth, IActiveDuringCombat, IActive
 
             Instantiate(LevelReferences.s.repairEffectPrefab, GetUITransform());
 
-            if (myBuilding.isDestroyed && currentHealth > maxHealth / 2) {
+            if (myCart.isDestroyed && currentHealth > maxHealth / 2) {
                 GetUnDestroyed();
             }
 
@@ -160,8 +158,8 @@ public class ModuleHealth : MonoBehaviour, IHealth, IActiveDuringCombat, IActive
             }
         }
         
-        myBuilding = GetComponent<Cart>();
-        if (myBuilding.isDestroyed && currentHealth > maxHealth / 2) {
+        myCart = GetComponent<Cart>();
+        if (myCart.isDestroyed && currentHealth > maxHealth / 2) {
             GetUnDestroyed();
         }
         
@@ -172,6 +170,7 @@ public class ModuleHealth : MonoBehaviour, IHealth, IActiveDuringCombat, IActive
     [ShowIf("damageNearCartsOnDeath")]
     public int[] explosionDamages = new[] { 100, 50, 25 };
     void DamageNearCartsOnDeath() {
+        return;
         var myModule = GetComponent<Cart>();
 
         var forwardWave = myModule;
@@ -320,13 +319,13 @@ public class ModuleHealth : MonoBehaviour, IHealth, IActiveDuringCombat, IActive
     }
     
     private void Start() {
+        myCart = GetComponent<Cart>();
+        
         if (GetComponentInParent<Train>() != null) {
-            //healthBar = Instantiate(LevelReferences.s.partHealthPrefab, LevelReferences.s.uiDisplayParent).GetComponent<MiniGUI_HealthBar>();
-            //healthBar.SetUp(this, GetComponent<ModuleAmmo>());
+            myUIBar = Instantiate(LevelReferences.s.cartHealthPrefab, LevelReferences.s.cartHealthParent).GetComponent<MiniGUI_CartUIBar>();
+            myUIBar.SetUp(myCart, this, GetComponentInChildren<ModuleAmmo>());
             buildingsBuild += 1;
         }
-
-        myBuilding = GetComponent<Cart>();
         
         myBar.UpdateHealth(currentHealth/maxHealth);
     }
@@ -340,13 +339,6 @@ public class ModuleHealth : MonoBehaviour, IHealth, IActiveDuringCombat, IActive
             DamageNearCartsOnDeath();
         }*/
 
-        if (isCartHp) {
-            var buildings = GetComponentsInChildren<Cart>();
-            for (int i = 0; i < buildings.Length; i++) {
-                buildings[i].GetComponent<ModuleHealth>().Die();
-            }
-        }
-        
         isDead = true;
         Instantiate(explodePrefab, transform.position, transform.rotation);
         SoundscapeController.s.PlayModuleExplode();
@@ -368,16 +360,16 @@ public class ModuleHealth : MonoBehaviour, IHealth, IActiveDuringCombat, IActive
 
     [Button]
     public void GetDestroyed() {
-        myBuilding.isDestroyed = true;
+        myCart.isDestroyed = true;
         GetComponent<PossibleTarget>().enabled = false;
 
-        var engineModule = GetComponent<EngineModule>();
+        var engineModule = GetComponentInChildren<EngineModule>();
         if (engineModule) {
             engineModule.enabled = false;
             GetComponentInChildren<EngineFireController>().StopEngineFire();
         }
 
-        var gunModule = GetComponent<GunModule>();
+        var gunModule = GetComponentInChildren<GunModule>();
         if (gunModule) {
             if (gunModule.beingDirectControlled) {
                 DirectControlMaster.s.DisableDirectControl();
@@ -385,14 +377,14 @@ public class ModuleHealth : MonoBehaviour, IHealth, IActiveDuringCombat, IActive
 
             gunModule.DeactivateGun();
 
-            GetComponent<TargetPicker>().enabled = false;
+            GetComponentInChildren<TargetPicker>().enabled = false;
         }
 
 
-        var colliders = GetComponentsInChildren<Collider>();
+        /*var colliders = GetComponentsInChildren<Collider>();
         for (int i = 0; i < colliders.Length; i++) {
             colliders[i].enabled = false;
-        }
+        }*/
 
         SetBuildingShaderAlive(false);
 
@@ -406,26 +398,26 @@ public class ModuleHealth : MonoBehaviour, IHealth, IActiveDuringCombat, IActive
 
     [Button]
     public void GetUnDestroyed() {
-        myBuilding.isDestroyed = false;
+        myCart.isDestroyed = false;
         GetComponent<PossibleTarget>().enabled = true;
         
-        var engineModule = GetComponent<EngineModule>();
+        var engineModule = GetComponentInChildren<EngineModule>();
         if (engineModule) {
             engineModule.enabled = true;
             GetComponentInChildren<EngineFireController>().ActivateEngineFire();
         }
 
-        var gunModule = GetComponent<GunModule>();
+        var gunModule = GetComponentInChildren<GunModule>();
         if (gunModule) {
             gunModule.ActivateGun();
-            GetComponent<TargetPicker>().enabled = true;
+            GetComponentInChildren<TargetPicker>().enabled = true;
         }
         
 
-        var colliders = GetComponentsInChildren<Collider>();
+        /*var colliders = GetComponentsInChildren<Collider>();
         for (int i = 0; i < colliders.Length; i++) {
             colliders[i].enabled = true;
-        }
+        }*/
 
         SetBuildingShaderAlive(true);
     }
@@ -464,9 +456,9 @@ public class ModuleHealth : MonoBehaviour, IHealth, IActiveDuringCombat, IActive
     }
 
     private void OnDestroy() {
-        if(healthBar != null)
-            if(healthBar.gameObject != null)
-                Destroy(healthBar.gameObject);
+        if(myUIBar != null)
+            if(myUIBar.gameObject != null)
+                Destroy(myUIBar.gameObject);
     }
 
     public bool IsPlayer() {
@@ -493,9 +485,9 @@ public class ModuleHealth : MonoBehaviour, IHealth, IActiveDuringCombat, IActive
     }
 
     public Transform GetUITransform() {
-        myBuilding = GetComponent<Cart>();
-        if (myBuilding != null) {
-            return myBuilding.GetUITargetTransform();
+        myCart = GetComponent<Cart>();
+        if (myCart != null) {
+            return myCart.GetUITargetTransform();
         } else {
             return transform;
         }

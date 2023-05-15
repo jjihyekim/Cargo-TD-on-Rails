@@ -173,10 +173,14 @@ public class EnemyWave : MonoBehaviour, IShowOnDistanceRadar, ISpeedForEngineSou
             myXOffset = Mathf.MoveTowards(myXOffset, targetXOffset, 0.1f * Time.deltaTime * currentSpeed);
             
         } else if(PlayStateMaster.s.isCombatFinished()) {
+            if (MissionWinFinisher.s.isWon) {
+                targetSpeed = 0;
+            } else {
+                targetSpeed = mySpeed;
+            }
             transform.position = Vector3.forward * (wavePosition - playerPos + currentDistanceOffset - 0.2f) + Vector3.left * myXOffset;
             wavePosition += currentSpeed * Time.deltaTime;
             currentSpeed = Mathf.MoveTowards(currentSpeed, targetSpeed, speedChangeDelta * Time.deltaTime);
-            targetSpeed = mySpeed;
             DestroyRouteDisplay();
         }
     }

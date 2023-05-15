@@ -6,14 +6,16 @@ using UnityEngine;
 public class CargoModule : MonoBehaviour, IActiveDuringCombat, IActiveDuringShopping {
 
     [SerializeField]
-    private bool isBuildingReward;
-    [SerializeField]
     private string myReward;
 
     public bool isLeftCargo;
 
     public SpriteRenderer[] icons;
-    
+
+    private void Start() {
+        highlight.SetActive(false);
+    }
+
     public void ActivateForCombat() {
         this.enabled = true;
     }
@@ -25,33 +27,21 @@ public class CargoModule : MonoBehaviour, IActiveDuringCombat, IActiveDuringShop
     public void Disable() {
         this.enabled = false;
     }
-    
-    public void CargoSold() {
-        Destroy(gameObject);
-    }
 
-    public void CargoReturned() {
-        Destroy(gameObject);
-    }
-
-    public bool IsBuildingReward() {
-        return isBuildingReward;
-    }
-    
     public string GetReward() {
         return myReward;
     }
 
     public Sprite GetRewardIcon() {
-        if (isBuildingReward) {
+        /*if (isBuildingReward) {
             return DataHolder.s.GetCart(myReward).Icon;
         } else {
             return DataHolder.s.GetPowerUp(myReward).icon;
-        }
+        }*/
+        return DataHolder.s.GetCart(myReward).Icon;
     }
 
     public void SetCargo(DataSaver.TrainState.CartState.CargoState cargoState) {
-        isBuildingReward = cargoState.isBuildingCargo;
         myReward = cargoState.cargoReward;
         isLeftCargo = cargoState.isLeftCargo;
 
@@ -60,5 +50,10 @@ public class CargoModule : MonoBehaviour, IActiveDuringCombat, IActiveDuringShop
         for (int i = 0; i < icons.Length; i++) {
             icons[i].sprite = icon;
         }
+    }
+
+    public GameObject highlight;
+    public void HighlightForDelivery() {
+        highlight.SetActive(true);
     }
 }

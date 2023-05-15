@@ -14,7 +14,7 @@ public class BreakParticles : MonoBehaviour {
 
     private bool lastState ;
     void Update() {
-        var isBreaking = SpeedController.s.currentBreakPower > 0;
+        var isBreaking = SpeedController.s.currentBreakPower > 0 && LevelReferences.s.speed > 0.01f;
         if (lastState != isBreaking) {
             for (int i = 0; i < _particleSystems.Length; i++) {
                 if (isBreaking) {
@@ -33,12 +33,6 @@ public class BreakParticles : MonoBehaviour {
             for (int i = 0; i < _particleSystems.Length; i++) {
                 var emission = _particleSystems[i].emission;
                 emission.rateOverTime = particleAmount;
-            }
-
-            if (LevelReferences.s.speed < 0.1f) {
-                for (int i = 0; i < _particleSystems.Length; i++) {
-                    _particleSystems[i].Stop();
-                }
             }
         }
     }

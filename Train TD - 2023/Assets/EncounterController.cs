@@ -171,7 +171,7 @@ public class EncounterController : MonoBehaviour {
     }
 
     void EncounterComplete() {
-        DataSaver.s.GetCurrentSave().currentRun.unclaimedRewards = new List<string>();
+        //DataSaver.s.GetCurrentSave().currentRun.unclaimedRewards = new List<string>();
         DataSaver.s.GetCurrentSave().currentRun.shopInitialized = false;
         MapController.s.FinishTravelingToStar();
         DataSaver.s.SaveActiveGame();

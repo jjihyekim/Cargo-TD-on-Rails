@@ -44,10 +44,10 @@ public class ActFinishController : MonoBehaviour {
     }
 
     public void CloseActUI() {
-        MissionWinFinisher.s.Cleanup();
-        
         act1WinUI.SetActive(false);
         act2WinUI.SetActive(false);
         act3WinUI.SetActive(false);
+        
+        PlayStateMaster.s.LeaveMissionRewardArea();
     }
 }
