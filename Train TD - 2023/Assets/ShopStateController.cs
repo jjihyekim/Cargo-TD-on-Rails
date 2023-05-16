@@ -56,9 +56,7 @@ public class ShopStateController : MonoBehaviour {
 		starterUI.SetActive(false);
 		FirstTimeTutorialController.s.StopTutorial();
 		PlayStateMaster.s.OpenMainMenu();
-
-		// MusicPlayer.s.SwapMusicTracksAndPlay(false);
-		FMODMusicPlayer.s.SwapMusicTracksAndPlay(false);
+		MusicPlayer.s.SwapMusicTracksAndPlay(false);
 	}
 
 	public void OpenShopUI() {
@@ -223,9 +221,7 @@ public class ShopStateController : MonoBehaviour {
 		RangeVisualizer.SetAllRangeVisualiserState(true);
 
 		SoundscapeController.s.PlayMissionStartSound();
-
-		//MusicPlayer.s.SwapMusicTracksAndPlay(true);
-		FMODMusicPlayer.s.SwapMusicTracksAndPlay(true);
+		MusicPlayer.s.SwapMusicTracksAndPlay(true);
 		
 		StartLevel();
 	}

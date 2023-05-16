@@ -72,10 +72,7 @@ public class MissionLoseFinisher : MonoBehaviour {
         DataSaver.s.GetCurrentSave().currentRun = null;
         DataSaver.s.GetCurrentSave().isInARun = false;
         DataSaver.s.SaveActiveGame();
-
-        // MusicPlayer.s.SwapMusicTracksAndPlay(false);
-        FMODMusicPlayer.s.SwapMusicTracksAndPlay(false);
-
+        MusicPlayer.s.SwapMusicTracksAndPlay(false);
         SceneLoader.s.ForceReloadScene();
     }
 }
