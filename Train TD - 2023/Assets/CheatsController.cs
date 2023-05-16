@@ -16,8 +16,11 @@ public class CheatsController : MonoBehaviour
     public bool debugNoRegularSpawns = false;
     public bool instantEnterPlayMode = false;
     public bool playerIsImmune;
-    public EnemyIdentifier debugEnemy;
+    public bool restartOnStart = false;
+    public bool dontDrawMap = false;
     
+    
+    public EnemyIdentifier debugEnemy;
 
     private void Start() {
         #if !UNITY_EDITOR
@@ -25,15 +28,23 @@ public class CheatsController : MonoBehaviour
         infiniteLevel = false;
         instantEnterPlayMode = false;
         playerIsImmune= false;
-        #endif
+        restartOnStart = false;
+        dontDrawMap = false;
+#endif
 
 
         
-        if(debugNoRegularSpawns || infiniteLevel)
+        if(debugNoRegularSpawns || infiniteLevel || infiniteLevel || instantEnterPlayMode || playerIsImmune || restartOnStart || dontDrawMap)
             Debug.LogError("Debug options active!");
         
         if (debugNoRegularSpawns)
             EnemyWavesController.s.debugNoRegularSpawns = true;
+
+        if (restartOnStart)
+            DataSaver.s.GetCurrentSave().isInARun = false;
+        
+        if(dontDrawMap)
+            WorldMapCreator.s.QuickStartNoWorldMap();
 
         if (instantEnterPlayMode) {
            Invoke(nameof(QuickStart),0.01f);

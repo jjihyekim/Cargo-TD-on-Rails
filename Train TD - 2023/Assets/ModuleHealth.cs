@@ -150,8 +150,7 @@ public class ModuleHealth : MonoBehaviour, IHealth, IActiveDuringCombat, IActive
         SetBuildingShaderHealth(currentHealth / maxHealth);
         
         if(currentHealth <= 0) {
-            var repairable = GetComponent<RepairableIfDestroyed>();
-            if (repairable != null) {
+            if (true) {
                 GetDestroyed();
             } else {
                 Die();
@@ -320,14 +319,15 @@ public class ModuleHealth : MonoBehaviour, IHealth, IActiveDuringCombat, IActive
     
     private void Start() {
         myCart = GetComponent<Cart>();
-        
+        myBar.UpdateHealth(currentHealth/maxHealth);
+    }
+
+    public void InitializeUIBar() {
         if (GetComponentInParent<Train>() != null) {
             myUIBar = Instantiate(LevelReferences.s.cartHealthPrefab, LevelReferences.s.cartHealthParent).GetComponent<MiniGUI_CartUIBar>();
             myUIBar.SetUp(myCart, this, GetComponentInChildren<ModuleAmmo>());
             buildingsBuild += 1;
         }
-        
-        myBar.UpdateHealth(currentHealth/maxHealth);
     }
 
     [NonSerialized]
@@ -347,10 +347,10 @@ public class ModuleHealth : MonoBehaviour, IHealth, IActiveDuringCombat, IActive
             buildingsDestroyed += 1;
         }
 
-        // in case of death give some of the cost back
+        /*// in case of death give some of the cost back
         var trainBuilding = GetComponent<Cart>();
         if(trainBuilding)
-            LevelReferences.s.SpawnResourceAtLocation(ResourceTypes.scraps, trainBuilding.cost * 0.25f, transform.position);
+            LevelReferences.s.SpawnResourceAtLocation(ResourceTypes.scraps, trainBuilding.cost * 0.25f, transform.position);*/
         
         
         dieEvent?.Invoke();

@@ -15,71 +15,31 @@ MonoBehaviour:
   myCharacter:
     uniqueName: Le Cheater
     description: For when you wanna test out all the guns.
-    starterModules:
-    - moduleUniqueName: AVR
-      amount: 5
-    - moduleUniqueName: cannon
-      amount: 5
-    - moduleUniqueName: Engine
-      amount: 5
-    - moduleUniqueName: flamethrower
-      amount: 5
-    - moduleUniqueName: gatling
-      amount: 5
-    - moduleUniqueName: pneumatic
-      amount: 5
-    - moduleUniqueName: roborepair
-      amount: 5
-    - moduleUniqueName: Rocket
-      amount: 5
-    - moduleUniqueName: steamvents
-      amount: 5
-    - moduleUniqueName: laser
-      amount: 5
-    - moduleUniqueName: ammoStorage
-      amount: 5
-    - moduleUniqueName: tripleStorage
-      amount: 5
-    - moduleUniqueName: fuelStorage
-      amount: 5
-    - moduleUniqueName: scrapStorage
-      amount: 5
-    - moduleUniqueName: nuclearEngine
-      amount: 5
-    - moduleUniqueName: BasicNuclear
-      amount: 5
     starterTrain:
       myCarts:
       - uniqueName: engine_nuclear
-        health: -1
-        ammo: -1
-        isBuildingCargo: 0
-        cargoReward: 
+        cargoState:
+          cargoReward: 
+          isLeftCargo: 0
       - uniqueName: cargo_mystery
-        health: -1
-        ammo: -1
-        isBuildingCargo: 0
-        cargoReward: 
+        cargoState:
+          cargoReward: 
+          isLeftCargo: 0
       - uniqueName: top_avr
-        health: -1
-        ammo: -1
-        isBuildingCargo: 0
-        cargoReward: 
-      - uniqueName: top_avr
-        health: -1
-        ammo: -1
-        isBuildingCargo: 0
-        cargoReward: 
-      - uniqueName: top_avr
-        health: -1
-        ammo: -1
-        isBuildingCargo: 0
-        cargoReward: 
+        cargoState:
+          cargoReward: 
+          isLeftCargo: 0
+      - uniqueName: top_cannon
+        cargoState:
+          cargoReward: 
+          isLeftCargo: 0
+      - uniqueName: side_cannon
+        cargoState:
+          cargoReward: 
+          isLeftCargo: 0
+      - uniqueName: side_avr
+        cargoState:
+          cargoReward: 
+          isLeftCargo: 0
     starterResources:
-      money: 2000
       scraps: 0
-      maxScraps: 0
-      ammo: 0
-      maxAmmo: 0
-      fuel: 0
-      maxFuel: 0

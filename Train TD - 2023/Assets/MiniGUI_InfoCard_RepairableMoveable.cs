@@ -12,6 +12,6 @@ public class MiniGUI_InfoCard_RepairableMoveable : MonoBehaviour, IBuildingInfoC
     
     public void SetUp(Cart building) {
         //repairable.isOn = building.GetComponent<RepairAction>() != null;
-        fragile.isOn = building.GetComponentInChildren<RepairableIfDestroyed>() == null;
+        //fragile.isOn = building.GetComponentInChildren<RepairableIfDestroyed>() == null;
     }
 }

@@ -17,7 +17,7 @@ public class Cart : MonoBehaviour {
 
     public float length = 1.4f;
     [HideInInspector]
-    public bool canSelect = true;
+    public bool canPlayerDrag = true;
 
     public string displayName = "Unnamed But Nice in game name";
     public string uniqueName = "unnamed";
@@ -28,14 +28,8 @@ public class Cart : MonoBehaviour {
 
     [ReadOnly] 
     public Train myTrain;
-
-
-    public int localShopCost = 100;
-    public int cost = 50;
-    public int weight = 50;
     
-
-    public bool isBuilt = false;
+    public int weight = 50;
 
     [Space] 
     public bool isDestroyed = false;
@@ -43,7 +37,6 @@ public class Cart : MonoBehaviour {
     public Transform uiTargetTransform;
     public Transform shootingTargetTransform;
     public Transform modulesParent;
-
 
     [NonSerialized] public GameObject currentlyRepairingUIThing;
     private void Start() {

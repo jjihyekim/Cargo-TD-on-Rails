@@ -188,7 +188,7 @@ public class SpeedController : MonoBehaviour, IShowOnDistanceRadar {
     // 0 = u2 + 2as
     // u2 = 2as
     // u2/2s = a
-    public readonly float stopDistance = 13.1f;
+    public readonly float stopDistance = 10f;
     private float stopAcceleration = 0;
 
     void CalculateStopAcceleration() {

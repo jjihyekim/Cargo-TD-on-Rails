@@ -282,6 +282,17 @@ public class Train : MonoBehaviour {
         }
     }
 
+    public void TrainCleanupForCombat() {
+        LevelReferences.s.cartHealthParent.DeleteAllChildren();
+        for (int i = 0; i < carts.Count; i++) {
+            carts[i].transform.SetSiblingIndex((carts.Count - 1) - i);
+        }
+        
+        for (int i = 0; i < carts.Count; i++) {
+            carts[i].GetHealthModule().InitializeUIBar();
+        }
+    }
+
 
     public void RemoveCart(Cart cart) {
         carts.Remove(cart);

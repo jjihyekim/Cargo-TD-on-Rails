@@ -153,16 +153,24 @@ public class WorldMapCreator : MonoBehaviour {
 
 	public float worldMapGenerationProgress = 0;
 
+	public void ResetWorldMapGenerationProgress() {
+		if (generateWorldMap) {
+			worldMapGenerationProgress = 0;
+		} else {
+			worldMapGenerationProgress = 1;
+		}
+	}
+
 	public void QuickStartNoWorldMap() {
 		generateWorldMap = false;
 		worldMapGenerationProgress = 1;
-
 	}
 
 	private bool generateWorldMap = true;
 	public void GenerateWorldMap() {
 		if(!generateWorldMap)
 			return;
+		
 		worldMapGenerationProgress = 0;
 		ReturnToRegularMap();
 

@@ -756,7 +756,6 @@ GameObject:
   - component: {fileID: 1066860337956249593}
   - component: {fileID: 1066860337956249592}
   - component: {fileID: 1066860337956249595}
-  - component: {fileID: 1515822202}
   m_Layer: 0
   m_Name: _ConstantObjects
   m_TagString: Untagged
@@ -805,7 +804,6 @@ MonoBehaviour:
         character:
           uniqueName: unset
           description: 
-          starterModules: []
           starterTrain:
             myCarts: []
           starterResources:
@@ -813,29 +811,24 @@ MonoBehaviour:
         myTrain:
           myCarts:
           - uniqueName: 
-            health: -1
             cargoState:
-              isBuildingCargo: 0
               cargoReward: 
               isLeftCargo: 0
         currentAct: 1
         map:
           chunks: []
-        trainBuildings: []
         playtime: 0
         myResources:
           scraps: 200
         powerUps: []
-        unclaimedRewards: []
+        isInEndRunArea: 0
         shopInitialized: 0
         shopState:
           cartStates: []
           leftCargo:
-            isBuildingCargo: 0
             cargoReward: 
             isLeftCargo: 0
           rightCargo:
-            isBuildingCargo: 0
             cargoReward: 
             isLeftCargo: 0
       xpProgress:
@@ -867,7 +860,6 @@ MonoBehaviour:
         character:
           uniqueName: unset
           description: 
-          starterModules: []
           starterTrain:
             myCarts: []
           starterResources:
@@ -875,29 +867,24 @@ MonoBehaviour:
         myTrain:
           myCarts:
           - uniqueName: 
-            health: -1
             cargoState:
-              isBuildingCargo: 0
               cargoReward: 
               isLeftCargo: 0
         currentAct: 1
         map:
           chunks: []
-        trainBuildings: []
         playtime: 0
         myResources:
           scraps: 200
         powerUps: []
-        unclaimedRewards: []
+        isInEndRunArea: 0
         shopInitialized: 0
         shopState:
           cartStates: []
           leftCargo:
-            isBuildingCargo: 0
             cargoReward: 
             isLeftCargo: 0
           rightCargo:
-            isBuildingCargo: 0
             cargoReward: 
             isLeftCargo: 0
       xpProgress:
@@ -929,7 +916,6 @@ MonoBehaviour:
         character:
           uniqueName: unset
           description: 
-          starterModules: []
           starterTrain:
             myCarts: []
           starterResources:
@@ -937,29 +923,24 @@ MonoBehaviour:
         myTrain:
           myCarts:
           - uniqueName: 
-            health: -1
             cargoState:
-              isBuildingCargo: 0
               cargoReward: 
               isLeftCargo: 0
         currentAct: 1
         map:
           chunks: []
-        trainBuildings: []
         playtime: 0
         myResources:
           scraps: 200
         powerUps: []
-        unclaimedRewards: []
+        isInEndRunArea: 0
         shopInitialized: 0
         shopState:
           cartStates: []
           leftCargo:
-            isBuildingCargo: 0
             cargoReward: 
             isLeftCargo: 0
           rightCargo:
-            isBuildingCargo: 0
             cargoReward: 
             isLeftCargo: 0
       xpProgress:
@@ -1011,120 +992,6 @@ MonoBehaviour:
   canvasGroup: {fileID: 3380069376071540210}
   isLoading: 0
   currentFadeValue: 0
---- !u!114 &1515822202
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1066860337956249594}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2934107c834a51446895503bd362fa25, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  cartPrefab: {fileID: 3399934084524781478, guid: 86c82cfee32788c49a35e2e0e34bf7b7, type: 3}
-  cartLength: 1.148
-  buildings:
-  - {fileID: 2506377382935208666, guid: 61172d9c4dd487a43a2668c52280a968, type: 3}
-  - {fileID: 2506377382935208666, guid: 8c79e4186a27f7946b92f387744ddc4a, type: 3}
-  - {fileID: 2506377382935208666, guid: 1c23873aadb7b9c4b9b573b6cf8d6868, type: 3}
-  - {fileID: 2506377382935208666, guid: 8f3fe7d03f92ca64c8158283265f694b, type: 3}
-  - {fileID: 2506377382935208666, guid: 82af73b6829e2814688ecfd1a21ba143, type: 3}
-  enemies:
-  - uniqueName: BuggyAVC
-    data: {fileID: 5297413553918262561, guid: 845f1cf4e800d8e45b607240c9e6190c, type: 3}
-  - uniqueName: BuggyPneumatic
-    data: {fileID: 5297413553918262561, guid: 35d98120faee6a84e898ff25fe528024, type: 3}
-  - uniqueName: BuggyCannon
-    data: {fileID: 5297413553918262561, guid: 31656bdda0a3b6e47b73b5c9bf17a4b3, type: 3}
-  - uniqueName: Biker
-    data: {fileID: 5055315991105005710, guid: 2435e3645a7ab1c46ad8aa27ff70b2b6, type: 3}
-  - uniqueName: Army
-    data: {fileID: 3387775018460824596, guid: e4c52cae8d2083a4cb1df1e0ed443938, type: 3}
-  - uniqueName: TruckCannon
-    data: {fileID: 8567764965066828291, guid: e222b2c7b0266e045b51df477b0386b1, type: 3}
-  - uniqueName: TruckFlamer
-    data: {fileID: 8567764965066828291, guid: 9a104d6286ff59440b75af80fe23d7a0, type: 3}
-  - uniqueName: SupplierSafe
-    data: {fileID: 8567764965066828291, guid: 167eb19127e4fa74aa76b56e51367d6b, type: 3}
-  - uniqueName: SupplierGatling
-    data: {fileID: 8567764965066828291, guid: 692722e00ae7e5b4f8252280d55f2d4e, type: 3}
-  - uniqueName: TeleportingBuggyAVC
-    data: {fileID: 5297413553918262561, guid: 071c8061e6809c640949f7bdfa72504f, type: 3}
-  - uniqueName: TeleportingBuggyCannon
-    data: {fileID: 5297413553918262561, guid: f6675424ff843c24cabe9f7d17dc7aba, type: 3}
-  - uniqueName: TeleportingBuggyGatling
-    data: {fileID: 5297413553918262561, guid: 0588e143456895e41a814aabb3503351, type: 3}
-  - uniqueName: Slower
-    data: {fileID: 3387775018460824596, guid: 6759a5c5f7d9520419667f2a0a9293ed, type: 3}
-  - uniqueName: Stealer
-    data: {fileID: 3387775018460824596, guid: 9862133d97f7be047bffbb7e8095e01b, type: 3}
-  - uniqueName: StrongBuggyLazer
-    data: {fileID: 5297413553918262561, guid: 4a798d309043a3d4b97be993a31b6f41, type: 3}
-  - uniqueName: StrongBuggyGatling
-    data: {fileID: 5297413553918262561, guid: f6d3434bbaf479d4db699bead21d2239, type: 3}
-  - uniqueName: BossTeleporter
-    data: {fileID: 3387775018460824596, guid: 1ab9c6d2aa4b2d7458a805827da37f26, type: 3}
-  - uniqueName: PowerUpCarrier
-    data: {fileID: 8567764965066828291, guid: f967fbf18add4a842a78d52f285eedf0, type: 3}
-  characters:
-  - {fileID: 11400000, guid: 2ee611f29a603744199eea6d9a3668ca, type: 2}
-  - {fileID: 11400000, guid: 72517930d567d1e47828c0af9641b34e, type: 2}
-  - {fileID: 11400000, guid: 059b7d277410e644482aaf682aef739f, type: 2}
-  cities:
-  - {fileID: 11400000, guid: 0d188d5e11ddb9a40ad5c80faa6f299f, type: 2}
-  - {fileID: 11400000, guid: 165b7fcbc45535f4ba349a69363afb7a, type: 2}
-  - {fileID: 11400000, guid: df2731e787113964c8404bd51c21d06b, type: 2}
-  - {fileID: 11400000, guid: 789eeadd031e172459190bd7f9bacc86, type: 2}
-  - {fileID: 11400000, guid: 576dcaa7b4e01164286bb74a9069e977, type: 2}
-  - {fileID: 11400000, guid: f2a6d41814c22c745aa4b687dc4c231d, type: 2}
-  - {fileID: 11400000, guid: 346c7b87b2c9a0d49af351b9699b543d, type: 2}
-  - {fileID: 11400000, guid: 2cb002e00486e3a429298bc6f08b75c5, type: 2}
-  encounters:
-  - {fileID: 3295736480921032522, guid: e5b4698d874016b4886952250af6da6e, type: 3}
-  - {fileID: 3295736480921032522, guid: 380f2f2ffc7ba96488db14e67d456a22, type: 3}
-  - {fileID: 1727440949419904987, guid: a4edeca98fdb5064a8186ddbb921430e, type: 3}
-  - {fileID: 3295736480921032522, guid: 5c27608b6e1fdf942bfed062c0a87ee8, type: 3}
-  - {fileID: 3295736480921032522, guid: 5ad023e4b63818943a4562e36c8110dd, type: 3}
-  - {fileID: 3295736480921032522, guid: 1fb26d73c13a8cf41943db95846b769f, type: 3}
-  - {fileID: 3295736480921032522, guid: f90aaae99e686cd4a803117ef511e49a, type: 3}
-  - {fileID: 3295736480921032522, guid: 74e11eec2b679cc4ca2084d1fe90b999, type: 3}
-  levels:
-  - {fileID: 11400000, guid: 7c8f4efe62c155e43b56816446150dfb, type: 2}
-  - {fileID: 11400000, guid: c393bb40291095e48b464e33e27d5f70, type: 2}
-  - {fileID: 11400000, guid: 30b53525c2cad324b9b1a0d5f74721ae, type: 2}
-  - {fileID: 11400000, guid: 2e6ba252936a8194290bd71d222c9888, type: 2}
-  - {fileID: 11400000, guid: a6d894180c4c0344599ffeb1bad1ea6c, type: 2}
-  - {fileID: 11400000, guid: 3197762caf9c5ba4c8dcbf4b0b650d4c, type: 2}
-  - {fileID: 11400000, guid: 5494274709734124b94f4de092f26f37, type: 2}
-  - {fileID: 11400000, guid: a01fb8147b9dd37489d7bbc5472b905d, type: 2}
-  - {fileID: 11400000, guid: 5d355632f840f6041992abb50da73eb7, type: 2}
-  - {fileID: 11400000, guid: 38490de6d7c4ad64eb55726eb400f2f4, type: 2}
-  - {fileID: 11400000, guid: 2934dcbe138a9d044894315d34635c71, type: 2}
-  - {fileID: 11400000, guid: 85455ea1b6fdf8c4ba6c4ee2558f7ccb, type: 2}
-  - {fileID: 11400000, guid: cf92652e50cc41e46a04029d20b8d7c0, type: 2}
-  - {fileID: 11400000, guid: a1c4466aa860fe2469a79e0d82c89854, type: 2}
-  - {fileID: 11400000, guid: 265cd3cc99700d14bb8e1419f05ea8e5, type: 2}
-  - {fileID: 11400000, guid: 50c616aa7de02154783b5e380a624a7f, type: 2}
-  - {fileID: 11400000, guid: 6739b5cfa0988b04b8668ff5db0237a8, type: 2}
-  - {fileID: 11400000, guid: 6b302e3f47f51314ca79441e6d03e4e8, type: 2}
-  - {fileID: 11400000, guid: 40666bdceb09ca94baa49ea75b43d62a, type: 2}
-  - {fileID: 11400000, guid: 70cd36719f60e59408bc37f16c00bef9, type: 2}
-  - {fileID: 11400000, guid: a461a96bea544e5498ca8d54726002bc, type: 2}
-  - {fileID: 11400000, guid: 1b367ee03ec05024a87b507057f168fb, type: 2}
-  - {fileID: 11400000, guid: d750168af7ac66a46875213a0a900fd0, type: 2}
-  - {fileID: 11400000, guid: 69ee3aa1084b5f4489ae7484cb05ebf2, type: 2}
-  - {fileID: 11400000, guid: a665294ebe521524ab361394107cea28, type: 2}
-  - {fileID: 11400000, guid: f14de6342fcfd8248982409a7a1275d2, type: 2}
-  - {fileID: 11400000, guid: 9ee5e0c810e83dd4eb46563111bb780e, type: 2}
-  powerUps:
-  - {fileID: 11400000, guid: e4f6feee71538644289ba169a701ac18, type: 2}
-  - {fileID: 11400000, guid: 72c8380ccf7b68a45a38deebf8c39e24, type: 2}
-  - {fileID: 11400000, guid: d64975c4fead0f04f8afc256017abdee, type: 2}
-  moneyBackColor: {r: 0.7830189, g: 0.64343905, b: 0, a: 1}
-  repairPrefab: {fileID: 172524484023753321, guid: 63ac6f74862b66b49b9d837b5a27adf3, type: 3}
-  sellPrefab: {fileID: 172524484023753321, guid: 5c944d37062c8b04d8a0fa76e4e24049, type: 3}
 --- !u!1 &1881823425043155332
 GameObject:
   m_ObjectHideFlags: 0

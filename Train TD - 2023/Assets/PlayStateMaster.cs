@@ -63,13 +63,13 @@ public class PlayStateMaster : MonoBehaviour {
     }
 
     public void StarCombat() {
-        OnCombatEntered?.Invoke();
         _gameState = GameState.combat;
+        OnCombatEntered?.Invoke();
     }
 
     public void FinishCombat() {
-        OnCombatFinished?.Invoke();
         _gameState = GameState.levelFinished;
+        OnCombatFinished?.Invoke();
     }
 
     public bool isCombatInProgress() {
@@ -99,13 +99,12 @@ public class PlayStateMaster : MonoBehaviour {
     }
 
     void DoOpenMainMenu() {
+        _gameState = GameState.mainMenu;
         MainMenu.s.OpenProfileMenu();
 
         if (isCombatStarted()) {
             OnLeavingMissionRewardArea?.Invoke();
         }
-
-        _gameState = GameState.mainMenu;
         OnMainMenuEntered?.Invoke();
     }
 
@@ -148,7 +147,7 @@ public class PlayStateMaster : MonoBehaviour {
         _gameState = GameState.shop;
         
         StopAllCoroutines();
-        WorldMapCreator.s.worldMapGenerationProgress = 0;
+        WorldMapCreator.s.ResetWorldMapGenerationProgress();
         StartCoroutine(Transition(true, () => {
             OnNewWorldCreation?.Invoke();
             OnShopEntered?.Invoke();
@@ -160,7 +159,7 @@ public class PlayStateMaster : MonoBehaviour {
         _gameState = GameState.shop;
         
         StopAllCoroutines();
-        WorldMapCreator.s.worldMapGenerationProgress = 0;
+        WorldMapCreator.s.ResetWorldMapGenerationProgress();
         StartCoroutine(Transition(true, () => {
             OnNewWorldCreation?.Invoke();
             OnShopEntered?.Invoke();

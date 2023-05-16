@@ -17,12 +17,12 @@ public class UpgradesController : MonoBehaviour {
 
 	[ValueDropdown("GetAllModuleNames")]
 	public List<string> tier1Buildings = new List<string>();
-	[ValueDropdown("GetAllModuleNames")]
+	/*[ValueDropdown("GetAllModuleNames")]
 	public List<string> tier2Buildings = new List<string>();
 	[ValueDropdown("GetAllModuleNames")]
 	public List<string> tier3Buildings = new List<string>();
 	[ValueDropdown("GetAllModuleNames")]
-	public List<string> bossBuildings = new List<string>();
+	public List<string> bossBuildings = new List<string>();*/
 
 	public SnapCartLocation[] fleaMarketLocations;
 	public Transform shopableComponentsParent;
@@ -30,6 +30,9 @@ public class UpgradesController : MonoBehaviour {
 
 	public SnapCartLocation leftCargoParent;
 	public SnapCartLocation rightCargoParent;
+
+	public Transform leftRewardPos;
+	public Transform rightRewardPos;
 
 	public List<Cart> shopCarts;
 	public Cart leftCargo;
@@ -218,6 +221,7 @@ public class UpgradesController : MonoBehaviour {
 	
 	void InitializeShop(DataSaver.RunState state) {
 		state.shopState = new ShopState();
+		ClearRandomBuildingSpawnedList();
 
 		var buildingCargoCount = 3; 
 
@@ -355,10 +359,32 @@ public class UpgradesController : MonoBehaviour {
 				}
 			}
 
+			
+			SpawnRewardAtPos(leftRewardPos, leftCargo.GetComponentInChildren<CargoModule>());
+			SpawnRewardAtPos(rightRewardPos, rightCargo.GetComponentInChildren<CargoModule>());
+
 			CheckIfCanGo();
 		}
 
 		SaveShopCartState();
+	}
+
+	[ColorUsage(true, true)] 
+	public Color rewardOverlayColor = Color.cyan;
+
+	void SpawnRewardAtPos(Transform pos, CargoModule module) {
+		pos.DeleteAllChildren();
+
+		var rewardCart = Instantiate(DataHolder.s.GetCart(module.GetReward()), pos);
+
+		rewardCart.canPlayerDrag = false;
+
+		var renderers = rewardCart.GetComponentsInChildren<MeshRenderer>();
+
+		for (int i = 0; i < renderers.Length; i++) {
+			renderers[i].material.SetColor("OverlayColor", rewardOverlayColor);
+		}
+
 	}
 
 	int CheckIfCanGo() {
@@ -463,15 +489,40 @@ public class UpgradesController : MonoBehaviour {
 	public string GetRandomPowerup() {
 		return DataHolder.s.powerUps[Random.Range(0, DataHolder.s.powerUps.Length)].name;
 	}
+
+
+	void ClearRandomBuildingSpawnedList() {
+		spawnedList.Clear();
+	}
 	
+	private List<string> spawnedList = new List<string>();
+
 	public string GetRandomBuildingCargo() {
+		var reward = _GetRandomBuildingCargo();
+		int n = 20;
+		for (int i = 0; i < n; i++) {
+			if (spawnedList.Contains(reward)) {
+				reward = _GetRandomBuildingCargo();
+			} else {
+				spawnedList.Add(reward);
+				return reward;
+			}
+		}
+		
+		return reward;
+	}
+	public string _GetRandomBuildingCargo() {
 		string results;
 
 		switch (DataSaver.s.GetCurrentSave().currentRun.currentAct) {
 			case 1:
 				results = tier1Buildings[Random.Range(0,tier1Buildings.Count)];
 				break;
-			case 2:
+			default:
+				results = tier1Buildings[Random.Range(0,tier1Buildings.Count)];
+				Debug.LogError($"Illegal Act Number {DataSaver.s.GetCurrentSave().currentRun.currentAct}");
+				break;
+			/*case 2:
 				if (Random.value > 0.5f) {
 					results = tier2Buildings[Random.Range(0,tier2Buildings.Count)];
 				} else {
@@ -491,49 +542,16 @@ public class UpgradesController : MonoBehaviour {
 			default:
 				results = tier3Buildings[Random.Range(0,tier3Buildings.Count)];
 				Debug.LogError($"Illegal Act Number {DataSaver.s.GetCurrentSave().currentRun.currentAct}");
-				break;
+				break;*/
 		}
 		
 		return results;
 	}
 	
-	public string[] GetRandomLevelRewards() {
-		string[] results;
-
-		switch (DataSaver.s.GetCurrentSave().currentRun.currentAct) {
-			case 1:
-				results = GetBuildingsFromList(tier1Buildings);
-				break;
-			case 2:
-				if (Random.value > 0.5f) {
-					results = GetBuildingsFromList(tier2Buildings);
-				} else {
-					results = GetBuildingsFromList(tier1Buildings);
-				}
-				break;
-			case 3:
-				if (Random.value > 0.5f) {
-					results = GetBuildingsFromList(tier3Buildings);
-				} else if(Random.value > 0.5f){
-					results = GetBuildingsFromList(tier2Buildings);
-				} else {
-					results = GetBuildingsFromList(tier1Buildings);
-				}
-				results = GetBuildingsFromList(tier3Buildings);
-				break;
-			default:
-				results = GetBuildingsFromList(tier3Buildings);
-				Debug.LogError($"Illegal Act Number {DataSaver.s.GetCurrentSave().currentRun.currentAct}");
-				break;
-		}
-		
-		return results;
-	}
-
-	public string[] GetRandomBossRewards() {
+	/*public string[] GetRandomBossRewards() {
 		var results = GetBuildingsFromList(bossBuildings);
 		return results;
-	}
+	}*/
 
 	private string[] GetBuildingsFromList(List<string> buildings) {
 		var count = 3;

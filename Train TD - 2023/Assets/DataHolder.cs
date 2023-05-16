@@ -7,15 +7,10 @@ using UnityEngine.Events;
 public class DataHolder : MonoBehaviour {
     public static DataHolder s;
 
-    public GameObject cartPrefab;
     public float cartLength;
     
-    [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
-    static void Init() { s = null; }
-    
-    private void Awake() {
-        if (s == null)
-            s = this;
+    private void Awake() { 
+        s = this;
     }
 
 
@@ -24,19 +19,9 @@ public class DataHolder : MonoBehaviour {
     public CharacterDataScriptable[] characters;
     public CityDataScriptable[] cities;
     public EncounterTitle[] encounters;
-
     public LevelDataScriptable[] levels;
-
     public PowerUpScriptable[] powerUps;
-    
-    public Color moneyBackColor = Color.green;
 
-    public GameObject repairPrefab;
-    public GameObject sellPrefab;
-    //public GameObject trainModuleGenericExplodePrefab;
-
-    //public AudioClip[] sellSounds;
-    
 
     public PowerUpScriptable GetPowerUp(string powerUpUniqueName) {
         for (int i = 0; i < powerUps.Length; i++) {

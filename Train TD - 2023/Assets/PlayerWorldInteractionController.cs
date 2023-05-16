@@ -115,6 +115,10 @@ public class PlayerWorldInteractionController : MonoBehaviour {
         }
     }
 
+    bool CanDragCart(Cart cart) {
+        return !cart.isMainEngine && cart.canPlayerDrag;
+    }
+
     private Vector2 dragStartPos;
     public bool isDragStarted = false;
     public bool isSnapping = false;
@@ -122,7 +126,7 @@ public class PlayerWorldInteractionController : MonoBehaviour {
     void CheckAndDoDrag() {
         if (selectedCart != null) {
             if (clickCart.action.WasPressedThisFrame()) {
-                if (!selectedCart.isMainEngine) {
+                if (CanDragCart(selectedCart)) {
                     currentSnapLoc = null;
                     isSnapping = false;
                     selectedCart.transform.SetParent(null);
@@ -421,7 +425,7 @@ public class PlayerWorldInteractionController : MonoBehaviour {
 
         Color myColor = moveColor;
         if (PlayStateMaster.s.isShop()) {
-            if (building.isMainEngine)
+            if (!CanDragCart(building))
                 myColor = cantActColor;
         }
         

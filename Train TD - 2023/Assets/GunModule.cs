@@ -228,10 +228,13 @@ public class GunModule : MonoBehaviour, IComponentWithTarget, IActiveDuringComba
         
         var range = Mathf.Clamp01(projectileDamage / 10f) + Mathf.Clamp01(projectileDamage / 10f);
         range /= 2f;
+
+        var defaultPositions = new List<Vector3>();
         
         //stopUpdateRotation = true;
         for (int i = 0; i < rotateTransforms.Length; i++) {
             var rotateTransform = rotateTransforms[i].transform;
+            defaultPositions.Add(rotateTransform.localPosition);
             rotateTransform.localPosition = Random.insideUnitSphere * gunShakeMagnitude * range + (-rotateTransform.forward * gunShakeMagnitude * range * 2);
             rotateTransform.Rotate(gunShakeRotation);
         }
@@ -240,7 +243,7 @@ public class GunModule : MonoBehaviour, IComponentWithTarget, IActiveDuringComba
         //stopUpdateRotation = false;
         for (int i = 0; i < rotateTransforms.Length; i++) {
             var rotateTransform = rotateTransforms[i].transform;
-            rotateTransform.localPosition= Vector3.zero;
+            rotateTransform.localPosition= defaultPositions[i];
         }
     }
 
