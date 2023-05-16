@@ -20,11 +20,9 @@ public class PlayStateMaster : MonoBehaviour {
     public UnityEvent OnShopEntered = new UnityEvent();
     public UnityEvent OnCombatEntered = new UnityEvent();
     
-    public UnityEvent OnCombatWon = new UnityEvent();
-    public UnityEvent OnCombatLost = new UnityEvent();
-    
     public UnityEvent OnCombatFinished = new UnityEvent();
-    public UnityEvent OnCombatCleanup = new UnityEvent();
+    public UnityEvent OnEnterMissionRewardArea = new UnityEvent();
+    public UnityEvent OnLeavingMissionRewardArea = new UnityEvent();
     
     
     [SerializeField]
@@ -102,17 +100,22 @@ public class PlayStateMaster : MonoBehaviour {
 
     void DoOpenMainMenu() {
         MainMenu.s.OpenProfileMenu();
+
+        if (isCombatStarted()) {
+            OnLeavingMissionRewardArea?.Invoke();
+        }
+
         _gameState = GameState.mainMenu;
         OnMainMenuEntered?.Invoke();
     }
 
 
-    public void ClearOutOfCombat() {
+    public void LeaveMissionRewardArea() {
         _gameState = GameState.shop;
         
         StopAllCoroutines();
         StartCoroutine(Transition(false, () => {
-            OnCombatCleanup?.Invoke();
+            OnLeavingMissionRewardArea?.Invoke();
             OnShopEntered?.Invoke();
         }));
     }

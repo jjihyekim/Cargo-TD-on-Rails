@@ -42,24 +42,33 @@ public class SpeedController : MonoBehaviour, IShowOnDistanceRadar {
 
     public List<EngineModule> engines = new List<EngineModule>();
 
-    public void SetUpOnMissionStart() {
-        var myLevel = PlayStateMaster.s.currentLevel;
+    private void Start() {
+        ResetDistance();
+    }
+
+    public void ResetDistance() {
         missionDistance = 500;
-        
-        
         endTrainStation.startPos = Vector3.forward * missionDistance;
         enginePowerBoost = 1;
-        
         currentDistance = 0;
         LevelReferences.s.speed = 0;
         internalRealSpeed = 0;
         targetSpeed = 0;
         
+        currentBreakPower = 0;
+    }
+
+    public void SetUpOnMissionStart() {
+        ResetDistance();
         DistanceAndEnemyRadarController.s.RegisterUnit(this);
     }
 
     public void IncreaseMissionEndDistance(float amount) {
         SetMissionEndDistance(missionDistance + amount);
+    }
+
+    public void TravelToMissionEndDistance() {
+        currentDistance = missionDistance;
     }
     
     public void SetMissionEndDistance(float distance) {
@@ -164,6 +173,8 @@ public class SpeedController : MonoBehaviour, IShowOnDistanceRadar {
             if (stopAcceleration <= 0) {
                 CalculateStopAcceleration();
             }
+
+            currentBreakPower = 10;
             
             currentDistance += LevelReferences.s.speed * Time.deltaTime;
         } else {
@@ -177,14 +188,19 @@ public class SpeedController : MonoBehaviour, IShowOnDistanceRadar {
     // 0 = u2 + 2as
     // u2 = 2as
     // u2/2s = a
-    public readonly float stopDistance = 20f;
+    public readonly float stopDistance = 13.1f;
     private float stopAcceleration = 0;
 
     void CalculateStopAcceleration() {
         var speed = LevelReferences.s.speed;
+        if (speed < 0.1f) {
+            LevelReferences.s.speed = 5;
+            speed = LevelReferences.s.speed;
+        }
+        
         var realStopDistance = stopDistance - (Train.s.GetTrainLength()/2f);
         stopAcceleration = (speed * speed) / (2 * realStopDistance);
-        stopAcceleration = Mathf.Clamp(stopAcceleration, 0.05f, float.MaxValue);
+        stopAcceleration = Mathf.Clamp(stopAcceleration, 0, float.MaxValue);
     }
 
     public static string GetNiceTime(float time) {

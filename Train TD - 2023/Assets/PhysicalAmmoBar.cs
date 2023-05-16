@@ -7,64 +7,60 @@ using UnityEngine;
 public class PhysicalAmmoBar : MonoBehaviour {
 
 
-    public GameObject ammoBox;
+    public GameObject ammoChunk;
+    public float ammoChunkHeight;
 
-    public GameObject currentAmmoBox;
+    public List<GameObject> allAmmoChunks = new List<GameObject>();
+    public List<float> velocity = new List<float>();
 
     public Transform noAmmoPos;
-
-    public Transform fullAmmoPos;
-
     public Transform reloadSpawnPos;
 
     [ReadOnly]
     public ModuleAmmo moduleAmmo;
     void Start() {
         moduleAmmo = GetComponentInParent<ModuleAmmo>();
-        currentAmmoBox = Instantiate(ammoBox, transform);
         moduleAmmo.OnReload.AddListener(OnReload);
         moduleAmmo.OnUse.AddListener(OnUse);
+        OnReload();
+        OnUse();
     }
 
 
     void OnUse() {
-        currentAmmoBox.transform.position = Vector3.Lerp(noAmmoPos.position, fullAmmoPos.position, moduleAmmo.AmmoPercent());
-        if (moduleAmmo.curAmmo == 0) {
-            currentAmmoBox.SetActive(false);
-        } else {
-            currentAmmoBox.SetActive(true);
+        while ( allAmmoChunks.Count > moduleAmmo.curAmmo) {
+            var firstOne = allAmmoChunks[0];
+            allAmmoChunks.RemoveAt(0);
+            velocity.RemoveAt(0);
+            Destroy(firstOne);
         }
     }
     void OnReload() {
-        var oldAmmoBox = currentAmmoBox;
-        currentAmmoBox = Instantiate(ammoBox, transform);
-        currentAmmoBox.transform.position = reloadSpawnPos.position;
-        currentAmmoBox.SetActive(true);
-        Destroy(oldAmmoBox, 0);
+        var delta = Vector3.zero;
+        while ( allAmmoChunks.Count < moduleAmmo.curAmmo) {
+            var newOne = Instantiate(ammoChunk, reloadSpawnPos);
+            newOne.transform.position += delta;
+            newOne.SetActive(true);
+            allAmmoChunks.Add(newOne);
+            velocity.Add(0);
 
-        StartCoroutine(PlayAmmoBoxAnim(currentAmmoBox));
+            delta.y += ammoChunkHeight;
+        }
     }
 
+
     private float acceleration = 2;
-    IEnumerator PlayAmmoBoxAnim(GameObject box) {
-        var speed = 0f;
-        
-        var targetPos = Vector3.Lerp(noAmmoPos.position, fullAmmoPos.position, moduleAmmo.AmmoPercent());
-        //Debug.Break();
-        
-
-        while (Vector3.Distance(targetPos, box.transform.position) > 0.01f) {
-            targetPos = Vector3.Lerp(noAmmoPos.position, fullAmmoPos.position, moduleAmmo.AmmoPercent());
-            box.transform.position = Vector3.MoveTowards(box.transform.position, targetPos, speed * Time.deltaTime);
-            speed += acceleration * Time.deltaTime;
-            yield return null;
-
-            if (box == null) {
-                yield break;
+    private void Update() {
+        var target = noAmmoPos.transform.position;
+        for (int i = 0; i < allAmmoChunks.Count; i++) {
+            if (allAmmoChunks[i].transform.position.y > target.y) {
+                allAmmoChunks[i].transform.position = Vector3.MoveTowards(allAmmoChunks[i].transform.position, target, velocity[i] * Time.deltaTime);
+                velocity[i] += acceleration * Time.deltaTime;
+            } else {
+                velocity[i] = 0;
             }
+
+            target.y += ammoChunkHeight;
         }
-        
-        targetPos = Vector3.Lerp(noAmmoPos.position, fullAmmoPos.position, moduleAmmo.AmmoPercent());
-        box.transform.position = targetPos;
     }
 }

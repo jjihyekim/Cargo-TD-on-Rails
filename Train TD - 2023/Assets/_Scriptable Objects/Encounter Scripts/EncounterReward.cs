@@ -26,7 +26,7 @@ public class EncounterReward : MonoBehaviour {
     public void GainReward() {
         if (damageTrain <= 0) {
             if (building != null) {
-                UpgradesController.s.AddModulesToAvailableModules(building.uniqueName, amount);
+                //UpgradesController.s.AddModulesToAvailableModules(building.uniqueName, amount);
             } else {
                 MoneyController.s.ModifyResource(myType, amount);
             }

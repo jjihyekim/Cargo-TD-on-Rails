@@ -269,7 +269,7 @@ MeshFilter:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5133613499297555898}
-  m_Mesh: {fileID: 2159527548056214566, guid: fb581d765bbbc1141a4f74f5e8577ad0, type: 3}
+  m_Mesh: {fileID: 2159527548056214566, guid: 1d1d11020ea56d146843b720ba5c90bb, type: 3}
 --- !u!23 &5926475556387884735
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -344,7 +344,6 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 129247112531381}
-  - {fileID: 6855640007032794419}
   m_Father: {fileID: 8481526207145170715}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -625,70 +624,4 @@ PrefabInstance:
 Transform:
   m_CorrespondingSourceObject: {fileID: 2849140471503338825, guid: 86c82cfee32788c49a35e2e0e34bf7b7, type: 3}
   m_PrefabInstance: {fileID: 5926245680219220562}
-  m_PrefabAsset: {fileID: 0}
---- !u!1001 &7819285653765178194
-PrefabInstance:
-  m_ObjectHideFlags: 0
-  serializedVersion: 2
-  m_Modification:
-    m_TransformParent: {fileID: 5536560673647428002}
-    m_Modifications:
-    - target: {fileID: 3722100421248822881, guid: 4b19fa5bb3bedf24386e79dc0d6f9573, type: 3}
-      propertyPath: m_RootOrder
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 3722100421248822881, guid: 4b19fa5bb3bedf24386e79dc0d6f9573, type: 3}
-      propertyPath: m_LocalPosition.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 3722100421248822881, guid: 4b19fa5bb3bedf24386e79dc0d6f9573, type: 3}
-      propertyPath: m_LocalPosition.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 3722100421248822881, guid: 4b19fa5bb3bedf24386e79dc0d6f9573, type: 3}
-      propertyPath: m_LocalPosition.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 3722100421248822881, guid: 4b19fa5bb3bedf24386e79dc0d6f9573, type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 3722100421248822881, guid: 4b19fa5bb3bedf24386e79dc0d6f9573, type: 3}
-      propertyPath: m_LocalRotation.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 3722100421248822881, guid: 4b19fa5bb3bedf24386e79dc0d6f9573, type: 3}
-      propertyPath: m_LocalRotation.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 3722100421248822881, guid: 4b19fa5bb3bedf24386e79dc0d6f9573, type: 3}
-      propertyPath: m_LocalRotation.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 3722100421248822881, guid: 4b19fa5bb3bedf24386e79dc0d6f9573, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 3722100421248822881, guid: 4b19fa5bb3bedf24386e79dc0d6f9573, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 3722100421248822881, guid: 4b19fa5bb3bedf24386e79dc0d6f9573, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7368778913694744108, guid: 4b19fa5bb3bedf24386e79dc0d6f9573, type: 3}
-      propertyPath: m_Name
-      value: Construction Sounds
-      objectReference: {fileID: 0}
-    - target: {fileID: 7368778913694744108, guid: 4b19fa5bb3bedf24386e79dc0d6f9573, type: 3}
-      propertyPath: m_Layer
-      value: 11
-      objectReference: {fileID: 0}
-    m_RemovedComponents: []
-  m_SourcePrefab: {fileID: 100100000, guid: 4b19fa5bb3bedf24386e79dc0d6f9573, type: 3}
---- !u!4 &6855640007032794419 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 3722100421248822881, guid: 4b19fa5bb3bedf24386e79dc0d6f9573, type: 3}
-  m_PrefabInstance: {fileID: 7819285653765178194}
   m_PrefabAsset: {fileID: 0}

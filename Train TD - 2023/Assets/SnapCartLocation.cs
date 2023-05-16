@@ -8,6 +8,16 @@ public class SnapCartLocation : MonoBehaviour {
 
     public UpgradesController.CartLocation myLocation;
 
+    public bool onlySnapCargo = false;
+
+    public GameObject emptyShowObject;
+
+    public bool IsEmpty() {
+        return snapTransform.childCount == 0;
+    }
+    public void SetEmptyStatus(bool isEmpty) {
+        emptyShowObject.SetActive(isEmpty);
+    }
     public void SnapToLocation(GameObject child) {
         child.transform.position = snapTransform.position;
         child.transform.rotation = snapTransform.rotation;

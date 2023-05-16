@@ -9,6 +9,10 @@ public class Cart : MonoBehaviour {
     public bool isMainEngine = false;
     public bool isCargo = false;
 
+    public int trainIndex;
+
+    public bool isRepairable => !isMainEngine && !isCargo;
+
     public UpgradesController.CartLocation myLocation = UpgradesController.CartLocation.train;
 
     public float length = 1.4f;
@@ -47,6 +51,14 @@ public class Cart : MonoBehaviour {
         PlayStateMaster.s.OnCombatEntered.AddListener(SetComponentCombatShopMode);
         PlayStateMaster.s.OnShopEntered.AddListener(SetComponentCombatShopMode);
         SetUpOutlines();
+    }
+
+    private void Update() {
+        var pos = transform.position;
+        if (pos.y < -1) {
+            pos.y = 1;
+            transform.position = pos;
+        }
     }
 
     public Transform GetShootingTargetTransform() {

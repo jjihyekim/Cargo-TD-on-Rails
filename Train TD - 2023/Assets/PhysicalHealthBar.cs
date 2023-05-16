@@ -18,9 +18,14 @@ public class PhysicalHealthBar : MonoBehaviour {
     }
 
     private void Update() {
-        UpdateHealth(myHp.currentHealth/myHp.maxHealth);
+        var newHealth = myHp.currentHealth / myHp.maxHealth;
+        if (newHealth != lastHealth) {
+            UpdateHealth(newHealth);
+            lastHealth = newHealth;
+        }
     }
 
+    private float lastHealth;
     public void UpdateHealth(float percentage) {
         for (int i = 0; i < bars.Length; i++) {
             var scale = bars[i].transform.localScale;
@@ -29,14 +34,20 @@ public class PhysicalHealthBar : MonoBehaviour {
             pos.z = (1 - percentage) * fullLength / 2f;
             bars[i].transform.localScale = scale;
             bars[i].transform.localPosition = pos;
-            Color color;
-            if (percentage > 0.5f) {
-                color = Color.Lerp(halfColor, fullColor, (percentage-0.5f)*2);
-            } else {
-                color = Color.Lerp(emptyColor, halfColor, (percentage)*2);
-            }
+            var color = GetHealthColor(percentage);
 
             bars[i].GetComponent<Renderer>().material.color = color;
         }
+    }
+
+    private Color GetHealthColor(float percentage) {
+        Color color;
+        if (percentage > 0.5f) {
+            color = Color.Lerp(halfColor, fullColor, (percentage - 0.5f) * 2);
+        } else {
+            color = Color.Lerp(emptyColor, halfColor, (percentage) * 2);
+        }
+
+        return color;
     }
 }

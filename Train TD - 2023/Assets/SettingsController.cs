@@ -24,17 +24,18 @@ public class SettingsController : MonoBehaviour {
 
     
     public void ResetRun() {
-        if (PlayStateMaster.s.isCombatInProgress()) {
-            MissionWinFinisher.s.Cleanup();
-        }
+        /*if (PlayStateMaster.s.isCombatStarted()) {
+            MissionWinFinisher.s.ContinueToClearOutOfCombat();
+        }*/
 
         DataSaver.s.GetCurrentSave().currentRun = null;
         DataSaver.s.GetCurrentSave().isInARun = false;
-        //DataSaver.s.GetCurrentSave().currentRun.SetCharacter( DataHolder.s.GetCharacter("Le Cheater"));
-        //MapController.s.GenerateStarMap();
+        
         DataSaver.s.SaveActiveGame();
         
-        MenuToggle.HideAllToggleMenus();
+        SceneLoader.s.ForceReloadScene();
+        
+        /*MenuToggle.HideAllToggleMenus();
         
         if (FirstTimeTutorialController.s.tutorialEngaged) {
             FirstTimeTutorialController.s.SkipTutorial();
@@ -42,13 +43,10 @@ public class SettingsController : MonoBehaviour {
             PlayStateMaster.s.EnterShopState();
         }
         
-        Pauser.s.Unpause();
+        Pauser.s.Unpause();*/
     }
     
     public void ResetRunAndReplayTutorial() {
-        if (PlayStateMaster.s.isCombatInProgress()) {
-            MissionWinFinisher.s.Cleanup();
-        }
         MenuToggle.HideAllToggleMenus();
         Pauser.s.Unpause();
         

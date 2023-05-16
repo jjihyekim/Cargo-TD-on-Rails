@@ -28,12 +28,14 @@ public class ShopStateController : MonoBehaviour {
 		needToPutThingInFleaMarket, needToPickUpFreeCarts, needToSelectDestination, allGoodToGo
 	}
 
-	public CanStartLevelStatus currentStatus;
-
-
 	public Button mapOpenButton;
 
 	public TMP_Text backToProfileOrAbandonText;
+
+	private void Start() {
+		gateScript.OnCanLeaveAndPressLeave.AddListener(StartLevel);
+	}
+
 	void UpdateBackToProfileOrAbandonButton() {
 		if (PlayStateMaster.s.isCombatInProgress()) {
 			backToProfileOrAbandonText.text = "Abandon Run";
@@ -52,9 +54,6 @@ public class ShopStateController : MonoBehaviour {
 	
 	public void BackToMainMenu() {
 		starterUI.SetActive(false);
-		if (PlayStateMaster.s.isCombatInProgress()) {
-			MissionWinFinisher.s.Cleanup();
-		}
 		FirstTimeTutorialController.s.StopTutorial();
 		PlayStateMaster.s.OpenMainMenu();
 
@@ -72,15 +71,17 @@ public class ShopStateController : MonoBehaviour {
 		mapOpenButton.interactable = true;
 		//mapDisabledDuringBattleOverlay.SetActive(false);
 		
-		if (DataSaver.s.GetCurrentSave().currentRun.unclaimedRewards.Count > 0) {
-			StartLevel(false);
+		CameraController.s.ResetCameraPos();
+		
+		if (DataSaver.s.GetCurrentSave().currentRun.isInEndRunArea) {
 			starterUI.SetActive(false);
 			MissionWinFinisher.s.ShowUnclaimedRewards();
+			
+		} else {
+			UpgradesController.s.DrawShopOptions();
+			UpdateBackToProfileOrAbandonButton();
+			SpeedController.s.ResetDistance();
 		}
-		
-		UpgradesController.s.DrawShopOptions();
-
-		UpdateBackToProfileOrAbandonButton();
 	}
 
 	public void SetStarterUIStatus(bool status) {
@@ -88,9 +89,12 @@ public class ShopStateController : MonoBehaviour {
 	}
 
 	public GateScript gateScript;
+	public Tooltip selectDestinationTooltip;
+	public Tooltip pickUpWorldCartTooltip;
+	public Tooltip fillFleaMarketTooltip;
+	public Tooltip allGoodToGoTooltip;
 	public void SetGoingLeft() {
-		gateScript.SetCanGoStatus(true);
-		currentStatus = CanStartLevelStatus.allGoodToGo;
+		gateScript.SetCanGoStatus(true, allGoodToGoTooltip);
 		
 		var playerStar = DataSaver.s.GetCurrentSave().currentRun.map.GetPlayerStar();
 		var targetStar = DataSaver.s.GetCurrentSave().currentRun.map.GetStarWithName(playerStar.outgoingConnections[0]);
@@ -98,8 +102,7 @@ public class ShopStateController : MonoBehaviour {
 	}
 
 	public void SetGoingRight() {
-		gateScript.SetCanGoStatus(true);
-		currentStatus = CanStartLevelStatus.allGoodToGo;
+		gateScript.SetCanGoStatus(true, allGoodToGoTooltip);
 
 		var playerStar = DataSaver.s.GetCurrentSave().currentRun.map.GetPlayerStar();
 		var targetStar = DataSaver.s.GetCurrentSave().currentRun.map.GetStarWithName(playerStar.outgoingConnections[0]);
@@ -107,11 +110,31 @@ public class ShopStateController : MonoBehaviour {
 	}
 
 	public void SetCannotGo(CanStartLevelStatus status) {
-		gateScript.SetCanGoStatus(false);
-		currentStatus = status;
+		Tooltip tooltip;
+
+		switch (status) {
+			case CanStartLevelStatus.needToSelectDestination:
+				tooltip = selectDestinationTooltip;
+				break;
+			case CanStartLevelStatus.needToPickUpFreeCarts:
+				tooltip = pickUpWorldCartTooltip;
+				break;
+			case CanStartLevelStatus.needToPutThingInFleaMarket:
+				tooltip = fillFleaMarketTooltip;
+				break;
+			default:
+				tooltip = null;
+				break;
+		}
+		
+		gateScript.SetCanGoStatus(false, tooltip);
 	}
 
-	public void StartLevel(bool legitStart = true) {
+	public void StartLevel() {
+		StartLevel(true);
+	}
+
+	public void StartLevel(bool legitStart) {
 		if (PlayStateMaster.s.IsLevelSelected()) {
 			var currentLevel = PlayStateMaster.s.currentLevel;
 			starterUI.SetActive(false);
@@ -122,18 +145,19 @@ public class ShopStateController : MonoBehaviour {
 			ClearStaticTrackers();
 
 			gameUI.SetActive(true);
-			PlayStateMaster.s.StarCombat();
 			
 			UpdateBackToProfileOrAbandonButton();
 
 			if (legitStart) {
+				PlayStateMaster.s.StarCombat();
+				
 				RangeVisualizer.SetAllRangeVisualiserState(true);
 
 				SoundscapeController.s.PlayMissionStartSound();
 				
 				if(currentLevel.isBossLevel)
 					MiniGUI_BossNameUI.s.ShowBossName(currentLevel.levelName);
-			}
+			} 
 			/*} else {
 				SceneLoader.s.FinishLevel();
 				EncounterController.s.EngageEncounter(currentLevel);
@@ -141,7 +165,7 @@ public class ShopStateController : MonoBehaviour {
 		}
 	}
 
-	public void DebugEngageEncounter(string encounterName) {
+	/*public void DebugEngageEncounter(string encounterName) {
 		var playerStar = DataSaver.s.GetCurrentSave().currentRun.map.GetPlayerStar();
 		starterUI.SetActive(false);
 
@@ -150,7 +174,7 @@ public class ShopStateController : MonoBehaviour {
 
 		PlayStateMaster.s.FinishCombat();
 		EncounterController.s.EngageEncounter(encounterName);
-	}
+	}*/
 
 	void ClearStaticTrackers() {
 		ModuleHealth.buildingsBuild = 0;

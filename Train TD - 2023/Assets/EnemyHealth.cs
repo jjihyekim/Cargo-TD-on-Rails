@@ -105,7 +105,7 @@ public class EnemyHealth : MonoBehaviour, IHealth {
 	}
 
 	private void Start() {
-		healthBar = Instantiate(LevelReferences.s.partHealthPrefab, LevelReferences.s.uiDisplayParent).GetComponent<MiniGUI_HealthBar>();
+		healthBar = Instantiate(LevelReferences.s.enemyHealthPrefab, LevelReferences.s.uiDisplayParent).GetComponent<MiniGUI_HealthBar>();
 		healthBar.SetUp(this);
 		enemySpawned += 1;
 	}

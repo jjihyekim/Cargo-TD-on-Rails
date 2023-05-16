@@ -208,6 +208,15 @@ public class CameraController : MonoBehaviour {
         ProcessMovementInput(output, edgeScrollMoveSpeed);
     }
 
+
+    public void ResetCameraPos() {
+        regularPos = Vector3.zero;
+        regularZoom = 0;
+        
+        cameraCenter.position = regularPos;
+        currentZoom = regularZoom;
+    }
+
     [Header("Map Settings")]
     
     public bool isSnappedToMap = false;

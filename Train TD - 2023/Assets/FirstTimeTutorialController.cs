@@ -79,10 +79,11 @@ public class FirstTimeTutorialController : MonoBehaviour {
     }
 
     public void ReDoTutorial() {
-        TutorialComplete();
+        //TutorialComplete();
         DataSaver.s.GetCurrentSave().isInARun = false;
         DataSaver.s.GetCurrentSave().tutorialProgress = new DataSaver.TutorialProgress();
-        ShopStateController.s.BackToMainMenu();
+        //ShopStateController.s.BackToMainMenu();
+        SceneLoader.s.ForceReloadScene();
     }
 
     void EngageFirstTimeTutorial() {
@@ -365,10 +366,10 @@ public class FirstTimeTutorialController : MonoBehaviour {
                 if (!_progress.getRewards && MissionWinFinisher.s.isWon) {
                     getRewardsHint.SetActive(true);
 
-                    var remainingRewards = MissionWinFinisher.s.unclaimedRewardCount;
+                    /*var remainingRewards = MissionWinFinisher.s.unclaimedRewardCount;
                     if (remainingRewards <= 0) {
                         _progress.getRewards = true;
-                    }
+                    }*/
                 }
             }
 

@@ -29,7 +29,9 @@ public class LevelReferences : MonoBehaviour {
     public GameObject mortarExplosionEffectPrefab;
     public GameObject mortarMiniHitPrefab;
     public GameObject waveDisplayPrefab;
-    public GameObject partHealthPrefab;
+    public GameObject enemyHealthPrefab;
+    public GameObject cartHealthPrefab;
+    public Transform cartHealthParent;
     public GameObject repairEffectPrefab;
     public GameObject reloadEffectPrefab;
     public GameObject damageNumbersPrefab;

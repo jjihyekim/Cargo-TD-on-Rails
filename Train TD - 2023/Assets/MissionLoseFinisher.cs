@@ -68,7 +68,7 @@ public class MissionLoseFinisher : MonoBehaviour {
 
     public void BackToMenu() {
         loseUI.SetActive(false);
-        MissionWinFinisher.s.Cleanup();
+        MissionWinFinisher.s.ContinueToClearOutOfCombat();
         DataSaver.s.GetCurrentSave().currentRun = null;
         DataSaver.s.GetCurrentSave().isInARun = false;
         DataSaver.s.SaveActiveGame();

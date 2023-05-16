@@ -4952,16 +4952,16 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3290193414898142845, guid: 4b19fa5bb3bedf24386e79dc0d6f9573, type: 3}
       propertyPath: possibleSounds.Array.size
-      value: 3
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 3290193414898142845, guid: 4b19fa5bb3bedf24386e79dc0d6f9573, type: 3}
       propertyPath: possibleSounds.Array.data[0]
       value: 
-      objectReference: {fileID: 8300000, guid: 5247aeabf7a30044dae5aec486f8194a, type: 3}
+      objectReference: {fileID: 8300000, guid: e0c70bed5c1a4443083a81de5648c7d5, type: 3}
     - target: {fileID: 3290193414898142845, guid: 4b19fa5bb3bedf24386e79dc0d6f9573, type: 3}
       propertyPath: possibleSounds.Array.data[1]
       value: 
-      objectReference: {fileID: 8300000, guid: 6824572f75c6b3847b929d59fee7ba97, type: 3}
+      objectReference: {fileID: 8300000, guid: 7d3ddaa2d10a0bf43a6c3fed2776c80d, type: 3}
     - target: {fileID: 3290193414898142845, guid: 4b19fa5bb3bedf24386e79dc0d6f9573, type: 3}
       propertyPath: possibleSounds.Array.data[2]
       value: 
@@ -5024,11 +5024,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3933499019978170859, guid: 4b19fa5bb3bedf24386e79dc0d6f9573, type: 3}
       propertyPath: m_Pitch
-      value: 0.5
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 3933499019978170859, guid: 4b19fa5bb3bedf24386e79dc0d6f9573, type: 3}
       propertyPath: m_Volume
-      value: 0.4
+      value: 0.8
       objectReference: {fileID: 0}
     - target: {fileID: 3933499019978170859, guid: 4b19fa5bb3bedf24386e79dc0d6f9573, type: 3}
       propertyPath: MaxDistance
@@ -5080,7 +5080,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3933499019978170859, guid: 4b19fa5bb3bedf24386e79dc0d6f9573, type: 3}
       propertyPath: panLevelCustomCurve.m_Curve.Array.data[0].value
-      value: 1
+      value: 0.3
       objectReference: {fileID: 0}
     - target: {fileID: 3933499019978170859, guid: 4b19fa5bb3bedf24386e79dc0d6f9573, type: 3}
       propertyPath: rolloffCustomCurve.m_Curve.Array.data[0].inSlope

@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 
 public class GateScript : MonoBehaviour {
 
@@ -21,11 +22,7 @@ public class GateScript : MonoBehaviour {
     public bool mouseOver;
     public bool canGo;
 
-    public Tooltip selectDestinationTooltip;
-    public Tooltip pickUpWorldCartTooltip;
-    public Tooltip fillFleaMarketTooltip;
-    public Tooltip allGoodToGoTooltip;
-
+    public Tooltip myTooltip;
     public Color canGoColor= Color.green;
     public Color cannotGoColor = Color.red;
 
@@ -51,37 +48,27 @@ public class GateScript : MonoBehaviour {
     }
 
     void ShowTooltip() {
-        switch (ShopStateController.s.currentStatus) {
-            case ShopStateController.CanStartLevelStatus.allGoodToGo:
-                TooltipsMaster.s.ShowTooltip(allGoodToGoTooltip);
-                break;
-            case ShopStateController.CanStartLevelStatus.needToSelectDestination:
-                TooltipsMaster.s.ShowTooltip(selectDestinationTooltip);
-                break;
-            case ShopStateController.CanStartLevelStatus.needToPickUpFreeCarts:
-                TooltipsMaster.s.ShowTooltip(pickUpWorldCartTooltip);
-                break;
-            case ShopStateController.CanStartLevelStatus.needToPutThingInFleaMarket:
-                TooltipsMaster.s.ShowTooltip(fillFleaMarketTooltip);
-                break;
-        }
-        
+        TooltipsMaster.s.ShowTooltip(myTooltip);
     }
+
+    [HideInInspector]
+    public UnityEvent OnCanLeaveAndPressLeave;
 
     public void _OnMouseUpAsButton() {
         if (canGo) {
-            ShopStateController.s.StartLevel();
+            OnCanLeaveAndPressLeave?.Invoke();
             _OnMouseExit();
             mouseOver = true;
         }
     }
 
 
-    public void SetCanGoStatus(bool status) {
+    public void SetCanGoStatus(bool status, Tooltip tooltip) {
         canGo = status;
         readyToGoEffects.SetActive(canGo);
         downCurrentSpeed = 0;
         _outline.OutlineColor = canGo ? canGoColor : cannotGoColor;
+        myTooltip = tooltip;
     }
 
     

@@ -57,6 +57,9 @@ public class TooltipsMaster : MonoBehaviour {
     }
 
     public void ShowTooltip(Tooltip tooltip) {
+        if(tooltip == null)
+            return;
+        
         tooltipText.text = AddBreaks(tooltip.text);
         
         // yeet it off screen before our calculation
