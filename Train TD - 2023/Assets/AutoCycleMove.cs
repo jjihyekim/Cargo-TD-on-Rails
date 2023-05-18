@@ -17,6 +17,7 @@ public class AutoCycleMove : MonoBehaviour
 
     private void Start() {
         initialPos = transform.localPosition;
+        curTime = Random.Range(0f, 1f);
     }
 
 

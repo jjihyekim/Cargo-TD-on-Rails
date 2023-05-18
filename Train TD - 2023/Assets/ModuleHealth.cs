@@ -6,6 +6,7 @@ using UnityEngine;
 using UnityEngine.Assertions;
 using UnityEngine.Events;
 using UnityEngine.UI;
+using Random = UnityEngine.Random;
 
 public class ModuleHealth : MonoBehaviour, IHealth, IActiveDuringCombat, IActiveDuringShopping {
 
@@ -45,7 +46,8 @@ public class ModuleHealth : MonoBehaviour, IHealth, IActiveDuringCombat, IActive
 
     public PhysicalHealthBar myBar;
 
-    
+    [HideInInspector] public List<Action<float>> damageDefenders = new List<Action<float>>();
+
     [Button]
     public void DealDamage(float damage) {
         Assert.IsTrue(damage > 0);
@@ -54,6 +56,13 @@ public class ModuleHealth : MonoBehaviour, IHealth, IActiveDuringCombat, IActive
 
         myCart = GetComponent<Cart>();
         if (!isDead && (myCart == null || !myCart.isDestroyed)) {
+            if (damageDefenders.Count > 0) {
+                damageDefenders[Random.Range(0, damageDefenders.Count)].Invoke(damage);
+                return;
+            }
+            
+
+            damage *= damageReductionMultiplier;
             currentHealth -= damage;
 
             var hpPercent = currentHealth / maxHealth;
@@ -264,7 +273,15 @@ public class ModuleHealth : MonoBehaviour, IHealth, IActiveDuringCombat, IActive
     public float currentBurn = 0;
     public float burnSpeed = 0;
     private float lastBurn;
+    
+    
+    [HideInInspector] public List<Action<float>> burnDefenders = new List<Action<float>>();
     public void BurnDamage(float damage) {
+        if (burnDefenders.Count > 0) {
+            burnDefenders[Random.Range(0, burnDefenders.Count)].Invoke(damage);
+            return;
+        }
+        
         if (burnResistant)
             damage /= 2;
         
@@ -369,15 +386,17 @@ public class ModuleHealth : MonoBehaviour, IHealth, IActiveDuringCombat, IActive
             GetComponentInChildren<EngineFireController>().StopEngineFire();
         }
 
-        var gunModule = GetComponentInChildren<GunModule>();
-        if (gunModule) {
-            if (gunModule.beingDirectControlled) {
+        var gunModules = GetComponentsInChildren<GunModule>();
+        for (int i = 0; i < gunModules.Length; i++) {
+            gunModules[i].DeactivateGun();
+            
+            if (gunModules[i].beingDirectControlled) {
                 DirectControlMaster.s.DisableDirectControl();
+            } 
+            
+            if(GetComponentInChildren<TargetPicker>()){
+                GetComponentInChildren<TargetPicker>().enabled = false;
             }
-
-            gunModule.DeactivateGun();
-
-            GetComponentInChildren<TargetPicker>().enabled = false;
         }
 
 
@@ -394,6 +413,17 @@ public class ModuleHealth : MonoBehaviour, IHealth, IActiveDuringCombat, IActive
         if (damageNearCartsOnDeath) {
             DamageNearCartsOnDeath();
         }
+
+
+        var attachedToTrain = GetComponentsInChildren<IActivateWhenAttachedToTrain>();
+
+        for (int i = 0; i < attachedToTrain.Length; i++) {
+            attachedToTrain[i].DetachedFromTrain();
+        }
+        
+        var duringCombat = GetComponentsInChildren<IActiveDuringCombat>();
+        
+        for (int i = 0; i < duringCombat.Length; i++) { duringCombat[i].Disable(); }
     }
 
     [Button]
@@ -407,12 +437,14 @@ public class ModuleHealth : MonoBehaviour, IHealth, IActiveDuringCombat, IActive
             GetComponentInChildren<EngineFireController>().ActivateEngineFire();
         }
 
-        var gunModule = GetComponentInChildren<GunModule>();
-        if (gunModule) {
-            gunModule.ActivateGun();
-            GetComponentInChildren<TargetPicker>().enabled = true;
+        var gunModules = GetComponentsInChildren<GunModule>();
+        for (int i = 0; i < gunModules.Length; i++) {
+            gunModules[i].ActivateGun();
+            
+            if(GetComponentInChildren<TargetPicker>()){
+                GetComponentInChildren<TargetPicker>().enabled = true;
+            }
         }
-        
 
         /*var colliders = GetComponentsInChildren<Collider>();
         for (int i = 0; i < colliders.Length; i++) {
@@ -420,6 +452,20 @@ public class ModuleHealth : MonoBehaviour, IHealth, IActiveDuringCombat, IActive
         }*/
 
         SetBuildingShaderAlive(true);
+        
+        var attachedToTrain = GetComponentsInChildren<IActivateWhenAttachedToTrain>();
+
+        for (int i = 0; i < attachedToTrain.Length; i++) {
+            attachedToTrain[i].AttachedToTrain();
+        }
+        
+        var duringCombat = GetComponentsInChildren<IActiveDuringCombat>();
+
+        if (PlayStateMaster.s.isCombatStarted()) {
+            for (int i = 0; i < duringCombat.Length; i++) {
+                duringCombat[i].ActivateForCombat();
+            }
+        }
     }
     
     void SetBuildingShaderHealth(float value) {

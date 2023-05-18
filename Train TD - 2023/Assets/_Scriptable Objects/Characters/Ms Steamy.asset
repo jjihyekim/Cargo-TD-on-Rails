@@ -15,33 +15,23 @@ MonoBehaviour:
   myCharacter:
     uniqueName: Ms Steamy
     description: Loves everything steam. Start with Pneumatic and steamvent guns.
-    starterModules:
-    - moduleUniqueName: BasicNuclear
-      amount: 1
-    - moduleUniqueName: Engine
-      amount: 1
     starterTrain:
       myCarts:
       - uniqueName: engine_nuclear
-        health: -1
-        ammo: -1
-        isBuildingCargo: 0
-        cargoReward: 
+        cargoState:
+          cargoReward: 
+          isLeftCargo: 0
       - uniqueName: cargo_mystery
-        health: -1
-        ammo: -1
-        isBuildingCargo: 0
-        cargoReward: 
-      - uniqueName: top_avr
-        health: -1
-        ammo: -1
-        isBuildingCargo: 0
-        cargoReward: 
+        cargoState:
+          cargoReward: 
+          isLeftCargo: 0
+      - uniqueName: top_pneumatic
+        cargoState:
+          cargoReward: 
+          isLeftCargo: 0
+      - uniqueName: side_pneumatic
+        cargoState:
+          cargoReward: 
+          isLeftCargo: 0
     starterResources:
-      money: 200
       scraps: 0
-      maxScraps: 0
-      ammo: 0
-      maxAmmo: 0
-      fuel: 0
-      maxFuel: 0

@@ -102,6 +102,17 @@ public class SpeedController : MonoBehaviour, IShowOnDistanceRadar {
 
     public float enginePowerPlayerControl = 1f;
     public float currentBreakPower = 0;
+
+    public void OnLevelStart() {
+        PlayEngineStartEffects();
+    }
+
+    public void PlayEngineStartEffects() {
+        for (int i = 0; i < engines.Count; i++) {
+            engines[i].OnEngineStart?.Invoke();
+        }
+    }
+    
     private void Update() {
         if (PlayStateMaster.s.isCombatInProgress()) {
             fuelPower = 0;
@@ -169,14 +180,21 @@ public class SpeedController : MonoBehaviour, IShowOnDistanceRadar {
                 CalculateStopAcceleration();
             }
         } else if (PlayStateMaster.s.isCombatFinished()) {
-            LevelReferences.s.speed = Mathf.MoveTowards(LevelReferences.s.speed, 0, stopAcceleration * Time.deltaTime);
-            if (stopAcceleration <= 0) {
-                CalculateStopAcceleration();
-            }
+            var stopProgress = (currentDistance - beforeStopDistance) / stopLength;
+            stopProgress = Mathf.Clamp01(stopProgress);
 
-            currentBreakPower = 10;
-            
-            currentDistance += LevelReferences.s.speed * Time.deltaTime;
+            if (stopProgress < 1) {
+                LevelReferences.s.speed = Mathf.Lerp(beforeStopSpeed, 0, stopProgress*stopProgress);
+                LevelReferences.s.speed = Mathf.Clamp(LevelReferences.s.speed, 0.2f, float.MaxValue);
+
+                currentBreakPower = 10;
+
+                currentDistance += LevelReferences.s.speed * Time.deltaTime;
+            } else {
+                LevelReferences.s.speed = 0;
+                currentBreakPower = 0;
+                currentDistance = stopMissionDistanceTarget;
+            }
         } else {
             LevelReferences.s.speed = 0;
             enginePower = 0;
@@ -184,23 +202,21 @@ public class SpeedController : MonoBehaviour, IShowOnDistanceRadar {
         }
     }
 
-    // v2 = u2 + 2as
-    // 0 = u2 + 2as
-    // u2 = 2as
-    // u2/2s = a
     public readonly float stopDistance = 10f;
-    private float stopAcceleration = 0;
-
+    public float stopMissionDistanceTarget;
+    public float beforeStopSpeed;
+    public float beforeStopDistance;
+    public float stopLength;
     void CalculateStopAcceleration() {
-        var speed = LevelReferences.s.speed;
-        if (speed < 0.1f) {
+        beforeStopSpeed = LevelReferences.s.speed;
+        if (beforeStopSpeed < 0.1f) {
             LevelReferences.s.speed = 5;
-            speed = LevelReferences.s.speed;
+            beforeStopSpeed = LevelReferences.s.speed;
         }
-        
-        var realStopDistance = stopDistance - (Train.s.GetTrainLength()/2f);
-        stopAcceleration = (speed * speed) / (2 * realStopDistance);
-        stopAcceleration = Mathf.Clamp(stopAcceleration, 0, float.MaxValue);
+
+        stopLength = stopDistance - (Train.s.GetTrainLength()/2f);
+        stopMissionDistanceTarget = missionDistance + stopLength;
+        beforeStopDistance = missionDistance;
     }
 
     public static string GetNiceTime(float time) {

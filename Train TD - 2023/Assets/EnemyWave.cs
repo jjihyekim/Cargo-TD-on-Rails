@@ -31,6 +31,7 @@ public class EnemyWave : MonoBehaviour, IShowOnDistanceRadar, ISpeedForEngineSou
 
     public bool isStealing = false;
     public bool isLeaving = false;
+    public bool isForwardLeave = false;
 
     public bool IsTrain() {
         return false;
@@ -107,6 +108,10 @@ public class EnemyWave : MonoBehaviour, IShowOnDistanceRadar, ISpeedForEngineSou
             }
 
             targetSpeed = Mathf.Min(mySpeed, Mathf.Max(distance, LevelReferences.s.speed) + 0.2f);
+
+            if (isLeaving) {
+                targetSpeed = isForwardLeave ? mySpeed : -mySpeed;
+            }
 
             if (isWaveMoving) {
                 if (playerPos < wavePosition && !isLeaving) {
@@ -359,7 +364,7 @@ public class EnemyWave : MonoBehaviour, IShowOnDistanceRadar, ISpeedForEngineSou
     }
 
     public float GetDistance() {
-        return wavePosition;
+        return wavePosition + currentDistanceOffset;
     }
 
     public Sprite GetIcon() {
@@ -418,13 +423,18 @@ public class EnemyWave : MonoBehaviour, IShowOnDistanceRadar, ISpeedForEngineSou
         Destroy(target);
     }
 
-    public void Leave() {
+    public void Leave(bool _isForwardLeave) {
         isLeaving = true;
         isStealing = false;
         isTeleporting = false;
         isWaveMoving = true;
+        isForwardLeave = _isForwardLeave;
         
         SetTargetPosition();
-        targetDistanceOffset = SpeedController.s.missionDistance;
+        /*if (isForwardLeave) {
+            targetDistanceOffset = SpeedController.s.missionDistance;
+        } else {
+            targetDistanceOffset = -SpeedController.s.missionDistance;
+        }*/
     }
 }

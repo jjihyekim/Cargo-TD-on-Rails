@@ -81,6 +81,13 @@ public class EnemyWavesController : MonoBehaviour {
 		waves.Add(wave);
 	}
 
+
+	public void PhaseOutExistingEnemies() {
+		for (int i = 0; i < waves.Count; i++) {
+			waves[i].Leave(false);
+		}
+	}
+
 	void Update() {
 		if (PlayStateMaster.s.isCombatInProgress() && enemiesInitialized) {
 			pursuerTimerObject.gameObject.SetActive(true);

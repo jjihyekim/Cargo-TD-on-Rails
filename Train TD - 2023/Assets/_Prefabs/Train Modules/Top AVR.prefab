@@ -323,7 +323,6 @@ GameObject:
   - component: {fileID: 5536560673647428002}
   - component: {fileID: 5294316236533204574}
   - component: {fileID: 3530306806417391473}
-  - component: {fileID: 7689868723181562946}
   m_Layer: 11
   m_Name: AVR
   m_TagString: Untagged
@@ -411,18 +410,6 @@ MonoBehaviour:
   tooltip:
     text: Your average gun. Does medium damage and uses some ammo.
   info: Anti Vehicle Rifle
---- !u!114 &7689868723181562946
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5362408767915291082}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f68cc5d632aa0b042a9a11038cda16d6, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &5901234116158881788
 GameObject:
   m_ObjectHideFlags: 0

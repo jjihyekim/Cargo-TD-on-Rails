@@ -179,6 +179,6 @@ public class StealerHarpoonModule : MonoBehaviour {
     }
 
     void Leave() {
-        GetComponentInParent<EnemyWave>().Leave();
+        GetComponentInParent<EnemyWave>().Leave(true);
     }
 }

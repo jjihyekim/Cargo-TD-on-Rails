@@ -10357,7 +10357,6 @@ GameObject:
   - component: {fileID: 1249084498607748609}
   - component: {fileID: 6579016706801922906}
   - component: {fileID: 26677003479329346}
-  - component: {fileID: 7689853419550113252}
   m_Layer: 11
   m_Name: BasicNuclearEngine
   m_TagString: Untagged
@@ -10419,18 +10418,6 @@ MonoBehaviour:
     text: A bigger train is heavier and needs more engines. Nuclear Engines create
       steam for free using nuclear power. This one is small and safe.
   info: Basic Nuclear Engine
---- !u!114 &7689853419550113252
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5415555812727877745}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f68cc5d632aa0b042a9a11038cda16d6, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &5507805009449139861
 GameObject:
   m_ObjectHideFlags: 0
@@ -20182,7 +20169,7 @@ AudioSource:
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 4226279657425738903, guid: 660d07ac376d6214b99c5d084e20d01f, type: 2}
   m_audioClip: {fileID: 8300000, guid: 4d785aa41837d9544a53d651d68f3257, type: 3}
-  m_PlayOnAwake: 1
+  m_PlayOnAwake: 0
   m_Volume: 1
   m_Pitch: 1
   Loop: 0
@@ -20192,9 +20179,9 @@ AudioSource:
   Priority: 128
   DopplerLevel: 1
   MinDistance: 0.1
-  MaxDistance: 10
+  MaxDistance: 4
   Pan2D: 0
-  rolloffMode: 0
+  rolloffMode: 2
   BypassEffects: 0
   BypassListenerEffects: 0
   BypassReverbZones: 0
@@ -20210,6 +20197,15 @@ AudioSource:
       weightedMode: 0
       inWeight: 0.33333334
       outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 0.25837564
+      value: 0.99647474
+      inSlope: -0.013643922
+      outSlope: -3.409368
+      tangentMode: 5
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.0744092
     - serializedVersion: 3
       time: 1
       value: 0
@@ -20227,7 +20223,7 @@ AudioSource:
     m_Curve:
     - serializedVersion: 3
       time: 0
-      value: 0.8
+      value: 0.3
       inSlope: 0
       outSlope: 0
       tangentMode: 0
@@ -20282,7 +20278,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &1146384762788523931
 Transform:
   m_ObjectHideFlags: 0
@@ -20597,8 +20593,8 @@ ParticleSystem:
     startSpeed:
       serializedVersion: 2
       minMaxState: 3
-      scalar: 14
-      minScalar: 5
+      scalar: 20
+      minScalar: 8
       maxCurve:
         serializedVersion: 2
         m_Curve:
@@ -21295,7 +21291,7 @@ ParticleSystem:
     rateOverTime:
       serializedVersion: 2
       minMaxState: 0
-      scalar: 500
+      scalar: 200
       minScalar: 10
       maxCurve:
         serializedVersion: 2
@@ -30348,6 +30344,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 1691629272263448227, guid: 86c82cfee32788c49a35e2e0e34bf7b7, type: 3}
+      propertyPath: m_RootOrder
+      value: 8
+      objectReference: {fileID: 0}
     - target: {fileID: 3399934084524781478, guid: 86c82cfee32788c49a35e2e0e34bf7b7, type: 3}
       propertyPath: m_Name
       value: Nuclear Engine
@@ -30359,6 +30359,10 @@ PrefabInstance:
     - target: {fileID: 8139748349479078024, guid: 86c82cfee32788c49a35e2e0e34bf7b7, type: 3}
       propertyPath: length
       value: 0.8
+      objectReference: {fileID: 0}
+    - target: {fileID: 8139748349479078024, guid: 86c82cfee32788c49a35e2e0e34bf7b7, type: 3}
+      propertyPath: myRarity
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 8139748349479078024, guid: 86c82cfee32788c49a35e2e0e34bf7b7, type: 3}
       propertyPath: uniqueName

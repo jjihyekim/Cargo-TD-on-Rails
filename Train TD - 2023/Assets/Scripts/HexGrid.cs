@@ -214,7 +214,7 @@ public class HexGrid : MonoBehaviour {
 
 		currentBiome.skybox.SetActiveSkybox(currentBiome.sun, null);
 
-		var gridCount = Mathf.FloorToInt(Mathf.Abs(zRangesToFill.x - zRangesToFill.y) / gridSize.x);
+		gridCount = Mathf.FloorToInt(Mathf.Abs(zRangesToFill.x - zRangesToFill.y) / gridSize.x);
 		
 		for (int i = 0; i < gridCount; i++) {
 			var hex = Instantiate(currentBiome.groundPrefab, transform);
@@ -223,6 +223,9 @@ public class HexGrid : MonoBehaviour {
 			hexParents.Add(hex.transform);
 		}
 	}
+
+	[ReadOnly]
+	public int gridCount;
 
 	void ClearGrids() {
 		var count = hexParents.Count;
@@ -267,6 +270,7 @@ public class HexGrid : MonoBehaviour {
 			hexParents.RemoveAt(0);
 			lastHex.GetComponent<HexChunk>().ClearForeign();
 			//UpdateGrid(lastHex);
+			
 			lastHex.position = hexParents[hexParents.Count - 1].transform.position + Vector3.forward * gridOffset;
 			if (doubleNextOne) {
 				lastHex.position = hexParents[hexParents.Count - 1].transform.position + Vector3.forward * (gridOffset * 2);
@@ -292,6 +296,7 @@ public class HexGrid : MonoBehaviour {
 				if (SpeedController.s.currentDistance + lastHex.position.z > trackSwitchDistances[i]) {
 					var trackSwitchHex = Instantiate(currentBiome.groundTrackSwitchPrefab, transform);
 					trackSwitchHex.transform.position = lastHex.transform.position;
+					trackSwitchHex.GetComponent<TrackSwitchHex>().SetUp();
 					Destroy(lastHex.gameObject);
 					lastHex = trackSwitchHex.transform;
 					

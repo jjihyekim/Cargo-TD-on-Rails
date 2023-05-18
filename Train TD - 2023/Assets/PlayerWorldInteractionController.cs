@@ -212,7 +212,8 @@ public class PlayerWorldInteractionController : MonoBehaviour {
 
                     var snapLocationValidAndNew = snapLocation != null && snapLocation != currentSnapLoc;
                     var snapLocationCanAcceptCart = !snapLocation.onlySnapCargo || selectedCart.isCargo;
-                    var canSnap = snapLocationValidAndNew && snapLocationCanAcceptCart;
+                    var snapLocationEmpty = snapLocation.snapTransform.childCount == 0;
+                    var canSnap = snapLocationValidAndNew && snapLocationCanAcceptCart && snapLocationEmpty;
 
                     if (canSnap) {
                         isSnapping = true;

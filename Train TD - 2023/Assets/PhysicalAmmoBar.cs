@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Unity.Collections;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 public class PhysicalAmmoBar : MonoBehaviour {
 
@@ -22,7 +23,7 @@ public class PhysicalAmmoBar : MonoBehaviour {
         moduleAmmo = GetComponentInParent<ModuleAmmo>();
         moduleAmmo.OnReload.AddListener(OnReload);
         moduleAmmo.OnUse.AddListener(OnUse);
-        OnReload();
+        OnReload(false);
         OnUse();
     }
 
@@ -35,24 +36,32 @@ public class PhysicalAmmoBar : MonoBehaviour {
             Destroy(firstOne);
         }
     }
-    void OnReload() {
+    void OnReload(bool showEffect) {
         var delta = Vector3.zero;
         while ( allAmmoChunks.Count < moduleAmmo.curAmmo) {
             var newOne = Instantiate(ammoChunk, reloadSpawnPos);
-            newOne.transform.position += delta;
+            newOne.transform.position += delta + new Vector3(Random.Range(-0.005f, 0.005f), 0, Random.Range(-0.005f, 0.005f));
             newOne.SetActive(true);
             allAmmoChunks.Add(newOne);
-            velocity.Add(0);
-
+            if (showEffect) {
+                velocity.Add(0);
+            } else {
+                velocity.Add(100);
+            }
             delta.y += ammoChunkHeight;
         }
+        
+        if(!showEffect)
+            Update();
     }
 
 
     private float acceleration = 2;
     private void Update() {
-        var target = noAmmoPos.transform.position;
+        var targetY = noAmmoPos.transform.position.y;
         for (int i = 0; i < allAmmoChunks.Count; i++) {
+            var target = allAmmoChunks[i].transform.position;
+            target.y = targetY;
             if (allAmmoChunks[i].transform.position.y > target.y) {
                 allAmmoChunks[i].transform.position = Vector3.MoveTowards(allAmmoChunks[i].transform.position, target, velocity[i] * Time.deltaTime);
                 velocity[i] += acceleration * Time.deltaTime;
@@ -60,7 +69,7 @@ public class PhysicalAmmoBar : MonoBehaviour {
                 velocity[i] = 0;
             }
 
-            target.y += ammoChunkHeight;
+            targetY += ammoChunkHeight;
         }
     }
 }

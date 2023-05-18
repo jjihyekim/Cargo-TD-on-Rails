@@ -5,12 +5,13 @@ using UnityEngine;
 public class ParticlesAtEngineStart : MonoBehaviour
 {
     private void Start() {
-        if (PlayStateMaster.s.isShop()) {
+        /*if (PlayStateMaster.s.isShop()) {
             Activate();
         } else {
             Disable();
-        }
+        }*/
         
+        Disable();
         GetComponentInParent<EngineModule>().OnEngineStart.AddListener(Activate);
     }
 
@@ -23,8 +24,6 @@ public class ParticlesAtEngineStart : MonoBehaviour
         foreach (var audio in GetComponentsInChildren<AudioSource>()) {
             audio.Play();
         }
-        
-        
     }
 
     void Disable() {

@@ -11,31 +11,34 @@ public class CheatsController : MonoBehaviour
     
     public EncounterTitle debugEncounter;
     public PowerUpScriptable debugPowerUp;
+    public CharacterDataScriptable quickStartCheater;
 
+    
+    // whenever you add a new cheat make sure to add it to the auto disable are below!
     public bool infiniteLevel = false;
     public bool debugNoRegularSpawns = false;
     public bool instantEnterPlayMode = false;
     public bool playerIsImmune;
     public bool restartOnStart = false;
+    public bool autoRestartWithCheaterOnStart = false;
     public bool dontDrawMap = false;
     
     
     public EnemyIdentifier debugEnemy;
 
     private void Start() {
-        #if !UNITY_EDITOR
-        debugNoRegularSpawns = false;
+#if !UNITY_EDITOR
         infiniteLevel = false;
+        debugNoRegularSpawns = false;
         instantEnterPlayMode = false;
         playerIsImmune= false;
         restartOnStart = false;
+        autoRestartWithCheaterOnStart = false;
         dontDrawMap = false;
 #endif
-
-
         
-        if(debugNoRegularSpawns || infiniteLevel || infiniteLevel || instantEnterPlayMode || playerIsImmune || restartOnStart || dontDrawMap)
-            Debug.LogError("Debug options active!");
+        if(debugNoRegularSpawns || infiniteLevel || infiniteLevel || instantEnterPlayMode || playerIsImmune || restartOnStart || dontDrawMap || autoRestartWithCheaterOnStart)
+            Debug.LogError("Debug options active! See _CheatsController for more info");
         
         if (debugNoRegularSpawns)
             EnemyWavesController.s.debugNoRegularSpawns = true;
@@ -46,7 +49,9 @@ public class CheatsController : MonoBehaviour
         if(dontDrawMap)
             WorldMapCreator.s.QuickStartNoWorldMap();
 
-        if (instantEnterPlayMode) {
+        if (autoRestartWithCheaterOnStart) {
+            Invoke(nameof(QuickRestartWithCheaterCharacter),0.01f);
+        }else if (instantEnterPlayMode) {
            Invoke(nameof(QuickStart),0.01f);
         }
     }
@@ -54,13 +59,35 @@ public class CheatsController : MonoBehaviour
     void QuickStart() {
         WorldMapCreator.s.QuickStartNoWorldMap();
         MainMenu.s.QuickStartGame();
-        PlayStateMaster.s.OnShopEntered.AddListener(OnShopStateEntered);
+        PlayStateMaster.s.OnShopEntered.AddListener(OnShopStateEnteredQuickStart);
+    }
+    void OnShopStateEnteredQuickStart() {
+        PlayStateMaster.s.OnShopEntered.RemoveListener(OnShopStateEnteredQuickStart);
+        Invoke(nameof(_OnShopStateEnteredQuickStart),0.01f);
     }
 
-    void OnShopStateEntered() {
+    void _OnShopStateEnteredQuickStart() {
         ShopStateController.s.QuickStart();
-        PlayStateMaster.s.OnShopEntered.RemoveListener(OnShopStateEntered);
     }
+    
+    
+    
+    void QuickRestartWithCheaterCharacter() {
+        DataSaver.s.GetCurrentSave().isInARun = false;
+        WorldMapCreator.s.QuickStartNoWorldMap();
+        MainMenu.s.QuickStartGame();
+        PlayStateMaster.s.OnOpenCharacterSelectMenu.AddListener(OnShopStateEnteredQuickRestartWithCheaterCharacter);
+    }
+    
+    void OnShopStateEnteredQuickRestartWithCheaterCharacter() {
+        CharacterSelector.s.SelectCharacter(quickStartCheater.myCharacter);
+        PlayStateMaster.s.OnOpenCharacterSelectMenu.RemoveListener(OnShopStateEnteredQuickRestartWithCheaterCharacter);
+
+        if (instantEnterPlayMode) {
+            Invoke(nameof(_OnShopStateEnteredQuickStart),0.5f);
+        }
+    }
+
 
     private void Update() {
         if (infiniteLevel) {

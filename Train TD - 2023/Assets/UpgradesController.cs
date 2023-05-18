@@ -14,6 +14,10 @@ public class UpgradesController : MonoBehaviour {
 		s = this;
 	}
 	
+	
+	public enum CartRarity {
+		common, rare, epic
+	}
 
 	[ValueDropdown("GetAllModuleNames")]
 	public List<string> tier1Buildings = new List<string>();
@@ -221,25 +225,23 @@ public class UpgradesController : MonoBehaviour {
 	
 	void InitializeShop(DataSaver.RunState state) {
 		state.shopState = new ShopState();
-		ClearRandomBuildingSpawnedList();
-
 		var buildingCargoCount = 3; 
 
 		for (int i = 0; i < buildingCargoCount; i++) {
 			state.shopState.cartStates.Add(new WorldCartState() {
 				location =  CartLocation.market,
 				state = new DataSaver.TrainState.CartState() {
-					uniqueName = GetRandomBuildingCargo()
+					uniqueName = GetRandomBuildingCargoForFleaMarket()
 				}
 			});
 		}
 
 		state.shopState.leftCargo = new DataSaver.TrainState.CartState.CargoState() {
-			cargoReward = GetRandomBuildingCargo(),
+			cargoReward = GetRandomBuildingCargoForDestinationReward(),
 			isLeftCargo = true
 		};
 		state.shopState.rightCargo = new DataSaver.TrainState.CartState.CargoState() {
-			cargoReward = GetRandomBuildingCargo(),
+			cargoReward = GetRandomBuildingCargoForDestinationReward(),
 			isLeftCargo = false
 		};
 
@@ -490,62 +492,113 @@ public class UpgradesController : MonoBehaviour {
 		return DataHolder.s.powerUps[Random.Range(0, DataHolder.s.powerUps.Length)].name;
 	}
 
-
-	void ClearRandomBuildingSpawnedList() {
-		spawnedList.Clear();
+	class RarityPickChance {
+		public float epicChance; 
+		public float rareChance;
+		public float startingValue;
+		public float increaseValue;
 	}
-	
-	private List<string> spawnedList = new List<string>();
 
-	public string GetRandomBuildingCargo() {
-		var reward = _GetRandomBuildingCargo();
-		int n = 20;
-		for (int i = 0; i < n; i++) {
-			if (spawnedList.Contains(reward)) {
-				reward = _GetRandomBuildingCargo();
+	RarityPickChance fleaMarketRarity = new RarityPickChance() {
+		epicChance = 0.03f,
+		rareChance = 0.37f,
+		startingValue = -0.05f,
+		increaseValue = 0.01f
+	};
+	RarityPickChance destinationRarity = new RarityPickChance() {
+		epicChance = 0.10f,
+		rareChance = 0.40f,
+		startingValue = -0.12f,
+		increaseValue = 0.02f
+	};
+
+	public void SetUpNewCharacterRarityBoosts() {
+		DataSaver.s.GetCurrentSave().currentRun.fleaMarketRarityBoost = fleaMarketRarity.startingValue;
+		DataSaver.s.GetCurrentSave().currentRun.destinationRarityBoost = destinationRarity.startingValue;
+	}
+
+	public string GetRandomBuildingCargoForDestinationReward() {
+		return _GetRandomBuildingCargo(ref DataSaver.s.GetCurrentSave().currentRun.destinationRarityBoost, destinationRarity);
+	}
+
+	public string GetRandomBuildingCargoForFleaMarket() {
+		return _GetRandomBuildingCargo(ref DataSaver.s.GetCurrentSave().currentRun.fleaMarketRarityBoost, fleaMarketRarity);
+	}
+
+
+	private List<string> recentlySpawned = new List<string>();
+
+	string _GetRandomBuildingCargo(ref float rarityBoost, RarityPickChance rarityPickChance) {
+		var building = _GetRandomBuildingCargo(ref rarityBoost, rarityPickChance, true);
+
+		for (int i = 0; i < 3; i++) {
+			if (building.Length > 0) {
+				break;
 			} else {
-				spawnedList.Add(reward);
-				return reward;
+				building = _GetRandomBuildingCargo(ref rarityBoost, rarityPickChance, true);
 			}
 		}
-		
-		return reward;
-	}
-	public string _GetRandomBuildingCargo() {
-		string results;
 
-		switch (DataSaver.s.GetCurrentSave().currentRun.currentAct) {
-			case 1:
-				results = tier1Buildings[Random.Range(0,tier1Buildings.Count)];
-				break;
-			default:
-				results = tier1Buildings[Random.Range(0,tier1Buildings.Count)];
-				Debug.LogError($"Illegal Act Number {DataSaver.s.GetCurrentSave().currentRun.currentAct}");
-				break;
-			/*case 2:
-				if (Random.value > 0.5f) {
-					results = tier2Buildings[Random.Range(0,tier2Buildings.Count)];
-				} else {
-					results = tier1Buildings[Random.Range(0,tier1Buildings.Count)];
+		if (building.Length <= 0) {
+			building = _GetRandomBuildingCargo(ref rarityBoost, rarityPickChance, false);
+		}
+
+		if (DataHolder.s.GetCart(building).myRarity == CartRarity.epic) {
+			rarityBoost = rarityPickChance.startingValue;
+		} else {
+			rarityBoost += rarityPickChance.increaseValue;
+		}
+
+		return building;
+	}
+
+	string _GetRandomBuildingCargo(ref float rarityBoost, RarityPickChance rarityPickChance, bool careRecentlySpawned) {
+		List<string> possibleCarts = new List<string>();
+
+
+		var cartRarityRoll = Random.value;
+
+		if (cartRarityRoll < rarityPickChance.epicChance + rarityBoost) {
+			// rolled an epic cart
+			for (int i = 0; i < tier1Buildings.Count; i++) {
+				if (DataHolder.s.GetCart(tier1Buildings[i]).myRarity == CartRarity.epic) {
+					if (!recentlySpawned.Contains(tier1Buildings[i]) || !careRecentlySpawned) {
+						possibleCarts.Add(tier1Buildings[i]);
+					}
 				}
-				break;
-			case 3:
-				if (Random.value > 0.5f) {
-					results = tier3Buildings[Random.Range(0,tier3Buildings.Count)];
-				} else if(Random.value > 0.5f){
-					results = tier2Buildings[Random.Range(0,tier2Buildings.Count)];
-				} else {
-					results = tier1Buildings[Random.Range(0,tier1Buildings.Count)];
+			}
+			
+		}else if (cartRarityRoll < rarityPickChance.rareChance + (rarityPickChance.epicChance + rarityBoost)) {
+			//rolled a rare cart
+			
+			for (int i = 0; i < tier1Buildings.Count; i++) {
+				if (DataHolder.s.GetCart(tier1Buildings[i]).myRarity == CartRarity.rare) {
+					if (!recentlySpawned.Contains(tier1Buildings[i]) || !careRecentlySpawned) {
+						possibleCarts.Add(tier1Buildings[i]);
+					}
 				}
-				//results = tier3Buildings[Random.Range(0,tier3Buildings.Count)];
-				break;
-			default:
-				results = tier3Buildings[Random.Range(0,tier3Buildings.Count)];
-				Debug.LogError($"Illegal Act Number {DataSaver.s.GetCurrentSave().currentRun.currentAct}");
-				break;*/
+			}
+			
+		} else {
+			//rolled a common cart
+			
+			for (int i = 0; i < tier1Buildings.Count; i++) {
+				if (DataHolder.s.GetCart(tier1Buildings[i]).myRarity == CartRarity.common) {
+					if (!recentlySpawned.Contains(tier1Buildings[i]) || !careRecentlySpawned) {
+						possibleCarts.Add(tier1Buildings[i]);
+					}
+				}
+			}
+		}
+
+
+		var result = "";
+
+		if (possibleCarts.Count > 0) {
+			result = possibleCarts[Random.Range(0, possibleCarts.Count)];
 		}
 		
-		return results;
+		return result;
 	}
 	
 	/*public string[] GetRandomBossRewards() {

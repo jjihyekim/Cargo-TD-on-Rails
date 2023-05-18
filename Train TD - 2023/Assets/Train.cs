@@ -107,6 +107,10 @@ public class Train : MonoBehaviour {
         
         UpdateCartPositions();
         
+        for (int i = 0; i < carts.Count; i++) {
+            carts[i].SetAttachedToTrainModulesMode(true);
+        }
+        
         trainUpdatedThroughNonBuildingActions?.Invoke();
         trainUpdated?.Invoke();
 
@@ -240,9 +244,25 @@ public class Train : MonoBehaviour {
         }*/
         
         RestartShake();
-        
-        if(carts.Count <= 0 && PlayStateMaster.s.isCombatInProgress())
+
+        var hasEngine = false;
+        var hasCriticalComponent = false;
+
+        for (int i = 0; i < carts.Count; i++) {
+            if (carts[i].isMainEngine) {
+                hasEngine = true;
+            }
+
+            if (carts[i].isCriticalComponent) {
+                hasCriticalComponent = true;
+            }
+        }
+
+        var lostGame = carts.Count <= 0 || !hasEngine || !hasCriticalComponent;
+
+        if (lostGame && PlayStateMaster.s.isCombatInProgress()) {
             MissionLoseFinisher.s.MissionLost();
+        }
         
         // draw train already calls this
         //trainUpdatedThroughNonBuildingActions?.Invoke();
@@ -295,15 +315,39 @@ public class Train : MonoBehaviour {
 
 
     public void RemoveCart(Cart cart) {
+        for (int i = 0; i < carts.Count; i++) {
+            carts[i].SetAttachedToTrainModulesMode(false);
+        }
+        
         carts.Remove(cart);
         cart.myLocation = UpgradesController.CartLocation.world;
         cart.transform.SetParent(null);
+        
+        for (int i = 0; i < carts.Count; i++) {
+            carts[i].trainIndex = i;
+        }
+        
+        for (int i = 0; i < carts.Count; i++) {
+            carts[i].SetAttachedToTrainModulesMode(true);
+        }
     }
 
     public void AddCartAtIndex(int index, Cart cart) {
+        for (int i = 0; i < carts.Count; i++) {
+            carts[i].SetAttachedToTrainModulesMode(false);
+        }
+        
         carts.Insert(index, cart);
         cart.myLocation = UpgradesController.CartLocation.train;
         cart.transform.SetParent(transform);
+
+        for (int i = 0; i < carts.Count; i++) {
+            carts[i].trainIndex = i;
+        }
+        
+        for (int i = 0; i < carts.Count; i++) {
+            carts[i].SetAttachedToTrainModulesMode(true);
+        }
     }
 
     public void StopShake() {
@@ -560,30 +604,26 @@ public class Train : MonoBehaviour {
     }
     
     
-    public Cart GetNextBuilding(bool isForward, Cart building) {
-        throw new NotImplementedException();
-        /*if (isForward) {
-            if (slot.isFrontSlot) {
-                var nextCart = slot.GetCart().index - 1;
-                if (nextCart > 0) {
-                    return Train.s.carts[nextCart].GetComponent<Cart>().backSlot;
-                } else {
-                    return null;
-                }
+    public Cart GetNextBuilding(bool isForward, Cart cart) {
+        if (isForward) {
+            var nextCart = cart.trainIndex - 1;
+            if (nextCart >= 0) {
+                return carts[nextCart];
             } else {
-                return slot.GetCart().frontSlot;
+                return null;
             }
         } else {
-            if (!slot.isFrontSlot) {
-                var nextCart = slot.GetCart().index + 1;
-                if (nextCart < Train.s.carts.Count) {
-                    return Train.s.carts[nextCart].GetComponent<Cart>().frontSlot;
-                } else {
-                    return null;
-                }
+            var nextCart = cart.trainIndex + 1;
+            if (nextCart < Train.s.carts.Count) {
+                return carts[nextCart];
             } else {
-                return slot.GetCart().backSlot;
+                return null;
             }
-        }*/
+        }
     }
+}
+
+public interface IActivateWhenAttachedToTrain {
+    public void AttachedToTrain();
+    public void DetachedFromTrain();
 }

@@ -45,7 +45,7 @@ public class MiniGUI_TrackPath : MonoBehaviour {
 
     void SpawnUnitsOnSegment(LevelSegment segment, RectTransform parent) {
         if (!segment.isEncounter) {
-            for (int i = 0; i < segment.enemiesOnPath.Length; i++) {
+            /*for (int i = 0; i < segment.enemiesOnPath.Length; i++) {
                 var unitIcon = DataHolder.s.GetEnemy(segment.enemiesOnPath[i].enemyIdentifier.enemyUniqueName).GetComponent<EnemySwarmMaker>().enemyIcon;
                 if (segment.rewardPowerUpAtTheEnd && i == segment.enemiesOnPath.Length - 1) {
                     unitIcon = DataHolder.s.GetPowerUp(segment.powerUpRewardUniqueName).icon;
@@ -56,7 +56,20 @@ public class MiniGUI_TrackPath : MonoBehaviour {
                 var unit = Instantiate(unitsPrefab, parent);
                 unitDisplays.Add(unit);
                 unit.GetComponent<MiniGUI_RadarUnit>().SetUp(unitIcon, segment.enemiesOnPath[i].isLeft, percentage);
-            }
+            }*/
+            
+            var percentage = 0.5f;
+            //var distance = percentage * parent.rect.width;
+            
+            var unit = Instantiate(unitsPrefab, parent);
+            unitDisplays.Add(unit);
+
+            var icon = LevelReferences.s.smallEnemyIcon;
+            if (segment.rewardPowerUpAtTheEnd)
+                icon = LevelReferences.s.eliteEnemyIcon;
+            
+            unit.GetComponent<MiniGUI_RadarUnit>().SetUp(icon, percentage);
+            
         } else {
             var percentage = 0.5f;
             //var distance = percentage * parent.rect.width;
@@ -77,7 +90,8 @@ public class MiniGUI_TrackPath : MonoBehaviour {
         isShowingBoth = _isShowingBoth;
         showBothObject.SetActive(true);
         showSingleObject.SetActive(false);
-        singleLever.SetVisibility(false);
+        if(singleLever != null)
+            singleLever.SetVisibility(false);
         isMoving = true;
         curReverseSpeed = 0;
     }
@@ -202,7 +216,8 @@ public class MiniGUI_TrackPath : MonoBehaviour {
                     isMoving = false;
                     showBothObject.SetActive(false);
                     showSingleObject.SetActive(true);
-                    singleLever.SetVisibility(true);
+                    if(singleLever != null)
+                        singleLever.SetVisibility(true);
                     showBothObject.transform.position = hidePosition.position;
                 }
             }
@@ -220,8 +235,7 @@ public class MiniGUI_TrackPath : MonoBehaviour {
     private bool isLocked = false;
     public void LockTrackState() {
         isLocked = true;
-        showBothObject.SetActive(false);
-        showSingleObject.SetActive(true);
+        ToggleTrackState(false);
         ClearUnitDisplays();
     }
 

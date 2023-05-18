@@ -80,6 +80,9 @@ public class LevelReferences : MonoBehaviour {
     public Color rightColor = Color.white;
 
     public Sprite encounterIcon;
+    public Sprite smallEnemyIcon;
+    public Sprite eliteEnemyIcon;
+    public Sprite bossEnemyIcon;
 
     public EnemyIdentifier powerUpSpawnerEnemy;
 

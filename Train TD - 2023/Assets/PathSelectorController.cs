@@ -18,6 +18,8 @@ public class PathSelectorController : MonoBehaviour {
 	private List<MiniGUI_TrackPath> _tracks = new List<MiniGUI_TrackPath>();
 	private List<MiniGUI_TrackLever> _levers = new List<MiniGUI_TrackLever>();
 
+	public AudioSource trainCrossingAudioSource;
+	public AudioClip trackSwitchSound;
 
 	public ManualHorizontalLayoutGroup layoutGroup;
 
@@ -52,6 +54,7 @@ public class PathSelectorController : MonoBehaviour {
 			var _lever = Instantiate(switchPrefab, trackParent).GetComponent<MiniGUI_TrackLever>();
 			var leverState = Random.value > 0.5f;
 			_lever.SetTrackState(leverState);
+			_lever.SetTrackSwitchWarningState(false);
 			_lever.leverId = i;
 			_levers.Add(_lever);
 
@@ -61,6 +64,7 @@ public class PathSelectorController : MonoBehaviour {
 			_track.singleLever = _lever;
 			_track.doubleLever.SetTrackState(leverState);
 			_track.doubleLever.leverId = i;
+			_track.doubleLever.SetTrackSwitchWarningState(false);
 			_tracks.Add(_track);
 		}
 
@@ -85,6 +89,8 @@ public class PathSelectorController : MonoBehaviour {
 		}
 
 		ReCalculateMissionLength();
+		
+		trainCrossingAudioSource.PlayOneShot(trackSwitchSound);
 	}
 
 	public void ShowTrackInfo(int id) {
@@ -108,9 +114,22 @@ public class PathSelectorController : MonoBehaviour {
 	}
 
 
+	public float trackSwitchWarningDistance = 50;
+	public bool isPlayingTrackSwitchWarning = false;
 	private void Update() {
 		if (PlayStateMaster.s.isCombatInProgress()) {
-			if (nextSegmentChangeDistance > 0 && SpeedController.s.currentDistance > nextSegmentChangeDistance - HexGrid.s.gridSize.x - 1) {
+			if (SpeedController.s.currentDistance + trackSwitchWarningDistance > nextSegmentChangeDistance && !isPlayingTrackSwitchWarning) {
+				trainCrossingAudioSource.Play();
+				isPlayingTrackSwitchWarning = true;
+				_levers[currentSegment].SetTrackSwitchWarningState(true);
+				_tracks[currentSegment].doubleLever.SetTrackSwitchWarningState(true);
+			}
+			
+			
+			if (nextSegmentChangeDistance > 0 && SpeedController.s.currentDistance > nextSegmentChangeDistance) {
+				trainCrossingAudioSource.Pause();
+				isPlayingTrackSwitchWarning = false;
+				
 				_tracks[currentSegment].LockTrackState();
 				_levers[currentSegment].LockTrackState();
 
@@ -121,7 +140,12 @@ public class PathSelectorController : MonoBehaviour {
 				} else {
 					upcomingSegment = activeLevel.mySegmentsB[currentSegment + 1];
 				}
+				
+				_levers[currentSegment].SetTrackSwitchWarningState(false);
+				_levers[currentSegment].SetVisibility(false);
+				_tracks[currentSegment].doubleLever.SetTrackSwitchWarningState(false);
 
+				EnemyWavesController.s.PhaseOutExistingEnemies();
 				EnemyWavesController.s.SpawnEnemiesOnSegment(nextSegmentChangeDistance, upcomingSegment);
 
 				if (currentSegment < _tracks.Count - 1) {
@@ -132,6 +156,8 @@ public class PathSelectorController : MonoBehaviour {
 				}
 
 				currentSegment += 1;
+				
+				SpeedController.s.PlayEngineStartEffects();
 			}
 		}
 	}
@@ -143,6 +169,10 @@ public class PathSelectorController : MonoBehaviour {
 		myTrackSwitchHexes.Add(hex);
 		for (int i = 0; i < myTrackSwitchHexes.Count; i++) {
 			myTrackSwitchHexes[i].isGoingLeft = _levers[currentSegment].currentState;
+
+			if (i == currentSegment) {
+				nextSegmentChangeDistance = myTrackSwitchHexes[i].GetSwitchDistance()-2f;
+			}
 		}
 	}
 }

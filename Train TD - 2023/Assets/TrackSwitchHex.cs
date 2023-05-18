@@ -17,7 +17,11 @@ public class TrackSwitchHex : MonoBehaviour {
 
     public GameObject directionArrow;
 
-    private void Start() {
+    public float GetSwitchDistance() {
+        return transform.position.z + SpeedController.s.currentDistance;
+    }
+
+    public void SetUp() {
         PathSelectorController.s.RegisterTrackSwitchHex(this);
     }
 
@@ -55,7 +59,7 @@ public class TrackSwitchHex : MonoBehaviour {
             prevAngle = angle;
         }
 
-        if (zPos < -0.5f) {
+        if (zPos <= -0.5f) {
             enabled = false;
         }
     }
@@ -65,11 +69,11 @@ public class TrackSwitchHex : MonoBehaviour {
         attachedHex = toAttach;
         
         toAttach.SetParent(bottomRotationHexParentPos);
-        toAttach.localPosition = Vector3.zero;
+        toAttach.localPosition = Vector3.forward * HexGrid.s.gridOffset * (bottomRotationHexParentPos.childCount - 1);
         toAttach.localRotation = Quaternion.identity;
 
         toAttach2.SetParent(topRotationHexParentPos);
-        toAttach2.localPosition = Vector3.zero;
+        toAttach2.localPosition = Vector3.forward * HexGrid.s.gridOffset * (bottomRotationHexParentPos.childCount - 1);
         toAttach2.localRotation = Quaternion.identity;
     }
 }

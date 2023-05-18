@@ -6,12 +6,17 @@ using UnityEngine;
 using Random = UnityEngine.Random;
 
 public class Cart : MonoBehaviour {
+
+    public UpgradesController.CartRarity myRarity;
+    
     public bool isMainEngine = false;
+    public bool isCriticalComponent = false;
     public bool isCargo = false;
 
     public int trainIndex;
 
-    public bool isRepairable => !isMainEngine && !isCargo;
+    public bool isRepairable => !isMainEngine && !isCargo && !isCriticalComponent;
+    //public bool isRepairable => !isCargo;
 
     public UpgradesController.CartLocation myLocation = UpgradesController.CartLocation.train;
 
@@ -26,9 +31,6 @@ public class Cart : MonoBehaviour {
 
     public AudioClip[] moduleBuiltSound;
 
-    [ReadOnly] 
-    public Train myTrain;
-    
     public int weight = 50;
 
     [Space] 
@@ -82,8 +84,8 @@ public class Cart : MonoBehaviour {
 
     
     private void OnDestroy() {
-        if(myTrain != null)
-            myTrain.CartDestroyed(this);
+        if(GetComponentInParent<Train>() != null)
+            Train.s.CartDestroyed(this);
         
         if(currentlyRepairingUIThing != null)
             Destroy(currentlyRepairingUIThing);
@@ -130,7 +132,17 @@ public class Cart : MonoBehaviour {
     public void SetCurrentHealth(float health) {
         GetComponent<ModuleHealth>().SetHealth(health);
     }
-    
+
+    public void SetAttachedToTrainModulesMode(bool isAttached) {
+        var attachedToTrain = GetComponentsInChildren<IActivateWhenAttachedToTrain>();
+        for (int i = 0; i < attachedToTrain.Length; i++) {
+            if (isAttached) {
+                attachedToTrain[i].AttachedToTrain();
+            } else {
+                attachedToTrain[i].DetachedFromTrain();
+            }
+        }
+    }
 }
 
 

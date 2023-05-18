@@ -14,6 +14,7 @@ public class PlayStateMaster : MonoBehaviour {
     
 
     public UnityEvent OnMainMenuEntered = new UnityEvent();
+    public UnityEvent OnOpenCharacterSelectMenu = new UnityEvent();
     public UnityEvent OnCharacterSelected = new UnityEvent();
     public UnityEvent OnDrawWorld = new UnityEvent();
     public UnityEvent OnNewWorldCreation = new UnityEvent();
@@ -136,8 +137,7 @@ public class PlayStateMaster : MonoBehaviour {
             }
         } else {
             StartCoroutine(Transition(false, () => {
-                CharacterSelector.s.CheckAndShowCharSelectionScreen();
-                MainMenu.s.ExitMainMenu();
+                OnOpenCharacterSelectMenu?.Invoke();
             }));
         }
     }
@@ -149,6 +149,7 @@ public class PlayStateMaster : MonoBehaviour {
         StopAllCoroutines();
         WorldMapCreator.s.ResetWorldMapGenerationProgress();
         StartCoroutine(Transition(true, () => {
+            OnCharacterSelected?.Invoke();
             OnNewWorldCreation?.Invoke();
             OnShopEntered?.Invoke();
             CharacterSelector.s.CheckAndShowCharSelectionScreen();

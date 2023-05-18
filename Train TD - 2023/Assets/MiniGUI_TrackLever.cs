@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -63,10 +64,12 @@ public class MiniGUI_TrackLever : MonoBehaviour {
         if (isVisible) {
             button.SetActive(true);
             SetTrackState(currentState);
+            switchWarning.SetActive(enabled);
         } else {
             button.SetActive(false);
             upTrack.SetActive(false);
             bottomTrack.SetActive(false);
+            switchWarning.SetActive(false);
         }
     }
 
@@ -76,5 +79,36 @@ public class MiniGUI_TrackLever : MonoBehaviour {
 
     public void LockTrackState() {
         button.GetComponent<Button>().interactable = false;
+    }
+
+
+    public GameObject switchWarning;
+    public Image warning1;
+    public Image warning2;
+    public void SetTrackSwitchWarningState(bool state) {
+        enabled = state;
+        switchWarning.SetActive(state);
+        stateTimer = 0;
+        Update();
+    }
+
+
+    public float stateTimer;
+    private bool state;
+    private void Update() {
+        if (stateTimer <= 0) {
+            state = !state;
+            if (state) {
+                warning1.color = Color.white;
+                warning2.color = Color.red;
+            } else {
+                warning2.color = Color.white;
+                warning1.color = Color.red;
+            }
+
+            stateTimer = 0.3f;
+        } else {
+            stateTimer -= Time.deltaTime;
+        }
     }
 }

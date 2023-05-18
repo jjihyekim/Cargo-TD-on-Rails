@@ -14,31 +14,24 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   myCharacter:
     uniqueName: My Dude
-    description: Just your average dude. Starts with some basic guns and a great
-      potential.
-    starterModules: []
+    description: Just your average dude. Starts with a basic gun and a great potential.
     starterTrain:
       myCarts:
       - uniqueName: engine_nuclear
-        health: -1
-        ammo: -1
-        isBuildingCargo: 0
-        cargoReward: 
+        cargoState:
+          cargoReward: 
+          isLeftCargo: 0
       - uniqueName: cargo_mystery
-        health: -1
-        ammo: -1
-        isBuildingCargo: 0
-        cargoReward: 
+        cargoState:
+          cargoReward: 
+          isLeftCargo: 0
       - uniqueName: top_avr
-        health: -1
-        ammo: -1
-        isBuildingCargo: 0
-        cargoReward: 
+        cargoState:
+          cargoReward: 
+          isLeftCargo: 0
+      - uniqueName: empty
+        cargoState:
+          cargoReward: 
+          isLeftCargo: 0
     starterResources:
-      money: 200
       scraps: 0
-      maxScraps: 0
-      ammo: 0
-      maxAmmo: 0
-      fuel: 0
-      maxFuel: 0

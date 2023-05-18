@@ -271,6 +271,9 @@ public class DataSaver {
 		
 		public bool shopInitialized = false;
 		public UpgradesController.ShopState shopState;
+
+		public float fleaMarketRarityBoost = -0.05f;
+		public float destinationRarityBoost = -0.15f;
 		
 		public void SetCharacter(CharacterData characterData) {
 			character = characterData;

@@ -22,7 +22,14 @@ public class MissionLoseFinisher : MonoBehaviour {
 
     public string[] loseTips;
 
+    public bool isMissionLost = false;
+
     public void MissionLost() {
+        if (isMissionLost)
+            return;
+
+
+        isMissionLost = true;
         PlayStateMaster.s.FinishCombat();
         
         for (int i = 0; i < scriptsToDisable.Length; i++) {
@@ -67,6 +74,7 @@ public class MissionLoseFinisher : MonoBehaviour {
 
 
     public void BackToMenu() {
+        isMissionLost = false;
         loseUI.SetActive(false);
         MissionWinFinisher.s.ContinueToClearOutOfCombat();
         DataSaver.s.GetCurrentSave().currentRun = null;

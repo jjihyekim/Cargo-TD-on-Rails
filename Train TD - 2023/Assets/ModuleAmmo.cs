@@ -43,6 +43,7 @@ public class ModuleAmmo : MonoBehaviour, IActiveDuringCombat, IActiveDuringShopp
     
     [Button]
     public void Reload(float amount = -1, bool showEffect = true) {
+        curAmmo = Mathf.Clamp(curAmmo, 0, maxAmmo);
         if (curAmmo < maxAmmo) {
             if (amount < 0) {
                 amount = maxAmmo;
@@ -53,13 +54,22 @@ public class ModuleAmmo : MonoBehaviour, IActiveDuringCombat, IActiveDuringShopp
 
             curAmmo += amount;
             curAmmo = Mathf.Clamp(curAmmo, 0, maxAmmo);
-            UpdateModuleState();
-            OnReload?.Invoke();
+            
         }
+
+        UpdateModuleState();
+        OnReload?.Invoke(showEffect);
+    }
+
+    public void ChangeMaxAmmo(int newMax) {
+        maxAmmo = newMax;
+        curAmmo = maxAmmo;
+        OnUse?.Invoke();
+        OnReload?.Invoke(false);
     }
 
     public UnityEvent OnUse;
-    public UnityEvent OnReload;
+    public UnityEvent<bool> OnReload;
 
     [ReadOnly]
     public GameObject myUINoAmmoWarningThing;

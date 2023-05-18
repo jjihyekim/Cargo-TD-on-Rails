@@ -42,8 +42,9 @@ public class LevelArchetypeScriptable : ScriptableObject {
 
         for (int i = 0; i < segmentCount; i++) {
             if (i == 0 && firstLevel != null) {
-                level.mySegmentsA[0] = firstLevel.GetData();
-                level.mySegmentsB[0] = firstLevel.GetData();
+                level.mySegmentsA[0] = GenerateSegment(firstLevel, 0);
+                level.mySegmentsB[0] = GenerateSegment(firstLevel, 0);
+                continue;
             }
             
             var segmentType = NumberWithWeights.WeightedRandomRoll(enemyDirectionsChances);
@@ -106,10 +107,19 @@ public class LevelArchetypeScriptable : ScriptableObject {
 
 
     public int firstEnemyInSegmentDistance = 50;
-    public int lastEnemyAndSegmentEndDistance = 50;
+    public int lastEnemyAndSegmentEndDistance = 70;
     public int powerUpEnemyDistanceFromLastEnemy = 50;
-    LevelSegment GenerateSegment(int type) { // 0 -> random 1 -> all left 2 -> all right 
+
+    LevelSegment GenerateSegment(LevelSegmentScriptable segmentScriptable, int type) {
+        var segment =  segmentScriptable.GetData().Copy();
+        return _GenerateSegment(segment, type);
+    }
+    LevelSegment GenerateSegment(int type) {
         var segment =  possibleLevels[Random.Range(0, possibleLevels.Length)].GetData().Copy();
+        return _GenerateSegment(segment, type);
+    }
+
+    LevelSegment _GenerateSegment(LevelSegment segment, int type) { // 0 -> random 1 -> all left 2 -> all right 
 
         var enemyOffset = firstEnemyInSegmentDistance;
 
