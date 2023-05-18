@@ -2,26 +2,20 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using FMODUnity;
-using FMOD.Studio;
-using Sirenix.OdinInspector;
 
 public class EngineFireController : MonoBehaviour {
     private ParticleSystem _particleSystem;
-    // *** replaced by FMOD
-	// private AudioSource _audio;
+    private AudioSource _audio;
 
     public float baseDelay = 0.4f;
     public float minDelay = 0.1f;
     public float speedDelayEffect = 0.1f;
     public float currentDelay = 0.4f;
 
-    // *** replaced by FMOD
-    // public float slowSoundMaxSpeed = 1f;
-    // public float mediumSoundMaxSpeed = 7f;
+    public float slowSoundMaxSpeed = 1f;
+    public float mediumSoundMaxSpeed = 7f;
 
-    // *** replaced by FMOD
-    // public AudioClip[] speedSounds;
+    public AudioClip[] speedSounds;
 
     //public GameObject soundPrefab;
 
@@ -37,25 +31,18 @@ public class EngineFireController : MonoBehaviour {
     private void OnDisable() {
 	    if (soundSource == this)
 		    soundSource = null;
-
-		// stop locomotive sound when object is disabled
-		speaker.Stop(FMOD.Studio.STOP_MODE.IMMEDIATE);
     }
 
     void Start() {
 	    _particleSystem = GetComponentInChildren<ParticleSystem>();
-	    // _audio = GetComponentInChildren<AudioSource>();
+	    _audio = GetComponentInChildren<AudioSource>();
 	    _engine = GetComponentInParent<EngineModule>();
 	    UpdateEngineParticleSystemValues();
-
-		// istart playing locomotive sound at start
-		speaker.Play();
     }
 
     private float lastSpeed = 0;
     private float lastEnginePowerPlayerControl = 1;
     public int lastSpeedTier = 0;
-
     //public float pitchRange = 0.2f;
     void Update()
     {
@@ -68,9 +55,8 @@ public class EngineFireController : MonoBehaviour {
 		    lastEnginePowerPlayerControl = SpeedController.s.enginePowerPlayerControl;
 		    UpdateEngineParticleSystemValues();
 	    }
+	    
 
-		UpdateEngineSound();
-		/*
 	    if (PlayStateMaster.s.isCombatInProgress()) {
 		    var speedTier = 0;
 		    if (LevelReferences.s.speed > slowSoundMaxSpeed)
@@ -84,10 +70,8 @@ public class EngineFireController : MonoBehaviour {
 			    lastSpeedTier = speedTier;
 		    }
 	    }
-		*/
     }
 
-	/*
     IEnumerator ChangeSpeedSound(AudioClip target) {
 	    if (soundSource == null) {
             soundSource = this;
@@ -106,7 +90,7 @@ public class EngineFireController : MonoBehaviour {
 		    _audio.Stop();
 	    }
     }
-	*/
+
 
     public bool isLevelFinishTriggered = false;
     public bool fireActive = true;
@@ -140,9 +124,9 @@ public class EngineFireController : MonoBehaviour {
 		    emissionModule.enabled = false;
 		    if (PlayStateMaster.s.isCombatFinished() && !isLevelFinishTriggered) {
 			    isLevelFinishTriggered = true;
-			    // _audio.clip = speedSounds[0];
+			    _audio.clip = speedSounds[0];
 			    _particleSystem.Stop();
-			    // _audio.loop = false;
+			    _audio.loop = false;
 		    }
 	    }
     }
@@ -153,15 +137,5 @@ public class EngineFireController : MonoBehaviour {
 
     public void ActivateEngineFire() {
 	    fireActive = true;
-    }
-
-	[Header("FMOD Locomotive Sound")]
-	public FMODAudioSource speaker;
-	/// <summary>
-	/// Updates the engine sound based on train speed
-	/// </summary>
-	private void UpdateEngineSound()
-	{
-		speaker.SetParamByName("LocomotiveSpeed", LevelReferences.s.speed * 0.15f);
     }
 }
