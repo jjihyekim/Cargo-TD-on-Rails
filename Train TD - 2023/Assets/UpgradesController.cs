@@ -633,4 +633,14 @@ public class UpgradesController : MonoBehaviour {
 		}
 		return buildingNames;
 	}
+
+	public int WorldCartCount() {
+		var count = 0;
+		for (int i = 0; i < shopCarts.Count; i++) {
+			if (shopCarts[i].myLocation == CartLocation.world)
+				count += 1;
+		}
+
+		return count;
+	}
 }

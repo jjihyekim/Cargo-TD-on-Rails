@@ -230,12 +230,17 @@ public class GunModule : MonoBehaviour, IComponentWithTarget, IActiveDuringComba
         range /= 2f;
 
         var defaultPositions = new List<Vector3>();
+
+        var realMagnitude = gunShakeMagnitude;
+        if (beingDirectControlled) {
+            realMagnitude *= CameraShakeController.s.overallShakeAmount;
+        }
         
         //stopUpdateRotation = true;
         for (int i = 0; i < rotateTransforms.Length; i++) {
             var rotateTransform = rotateTransforms[i].transform;
             defaultPositions.Add(rotateTransform.localPosition);
-            rotateTransform.localPosition = Random.insideUnitSphere * gunShakeMagnitude * range + (-rotateTransform.forward * gunShakeMagnitude * range * 2);
+            rotateTransform.localPosition = Random.insideUnitSphere * realMagnitude * range + (-rotateTransform.forward * realMagnitude * range * 2);
             rotateTransform.Rotate(gunShakeRotation);
         }
 

@@ -410,7 +410,7 @@ public class CameraController : MonoBehaviour {
 
     public void ProcessDirectControl(Vector2 stickInput) {
         var realInput = stickInput*gamepadSensitivity + Mouse.current.delta.ReadValue() * mouseSensitivity;
-        realInput *= Time.unscaledDeltaTime * (overallSensitivity/2.5f);
+        realInput *= /*Time.unscaledTime **/ (overallSensitivity/2.5f)/45f;
 
         rotTarget += realInput;
 

@@ -28,8 +28,8 @@ public class TrackSwitchHex : MonoBehaviour {
     private float prevAngle = 0;
     void Update() {
         var gridSizeX = HexGrid.s.gridSize.x;
-        var zPos = transform.position.z/ gridSizeX;
-        zPos = Mathf.Clamp(zPos, -0.5f, 0.5f);
+        var zPosReal = transform.position.z/ gridSizeX;
+        var zPos = Mathf.Clamp(zPosReal, -0.5f, 0.5f);
         
         directionArrow.transform.rotation = Quaternion.Euler(0, !isGoingLeft? 180: 0,0);
         if (!isGoingLeft) {
@@ -59,7 +59,7 @@ public class TrackSwitchHex : MonoBehaviour {
             prevAngle = angle;
         }
 
-        if (zPos <= -0.5f) {
+        if (zPosReal <= -1f) {
             enabled = false;
         }
     }

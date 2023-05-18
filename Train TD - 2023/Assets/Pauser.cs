@@ -32,7 +32,18 @@ public class Pauser : MonoBehaviour {
     }
 
     private void TogglePause(InputAction.CallbackContext obj) {
-        TogglePause();
+        var menuToggles = pauseMenu.GetComponentsInChildren<MenuToggle>();
+        var menuClosed = false;
+
+        for (int i = 0; i < menuToggles.Length; i++) {
+            if (menuToggles[i].isMenuActive) {
+                menuClosed = true;
+                menuToggles[i].HideMenu();
+            }
+        }
+        
+        if(!menuClosed)
+            TogglePause();
     }
 
     void TogglePause() {

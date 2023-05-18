@@ -123,12 +123,15 @@ public class PlayerWorldInteractionController : MonoBehaviour {
     public bool isDragStarted = false;
     public bool isSnapping = false;
     public Vector3 offset;
+    public SnapCartLocation sourceSnapLocation;
     void CheckAndDoDrag() {
         if (selectedCart != null) {
             if (clickCart.action.WasPressedThisFrame()) {
                 if (CanDragCart(selectedCart)) {
                     currentSnapLoc = null;
                     isSnapping = false;
+                    sourceSnapLocation = selectedCart.GetComponentInParent<SnapCartLocation>();
+                    prevCartTrainSnapIndex = -1;
                     selectedCart.transform.SetParent(null);
                     selectedCart.GetComponent<Rigidbody>().isKinematic = true;
                     selectedCart.GetComponent<Rigidbody>().useGravity = false;
@@ -197,6 +200,17 @@ public class PlayerWorldInteractionController : MonoBehaviour {
             SnapToTrain();
             isSnapping = true;
         } else {
+            if (sourceSnapLocation != null && UpgradesController.s.WorldCartCount() <= 0) {
+                if (sourceSnapLocation.snapTransform.childCount > 0 && prevCartTrainSnapIndex > 0) {
+                    var prevCart = sourceSnapLocation.GetComponentInChildren<Cart>();
+                    if (prevCart != null) {
+                        UpgradesController.s.RemoveCartFromShop(prevCart);
+                        Train.s.AddCartAtIndex(prevCartTrainSnapIndex, prevCart);
+                    }
+                }
+            }
+            prevCartTrainSnapIndex = -1;
+
             if (carts.Contains(selectedCart)) {
                 Train.s.RemoveCart(selectedCart);
                 UpgradesController.s.AddCartToShop(selectedCart, UpgradesController.CartLocation.world);
@@ -241,6 +255,7 @@ public class PlayerWorldInteractionController : MonoBehaviour {
         }
     }
 
+    public int prevCartTrainSnapIndex = -1;
     private void SnapToTrain() {
         var carts = Train.s.carts;
         var zPos = GetMousePositionOnPlane().z;
@@ -262,8 +277,24 @@ public class PlayerWorldInteractionController : MonoBehaviour {
                     if (cart != selectedCart) {
                         if (carts.Contains(selectedCart)) {
                             Train.s.RemoveCart(selectedCart);
-                        }else {
+                        } else {
                             UpgradesController.s.RemoveCartFromShop(selectedCart);
+                        }
+
+                        if (sourceSnapLocation != null && UpgradesController.s.WorldCartCount() <= 0) {
+                            if (sourceSnapLocation.snapTransform.childCount > 0) {
+                                var prevCart = sourceSnapLocation.GetComponentInChildren<Cart>();
+                                if (prevCart != null) {
+                                    UpgradesController.s.RemoveCartFromShop(prevCart);
+                                    Train.s.AddCartAtIndex(prevCartTrainSnapIndex, prevCart);
+                                }
+                            }
+
+                            var swapCart = Train.s.carts[i];
+                            Train.s.RemoveCart(swapCart);
+                            UpgradesController.s.AddCartToShop(swapCart, sourceSnapLocation.myLocation);
+                            swapCart.transform.SetParent(sourceSnapLocation.snapTransform);
+                            prevCartTrainSnapIndex = i;
                         }
 
                         Train.s.AddCartAtIndex(i, selectedCart);

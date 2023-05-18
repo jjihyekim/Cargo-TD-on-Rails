@@ -26,6 +26,8 @@ public class CameraShakeController : MonoBehaviour {
         public float verticalMagnitudeDecay;
     }
 
+    public float overallShakeAmount = 1f;
+
 
     public void ShakeCamera(float duration, float magnitude, float verticalPushMagnitude = 0f, float verticalPushDuration = 1f, bool doHorizontalPush = false) {
 		
@@ -77,9 +79,9 @@ public class CameraShakeController : MonoBehaviour {
                 }
             }
 
-            cameraShakeDummy.localPosition = Random.insideUnitSphere * curMagnitude;
+            cameraShakeDummy.localPosition = Random.insideUnitSphere * curMagnitude * overallShakeAmount;
             if(rotationalShake)
-                cameraShakeDummy.localRotation = Quaternion.Euler(verticalPushMagnitude*-1,horizontalPush*verticalPushMagnitude,0);
+                cameraShakeDummy.localRotation = Quaternion.Euler(verticalPushMagnitude*-1 * overallShakeAmount,horizontalPush*verticalPushMagnitude *overallShakeAmount,0);
             else 
                 cameraShakeDummy.localRotation = Quaternion.identity;
             

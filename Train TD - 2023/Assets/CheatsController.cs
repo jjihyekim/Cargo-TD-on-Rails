@@ -11,7 +11,7 @@ public class CheatsController : MonoBehaviour
     
     public EncounterTitle debugEncounter;
     public PowerUpScriptable debugPowerUp;
-    public CharacterDataScriptable quickStartCheater;
+    public CharacterDataScriptable autoRestartCharacter;
 
     
     // whenever you add a new cheat make sure to add it to the auto disable are below!
@@ -20,7 +20,7 @@ public class CheatsController : MonoBehaviour
     public bool instantEnterPlayMode = false;
     public bool playerIsImmune;
     public bool restartOnStart = false;
-    public bool autoRestartWithCheaterOnStart = false;
+    public bool autoRestartWithSelectedCharacter = false;
     public bool dontDrawMap = false;
     
     
@@ -33,11 +33,11 @@ public class CheatsController : MonoBehaviour
         instantEnterPlayMode = false;
         playerIsImmune= false;
         restartOnStart = false;
-        autoRestartWithCheaterOnStart = false;
+        autoRestartWithSelectedCharacter = false;
         dontDrawMap = false;
 #endif
         
-        if(debugNoRegularSpawns || infiniteLevel || infiniteLevel || instantEnterPlayMode || playerIsImmune || restartOnStart || dontDrawMap || autoRestartWithCheaterOnStart)
+        if(debugNoRegularSpawns || infiniteLevel || infiniteLevel || instantEnterPlayMode || playerIsImmune || restartOnStart || dontDrawMap || autoRestartWithSelectedCharacter)
             Debug.LogError("Debug options active! See _CheatsController for more info");
         
         if (debugNoRegularSpawns)
@@ -49,7 +49,7 @@ public class CheatsController : MonoBehaviour
         if(dontDrawMap)
             WorldMapCreator.s.QuickStartNoWorldMap();
 
-        if (autoRestartWithCheaterOnStart) {
+        if (autoRestartWithSelectedCharacter) {
             Invoke(nameof(QuickRestartWithCheaterCharacter),0.01f);
         }else if (instantEnterPlayMode) {
            Invoke(nameof(QuickStart),0.01f);
@@ -80,7 +80,7 @@ public class CheatsController : MonoBehaviour
     }
     
     void OnShopStateEnteredQuickRestartWithCheaterCharacter() {
-        CharacterSelector.s.SelectCharacter(quickStartCheater.myCharacter);
+        CharacterSelector.s.SelectCharacter(autoRestartCharacter.myCharacter);
         PlayStateMaster.s.OnOpenCharacterSelectMenu.RemoveListener(OnShopStateEnteredQuickRestartWithCheaterCharacter);
 
         if (instantEnterPlayMode) {
