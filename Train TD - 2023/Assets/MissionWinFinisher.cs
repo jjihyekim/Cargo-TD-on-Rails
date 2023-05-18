@@ -99,8 +99,10 @@ public class MissionWinFinisher : MonoBehaviour {
 
 		if(!isShowingPrevRewards)
 			SoundscapeController.s.PlayMissionWonSound();
-		
-		MusicPlayer.s.SwapMusicTracksAndPlay(false);
+
+		// MusicPlayer.s.SwapMusicTracksAndPlay(false);
+		FMODMusicPlayer.s.SwapMusicTracksAndPlay(false);
+
 		DirectControlMaster.s.DisableDirectControl();
 	}
 
