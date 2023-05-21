@@ -19,52 +19,9 @@ public class FirstTimeTutorialController : MonoBehaviour {
     public bool cameraWASDMoved = false;
     public bool cameraZoomed = false;
     public bool cameraRRotated = false;
-    
-    [Space]
-    public GameObject getCargoHint;
-    public GameObject cargoIsHere;
-    public GameObject activateMoveMode;
-    public GameObject putOnTheTrain;
-    
-    [Space] 
-    public GameObject getScrapsHint;
-    public GameObject activateScrappingMode;
 
+    public List<GameObject> activeHints = new List<GameObject>();
 
-    [Space] 
-    public GameObject openMapHint;
-    public GameObject mapHere;
-    public GameObject selectACity;
-
-
-    [Space] 
-    public GameObject goGoGoHint;
-
-
-    [Space] 
-    public GameObject lookAtTheRadarHint;
-    
-    
-    [Space] 
-    public GameObject pressShiftHint;
-    public float shiftHoldTime = 0;
-    
-    
-    [Space] 
-    public GameObject useRepairTool;
-    public GameObject useReloadTool;
-    
-    
-    [Space] 
-    public GameObject directControlHint;
-    
-    
-    [Space] 
-    public GameObject getRewardsHint;
-    
-    
-    [Space] 
-    public GameObject buildYourNewThingsHint;
     private void Awake() {
         s = this;
         tutorialUI.SetActive(false);
@@ -72,10 +29,19 @@ public class FirstTimeTutorialController : MonoBehaviour {
     }
 
     public void TutorialCheck() {
-        return;
+        ClearActiveHints();
+        if(DataSaver.s.GetCurrentSave().currentRun.map.GetPlayerStar().starChunk == 0)
+            _progress.tutorialDone = !MiniGUI_DisableTutorial.IsTutorialActive();
+        
         if (!_progress.tutorialDone && !tutorialEngaged) {
             EngageFirstTimeTutorial();
         }
+    }
+
+    public void NewCharacterTutorialReset() {
+        var camDone = _progress.cameraDone;
+        DataSaver.s.GetCurrentSave().tutorialProgress = new DataSaver.TutorialProgress();
+        _progress.cameraDone = camDone;
     }
 
     public void ReDoTutorial() {
@@ -90,30 +56,142 @@ public class FirstTimeTutorialController : MonoBehaviour {
         tutorialEngaged = true;
         this.enabled = true;
 
-        DataSaver.s.GetCurrentSave().tutorialProgress = new DataSaver.TutorialProgress();
-        
-        tutorialUI.SetActive(true);
-        
         cameraHint.SetActive(false);
-        getCargoHint.SetActive(false);
-        getScrapsHint.SetActive(false);
-        openMapHint.SetActive(false);
-        goGoGoHint.SetActive(false);
-        lookAtTheRadarHint.SetActive(false);
-        pressShiftHint.SetActive(false);
-        useRepairTool.SetActive(false);
-        useReloadTool.SetActive(false);
-        directControlHint.SetActive(false);
-        getRewardsHint.SetActive(false);
-        buildYourNewThingsHint.SetActive(false);
-        
-        //PlayerBuildingController.s.completeBuildingEvent.AddListener(OnPlayerBuildOnTrain);
-        PlayStateMaster.s.OnCharacterSelected.AddListener(ShowCameraControls);
-        if (DataSaver.s.GetCurrentSave().isInARun) {
-            ShowCameraControls();
-        }
 
-        Train.s.trainUpdated.AddListener(GetTrainStuffBeforeLevelBegins);
+        PlayStateMaster.s.OnCharacterSelected.AddListener(PlayObjectiveAnimation);
+        if (DataSaver.s.GetCurrentSave().isInARun) {
+            PlayObjectiveAnimation();
+        }
+    }
+
+    void PlayObjectiveAnimation() {
+        tutorialUI.SetActive(true);
+        StartCoroutine(_PlayObjectiveAnimation());
+    }
+
+    public InputActionReference click;
+
+    public GameObject thisIsYourCargo;
+
+    public GameObject leaveTheCity;
+    public GameObject getRidOfEmpty;
+    private bool emptyCartThingActive = false;
+    private Cart emptyCart;
+
+    public GameObject hoverOverThingsToGetInfo;
+
+    public AnimationCurve worldMapLerp;
+    public float worldMapLerpSpeed = 1f;
+    
+    IEnumerator _PlayObjectiveAnimation() {
+
+        Cart cargo = null;
+        emptyCart = null;
+
+        for (int i = 0; i < Train.s.carts.Count; i++) {
+            if (Train.s.carts[i].isCriticalComponent) {
+                cargo = Train.s.carts[i];
+            }
+
+            if (Train.s.carts[i].modulesParent.childCount == 0) {
+                emptyCart = Train.s.carts[i];
+            }
+        }
+        
+        
+        
+        thisIsYourCargo.SetActive(true);
+        thisIsYourCargo.GetComponent<UIElementFollowWorldTarget>().SetUp(cargo.uiTargetTransform);
+
+        ShopStateController.s.mapOpenButton.interactable = false;
+        ShopStateController.s.starterUI.SetActive(false);
+        
+        CameraController.s.SetCameraControllerStatus(false);
+        CameraController.s.SetMainCamPos();
+
+        PlayerWorldInteractionController.s.canSelect = false;
+        
+        click.action.Enable();
+
+        while (!click.action.WasPerformedThisFrame()) {
+            yield return null;
+        }
+        
+        thisIsYourCargo.SetActive(false);
+        
+        WorldMapCreator.s.OpenWorldMap();
+        CameraController.s.SetMainCamPos();
+        WorldMapCreator.s.canSelectCastles = false;
+        
+        //WorldMapCreator.s.
+        
+        
+        yield return WaitForSecondsSmart(2f);
+
+        var lerpTarget = WorldMapCreator.s.yourObjectiveUIMarker.sourceTransform;
+        var camLerpTransform = CameraController.s.cameraCenter;
+
+        var curTimer = 0f;
+        var startPos = camLerpTransform.position;
+
+        while (curTimer <= 1f) {
+            camLerpTransform.position = Vector3.Lerp(startPos, lerpTarget.position, worldMapLerp.Evaluate(curTimer));
+            CameraController.s.SetMainCamPos();
+            curTimer += Time.deltaTime *worldMapLerpSpeed;
+            if(click.action.WasPerformedThisFrame())
+                break;
+            yield return null;
+        }
+        camLerpTransform.position = lerpTarget.position;
+        CameraController.s.SetMainCamPos();
+
+        yield return WaitForSecondsSmart(2f);
+        
+        camLerpTransform.position = startPos;
+        WorldMapCreator.s.ReturnToRegularMap();
+        PlayerWorldInteractionController.s.canSelect = false;
+        CameraController.s.SetMainCamPos();
+        WorldMapCreator.s.canSelectCastles = true;
+        
+        yield return WaitForSecondsSmart(1f);
+        
+        leaveTheCity.SetActive(true);
+        CameraController.s.SetMainCamPos();
+        
+        yield return WaitForSecondsSmart(1f);
+
+        if (emptyCart != null) {
+            getRidOfEmpty.SetActive(true);
+            getRidOfEmpty.GetComponent<UIElementFollowWorldTarget>().SetUp(emptyCart.uiTargetTransform);
+            emptyCartThingActive = true;
+        }
+        CameraController.s.SetMainCamPos();
+
+        yield return WaitForSecondsSmart(1f);
+
+        hoverOverThingsToGetInfo.SetActive(true);
+        
+
+        CameraController.s.SetCameraControllerStatus(true);
+        PlayerWorldInteractionController.s.canSelect = true;
+        ShopStateController.s.starterUI.SetActive(true);
+        
+        yield return WaitForSecondsSmart(1f);
+        
+        ShopStateController.s.mapOpenButton.interactable = true;
+        ShowCameraControls();
+    }
+
+    IEnumerator WaitForSecondsSmart(float toWait) {
+        yield return null;
+        var curTimer = 0f;
+        while (curTimer <= toWait) {
+            curTimer += Time.deltaTime;
+            if(click.action.WasPerformedThisFrame())
+                break;
+            yield return null;
+        }
+        yield return null;
     }
 
 
@@ -123,71 +201,7 @@ public class FirstTimeTutorialController : MonoBehaviour {
             cameraHint.SetActive(true);
         } else {
             cameraHint.SetActive(false);
-            ShowGetCargoControls();
         }
-    }
-
-    void ShowGetCargoControls() {
-        if (!_progress.cargoPutOnTrain) {
-            getCargoHint.SetActive(true);
-        } else {
-            getCargoHint.SetActive(false);
-            ShowSellScrap();
-        }
-    }
-
-    void ShowSellScrap() {
-        if (!_progress.scrapsScrapped) {
-            getScrapsHint.SetActive(true);
-        } else {
-            getScrapsHint.SetActive(false);
-            OpenMap();
-        }
-    }
-
-    void OpenMap() {
-        if (!_progress.mapTargetSelected) {
-            openMapHint.SetActive(true);
-        } else {
-            openMapHint.SetActive(false);
-            ShowGoGoGo();
-        }
-    }
-
-    void ShowGoGoGo() {
-        if (!_progress.levelStarted) {
-            goGoGoHint.SetActive(true);
-        } else {
-            goGoGoHint.SetActive(false);
-        }
-    }
-
-    void GetTrainStuffBeforeLevelBegins() {
-        Invoke(nameof(OneFrameLater),1f);
-    }
-
-    void OneFrameLater() {
-        /*var sellModules = Train.s.GetComponentsInChildren<SellAction>();
-        for (int i = 0; i < sellModules.Length; i++) {
-            sellModules[i].sellEvent.AddListener(PlayerSoldSomethingOnTrain);
-        }*/
-    }
-
-    private ModuleHealth[] _healths;
-    private ModuleAmmo[] _ammos;
-    void GetTrainStuff() {
-        _healths = Train.s.GetComponentsInChildren<ModuleHealth>();
-        _ammos = Train.s.GetComponentsInChildren<ModuleAmmo>();
-    }
-    
-    void LookAtTheRadar() {
-        lookAtTheRadarHint.SetActive(true);
-        Invoke(nameof(PressShift), 5f);
-    }
-
-    void PressShift() {
-        lookAtTheRadarHint.SetActive(false);
-        pressShiftHint.SetActive(true);
     }
 
     void CameraRRotated(InputAction.CallbackContext obj) {
@@ -195,28 +209,6 @@ public class FirstTimeTutorialController : MonoBehaviour {
         CameraController.s.rotateAction.action.performed -= CameraRRotated;
     }
 
-    private ModuleHealth cargoHealth;
-
-    public GameObject soldSomethingOnTrain;
-    void PlayerSoldSomethingOnTrain() {
-        soldSomethingOnTrain.SetActive(true);
-        CancelInvoke(nameof(DisableSoldOnTrain));
-        Invoke(nameof(DisableSoldOnTrain), 20f);
-    }
-
-    void DisableSoldOnTrain() {
-        soldSomethingOnTrain.SetActive(false);
-    }
-
-    private bool addedListeners = false;
-
-    void OnRepaired() {
-        _progress.repair += 1;
-    }
-
-    void OnReloaded() {
-        _progress.reload += 1;
-    }
     private void Update() {
         if (tutorialEngaged) {
             if (!_progress.cameraDone) {
@@ -233,202 +225,100 @@ public class FirstTimeTutorialController : MonoBehaviour {
                 }
             }
 
-
-            if (!_progress.cargoPutOnTrain && _progress.cameraDone) {
-                /*if (PlayerActionsController.s.currentMode != PlayerActionsController.ActionModes.shopMove && !PlayerBuildingController.s.isBuilding) {
-                    activateMoveMode.SetActive(true);
-                } else {
-                    activateMoveMode.SetActive(false);
-                }*/
-
-                /*if (PlayerBuildingController.s.isBuilding) {
-                    activateMoveMode.SetActive(false);
-                    putOnTheTrain.SetActive(true);
-                } else {
-                    putOnTheTrain.SetActive(false);
-                }*/
-            }
-
-            if (waitToShowScrap) {
-                /*if (PlayerActionsController.s.currentMode != PlayerActionsController.ActionModes.shopMove && !PlayerBuildingController.s.isBuilding) {
-                    ShowSellScrap();
-                    waitToShowScrap = false;
-                }*/
-            }
-
-
-            if (!_progress.scrapsScrapped && _progress.cargoPutOnTrain && _progress.cameraDone && !waitToShowScrap) {
-                /*if (PlayerActionsController.s.currentMode != PlayerActionsController.ActionModes.shopSell) {
-                    activateScrappingMode.SetActive(true);
-                } else {
-                    activateScrappingMode.SetActive(false);
-                }*/
-                
-                if (MoneyController.s.scraps > 0) {
-                    getScrapsHint.SetActive(false);
-                    _progress.scrapsScrapped = true;
-                    OpenMap();
-                }
-            }
-
-            if (!_progress.mapTargetSelected && _progress.scrapsScrapped && _progress.cargoPutOnTrain) {
-                if (PlayStateMaster.s.IsLevelSelected()) {
-                    openMapHint.SetActive(false);
-                    _progress.mapTargetSelected = true;
-                    ShowGoGoGo();
-                }
-
-                if (WorldMapCreator.s.worldMapOpen) {
-                    selectACity.SetActive(true);
-                    mapHere.SetActive(false);
-                } else {
-                    selectACity.SetActive(false);
-                    mapHere.SetActive(true);
-                }
-            }
-
-            if (!_progress.levelStarted && _progress.mapTargetSelected && _progress.scrapsScrapped && _progress.cargoPutOnTrain) {
-                if (PlayStateMaster.s.isCombatInProgress()) {
-                    _progress.levelStarted = true;
-                    goGoGoHint.SetActive(false);
-                    GetTrainStuff();
-                    
-                    if(!_progress.shiftToGoFast)
-                        Invoke(nameof(LookAtTheRadar), 5f);
-                    /*if(!_progress.powerup)
-                        PlayerActionsController.s.OnGetPowerUp.AddListener(OnPowerUpGet);*/
-                }
-            }
-
-            if (PlayStateMaster.s.isCombatInProgress()){
-                if (!addedListeners) {
-                    /*PlayerActionsController.s.OnRepaired.AddListener(OnRepaired);
-                    PlayerActionsController.s.OnReloaded.AddListener(OnReloaded);*/
-                    addedListeners = true;
-                }
-                
-                if (pressShiftHint.activeSelf) {
-                    if (shiftHoldTime < 1f) {
-                        if (TimeController.s.fastForwardKey.action.ReadValue<float>() > 0f) {
-                            shiftHoldTime += Time.deltaTime;
-                        }
-                    } else {
-                        _progress.shiftToGoFast = true;
-                        pressShiftHint.SetActive(false);
-                    }
-                }
-
-
-                bool isHealthLow = false;
-                if (_progress.repair < 10) {
-                    for (int i = 0; i < _healths.Length; i++) {
-                        if (_healths[i].GetHealthPercent() < 0.5f) {
-                            isHealthLow = true;
-                            break;
-                        }
-                    }
-                }
-
-                useRepairTool.SetActive(isHealthLow);
-
-                bool isAmmoLow = false;
-                if (_progress.reload < 2) {
-                    for (int i = 0; i < _ammos.Length; i++) {
-                        if (_ammos[i].curAmmo < 2) {
-                            isAmmoLow = true;
-                            break;
-                        }
-                    }
-                }
-
-                useReloadTool.SetActive(isAmmoLow);
-                
-                if (!_progress.directControl) {
-                    if (SpeedController.s.currentDistance > SpeedController.s.missionDistance/2f) {
-                        directControlHint.SetActive(true);
-                    } else {
-                        directControlHint.SetActive(false);
-                    }
-
-                    if (DirectControlMaster.s.directControlInProgress || _progress.directControl) {
-                        _progress.directControl = true;
-                        directControlHint.SetActive(false);
-                    }
-                }
-            }
-
-            if (PlayStateMaster.s.isCombatFinished()) {
-                useReloadTool.SetActive(false);
-                useRepairTool.SetActive(false);
-                directControlHint.SetActive(false);
-                powerUpHint.SetActive(false);
-                _progress.levelFinishedOnce = true;
-                if (!_progress.getRewards && MissionWinFinisher.s.isWon) {
-                    getRewardsHint.SetActive(true);
-
-                    /*var remainingRewards = MissionWinFinisher.s.unclaimedRewardCount;
-                    if (remainingRewards <= 0) {
-                        _progress.getRewards = true;
-                    }*/
-                }
-            }
-
-            if (PlayStateMaster.s.isShop() && _progress.levelFinishedOnce) {
-                if (!_progress.putTheNewStuff) {
-                    buildYourNewThingsHint.SetActive(true);
-                }
+            if (emptyCartThingActive) {
+                var isOnTrain = emptyCart.myLocation == UpgradesController.CartLocation.train;
+                var isLookingAtShop = !WorldMapCreator.s.worldMapOpen;
+                getRidOfEmpty.SetActive(isOnTrain && isLookingAtShop);
             }
         }
     }
 
-    [Space] 
-    public GameObject powerUpHint;
-    void OnPowerUpGet() {
-        //PlayerActionsController.s.OnGetPowerUp.RemoveListener(OnPowerUpGet);
-        _progress.powerup = true;
-        powerUpHint.SetActive(true);
-        Invoke(nameof(HidePowerup), 10f);
-    }
 
-    void HidePowerup() {
-        powerUpHint.SetActive(false);
-    }
+    public GameObject repairHintPrefab;
+    public GameObject repairCriticalHintPrefab;
+    public GameObject reloadHintPrefab;
+    public GameObject directControlHint;
+    public void OnEnterCombat() {
+        ClearActiveHints();
+        
+        emptyCartThingActive = false;
+        getRidOfEmpty.SetActive(false);
+        leaveTheCity.SetActive(false);
+        hoverOverThingsToGetInfo.SetActive(false);
 
-    private bool waitToShowScrap = false;
-    void OnPlayerBuildOnTrain() {
-        if (!_progress.cargoPutOnTrain) {
-            var cargoModule = Train.s.GetComponentsInChildren<CargoModule>();
 
-            if (cargoModule.Length > 0) {
-                getCargoHint.SetActive(false);
-                _progress.cargoPutOnTrain = true;
-                waitToShowScrap = true;
+        for (int i = 0; i < Train.s.carts.Count; i++) {
+            var cart = Train.s.carts[i];
+            if (!_progress.directControlHint && cart.GetComponentInChildren<DirectControllable>()) {
+                directControlHint.SetActive(true);
+                _progress.directControlHint = true;
+            }
 
-                for (int i = 0; i < cargoModule.Length; i++) {
-                    cargoModule[i].GetComponent<ModuleHealth>().invincibleTutorial = true;
-                }
+            if (!_progress.reloadHint && cart.GetComponentInChildren<ModuleAmmo>()) {
+                activeHints.Add(Instantiate(reloadHintPrefab, LevelReferences.s.uiDisplayParent).GetComponent<MiniGUI_TutorialHint>().SetUp(cart));
+            }
+
+            if (cart.isMainEngine || cart.isCriticalComponent) {
+                if(!_progress.repairHint)
+                    activeHints.Add(Instantiate(repairCriticalHintPrefab, LevelReferences.s.uiDisplayParent).GetComponent<MiniGUI_TutorialHint>().SetUp(cart));
+            } else {
+                if(!_progress.repairCriticalHint)
+                    activeHints.Add(Instantiate(repairHintPrefab, LevelReferences.s.uiDisplayParent).GetComponent<MiniGUI_TutorialHint>().SetUp(cart));
             }
         }
+    }
 
-        if (!_progress.putTheNewStuff && _progress.levelFinishedOnce) {
-            _progress.putTheNewStuff = true;
-            TutorialComplete();
+    void ClearActiveHints() {
+        for (int i = 0; i < activeHints.Count; i++) {
+            if(activeHints[i] != null)
+                Destroy(activeHints[i].gameObject);
+        }
+        
+        activeHints.Clear();
+    }
+
+
+    public GameObject deliverCargoHintPrefab;
+    public void OnFinishCombat() {
+        ClearActiveHints();
+        
+        for (int i = 0; i < Train.s.carts.Count; i++) {
+            var cart = Train.s.carts[i];
+            if (!_progress.deliverCargoHint && cart.GetComponentInChildren<CargoModule>()) {
+                activeHints.Add(Instantiate(deliverCargoHintPrefab, LevelReferences.s.uiDisplayParent).GetComponent<MiniGUI_TutorialHint>().SetUp(cart));
+            }
         }
     }
 
+    public void OnEnterShop() {
+        ClearActiveHints();
+        TutorialComplete();
+    }
+
+    public void ReloadHintShown() {
+        _progress.reloadHint = true;
+    }
+
+    public void RepairCriticalHintShown() {
+        _progress.repairCriticalHint = true;
+    }
+
+    public void RepairHintShown() {
+        _progress.repairHint = true;
+    }
+
+    public void CargoHintShown() {
+        _progress.deliverCargoHint = true;
+    }
+    
     void DisableCameraMovesetHint() {
         cameraHint.SetActive(false);
-        ShowGetCargoControls();
     }
 
     void TutorialComplete() {
         tutorialEngaged = false;
         DataSaver.s.GetCurrentSave().tutorialProgress.tutorialDone = true;
         tutorialUI.SetActive(false);
-        /*if (addedListeners) {
-            PlayerActionsController.s.OnRepaired.RemoveListener(OnRepaired);
-            PlayerActionsController.s.OnReloaded.RemoveListener(OnReloaded);
-        }*/
     }
     
     public void SkipTutorial (){

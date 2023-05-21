@@ -3,7 +3,10 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Analytics;
+using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
+using UnityEngine.InputSystem.UI;
+using UnityEngine.UI;
 
 public class Pauser : MonoBehaviour {
 
@@ -19,6 +22,9 @@ public class Pauser : MonoBehaviour {
 
     public GameObject pauseMenu;
 
+    public Button gamepadSelect;
+
+    public MenuToggle settingsMenu;
 
     private void OnEnable() {
         pauseButton.action.Enable();
@@ -47,15 +53,15 @@ public class Pauser : MonoBehaviour {
     }
 
     void TogglePause() {
-        if (PlayStateMaster.s.isCombatInProgress()) {
-            isPaused = !isPaused;
-            
-            if (isPaused) {
-                Pause();
-            } else {
-                Unpause();
-            }
+        isPaused = !isPaused;
+        
+        if (isPaused) {
+            Pause();
+        } else {
+            Unpause();
         }
+        
+        //gamepadSelect.transition
     }
 
 
@@ -71,6 +77,10 @@ public class Pauser : MonoBehaviour {
         
         if (CameraController.s.directControlActive) {
             Cursor.lockState = CursorLockMode.None;
+        }
+
+        if (SettingsController.GamepadMode()) {
+            EventSystem.current.SetSelectedGameObject(gamepadSelect.gameObject);
         }
     }
 

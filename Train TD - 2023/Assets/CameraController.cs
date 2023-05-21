@@ -44,10 +44,11 @@ public class CameraController : MonoBehaviour {
     public float snapToDefaultAngleDistance = 5;
     public float rotLerpSpeed = 20f;
 
-    public InputActionProperty moveAction;
-    public InputActionProperty rotateAction;
-    public InputActionProperty zoomAction;
-    public InputActionProperty rotateCameraAction;
+    public InputActionReference moveAction;
+    public InputActionReference rotateAction;
+    public InputActionReference zoomAction;
+    public InputActionReference rotateCameraAction;
+    public InputActionReference aimAction;
     
 
     public float currentZoom = 0;
@@ -69,6 +70,7 @@ public class CameraController : MonoBehaviour {
         rotateAction.action.Enable();
         zoomAction.action.Enable();
         rotateCameraAction.action.Enable();
+        aimAction.action.Enable();
         rotateAction.action.performed += FlipCamera;
     }
 
@@ -79,6 +81,7 @@ public class CameraController : MonoBehaviour {
         rotateAction.action.Disable();
         zoomAction.action.Disable();
         rotateCameraAction.action.Disable();
+        aimAction.action.Disable();
         rotateAction.action.performed -= FlipCamera;
     }
 
@@ -98,7 +101,9 @@ public class CameraController : MonoBehaviour {
     private void LateUpdate() {
         if (!Pauser.s.isPaused) {
             if (directControlActive) {
-                ProcessDirectControl(moveAction.action.ReadValue<Vector2>());
+                ProcessDirectControl(aimAction.action.ReadValue<Vector2>());
+                if(SettingsController.GamepadMode())
+                    ProcessAimAssist();
             } else {
                 var mousePos = Mouse.current.position.ReadValue();
                 if (canEdgeMove)
@@ -119,8 +124,60 @@ public class CameraController : MonoBehaviour {
 
 
             SetMainCamPos();
-            AfterCameraPosUpdate?.Invoke();
         }
+    }
+
+    [Header("Aim Assist")]
+    public float maxAimAssistOffset = 0.09f;
+    public float maxAimDistance = 15;
+    void ProcessAimAssist() {
+        var targets = EnemyWavesController.s.allEnemyTargetables;
+ 
+        var myPosition =  mainCamera.transform.position;
+        var myForward = mainCamera.transform.forward;
+
+        for (int i = 0; i < targets.Length; i++) {
+            if(targets[i] == null || targets[i].gameObject == null || targets[i].myType != PossibleTarget.Type.enemy)
+                continue;
+            
+            var targetLocation = targets[i].targetTransform.position;
+            var vectorToEnemy = targetLocation - myPosition;
+            
+            if(vectorToEnemy.magnitude > maxAimDistance)
+                continue;
+
+            vectorToEnemy.Normalize();
+ 
+            // essentially the tangent vector between MyForward and the line to the enemy
+            var difference = vectorToEnemy - myForward;
+ 
+            // how big is that offset along the sphere surface
+            float vectorOffset = difference.magnitude;
+ 
+            // if it is within our auto-aim MaxVectorOffset, we care
+            if (vectorOffset < maxAimAssistOffset)
+            {
+                // transform it to local offset X,Y plane
+                var localDifference = transform.InverseTransformDirection( difference);
+ 
+                // normalize it to full deflection
+                localDifference /= maxAimAssistOffset;
+ 
+                // scale it according to conical offset from boresight (strongest in middle)
+                float conicalStrength = (maxAimAssistOffset - vectorOffset) / maxAimAssistOffset;
+                localDifference *= conicalStrength;
+ 
+                // send it to the aim assist injection point
+                ProcessDirectControl(localDifference, false);
+            }
+        }
+    }
+
+    public void SetCameraControllerStatus(bool active) {
+        enabled = active;
+        if (active) {
+            SetMainCamPos();
+        } 
     }
 
     private Vector2 mousePosLastFrame;
@@ -160,9 +217,10 @@ public class CameraController : MonoBehaviour {
             realZoom = -realZoom;
     }
 
-    void SetMainCamPos() {
+    public void SetMainCamPos() {
         mainCamera.transform.position = cameraShakeDummy.transform.position;
         mainCamera.transform.rotation = cameraShakeDummy.transform.rotation;
+        AfterCameraPosUpdate?.Invoke();
     }
 
     void ProcessZoom(float value) {
@@ -247,6 +305,8 @@ public class CameraController : MonoBehaviour {
         if (!isRight) {
             FlipCamera(new InputAction.CallbackContext());
         }
+        
+        SetMainCamPos();
     }
 
     public void ExitMapMode() {
@@ -258,6 +318,8 @@ public class CameraController : MonoBehaviour {
         if (!isRight) {
             FlipCamera(new InputAction.CallbackContext());
         }
+        
+        SetMainCamPos();
     }
 
     void ProcessMovementInput(Vector2 value, float multiplier) {
@@ -408,9 +470,17 @@ public class CameraController : MonoBehaviour {
     public float overallSensitivity = 1f;
     private bool rotLerping = true;
 
-    public void ProcessDirectControl(Vector2 stickInput) {
-        var realInput = stickInput*gamepadSensitivity + Mouse.current.delta.ReadValue() * mouseSensitivity;
-        realInput *= /*Time.unscaledTime **/ (overallSensitivity/2.5f)/45f;
+    public void ProcessDirectControl(Vector2 stickInput, bool filterBasedOnSensitivity = true) {
+        var realInput = stickInput;
+        if (filterBasedOnSensitivity) {
+            if (SettingsController.GamepadMode()) {
+                realInput *= gamepadSensitivity * 35;
+            } else {
+                realInput *= mouseSensitivity;
+            }
+
+            realInput *= /*Time.unscaledTime **/ (overallSensitivity / 2.5f) / 45f;
+        }
 
         rotTarget += realInput;
 

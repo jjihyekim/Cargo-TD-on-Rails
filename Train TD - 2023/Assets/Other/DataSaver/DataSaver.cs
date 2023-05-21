@@ -229,26 +229,12 @@ public class DataSaver {
 	public class TutorialProgress {
 		public bool tutorialDone;
 		public bool cameraDone;
-		public bool cargoPutOnTrain;
-		public bool scrapsScrapped;
-		public bool mapTargetSelected;
-		public bool levelStarted;
-		
-		public bool shiftToGoFast;
-		public bool changeTracks;
-		public int reload;
-		public int repair;
-		public bool directControl;
-		public bool powerup;
-		
-		public bool trainSpeed;
 
-		public bool levelFinishedOnce;
-		public bool getRewards;
-		
-		public bool repairAtTheStation;
-		public bool moveThingsAround;
-		public bool putTheNewStuff;
+		public bool directControlHint;
+		public bool reloadHint;
+		public bool repairCriticalHint;
+		public bool repairHint;
+		public bool deliverCargoHint;
 	}
 
 	[Serializable]

@@ -176,7 +176,7 @@ public class EncounterController : MonoBehaviour {
         MapController.s.FinishTravelingToStar();
         DataSaver.s.SaveActiveGame();
         PlayStateMaster.s.EnterShopState();
-        PlayStateMaster.s.afterTransferCalls.Enqueue(() => DoComplete());
+        //PlayStateMaster.s.afterTransferCalls.Enqueue(() => DoComplete());
     }
     
     

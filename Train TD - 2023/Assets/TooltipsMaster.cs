@@ -93,8 +93,14 @@ public class TooltipsMaster : MonoBehaviour {
     
     private void Update() {
         if (isTooltipActive) {
-            var screenPoint = (Vector3)Mouse.current.position.ReadValue() + offset;
-            screenPoint = OverlayCamsReference.s.uiCam.ScreenToViewportPoint(screenPoint);
+            Vector3 screenPoint = Vector3.zero;
+            if (SettingsController.GamepadMode()) {
+                screenPoint = MainCameraReference.s.cam.WorldToViewportPoint(GamepadControlsHelper.s.GetTooltipPosition());
+            } else {
+                screenPoint = (Vector3)Mouse.current.position.ReadValue() + offset;
+                screenPoint = OverlayCamsReference.s.uiCam.ScreenToViewportPoint(screenPoint);
+            }
+            
             // restrict to screen:
             //now you can set the position of the ui element
             var halfWidthLimit = (CanvasRect.rect.width - (UIRect.rect.width + edgeGive)) / 2f;

@@ -82,7 +82,6 @@ public class MainMenu : MonoBehaviour {
     }
 
     public void StartGame() {
-        FirstTimeTutorialController.s.TutorialCheck();
         PlayStateMaster.s.EnterShopState();
     }
 

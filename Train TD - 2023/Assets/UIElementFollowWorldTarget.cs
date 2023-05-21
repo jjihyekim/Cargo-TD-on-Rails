@@ -7,12 +7,6 @@ public class UIElementFollowWorldTarget : MonoBehaviour {
 
     public bool autoSetUp = false;
     public bool avoidOverlaps = true;
-    private void Start() {
-        this.enabled = sourceTransform != null;
-        if (autoSetUp)
-            SetUp(sourceTransform);
-    }
-
     public void SetUp(Transform target) {
         sourceTransform = target;
         
@@ -79,6 +73,10 @@ public class UIElementFollowWorldTarget : MonoBehaviour {
     }
 
     private void OnEnable() {
+        this.enabled = sourceTransform != null;
+        if (autoSetUp)
+            SetUp(sourceTransform);
+        
         UIWorldFollowerSorter.activeElements.Add(this);
         if(avoidOverlaps)
             UIWorldFollowerSorter.avoidanceElements.Add(this);

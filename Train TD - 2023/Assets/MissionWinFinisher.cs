@@ -148,6 +148,8 @@ public class MissionWinFinisher : MonoBehaviour {
 		PlayerWorldInteractionController.s.canSelect = true;
 		
 		UpgradesController.s.UpdateCargoHighlights();
+		
+		PlayStateMaster.s.EnterMissionRewardArea();
 	}
 
 	public void ContinueToNextCity() {

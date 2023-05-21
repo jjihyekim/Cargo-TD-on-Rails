@@ -16,6 +16,7 @@ public class EnemyWavesController : MonoBehaviour {
 	public GameObject enemyWavePrefab;
 
 	public List<EnemyWave> waves = new List<EnemyWave>();
+	public PossibleTarget[] allEnemyTargetables;
 
 	public bool enemiesInitialized = false;
 
@@ -79,6 +80,11 @@ public class EnemyWavesController : MonoBehaviour {
 		wave.transform.SetParent(transform);
 		wave.SetUp(enemyIdentifier, distance, startMoving, isLeft, powerUp);
 		waves.Add(wave);
+		UpdateEnemyTargetables();
+	}
+
+	public void UpdateEnemyTargetables() {
+		allEnemyTargetables = GetComponentsInChildren<PossibleTarget>();
 	}
 
 
@@ -131,6 +137,7 @@ public class EnemyWavesController : MonoBehaviour {
 
 	public void RemoveWave(EnemyWave toRemove) {
 		waves.Remove(toRemove);
+		UpdateEnemyTargetables();
 	}
 
 	public void Cleanup() {

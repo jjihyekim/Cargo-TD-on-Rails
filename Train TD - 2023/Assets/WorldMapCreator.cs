@@ -13,10 +13,26 @@ public class WorldMapCreator : MonoBehaviour {
 
 	private void Awake() {
 		s = this;
+		ResetWorldMapGenerationProgress();
+	}
+
+	public InputActionReference openMap;
+
+	private void OnEnable() {
+		openMap.action.Enable();
+		openMap.action.performed += ToggleWorldMap;
+	}
+
+	private void OnDisable() {
+		openMap.action.performed -= ToggleWorldMap;
+		openMap.action.Disable();
+	}
+
+	private void ToggleWorldMap(InputAction.CallbackContext obj) {
+		ToggleWorldMap();
 	}
 
 	public TMP_Text mapText;
-	
 
 	public bool worldMapOpen = false;
 
@@ -29,10 +45,12 @@ public class WorldMapCreator : MonoBehaviour {
 	public Sprite openMapIcon;
 	public Sprite backToTrainIcon;
 	public void ToggleWorldMap() {
-		if (!worldMapOpen) {
-			OpenWorldMap();
-		} else {
-			ReturnToRegularMap();
+		if (PlayStateMaster.s.isShop()) {
+			if (!worldMapOpen) {
+				OpenWorldMap();
+			} else {
+				ReturnToRegularMap();
+			}
 		}
 	}
 
@@ -40,9 +58,11 @@ public class WorldMapCreator : MonoBehaviour {
 	private CastleWorldScript highlightedCastle;
 	public bool ignoreNextHide = false;
 
+	public bool canSelectCastles = true;
+
 	public RectTransform[] ignoredRects;
 	private void Update() {
-		if (Mouse.current.leftButton.wasPressedThisFrame) {
+		if (canSelectCastles && worldMapOpen && Mouse.current.leftButton.wasPressedThisFrame) {
 			var mousePos = Mouse.current.position.ReadValue();
 			var ray = LevelReferences.s.mainCam.ScreenPointToRay(mousePos);
 
@@ -95,7 +115,10 @@ public class WorldMapCreator : MonoBehaviour {
 
 	public GameObject targetStarInfoScreenBudget;
 
-	void OpenWorldMap() {
+	public UIElementFollowWorldTarget playerHereUIMarker;
+	public UIElementFollowWorldTarget yourObjectiveUIMarker;
+
+	public void OpenWorldMap() {
 		if (!worldMapOpen) {
 			for (int i = 0; i < castles.Count; i++) {
 				castles[i].Refresh();
@@ -108,24 +131,31 @@ public class WorldMapCreator : MonoBehaviour {
 				rails[i].Refresh();
 			}
 			
-			CameraController.s.EnterMapMode();
 			mapText.text = "Train";
 			ShopStateController.s.SetStarterUIStatus(false);
 
 			Train.s.transform.position = playerTrainTargetTransform.transform.position;
 			Train.s.transform.localScale = playerTrainTargetTransform.transform.localScale;
+			
+			playerHereUIMarker.gameObject.SetActive(true);
+			playerHereUIMarker.SetUp(playerTrainTargetTransform);
+			
+			yourObjectiveUIMarker.gameObject.SetActive(true);
 
 			MiniGUI_HealthBar.showHealthBars = false;
 			//PlayerModuleSelector.s.DisableModuleSelecting();
 			worldMapOpen = true;
 
 			mapIcon.sprite = backToTrainIcon;
+
+			PlayerWorldInteractionController.s.canSelect = false;
+			
+			CameraController.s.EnterMapMode();
 		}
 	}
 
 	public void ReturnToRegularMap() {
 		if (worldMapOpen) {
-			CameraController.s.ExitMapMode();
 			mapText.text = "Map";
 			ShopStateController.s.SetStarterUIStatus(true);
 
@@ -137,6 +167,10 @@ public class WorldMapCreator : MonoBehaviour {
 			targetStarInfoScreenBudget.SetActive(false);
 
 			mapIcon.sprite = openMapIcon;
+
+			PlayerWorldInteractionController.s.canSelect = true;
+			
+			CameraController.s.ExitMapMode();
 		}
 	}
 
@@ -249,6 +283,10 @@ public class WorldMapCreator : MonoBehaviour {
 				script.Initialize(myStar);
 				if (myStar.isPlayerHere) {
 					playerTrainTargetTransform = script.playerIndicator.transform;
+				}
+
+				if (myStar.isBoss) {
+					yourObjectiveUIMarker.SetUp(castle.transform);
 				}
 				
 				castles.Add(script);

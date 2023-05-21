@@ -21,8 +21,8 @@ public class DirectControlMaster : MonoBehaviour {
 		hitAud = GetComponent<AudioSource>();
 	}
 
-	public InputActionProperty cancelDirectControlAction;
-	public InputActionProperty directControlShootAction;
+	public InputActionReference cancelDirectControlAction;
+	public InputActionReference directControlShootAction;
 
 	[Space]
 	public ModuleHealth directControlTrainBuilding;
@@ -326,8 +326,8 @@ public class DirectControlMaster : MonoBehaviour {
 				Mathf.Lerp(0.1f, 0.5f, range),
 				true
 			);
-			
-			CameraController.s.ProcessDirectControl(new Vector2(Random.Range(-range*2, range*2), range*5));
+			if(!SettingsController.GamepadMode())
+				CameraController.s.ProcessDirectControl(new Vector2(Random.Range(-range*2, range*2), range*5), false);
 		} else {
 			/*CameraShakeController.s.ShakeCamera(
 				Mathf.Lerp(0.1f, 0.7f, range),

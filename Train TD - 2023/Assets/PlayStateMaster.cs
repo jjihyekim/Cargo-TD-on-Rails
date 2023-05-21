@@ -109,6 +109,9 @@ public class PlayStateMaster : MonoBehaviour {
         OnMainMenuEntered?.Invoke();
     }
 
+    public void EnterMissionRewardArea() {
+        OnEnterMissionRewardArea?.Invoke();
+    }
 
     public void LeaveMissionRewardArea() {
         _gameState = GameState.shop;
@@ -173,13 +176,6 @@ public class PlayStateMaster : MonoBehaviour {
 
     delegate float LoadDelegate();
     
-
-    public Queue<Action> afterTransferCalls = new Queue<Action>(); // must add stuff to this AFTER calling back to menu!
-    void DoTransfer() {
-        while (afterTransferCalls.TryDequeue(out Action result)) {
-            result(); 
-        }
-    }
 
     public bool isLoading = false;
     public float loadingProgress;

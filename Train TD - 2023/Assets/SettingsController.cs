@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class SettingsController : MonoBehaviour {
     public static SettingsController s;
@@ -12,9 +13,15 @@ public class SettingsController : MonoBehaviour {
     }
 
     public GameObject settingsParent;
+
+    public bool forceDisableGamepadMode = false;
     
     void Start()
     {
+#if !UNITY_EDITOR
+        forceDisableGamepadMode = false;
+#endif
+        
         var initRequiredSettings = settingsParent.GetComponentsInChildren<IInitRequired>();
         for (int i = 0; i < initRequiredSettings.Length; i++) {
             initRequiredSettings[i].Initialize();
@@ -57,6 +64,11 @@ public class SettingsController : MonoBehaviour {
     public void ClearCurrentSaveAndPlayerPrefs() {
         PlayerPrefs.DeleteAll();
         DataSaver.s.ClearCurrentSave();
+    }
+
+
+    public static bool GamepadMode() {
+        return Gamepad.all.Count > 0 && !SettingsController.s.forceDisableGamepadMode;
     }
     
 }

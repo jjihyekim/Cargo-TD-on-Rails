@@ -69,10 +69,16 @@ public class GateScript : MonoBehaviour {
         downCurrentSpeed = 0;
         _outline.OutlineColor = canGo ? canGoColor : cannotGoColor;
         myTooltip = tooltip;
+        enabled = true;
     }
 
     
     private void Update() {
+        if (PlayStateMaster.s.isCombatInProgress()) {
+            enabled = false;
+            TooltipsMaster.s.HideTooltip();
+        }
+        
         if (canGo) {
             if (mouseOver) {
                 gate.transform.position = Vector3.MoveTowards(gate.transform.position, gateFullOpenPos.position, upMoveSpeed * Time.deltaTime);

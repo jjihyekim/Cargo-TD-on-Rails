@@ -65,6 +65,8 @@ public class CargoDeliveryAreaScript : MonoBehaviour {
         rewardCart.GetComponent<Rigidbody>().useGravity = true;
 
         isEngaged = false;
+        
+        FirstTimeTutorialController.s.CargoHintShown();
     }
 
     void SetColliderStatus(GameObject target, bool status) {

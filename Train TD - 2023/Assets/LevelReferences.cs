@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 using Random = UnityEngine.Random;
 
 public class LevelReferences : MonoBehaviour {
@@ -96,6 +97,7 @@ public class LevelReferences : MonoBehaviour {
     public GameObject resourceLostParticleAmmo;
     public GameObject resourceLostParticleFuel;
 
+    public GameObject emptyCart;
 
     public GameObject noAmmoWarning;
 

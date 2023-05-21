@@ -3,8 +3,10 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
+using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
 using UnityEngine.Serialization;
+using UnityEngine.UI;
 
 public class MenuToggle : MonoBehaviour {
 
@@ -69,18 +71,29 @@ public class MenuToggle : MonoBehaviour {
         }
     }
 
+    private GameObject previouslySelected;
     public void ShowMenu() {
         if(!dontAutoCloseWithOtherPanels)
             hideAllToggleMenus?.Invoke();
         isMenuActive = true;
         menu.SetActive(true);
         PanelEnabledEvent?.Invoke();
+
+        if (SettingsController.GamepadMode()) {
+            previouslySelected = EventSystem.current.currentSelectedGameObject;
+            EventSystem.current.SetSelectedGameObject(menu.GetComponentInChildren<Button>().gameObject);
+        }
     }
 
     public void HideMenu() {
         isMenuActive = false;
         menu.SetActive(false);
         PanelDisabledEvent?.Invoke();
+        
+        if (SettingsController.GamepadMode()) {
+            if(previouslySelected != null)
+                EventSystem.current.SetSelectedGameObject(previouslySelected);
+        }
     }
 }
 

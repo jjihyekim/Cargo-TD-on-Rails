@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Sirenix.OdinInspector;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
 
 public class CheatsController : MonoBehaviour
@@ -57,7 +58,8 @@ public class CheatsController : MonoBehaviour
     }
 
     void QuickStart() {
-        WorldMapCreator.s.QuickStartNoWorldMap();
+        if(dontDrawMap)
+            WorldMapCreator.s.QuickStartNoWorldMap();
         MainMenu.s.QuickStartGame();
         PlayStateMaster.s.OnShopEntered.AddListener(OnShopStateEnteredQuickStart);
     }
@@ -74,7 +76,8 @@ public class CheatsController : MonoBehaviour
     
     void QuickRestartWithCheaterCharacter() {
         DataSaver.s.GetCurrentSave().isInARun = false;
-        WorldMapCreator.s.QuickStartNoWorldMap();
+        if(dontDrawMap)
+            WorldMapCreator.s.QuickStartNoWorldMap();
         MainMenu.s.QuickStartGame();
         PlayStateMaster.s.OnOpenCharacterSelectMenu.AddListener(OnShopStateEnteredQuickRestartWithCheaterCharacter);
     }
@@ -97,7 +100,6 @@ public class CheatsController : MonoBehaviour
         }
         
         ModuleHealth.isImmune = playerIsImmune;
-        
     }
 
     [Button]

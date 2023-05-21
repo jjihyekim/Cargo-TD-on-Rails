@@ -88,7 +88,7 @@ public class PlayerWorldInteractionController : MonoBehaviour {
     private bool clickedOnGate;
     void CheckGate() {
         RaycastHit hit;
-        Ray ray = LevelReferences.s.mainCam.ScreenPointToRay(GetMousePos());
+        Ray ray = GetRay();
         if (Physics.Raycast(ray, out hit, 100f, LevelReferences.s.gateMask)) {
             var gate = hit.collider.GetComponentInParent<GateScript>();
 
@@ -174,8 +174,8 @@ public class PlayerWorldInteractionController : MonoBehaviour {
                     }
 
                     if (PlayStateMaster.s.isShop()) {
-                        UpgradesController.s.UpdateCartShopHighlights();
                         UpgradesController.s.SnapDestinationCargos(selectedCart);
+                        UpgradesController.s.UpdateCartShopHighlights();
                     } else {
                         UpgradesController.s.UpdateCargoHighlights();
                     }
@@ -197,9 +197,10 @@ public class PlayerWorldInteractionController : MonoBehaviour {
     void CheckIfSnapping() {
         var carts = Train.s.carts;
         if (Mathf.Abs(GetMousePositionOnPlane().x) < 0.3f) {
-            SnapToTrain();
-            isSnapping = true;
-        } else {
+            isSnapping = SnapToTrain();
+        } 
+        
+        if(!isSnapping || Mathf.Abs(GetMousePositionOnPlane().x) > 0.3f){
             if (sourceSnapLocation != null && UpgradesController.s.WorldCartCount() <= 0) {
                 if (sourceSnapLocation.snapTransform.childCount > 0 && prevCartTrainSnapIndex > 0) {
                     var prevCart = sourceSnapLocation.GetComponentInChildren<Cart>();
@@ -219,7 +220,7 @@ public class PlayerWorldInteractionController : MonoBehaviour {
 
             if (!selectedCart.isCargo || !PlayStateMaster.s.isShop()) { // we dont want cargo to snap to flea market locations
                 RaycastHit hit;
-                Ray ray = LevelReferences.s.mainCam.ScreenPointToRay(GetMousePos());
+                Ray ray = GetRay();
 
                 if (Physics.Raycast(ray, out hit, 100f, LevelReferences.s.cartSnapLocationsLayer)) {
                     var snapLocation = hit.collider.gameObject.GetComponentInParent<SnapCartLocation>();
@@ -256,7 +257,7 @@ public class PlayerWorldInteractionController : MonoBehaviour {
     }
 
     public int prevCartTrainSnapIndex = -1;
-    private void SnapToTrain() {
+    private bool SnapToTrain() {
         var carts = Train.s.carts;
         var zPos = GetMousePositionOnPlane().z;
 
@@ -268,12 +269,14 @@ public class PlayerWorldInteractionController : MonoBehaviour {
         var currentSpot = transform.localPosition - Vector3.back * (totalLength / 2f);
 
         bool inserted = false;
+        float distance = 0;
         for (int i = 0; i < carts.Count; i++) {
             var cart = carts[i];
             currentSpot += -Vector3.forward * cart.length;
 
             if (i != 0) {
-                if (currentSpot.z + (cart.length / 2f) < zPos) {
+                distance = Mathf.Abs((currentSpot.z + (cart.length / 2f)) - zPos);
+                if (currentSpot.z + (cart.length / 2f) < zPos && distance < cart.length*2) {
                     if (cart != selectedCart) {
                         if (carts.Contains(selectedCart)) {
                             Train.s.RemoveCart(selectedCart);
@@ -290,24 +293,26 @@ public class PlayerWorldInteractionController : MonoBehaviour {
                                 }
                             }
 
-                            var swapCart = Train.s.carts[i];
-                            Train.s.RemoveCart(swapCart);
-                            UpgradesController.s.AddCartToShop(swapCart, sourceSnapLocation.myLocation);
-                            swapCart.transform.SetParent(sourceSnapLocation.snapTransform);
-                            prevCartTrainSnapIndex = i;
+                            if (sourceSnapLocation.myLocation == UpgradesController.CartLocation.market) {
+                                var swapCart = Train.s.carts[i];
+                                Train.s.RemoveCart(swapCart);
+                                UpgradesController.s.AddCartToShop(swapCart, sourceSnapLocation.myLocation);
+                                swapCart.transform.SetParent(sourceSnapLocation.snapTransform);
+                                prevCartTrainSnapIndex = i;
+                            }
                         }
 
                         Train.s.AddCartAtIndex(i, selectedCart);
                     }
 
                     inserted = true;
-                    break;
+                    return true;
                 }
             }
         }
 
         if (!inserted) {
-            if (carts[carts.Count - 1] != selectedCart) {
+            if (carts[carts.Count - 1] != selectedCart && distance < carts[0].length*2) {
                 if (carts.Contains(selectedCart)) {
                     Train.s.RemoveCart(selectedCart);
                 } else {
@@ -316,7 +321,10 @@ public class PlayerWorldInteractionController : MonoBehaviour {
 
                 Train.s.AddCartAtIndex(carts.Count, selectedCart);
             }
+            return true;
         }
+        
+        return false;
     }
 
 
@@ -377,6 +385,14 @@ public class PlayerWorldInteractionController : MonoBehaviour {
         }
     }
 
+    public Ray GetRay() {
+        if (SettingsController.GamepadMode()) {
+            return GamepadControlsHelper.s.GetRay();
+        } else {
+            return LevelReferences.s.mainCam.ScreenPointToRay(GetMousePos());
+        }
+    }
+
     public float holdOverTimer;
     public float infoShowTime = 3f;
 
@@ -386,12 +402,23 @@ public class PlayerWorldInteractionController : MonoBehaviour {
 
     public SelectMode currentSelectMode = SelectMode.cart;
 
+    public float sphereCastRadiusGamepad = 0.3f;
+    public float sphereCastRadiusMouse = 0.1f;
+
+    public float GetSphereCastRadius() {
+        if (SettingsController.GamepadMode()) {
+            return sphereCastRadiusGamepad;
+        } else {
+            return sphereCastRadiusMouse;
+        }
+    }
+
     public MiniGUI_BuildingInfoCard infoCard;
     void CastRayToOutlineCart() {
         RaycastHit hit;
-        Ray ray = LevelReferences.s.mainCam.ScreenPointToRay(GetMousePos());
+        Ray ray = GetRay();
 
-        if (Physics.Raycast(ray, out hit, 100f, LevelReferences.s.buildingLayer)) {
+        if (Physics.SphereCast(ray, GetSphereCastRadius(), out hit, 100f, LevelReferences.s.buildingLayer)) {
             var lastSelectMode = currentSelectMode;
             currentSelectMode = SelectMode.cart;
             
@@ -553,7 +580,7 @@ public class PlayerWorldInteractionController : MonoBehaviour {
         Plane plane = new Plane(Vector3.up, new Vector3(0,0.5f,0));
 
         float distance;
-        Ray ray = LevelReferences.s.mainCam.ScreenPointToRay(GetMousePos());
+        Ray ray = GetRay();
         if (plane.Raycast(ray, out distance))
         {
             return ray.GetPoint(distance);

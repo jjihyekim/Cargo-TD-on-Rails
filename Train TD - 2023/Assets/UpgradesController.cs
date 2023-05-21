@@ -21,6 +21,8 @@ public class UpgradesController : MonoBehaviour {
 
 	[ValueDropdown("GetAllModuleNames")]
 	public List<string> tier1Buildings = new List<string>();
+	[ValueDropdown("GetAllModuleNames")]
+	public List<string> firstShopCarts = new List<string>();
 	/*[ValueDropdown("GetAllModuleNames")]
 	public List<string> tier2Buildings = new List<string>();
 	[ValueDropdown("GetAllModuleNames")]
@@ -518,29 +520,35 @@ public class UpgradesController : MonoBehaviour {
 	}
 
 	public string GetRandomBuildingCargoForDestinationReward() {
-		return _GetRandomBuildingCargo(ref DataSaver.s.GetCurrentSave().currentRun.destinationRarityBoost, destinationRarity);
+		return _GetRandomBuildingCargo(tier1Buildings, ref DataSaver.s.GetCurrentSave().currentRun.destinationRarityBoost, destinationRarity);
 	}
 
 	public string GetRandomBuildingCargoForFleaMarket() {
-		return _GetRandomBuildingCargo(ref DataSaver.s.GetCurrentSave().currentRun.fleaMarketRarityBoost, fleaMarketRarity);
+		List<string> rollSource = tier1Buildings;
+
+		if (DataSaver.s.GetCurrentSave().currentRun.map.GetPlayerStar().starChunk == 0) {
+			rollSource = firstShopCarts;
+		}
+		
+		return _GetRandomBuildingCargo(rollSource, ref DataSaver.s.GetCurrentSave().currentRun.fleaMarketRarityBoost, fleaMarketRarity);
 	}
 
 
 	private List<string> recentlySpawned = new List<string>();
 
-	string _GetRandomBuildingCargo(ref float rarityBoost, RarityPickChance rarityPickChance) {
-		var building = _GetRandomBuildingCargo(ref rarityBoost, rarityPickChance, true);
+	string _GetRandomBuildingCargo(List<string> rollSource, ref float rarityBoost, RarityPickChance rarityPickChance) {
+		var building = _GetRandomBuildingCargo(rollSource, ref rarityBoost, rarityPickChance, true);
 
 		for (int i = 0; i < 3; i++) {
 			if (building.Length > 0) {
 				break;
 			} else {
-				building = _GetRandomBuildingCargo(ref rarityBoost, rarityPickChance, true);
+				building = _GetRandomBuildingCargo(rollSource, ref rarityBoost, rarityPickChance, true);
 			}
 		}
 
 		if (building.Length <= 0) {
-			building = _GetRandomBuildingCargo(ref rarityBoost, rarityPickChance, false);
+			building = _GetRandomBuildingCargo(rollSource, ref rarityBoost, rarityPickChance, false);
 		}
 
 		if (DataHolder.s.GetCart(building).myRarity == CartRarity.epic) {
@@ -548,44 +556,54 @@ public class UpgradesController : MonoBehaviour {
 		} else {
 			rarityBoost += rarityPickChance.increaseValue;
 		}
+		
+		recentlySpawned.Add(building);
+		if (recentlySpawned.Count > 5) {
+			recentlySpawned.RemoveAt(0);
+		}
 
 		return building;
 	}
 
-	string _GetRandomBuildingCargo(ref float rarityBoost, RarityPickChance rarityPickChance, bool careRecentlySpawned) {
+	string _GetRandomBuildingCargo(List<string> rollSource, ref float rarityBoost, RarityPickChance rarityPickChance, bool careRecentlySpawned) {
 		List<string> possibleCarts = new List<string>();
+		
 
 
 		var cartRarityRoll = Random.value;
 
 		if (cartRarityRoll < rarityPickChance.epicChance + rarityBoost) {
 			// rolled an epic cart
-			for (int i = 0; i < tier1Buildings.Count; i++) {
-				if (DataHolder.s.GetCart(tier1Buildings[i]).myRarity == CartRarity.epic) {
-					if (!recentlySpawned.Contains(tier1Buildings[i]) || !careRecentlySpawned) {
-						possibleCarts.Add(tier1Buildings[i]);
+			for (int i = 0; i < rollSource.Count; i++) {
+				if (DataHolder.s.GetCart(rollSource[i]).myRarity == CartRarity.epic) {
+					if (!recentlySpawned.Contains(rollSource[i]) || !careRecentlySpawned) {
+						possibleCarts.Add(rollSource[i]);
 					}
 				}
 			}
 			
-		}else if (cartRarityRoll < rarityPickChance.rareChance + (rarityPickChance.epicChance + rarityBoost)) {
+		}
+		// if there are no carts of the higher tier available, roll a lower tier
+		if (possibleCarts.Count == 0 && cartRarityRoll < rarityPickChance.rareChance + (rarityPickChance.epicChance + rarityBoost)) {
 			//rolled a rare cart
 			
-			for (int i = 0; i < tier1Buildings.Count; i++) {
-				if (DataHolder.s.GetCart(tier1Buildings[i]).myRarity == CartRarity.rare) {
-					if (!recentlySpawned.Contains(tier1Buildings[i]) || !careRecentlySpawned) {
-						possibleCarts.Add(tier1Buildings[i]);
+			for (int i = 0; i < rollSource.Count; i++) {
+				if (DataHolder.s.GetCart(rollSource[i]).myRarity == CartRarity.rare) {
+					if (!recentlySpawned.Contains(rollSource[i]) || !careRecentlySpawned) {
+						possibleCarts.Add(rollSource[i]);
 					}
 				}
 			}
 			
-		} else {
+		}
+		// if there are no carts of the higher tier available, roll a lower tier
+		if (possibleCarts.Count == 0) {
 			//rolled a common cart
 			
-			for (int i = 0; i < tier1Buildings.Count; i++) {
-				if (DataHolder.s.GetCart(tier1Buildings[i]).myRarity == CartRarity.common) {
-					if (!recentlySpawned.Contains(tier1Buildings[i]) || !careRecentlySpawned) {
-						possibleCarts.Add(tier1Buildings[i]);
+			for (int i = 0; i < rollSource.Count; i++) {
+				if (DataHolder.s.GetCart(rollSource[i]).myRarity == CartRarity.common) {
+					if (!recentlySpawned.Contains(rollSource[i]) || !careRecentlySpawned) {
+						possibleCarts.Add(rollSource[i]);
 					}
 				}
 			}

@@ -50,7 +50,7 @@ public class MapController : MonoBehaviour {
     private void Start() {
 	    //GenerateStarMap();
 	    targetStarInfoScreen.Hide();
-	    selectedStarInfoScreen.Hide();
+	    //selectedStarInfoScreen.Hide();
 	    /*if(ApplyStarMap)
 			ApplyStarMapFromSave();*/
     }
@@ -315,7 +315,7 @@ public class MapController : MonoBehaviour {
 
     public MiniGUI_StarInfoPanel targetStarInfoScreen;
     public MiniGUI_StarInfoPanel targetStarInfoScreenBudget;
-    public MiniGUI_StarInfoPanel selectedStarInfoScreen;
+    //public MiniGUI_StarInfoPanel selectedStarInfoScreen;
 
     //public StarState playerStar => StateMaster.s.currentState.starMapState.GetPlayerStar();
     public StarState playerStar => DataSaver.s.GetCurrentSave().currentRun.map.GetPlayerStar();
@@ -354,7 +354,7 @@ public class MapController : MonoBehaviour {
 		    }
 	    }
 	    
-	    selectedStarInfoScreen.Initialize(_playerStar, targetStar, level);
+	    //selectedStarInfoScreen.Initialize(_playerStar, targetStar, level);
 	    
 	    ShopStateController.s.SelectLevel(targetStar);
 	    AskForCargo(false);
@@ -419,7 +419,7 @@ public class MapController : MonoBehaviour {
 
     public void DeselectStar() {
 	    targetStarInfoScreen.Hide();
-	    selectedStarInfoScreen.Hide();
+	    //selectedStarInfoScreen.Hide();
 	    targetStarInfoScreenBudget.Hide();
     }
 
