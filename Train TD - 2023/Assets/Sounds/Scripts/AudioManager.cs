@@ -9,6 +9,10 @@ public class AudioManager : MonoBehaviour
     // singleton class
     public static AudioManager instance { get; private set; }
 
+    [Header("Music Mixer")]
+    public Bus musicBus;
+    [Range(-80f, 10f)] public float musicBusVolume;
+
     private void Awake()
     {
         // setup singleton object
@@ -19,6 +23,11 @@ public class AudioManager : MonoBehaviour
         instance = this;
     }
 
+    private void Start()
+    {
+        musicBus = RuntimeManager.GetBus("bus:/Music");
+    }
+
     /// <summary>
     /// Play one shot sound, mostly for sound effects that are played instantly and once. E.g., gun fire sound.
     /// </summary>
@@ -27,6 +36,21 @@ public class AudioManager : MonoBehaviour
     public void PlayOneShot(EventReference sound, Vector3 worldPos)
     {
         RuntimeManager.PlayOneShot(sound, worldPos);
+    }
+
+    private void Update()
+    {
+        UpdateBus();
+    }
+
+    private void UpdateBus()
+    {
+        musicBus.setVolume(musicBusVolume);
+    }
+    
+    private float DecibleToLinear(float db)
+    {
+        return Mathf.Pow(10f, db / 20f);
     }
 
     public static EventInstance CreateFmodEventInstance(EventReference eventRef)

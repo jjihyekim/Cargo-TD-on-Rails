@@ -23,6 +23,9 @@ public class MiniGUI_VolumeSlider : MonoBehaviour, IInitRequired
 
     void SetVol(float sliderVal) {
         sliderVal = Mathf.Clamp(sliderVal, 0.001f, 1f);
-        mixer.SetFloat(exposedName, Mathf.Log(sliderVal) * 20);
+        if (exposedName == "MusicVol")
+            AudioManager.instance.musicBusVolume = sliderVal;
+        else
+            mixer.SetFloat(exposedName, Mathf.Log(sliderVal) * 20);
     }
 }
