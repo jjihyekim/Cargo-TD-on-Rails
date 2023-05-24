@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Sirenix.OdinInspector;
 using UnityEngine;
+using UnityEngine.Events;
 using UnityStandardAssets.Utility;
 using Random = UnityEngine.Random;
 
@@ -24,6 +25,10 @@ public class EnemyWavesController : MonoBehaviour {
 
 
 	public MiniGUI_PursuerTimer pursuerTimerObject;
+
+
+	public UnityEvent<EnemyIdentifier> OnEnemyWaveSpawn = new UnityEvent<EnemyIdentifier>();
+	public UnityEvent<EnemyIdentifier> OnEnemyWaveCleared = new UnityEvent<EnemyIdentifier>();
 
 
 	private void Start() {
@@ -81,6 +86,7 @@ public class EnemyWavesController : MonoBehaviour {
 		wave.SetUp(enemyIdentifier, distance, startMoving, isLeft, powerUp);
 		waves.Add(wave);
 		UpdateEnemyTargetables();
+		OnEnemyWaveSpawn.Invoke(enemyIdentifier);
 	}
 
 	public void UpdateEnemyTargetables() {
@@ -138,6 +144,7 @@ public class EnemyWavesController : MonoBehaviour {
 	public void RemoveWave(EnemyWave toRemove) {
 		waves.Remove(toRemove);
 		UpdateEnemyTargetables();
+		OnEnemyWaveCleared.Invoke(toRemove.myEnemy);
 	}
 
 	public void Cleanup() {
