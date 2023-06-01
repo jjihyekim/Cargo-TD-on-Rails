@@ -2,6 +2,8 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
+using UnityEngine.UI;
 
 public class ActFinishController : MonoBehaviour {
     public static ActFinishController s;
@@ -11,9 +13,7 @@ public class ActFinishController : MonoBehaviour {
     }
 
     private void Start() {
-        act1WinUI.SetActive(false);
-        act2WinUI.SetActive(false);
-        act3WinUI.SetActive(false);
+        CloseActUI();
     }
 
     public GameObject act1WinUI;
@@ -22,15 +22,22 @@ public class ActFinishController : MonoBehaviour {
     public void OpenActWinUI() {
         if (DataSaver.s.GetCurrentSave().currentRun.currentAct == 1) {
             act1WinUI.SetActive(true);
+            EventSystem.current.SetSelectedGameObject(act1WinUI.GetComponentInChildren<Button>().gameObject);
         }else if (DataSaver.s.GetCurrentSave().currentRun.currentAct == 2) {
             act2WinUI.SetActive(true);
+            EventSystem.current.SetSelectedGameObject(act2WinUI.GetComponentInChildren<Button>().gameObject);
         } else {
             act3WinUI.SetActive(true);
+            EventSystem.current.SetSelectedGameObject(act3WinUI.GetComponentInChildren<Button>().gameObject);
         }
     }
 
 
+    private bool movingToNextAct = false;
     public void StartNewAct() {
+        movingToNextAct = true;
+        DataSaver.s.GetCurrentSave().currentRun.currentAct += 1;
+        
         if (DataSaver.s.GetCurrentSave().currentRun.currentAct == 3) {
             DataSaver.s.GetCurrentSave().currentRun = null;
             DataSaver.s.GetCurrentSave().isInARun = false;
@@ -38,16 +45,15 @@ public class ActFinishController : MonoBehaviour {
             ShopStateController.s.BackToMainMenu();
             return;
         }
-        
+
         PlayStateMaster.s.EnterNewAct();
         DataSaver.s.SaveActiveGame();
     }
 
     public void CloseActUI() {
+        movingToNextAct = false;
         act1WinUI.SetActive(false);
         act2WinUI.SetActive(false);
         act3WinUI.SetActive(false);
-        
-        PlayStateMaster.s.LeaveMissionRewardArea();
     }
 }

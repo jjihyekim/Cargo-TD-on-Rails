@@ -19,9 +19,11 @@ public class CharacterSelector : MonoBehaviour {
     public void CheckAndShowCharSelectionScreen() {
         if (!DataSaver.s.GetCurrentSave().isInARun) {
             charSelectUI.SetActive(true);
+            PlayerWorldInteractionController.s.canSelect = false;
             SetUpCharPanel();
         } else {
             charSelectUI.SetActive(false);
+            PlayerWorldInteractionController.s.canSelect = true;
         }
     }
 
@@ -30,7 +32,7 @@ public class CharacterSelector : MonoBehaviour {
         var allChars = DataHolder.s.characters;
         for (int i = 0; i < allChars.Length; i++) {
             var panel = Instantiate(charPanelPrefab, charsParent).GetComponent<MiniGUI_CharSelectPanel>();
-            panel.Setup(allChars[i].myCharacter, !XPProgressionController.s.IsCharacterUnlocked(i));
+            panel.Setup(allChars[i].myCharacter, !XPProgressionController.s.IsCharacterUnlocked(i), i==0);
         }
     }
 

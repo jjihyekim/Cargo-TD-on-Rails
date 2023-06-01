@@ -619,7 +619,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   tooltip:
-    text: Mysterious
+    text: <color=#f694ff>The Collective</color> requires you to deliver this cargo.
+      You <i>will</i> be disposed of if you fail to protect it.
   info: Mysterious Cargo
 --- !u!1 &6073088298320839589
 GameObject:
@@ -934,6 +935,14 @@ PrefabInstance:
     - target: {fileID: 1063128118414717790, guid: 86c82cfee32788c49a35e2e0e34bf7b7, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2564255422046077385, guid: 86c82cfee32788c49a35e2e0e34bf7b7, type: 3}
+      propertyPath: maxHealth
+      value: 700
+      objectReference: {fileID: 0}
+    - target: {fileID: 2564255422046077385, guid: 86c82cfee32788c49a35e2e0e34bf7b7, type: 3}
+      propertyPath: currentHealth
+      value: 700
       objectReference: {fileID: 0}
     - target: {fileID: 3399934084524781478, guid: 86c82cfee32788c49a35e2e0e34bf7b7, type: 3}
       propertyPath: m_Name

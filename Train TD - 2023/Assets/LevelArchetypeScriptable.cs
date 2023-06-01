@@ -147,12 +147,12 @@ public class LevelArchetypeScriptable : ScriptableObject {
 
         
 
-        if (segment.rewardPowerUpAtTheEnd) {
+        if (segment.eliteEnemy) {
             /*if (furthestEnemyDistance + (lastEnemyAndSegmentEndDistance*2) > segment.segmentLength) {
                 segment.segmentLength = furthestEnemyDistance + (lastEnemyAndSegmentEndDistance*2);
             }*/
             
-            furthestEnemyDistance += powerUpEnemyDistanceFromLastEnemy;
+            /*furthestEnemyDistance += powerUpEnemyDistanceFromLastEnemy;
             var enemiesOnPath = new List<EnemyOnPathData>(segment.enemiesOnPath);
             enemiesOnPath.Add(new EnemyOnPathData() {
                 distanceOnPath = furthestEnemyDistance,
@@ -161,7 +161,7 @@ public class LevelArchetypeScriptable : ScriptableObject {
             });
 
 
-            segment.enemiesOnPath = enemiesOnPath.ToArray();
+            segment.enemiesOnPath = enemiesOnPath.ToArray();*/
 
             segment.powerUpRewardUniqueName = DataHolder.s.powerUps[Random.Range(0, DataHolder.s.powerUps.Length)].name;
 

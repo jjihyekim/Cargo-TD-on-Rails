@@ -662,7 +662,9 @@ MonoBehaviour:
   fireDelay: 1.5
   fireBarrageCount: 1
   fireBarrageDelay: 0.5
+  fireRateMultiplier: 1
   projectileDamage: 100
+  damageMultiplier: 1
   rotateSpeed: 10
   gunActive: 1
   IsBarrelPointingCorrectly: 0
@@ -699,7 +701,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   tooltip:
-    text: Rockets go BOOM! Need fuel instead of ammo. Penetrates armor.
+    text: Can kill most things with a single rocket if you manage to lock-on to them.
+      Penetrates armor.
   info: Rocket Launcher
 --- !u!1 &5811377688619122279
 GameObject:

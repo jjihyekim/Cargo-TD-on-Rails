@@ -221,10 +221,9 @@ GameObject:
   m_Component:
   - component: {fileID: 1756475097583571497}
   - component: {fileID: 7314309655479822926}
-  - component: {fileID: 5767618250308445349}
   - component: {fileID: 8481141605124365457}
   - component: {fileID: 1285945162980241764}
-  - component: {fileID: 1354366149717605385}
+  - component: {fileID: 527875334010512387}
   m_Layer: 6
   m_Name: Encounter Requirement
   m_TagString: Untagged
@@ -271,20 +270,6 @@ MonoBehaviour:
   canMeetRequirementColor: {r: 1, g: 0.8862745, b: 0, a: 1}
   cannotMeetRequirementColor: {r: 1, g: 0, b: 0, a: 1}
   rewardColor: {r: 0, g: 1, b: 0, a: 1}
---- !u!114 &5767618250308445349
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8169348956731911723}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 07ac2e6a1a938f94b999a75c023af033, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  tooltip:
-    text: 
 --- !u!222 &8481141605124365457
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -323,7 +308,7 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
---- !u!114 &1354366149717605385
+--- !u!114 &527875334010512387
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -332,39 +317,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 8169348956731911723}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d0b148fe25e99eb48b9724523833bab1, type: 3}
+  m_Script: {fileID: 11500000, guid: bdcee4c1407ad384fb315781e1889bf9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_Delegates:
-  - eventID: 0
-    callback:
-      m_PersistentCalls:
-        m_Calls:
-        - m_Target: {fileID: 5767618250308445349}
-          m_TargetAssemblyTypeName: TooltipOnHoverOver, Assembly-CSharp
-          m_MethodName: OnPointerEnter
-          m_Mode: 1
-          m_Arguments:
-            m_ObjectArgument: {fileID: 0}
-            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-            m_IntArgument: 0
-            m_FloatArgument: 0
-            m_StringArgument: 
-            m_BoolArgument: 0
-          m_CallState: 2
-  - eventID: 1
-    callback:
-      m_PersistentCalls:
-        m_Calls:
-        - m_Target: {fileID: 5767618250308445349}
-          m_TargetAssemblyTypeName: TooltipOnHoverOver, Assembly-CSharp
-          m_MethodName: OnPointerExit
-          m_Mode: 1
-          m_Arguments:
-            m_ObjectArgument: {fileID: 0}
-            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-            m_IntArgument: 0
-            m_FloatArgument: 0
-            m_StringArgument: 
-            m_BoolArgument: 0
-          m_CallState: 2
+  myTooltip:
+    text: 
+  curTimer: 0
+  showingTooltip: 0
+  doubleTimer: 0

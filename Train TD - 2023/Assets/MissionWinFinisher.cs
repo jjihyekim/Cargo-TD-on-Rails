@@ -6,6 +6,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.Analytics;
 using UnityEngine.Events;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
 using Random = UnityEngine.Random;
 
@@ -33,7 +34,9 @@ public class MissionWinFinisher : MonoBehaviour {
 		gateScript.OnCanLeaveAndPressLeave.AddListener(ContinueToNextCity);
 		gateScript.SetCanGoStatus(false, deliverYourCargoFirstTooltip);
 	}
-	
+
+	public GameObject winContinueButton;
+
 	public bool isWon = false;
 	public void MissionWon(bool isShowingPrevRewards = false) {
 		SpeedController.s.TravelToMissionEndDistance();
@@ -104,6 +107,9 @@ public class MissionWinFinisher : MonoBehaviour {
 		FMODMusicPlayer.s.SwapMusicTracksAndPlay(false);
 
 		DirectControlMaster.s.DisableDirectControl();
+		
+		if(SettingsController.GamepadMode())
+			EventSystem.current.SetSelectedGameObject(winContinueButton);
 	}
 
 	void ChangeRangeShowState(bool state) {
@@ -119,11 +125,7 @@ public class MissionWinFinisher : MonoBehaviour {
 		//Invoke(nameof(DelayedShowRewards), 0.05f);
 	}
 
-	void DelayedShowRewards() {
-		MissionWon(true);
-	}
-	
-	
+
 	void GenerateMissionRewards() {
 		var mySave = DataSaver.s.GetCurrentSave();
 		var playerStar = mySave.currentRun.map.GetPlayerStar();
@@ -154,7 +156,9 @@ public class MissionWinFinisher : MonoBehaviour {
 
 	public void ContinueToNextCity() {
 		if (isWon) { // call this only once
-			if (DataSaver.s.GetCurrentSave().currentRun.map.GetPlayerStar().isBoss) {
+			var targetStar = DataSaver.s.GetCurrentSave().currentRun.map.GetStarWithName(DataSaver.s.GetCurrentSave().currentRun.targetStar);
+			
+			if (targetStar.isBoss) {
 				ActFinishController.s.OpenActWinUI();
 			} else {
 				PlayStateMaster.s.LeaveMissionRewardArea();
@@ -165,8 +169,6 @@ public class MissionWinFinisher : MonoBehaviour {
 	}
 
 	public void CleanupWhenLeavingMissionRewardArea() {
-		ContinueToClearOutOfCombat();
-		
 		DataSaver.s.GetCurrentSave().currentRun.shopInitialized = false;
 		DataSaver.s.GetCurrentSave().currentRun.isInEndRunArea = false;
 		Train.s.SaveTrainState();

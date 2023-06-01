@@ -21,21 +21,24 @@ MonoBehaviour:
         enemyCount: 1
       distanceOnPath: 0
       isLeft: 0
+      hasReward: 0
     - enemyIdentifier:
         enemyUniqueName: Army
-        enemyCount: 1
+        enemyCount: 3
       distanceOnPath: 0
       isLeft: 0
+      hasReward: 0
     - enemyIdentifier:
         enemyUniqueName: SupplierSafe
-        enemyCount: 2
+        enemyCount: 3
       distanceOnPath: 30
       isLeft: 0
+      hasReward: 0
     - enemyIdentifier:
         enemyUniqueName: Army
-        enemyCount: 2
-      distanceOnPath: 60
+        enemyCount: 3
+      distanceOnPath: 30
       isLeft: 0
-    rewardPowerUpAtTheEnd: 0
+      hasReward: 0
     segmentLength: 150
     powerUpRewardUniqueName: 

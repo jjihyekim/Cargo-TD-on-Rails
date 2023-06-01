@@ -1240,14 +1240,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b49180ea77ea07d40898da773b037d45, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  attachmentThing: {fileID: 5150239052755639989}
+  attachmentThings: []
+  isAttached: 0
   repairDelay: 4
   repairAmount: 10
   steamUsePerRepair: 10
   repairRange: 1
   repairPerCycle: 2
-  attachmentThing: {fileID: 5150239052755639989}
-  attachmentThings: []
-  isAttached: 0
 --- !u!114 &4960686331885063257
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1313,6 +1313,14 @@ PrefabInstance:
     - target: {fileID: 1063128118414717790, guid: 86c82cfee32788c49a35e2e0e34bf7b7, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2564255422046077385, guid: 86c82cfee32788c49a35e2e0e34bf7b7, type: 3}
+      propertyPath: maxHealth
+      value: 200
+      objectReference: {fileID: 0}
+    - target: {fileID: 2564255422046077385, guid: 86c82cfee32788c49a35e2e0e34bf7b7, type: 3}
+      propertyPath: currentHealth
+      value: 200
       objectReference: {fileID: 0}
     - target: {fileID: 3399934084524781478, guid: 86c82cfee32788c49a35e2e0e34bf7b7, type: 3}
       propertyPath: m_Name

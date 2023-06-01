@@ -44,7 +44,7 @@ public class EnemySwarmMaker : MonoBehaviour
 
     public float currentXSpread = 0;
     public float xSpreadAdd = 0;
-    public float SetData(float data) {
+    public float SetData(float data, PowerUpScriptable powerUpScriptable) {
         var totalCount = Mathf.RoundToInt(data);
         currentXSpread = 0;
 
@@ -75,6 +75,12 @@ public class EnemySwarmMaker : MonoBehaviour
 
                 n++;
             }
+        }
+
+        if (powerUpScriptable != null) {
+            var powerUpCarrier = transform.GetChild(Random.Range(0, transform.childCount));
+            var powerUpParent = powerUpCarrier.GetComponent<EnemyHealth>().GetCartRewardTransform();
+            Instantiate(LevelReferences.s.enemyCartReward, powerUpParent).transform.ResetTransformation();
         }
 
         currentXSpread += xSpreadAdd;

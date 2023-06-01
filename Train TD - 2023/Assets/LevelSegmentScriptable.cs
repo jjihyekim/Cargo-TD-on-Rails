@@ -29,9 +29,18 @@ public class LevelSegment {
 	public bool isEncounter = false;
 
 	public EnemyOnPathData[] enemiesOnPath;
-
-	public bool rewardPowerUpAtTheEnd = false;
 	
+	public bool eliteEnemy {
+		get {
+			for (int i = 0; i < enemiesOnPath.Length; i++) {
+				if (enemiesOnPath[i].hasReward) {
+					return true;
+				}
+			}
+			return false;
+		}
+	}
+
 	//[Tooltip("This will be expanded by about 100 to make space at the start and the end")]
 	[HideInInspector]
 	public int segmentLength = 200;

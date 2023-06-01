@@ -10,7 +10,7 @@ public class MiniGUI_EncounterRequirementOrRewardDisplay : MonoBehaviour {
 
 	public Image image;
 	public TMP_Text amount;
-	TooltipOnHoverOver tooltipOnHoverOver;
+	UITooltipDisplayer _uiITooltipDisplayer;
 	
 	public Color canMeetRequirementColor = Color.yellow;
 	public Color cannotMeetRequirementColor = Color.red;
@@ -30,15 +30,15 @@ public class MiniGUI_EncounterRequirementOrRewardDisplay : MonoBehaviour {
 			myTooltipText += $"You don't have enough {requirement.myType}";
 		}
 
-		tooltipOnHoverOver = GetComponent<TooltipOnHoverOver>();
-		tooltipOnHoverOver.tooltip.text = myTooltipText;
+		_uiITooltipDisplayer = GetComponent<UITooltipDisplayer>();
+		_uiITooltipDisplayer.myTooltip.text = myTooltipText;
 
 
 		return canMeetRequirement;
 	}
 
 	public void SetUp(EncounterReward reward) {
-		tooltipOnHoverOver = GetComponent<TooltipOnHoverOver>();
+		_uiITooltipDisplayer = GetComponent<UITooltipDisplayer>();
 		
 		if (reward.damageTrain > 0) {
 			image.sprite = reward.icon;
@@ -59,7 +59,7 @@ public class MiniGUI_EncounterRequirementOrRewardDisplay : MonoBehaviour {
 					damageAmountText = "so much";
 					break;
 			}
-			tooltipOnHoverOver.tooltip.text = $"Your train will take {damageAmountText} damage";
+			_uiITooltipDisplayer.myTooltip.text = $"Your train will take {damageAmountText} damage";
 			return;
 		}
 		
@@ -67,10 +67,10 @@ public class MiniGUI_EncounterRequirementOrRewardDisplay : MonoBehaviour {
 
 		if (reward.building == null) {
 			image.sprite = reward.icon;
-			tooltipOnHoverOver.tooltip.text = $"Get {reward.amount} {reward.myType}";
+			_uiITooltipDisplayer.myTooltip.text = $"Get {reward.amount} {reward.myType}";
 		} else {
 			image.sprite = reward.building.Icon;
-			tooltipOnHoverOver.tooltip.text = $"Get {reward.amount} {reward.building.displayName}";
+			_uiITooltipDisplayer.myTooltip.text = $"Get {reward.amount} {reward.building.displayName}";
 		}
 
 

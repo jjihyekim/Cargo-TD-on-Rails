@@ -1186,7 +1186,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   tooltip:
-    text: Doubles the max ammo of connected modules.
+    text: Attaches to the two closest carts to boost them.
   info: Ammo Boost
 --- !u!114 &8259430691934936149
 MonoBehaviour:
@@ -1200,10 +1200,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 451fb5986e82b3845a1e56dc3a03582d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ammoMultiplier: 2
   attachmentThing: {fileID: 5231439669197304400}
   attachmentThings: []
   isAttached: 0
+  ammoBoost: 1
 --- !u!1001 &5926245680219220562
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1254,6 +1254,14 @@ PrefabInstance:
     - target: {fileID: 1063128118414717790, guid: 86c82cfee32788c49a35e2e0e34bf7b7, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2564255422046077385, guid: 86c82cfee32788c49a35e2e0e34bf7b7, type: 3}
+      propertyPath: maxHealth
+      value: 200
+      objectReference: {fileID: 0}
+    - target: {fileID: 2564255422046077385, guid: 86c82cfee32788c49a35e2e0e34bf7b7, type: 3}
+      propertyPath: currentHealth
+      value: 200
       objectReference: {fileID: 0}
     - target: {fileID: 3399934084524781478, guid: 86c82cfee32788c49a35e2e0e34bf7b7, type: 3}
       propertyPath: m_Name

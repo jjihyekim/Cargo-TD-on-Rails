@@ -222,7 +222,7 @@ public class UpgradesController : MonoBehaviour {
 
 	[Serializable]
 	public enum CartLocation {
-		train = 0, market = 1, world = 2, forge = 3, destinationSelect = 4, cargoDelivery = 5
+		train = 0, market = 1, world = 2, forge = 3, destinationSelect = 4, cargoDelivery = 5, rewardDisplay = 6
 	}
 	
 	void InitializeShop(DataSaver.RunState state) {
@@ -313,12 +313,9 @@ public class UpgradesController : MonoBehaviour {
 				var thingy = Instantiate(DataHolder.s.GetCart(cart.state.uniqueName).gameObject, shopableComponentsParent);
 				Train.ApplyStateToCart(thingy.GetComponent<Cart>(), cart.state);
 				if (cart.location == CartLocation.market) { // we don't properly load from carts in the forge
-					var location = GetRandomLocation();
-					if (location == null)
-						return;
-
+					var location = fleaMarketLocations[i];
 					
-					location.GetComponent<SnapCartLocation>().SnapToLocation(thingy);
+					location.SnapToLocation(thingy);
 					AddCartToShop(thingy.GetComponent<Cart>(), CartLocation.market, false);
 				} else {
 					AddCartToShop(thingy.GetComponent<Cart>(), CartLocation.world, false);
@@ -382,6 +379,7 @@ public class UpgradesController : MonoBehaviour {
 		var rewardCart = Instantiate(DataHolder.s.GetCart(module.GetReward()), pos);
 
 		rewardCart.canPlayerDrag = false;
+		rewardCart.myLocation = CartLocation.rewardDisplay;
 
 		var renderers = rewardCart.GetComponentsInChildren<MeshRenderer>();
 
@@ -464,30 +462,6 @@ public class UpgradesController : MonoBehaviour {
 		thingy.GetComponentInChildren<CargoModule>().SetCargo(cargoState);
 		AddCartToShop(thingy.GetComponent<Cart>(), CartLocation.destinationSelect, false);
 		return thingy.GetComponent<Cart>();
-	}
-
-	SnapCartLocation GetRandomLocation() {
-		var availableCount = 0;
-		for (int i = 0; i < fleaMarketLocations.Length; i++) {
-			if (fleaMarketLocations[i].IsEmpty())
-				availableCount += 1;
-		}
-
-		if (availableCount < 0)
-			return null;
-
-		var selection = Random.Range(0, availableCount);
-		for (int i = 0; i < fleaMarketLocations.Length; i++) {
-			if (fleaMarketLocations[i].IsEmpty())
-				selection -= 1;
-			if (selection <= 0) {
-				if (fleaMarketLocations[i].IsEmpty()) {
-					return fleaMarketLocations[i];
-				}
-			}
-		}
-
-		return null;
 	}
 
 	public string GetRandomPowerup() {

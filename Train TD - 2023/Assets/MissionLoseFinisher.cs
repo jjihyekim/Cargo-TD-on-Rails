@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Analytics;
+using UnityEngine.EventSystems;
 using Random = UnityEngine.Random;
 
 public class MissionLoseFinisher : MonoBehaviour {
@@ -23,6 +24,8 @@ public class MissionLoseFinisher : MonoBehaviour {
     public string[] loseTips;
 
     public bool isMissionLost = false;
+
+    public GameObject loseContinueButton;
 
     public void MissionLost() {
         if (isMissionLost)
@@ -64,6 +67,10 @@ public class MissionLoseFinisher : MonoBehaviour {
         
         MusicPlayer.s.Stop();
         DirectControlMaster.s.DisableDirectControl();
+        
+        
+        if(SettingsController.GamepadMode())
+            EventSystem.current.SetSelectedGameObject(loseContinueButton);
     }
 
 

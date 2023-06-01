@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class RoboRepairModule : MonoBehaviour, IActiveDuringCombat, IActivateWhenAttachedToTrain {
+public class RoboRepairModule : ActivateWhenAttachedToTrain, IActiveDuringCombat{
     private float curRepairDelay = 0.5f;
     public float repairDelay = 2;
     public float repairAmount = 25;
@@ -118,59 +118,23 @@ public class RoboRepairModule : MonoBehaviour, IActiveDuringCombat, IActivateWhe
         this.enabled = false;
     }
     
-    public GameObject attachmentThing;
-    public List<GameObject> attachmentThings = new List<GameObject>();
-
-    public bool isAttached = false;
-
-    public void AttachedToTrain() {
-        if (isAttached == false) {
-            isAttached = true;
-
-            ApplyAmmoBoost(Train.s.GetNextBuilding(true, GetComponentInParent<Cart>()), true);
-            ApplyAmmoBoost(Train.s.GetNextBuilding(false, GetComponentInParent<Cart>()), true);
-        }
-    }
-
-
-    void ApplyAmmoBoost(Cart target, bool doApply) {
-        if(target == null)
-            return;
-        
-        var healModule = target.GetComponentInChildren<ModuleHealth>();
-
-        if (healModule != null) {
-            if (doApply) {
-                attachmentThings.Add(
-                    Instantiate(attachmentThing).GetComponent<AttachmentThingScript>().SetUp(GetComponentInParent<Cart>(), target)
-                );
-            } else {
-            }
-        }
-    }
-
-    public void DetachedFromTrain() {
-        if (isAttached == true) {
-            isAttached = false;
-			
-            DeleteAllAttachments();
-
-            ApplyAmmoBoost(Train.s.GetNextBuilding(true, GetComponentInParent<Cart>()), false);
-            ApplyAmmoBoost(Train.s.GetNextBuilding(false, GetComponentInParent<Cart>()), false);
-        }
-    }
     
-    void DeleteAllAttachments() {
-        for (int i = 0; i < attachmentThings.Count; i++) {
-            if (attachmentThings[i] != null) {
-                Destroy(attachmentThings[i]);
-            }
-        }
-        
-        attachmentThings.Clear();
+    protected override void _AttachedToTrain() {
+        ApplyBoost(Train.s.GetNextBuilding(true, GetComponentInParent<Cart>()), true);
+        ApplyBoost(Train.s.GetNextBuilding(false, GetComponentInParent<Cart>()), true);
     }
 
-    private void OnDestroy() {
-        DeleteAllAttachments();
+    protected override bool CanApply(Cart target) {
+        var health = target.GetComponentInChildren<ModuleHealth>();
+        return health != null;
+    }
+
+    protected override void _ApplyBoost(Cart target, bool doApply) {
+        // do nothing
+    }
+
+    protected override void _DetachedFromTrain() {
+        ApplyBoost(Train.s.GetNextBuilding(true, GetComponentInParent<Cart>()), false);
+        ApplyBoost(Train.s.GetNextBuilding(false, GetComponentInParent<Cart>()), false);
     }
 }

@@ -24,7 +24,6 @@ public class CheatsController : MonoBehaviour
     public bool autoRestartWithSelectedCharacter = false;
     public bool dontDrawMap = false;
     
-    
     public EnemyIdentifier debugEnemy;
 
     private void Start() {
@@ -38,7 +37,7 @@ public class CheatsController : MonoBehaviour
         dontDrawMap = false;
 #endif
         
-        if(debugNoRegularSpawns || infiniteLevel || infiniteLevel || instantEnterPlayMode || playerIsImmune || restartOnStart || dontDrawMap || autoRestartWithSelectedCharacter)
+        /*if(debugNoRegularSpawns || infiniteLevel || infiniteLevel || instantEnterPlayMode || playerIsImmune || restartOnStart || dontDrawMap || autoRestartWithSelectedCharacter)
             Debug.LogError("Debug options active! See _CheatsController for more info");
         
         if (debugNoRegularSpawns)
@@ -50,11 +49,15 @@ public class CheatsController : MonoBehaviour
         if(dontDrawMap)
             WorldMapCreator.s.QuickStartNoWorldMap();
 
+        if (autoRestartCharacter || autoRestartWithSelectedCharacter) {
+            PlayerPrefs.SetInt(MiniGUI_DisableTutorial.exposedName, 0);
+        }
+
         if (autoRestartWithSelectedCharacter) {
             Invoke(nameof(QuickRestartWithCheaterCharacter),0.01f);
         }else if (instantEnterPlayMode) {
            Invoke(nameof(QuickStart),0.01f);
-        }
+        }*/
     }
 
     void QuickStart() {

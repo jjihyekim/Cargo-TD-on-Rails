@@ -36,12 +36,21 @@ public class PossibleTarget : MonoBehaviour, IActiveDuringCombat {
             return GetComponent<EnemyHealth>().currentHealth;
         }
     }
-    
+
     public void ActivateForCombat() {
         this.enabled = true;
     }
 
     public void Disable() {
         this.enabled = false;
+    }
+    
+    Vector3 previous;
+    public Vector3 velocity;
+     
+    void Update()
+    {
+        velocity = ((transform.position - previous)) / Time.deltaTime;
+        previous = transform.position;
     }
 }

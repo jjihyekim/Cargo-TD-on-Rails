@@ -68,6 +68,7 @@ public class SpeedController : MonoBehaviour, IShowOnDistanceRadar {
     }
 
     public void TravelToMissionEndDistance() {
+        CalculateStopAcceleration();
         currentDistance = missionDistance;
     }
     
@@ -209,8 +210,8 @@ public class SpeedController : MonoBehaviour, IShowOnDistanceRadar {
     public float stopLength;
     void CalculateStopAcceleration() {
         beforeStopSpeed = LevelReferences.s.speed;
-        if (beforeStopSpeed < 0.1f) {
-            LevelReferences.s.speed = 5;
+        if (beforeStopSpeed < 2f) {
+            LevelReferences.s.speed = 2;
             beforeStopSpeed = LevelReferences.s.speed;
         }
 

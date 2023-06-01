@@ -26,7 +26,7 @@ public class MiniGUI_InfoCard_GunAndAmmo : MonoBehaviour, IBuildingInfoCard {
             gameObject.SetActive(true);
         }
 
-        damageAndFireRate.text = $"Damage: {gunModule.GetDamage()}\n" +
+        damageAndFireRate.text = $"Damage: {gunModule.GetDamage():F1}\n" +
                                  $"Firerate: {1f / gunModule.GetFireDelay():0:0.##}/s";
 
         armorPenet.isOn = gunModule.canPenetrateArmor;

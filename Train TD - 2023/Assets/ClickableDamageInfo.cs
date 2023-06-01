@@ -22,7 +22,7 @@ public class ClickableDamageInfo : MonoBehaviour, IClickableInfo {
     }
 
     public string GetInfo() {
-        return $"{_gunModule.GetDamage()}dmg/{_gunModule.GetFireDelay()} secs";
+        return $"{_gunModule.GetDamage():F1}dmg/{_gunModule.GetFireDelay()} secs";
     }
 
     public Tooltip GetTooltip() {

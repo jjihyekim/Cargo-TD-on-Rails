@@ -406,8 +406,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   tooltip:
-    text: You can slowly burn your enemies with the hot hot steam coming from your
-      engines. But less steam means less speed...
+    text: 'You can slowly burn your enemies with the hot hot steam coming from your
+      engines. '
   info: Steam Vents
 --- !u!1 &7353689250308290952
 GameObject:
@@ -839,6 +839,14 @@ PrefabInstance:
     - target: {fileID: 1063128118414717790, guid: 86c82cfee32788c49a35e2e0e34bf7b7, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2564255422046077385, guid: 86c82cfee32788c49a35e2e0e34bf7b7, type: 3}
+      propertyPath: maxHealth
+      value: 400
+      objectReference: {fileID: 0}
+    - target: {fileID: 2564255422046077385, guid: 86c82cfee32788c49a35e2e0e34bf7b7, type: 3}
+      propertyPath: currentHealth
+      value: 400
       objectReference: {fileID: 0}
     - target: {fileID: 3399934084524781478, guid: 86c82cfee32788c49a35e2e0e34bf7b7, type: 3}
       propertyPath: m_Name

@@ -5,7 +5,10 @@ using UnityEngine;
 
 public class BreakParticles : MonoBehaviour {
     private ParticleSystem[] _particleSystems;
+
+    private Cart myCart;
     private void Start() {
+        myCart = GetComponentInParent<Cart>();
         _particleSystems = GetComponentsInChildren<ParticleSystem>();
         for (int i = 0; i < _particleSystems.Length; i++) {
             _particleSystems[i].Stop();
@@ -14,7 +17,9 @@ public class BreakParticles : MonoBehaviour {
 
     private bool lastState ;
     void Update() {
-        var isBreaking = SpeedController.s.currentBreakPower > 0 && LevelReferences.s.speed > 0.01f;
+        var isBreaking = SpeedController.s.currentBreakPower > 0 
+                         && (LevelReferences.s.speed > 0.01f || PlayStateMaster.s.isShop() 
+                             && myCart.myLocation == UpgradesController.CartLocation.train);
         if (lastState != isBreaking) {
             for (int i = 0; i < _particleSystems.Length; i++) {
                 if (isBreaking) {

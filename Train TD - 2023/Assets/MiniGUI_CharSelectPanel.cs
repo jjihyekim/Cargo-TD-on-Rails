@@ -2,6 +2,8 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.EventSystems;
+using UnityEngine.UI;
 
 public class MiniGUI_CharSelectPanel : MonoBehaviour {
 	public CharacterData myData;
@@ -11,12 +13,18 @@ public class MiniGUI_CharSelectPanel : MonoBehaviour {
 
 	public GameObject lockedOverlay;
 
-	public void Setup(CharacterData data, bool isLocked) {
+	public void Setup(CharacterData data, bool isLocked, bool autoSelect) {
 		myData = data;
 		charNameText.text = myData.uniqueName;
 		charDescText.text = myData.description;
 		
 		lockedOverlay.SetActive(isLocked);
+
+		if (autoSelect) {
+			if (SettingsController.GamepadMode()) {
+				EventSystem.current.SetSelectedGameObject(GetComponentInChildren<Button>().gameObject);
+			}
+		}
 	}
 
 

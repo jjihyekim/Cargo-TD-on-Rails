@@ -12,6 +12,11 @@ public class HexHeightAffector : MonoBehaviour
     [PropertyRange(0,20)]
     public float pinDistance = 2;
     public AnimationCurve pinDropOff = AnimationCurve.Linear(0,1,1,0);
+    public PinDropOffType myType;
+
+    public enum PinDropOffType {
+        linear, castle
+    }
 
     public float randomness = 0.2f;
 

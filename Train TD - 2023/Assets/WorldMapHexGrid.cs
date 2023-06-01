@@ -116,10 +116,13 @@ public class WorldMapHexGrid : MonoBehaviour {
 		public float posY;
 		public float pinDistance;
 		public float pinWeight;
-		public AnimationCurve pinDropOff;
+		//public AnimationCurve pinDropOff;
+		public HexHeightAffector.PinDropOffType type;
 		public float randomness;
 	}
 	IEnumerator ApplyHeightsOverAFewFrames( ) {
+		var startTime = Time.realtimeSinceStartup;
+		
 		cells = GetComponentsInChildren<HexCell>();
 		var heightAffectors = GetComponentsInChildren<HexHeightAffector>();
 		heightAffectors.Reverse();
@@ -138,7 +141,8 @@ public class WorldMapHexGrid : MonoBehaviour {
 				posY = affectorPos.y,
 				pinDistance = affector.pinDistance,
 				pinWeight = affector.pinWeight,
-				pinDropOff = affector.pinDropOff,
+				//pinDropOff = affector.pinDropOff,
+				type =  affector.myType,
 				randomness = affector.randomness,
 			};
 		}
@@ -167,11 +171,21 @@ public class WorldMapHexGrid : MonoBehaviour {
 				var distance = Vector3.Distance(cellPosNoY, affector.posNoY);
 				var percent = distance / affector.pinDistance;
 				percent = Mathf.Clamp(percent,0, 1);
-				var falloff = affector.pinDropOff.Evaluate(percent);
+				//var falloff = affector.pinDropOff.Evaluate(percent);
+				var falloff = 1f - percent;
+				//Debug.Log($"eval: {falloff}, linear: {1f-percent}");
+				if (affector.type == HexHeightAffector.PinDropOffType.castle) {
+					if (falloff > 0.5f) {
+						falloff = 1.2f;
+					} else {
+						falloff = falloff.Remap(0.5f, 0, 1f, 0f);
+					}
+				}
+				
 				var weighted = falloff * affector.pinWeight;
 				var heightAdjustment = weighted * affector.posY;
 				//var withRandom = heightAdjustment;
-				var withRandom = heightAdjustment * Random.Range(1 - affector.randomness, 1 + affector.randomness);
+				var withRandom = heightAdjustment * Random.Range(1f - affector.randomness, 1f + affector.randomness);
 				/*if (refreshHeightAdjustment) {
 					withRandom = heightAdjustment * Random.Range(1 - affector.randomness, 1 + affector.randomness);
 					currentCell.randomHeightAdjustment = withRandom - heightAdjustment;
@@ -237,6 +251,9 @@ public class WorldMapHexGrid : MonoBehaviour {
 		//Debug.Break();
 		myCallback?.Invoke();
 		//doCallback = true;
+		
+		
+		Debug.Log($"Height Map generated in: {Time.realtimeSinceStartup-startTime}");
 	}
 
 	/*public bool doCallback = false;

@@ -58,14 +58,14 @@ public class MiniGUI_TrackPath : MonoBehaviour {
                 unit.GetComponent<MiniGUI_RadarUnit>().SetUp(unitIcon, segment.enemiesOnPath[i].isLeft, percentage);
             }*/
             
-            var percentage = 0.5f;
+            var percentage = 20/parent.rect.width;
             //var distance = percentage * parent.rect.width;
             
             var unit = Instantiate(unitsPrefab, parent);
             unitDisplays.Add(unit);
 
             var icon = LevelReferences.s.smallEnemyIcon;
-            if (segment.rewardPowerUpAtTheEnd)
+            if (segment.eliteEnemy)
                 icon = LevelReferences.s.eliteEnemyIcon;
             
             unit.GetComponent<MiniGUI_RadarUnit>().SetUp(icon, percentage);

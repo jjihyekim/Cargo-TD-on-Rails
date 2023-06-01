@@ -419,7 +419,7 @@ public class ModuleHealth : MonoBehaviour, IHealth, IActiveDuringCombat, IActive
         }
 
 
-        var attachedToTrain = GetComponentsInChildren<IActivateWhenAttachedToTrain>();
+        var attachedToTrain = GetComponentsInChildren<ActivateWhenAttachedToTrain>();
 
         for (int i = 0; i < attachedToTrain.Length; i++) {
             attachedToTrain[i].DetachedFromTrain();
@@ -457,7 +457,7 @@ public class ModuleHealth : MonoBehaviour, IHealth, IActiveDuringCombat, IActive
 
         SetBuildingShaderAlive(true);
         
-        var attachedToTrain = GetComponentsInChildren<IActivateWhenAttachedToTrain>();
+        var attachedToTrain = GetComponentsInChildren<ActivateWhenAttachedToTrain>();
 
         for (int i = 0; i < attachedToTrain.Length; i++) {
             attachedToTrain[i].AttachedToTrain();

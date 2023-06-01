@@ -14,6 +14,8 @@ public class MiniGUI_CartUIBar : MonoBehaviour {
 
     public RectTransform mainRect;
 
+    public RectTransform directControl;
+
 
     public Cart myCart;
     public ModuleHealth myHealth;
@@ -30,18 +32,27 @@ public class MiniGUI_CartUIBar : MonoBehaviour {
 
     public float cartLengthToWidth = 100;
 
+    public GameObject warning;
+
+    public bool showWarning = false;
+
     public void SetUp(Cart cart, ModuleHealth moduleHealth, ModuleAmmo moduleAmmo) {
         myCart = cart;
         myHealth = moduleHealth;
         myAmmo = moduleAmmo;
         isAmmo = myAmmo != null;
         ammoBar.gameObject.SetActive(isAmmo);
+        directControl.gameObject.SetActive(cart.GetComponentInChildren<DirectControllable>() != null);
         
         mainRect.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, cartLengthToWidth*myCart.length);
         Update();
 
         icon.sprite = myCart.Icon;
         UpdateAllSiblingPositions();
+        
+        warning.SetActive(false);
+
+        showWarning = myCart.isCriticalComponent || myCart.isMainEngine;
     }
 
     void UpdateAllSiblingPositions() {
@@ -66,6 +77,11 @@ public class MiniGUI_CartUIBar : MonoBehaviour {
         
         healthBar.SetRight(totalLength*(1-percent));
         healthBar.GetComponent<Image>().color = GetHealthColor(percent);
+
+        if (showWarning) {
+            warning.SetActive(percent < 0.5f);
+            warning.GetComponent<PulseAlpha>().speed = percent.Remap(0f, 0.5f, 3f, 0.2f);
+        }
     }
 
     void SetAmmoBarValue() {
@@ -100,5 +116,13 @@ public class MiniGUI_CartUIBar : MonoBehaviour {
         var percent = ammo;
         
         ammoBar.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, Mathf.Lerp(ammoMinHeight, ammoMaxHeight, percent));
+    }
+
+    public void ClickRepair() {
+        PlayerWorldInteractionController.s.UIRepair(myCart);
+    }
+
+    public void ClickReloadOrDirectControl() {
+        PlayerWorldInteractionController.s.UIReloadOrDirectControl(myCart);
     }
 }

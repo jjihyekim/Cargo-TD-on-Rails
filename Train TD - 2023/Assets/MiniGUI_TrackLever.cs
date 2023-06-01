@@ -18,6 +18,13 @@ public class MiniGUI_TrackLever : MonoBehaviour {
     public Color disabledColor = Color.white;
 
     public bool isVisible = true;
+
+    public GameObject buttonPrompt;
+    public void SetButtonPromptState(bool state) {
+        if(buttonPrompt != null)
+            buttonPrompt.SetActive(state);
+    }
+    
     public void SetTrackState(bool state) {
         currentState = state;
         
@@ -63,13 +70,8 @@ public class MiniGUI_TrackLever : MonoBehaviour {
 
         if (isVisible) {
             button.SetActive(true);
-            SetTrackState(currentState);
-            switchWarning.SetActive(enabled);
         } else {
             button.SetActive(false);
-            upTrack.SetActive(false);
-            bottomTrack.SetActive(false);
-            switchWarning.SetActive(false);
         }
     }
 
@@ -77,8 +79,11 @@ public class MiniGUI_TrackLever : MonoBehaviour {
         PathSelectorController.s.ActivateLever(leverId);
     }
 
+    public bool isLocked = false;
     public void LockTrackState() {
+        isLocked = true;
         button.GetComponent<Button>().interactable = false;
+        Destroy(buttonPrompt.gameObject);
     }
 
 

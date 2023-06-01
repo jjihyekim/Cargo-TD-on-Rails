@@ -37,24 +37,23 @@ public class ShopStateController : MonoBehaviour {
 	}
 
 	void UpdateBackToProfileOrAbandonButton() {
-		if (PlayStateMaster.s.isCombatInProgress()) {
+		/*if (PlayStateMaster.s.isCombatInProgress()) {
 			backToProfileOrAbandonText.text = "Abandon Run";
-		} else {
+		} else {*/
 			backToProfileOrAbandonText.text = "Back to Main Menu";
-		}
+		//}
 	}
 	public void BackToMainMenuOrAbandon() {
-		if (PlayStateMaster.s.isCombatInProgress()) {
+		/*if (PlayStateMaster.s.isCombatInProgress()) {
 			Pauser.s.AbandonMission();
-		} else {
+		} else {*/
 			Pauser.s.Unpause();
 			BackToMainMenu();
-		}
+		//}
 	}
 	
 	public void BackToMainMenu() {
 		starterUI.SetActive(false);
-		FirstTimeTutorialController.s.StopTutorial();
 		PlayStateMaster.s.OpenMainMenu();
 
 		// MusicPlayer.s.SwapMusicTracksAndPlay(false);
@@ -69,6 +68,7 @@ public class ShopStateController : MonoBehaviour {
 		RangeVisualizer.SetAllRangeVisualiserState(false);
 
 		mapOpenButton.interactable = true;
+		GamepadControlsHelper.s.AddPossibleActions(GamepadControlsHelper.PossibleActions.openMap);
 		//mapDisabledDuringBattleOverlay.SetActive(false);
 		
 		CameraController.s.ResetCameraPos();
@@ -140,6 +140,7 @@ public class ShopStateController : MonoBehaviour {
 			starterUI.SetActive(false);
 
 			mapOpenButton.interactable = false;
+			GamepadControlsHelper.s.RemovePossibleAction(GamepadControlsHelper.PossibleActions.openMap);
 			//mapDisabledDuringBattleOverlay.SetActive(true);
 
 			ClearStaticTrackers();
@@ -190,6 +191,7 @@ public class ShopStateController : MonoBehaviour {
 	}
 
 	public void SelectLevel(StarState targetStar) {
+		DataSaver.s.GetCurrentSave().currentRun.targetStar = targetStar.starName;
 		var playerStar = DataSaver.s.GetCurrentSave().currentRun.map.GetPlayerStar();
 
 		for (int i = 0; i < playerStar.outgoingConnections.Count; i++) {
@@ -230,6 +232,10 @@ public class ShopStateController : MonoBehaviour {
 		StartLevel();
 	}
 
+	public void FinishTravellingToStar() {
+		var currentRun = DataSaver.s.GetCurrentSave().currentRun;
+		MapController.s.TravelToStar(currentRun.map.GetStarWithName(currentRun.targetStar));
+	}
 
 	public void QuickStart() {
 		if (DataSaver.s.GetCurrentSave().isInARun) {

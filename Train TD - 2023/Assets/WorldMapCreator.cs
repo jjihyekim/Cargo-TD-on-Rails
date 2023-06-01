@@ -45,7 +45,7 @@ public class WorldMapCreator : MonoBehaviour {
 	public Sprite openMapIcon;
 	public Sprite backToTrainIcon;
 	public void ToggleWorldMap() {
-		if (PlayStateMaster.s.isShop()) {
+		if (PlayStateMaster.s.isShopOrEndGame()) {
 			if (!worldMapOpen) {
 				OpenWorldMap();
 			} else {
@@ -165,12 +165,17 @@ public class WorldMapCreator : MonoBehaviour {
 			//PlayerModuleSelector.s.EnableModuleSelecting();
 			worldMapOpen = false;
 			targetStarInfoScreenBudget.SetActive(false);
+			
+			
+			playerHereUIMarker.gameObject.SetActive(false);
+			yourObjectiveUIMarker.gameObject.SetActive(false);
 
 			mapIcon.sprite = openMapIcon;
 
 			PlayerWorldInteractionController.s.canSelect = true;
 			
 			CameraController.s.ExitMapMode();
+			
 		}
 	}
 

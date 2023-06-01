@@ -55,9 +55,10 @@ public class DirectControlMaster : MonoBehaviour {
 		directControlShootAction.action.Disable();
 		cancelDirectControlAction.action.performed -= DisableDirectControl;
 	}
-	
+
+	public float directControlLock = 0;
 	public void AssumeDirectControl(DirectControllable source) {
-		if (!directControlInProgress) {
+		if (!directControlInProgress && directControlLock <= 0) {
 			CameraController.s.ActivateDirectControl(source.GetDirectControlTransform());
 			directControllable = source;
 
@@ -96,14 +97,19 @@ public class DirectControlMaster : MonoBehaviour {
 				case DirectControllable.DirectControlMode.Gun:
 					gunCrosshair.gameObject.SetActive(true);
 					rocketCrosshairEverything.gameObject.SetActive(false);
+					CameraController.s.velocityAdjustment = true;
 					break;
 				case DirectControllable.DirectControlMode.LockOn:
 					gunCrosshair.gameObject.SetActive(false);
 					rocketCrosshairEverything.gameObject.SetActive(true);
+					CameraController.s.velocityAdjustment = false;
 					break;
 			}
 
 			curRocketLockInTime = rocketLockOnTime;
+			
+			GamepadControlsHelper.s.AddPossibleActions(GamepadControlsHelper.PossibleActions.shoot);
+			GamepadControlsHelper.s.AddPossibleActions(GamepadControlsHelper.PossibleActions.exitDirectControl);
 		}
 	}
 
@@ -121,6 +127,12 @@ public class DirectControlMaster : MonoBehaviour {
 			//PlayerModuleSelector.s.EnableModuleSelecting();
 			
 			CameraShakeController.s.rotationalShake = false;
+				
+				
+			GamepadControlsHelper.s.RemovePossibleAction(GamepadControlsHelper.PossibleActions.shoot);
+			GamepadControlsHelper.s.RemovePossibleAction(GamepadControlsHelper.PossibleActions.exitDirectControl);
+
+			directControlLock = 0.2f;
 		}
 	}
 
@@ -153,7 +165,7 @@ public class DirectControlMaster : MonoBehaviour {
 		if (directControlInProgress) {
 			if (directControlTrainBuilding == null || directControlTrainBuilding.isDead || myGun == null) {
 				// in case our module gets destroyed
-				DisableDirectControl(new InputAction.CallbackContext());
+				DisableDirectControl();
 				return;
 			}
 
@@ -281,6 +293,10 @@ public class DirectControlMaster : MonoBehaviour {
 
 			curOnHitDecayTime = onHitSoundDecayTime;
 		}
+
+		if (directControlLock > 0) {
+			directControlLock -= Time.deltaTime;
+		}
 	}
 
 	private IEnumerator flashCoroutine;
@@ -327,7 +343,7 @@ public class DirectControlMaster : MonoBehaviour {
 				true
 			);
 			if(!SettingsController.GamepadMode())
-				CameraController.s.ProcessDirectControl(new Vector2(Random.Range(-range*2, range*2), range*5), false);
+				CameraController.s.ProcessDirectControl(new Vector2(Random.Range(-range*2, range*2), range*5));
 		} else {
 			/*CameraShakeController.s.ShakeCamera(
 				Mathf.Lerp(0.1f, 0.7f, range),

@@ -406,8 +406,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   tooltip:
-    text: 'Uses steam pressure to shoot useless metal instead of ammo. Need to ammo
-      but not great damage.
+    text: 'Uses steam pressure to shoot useless metal instead of ammo. No need to
+      reload but not great damage.
 
 '
   info: Pneumatic gun
@@ -703,6 +703,14 @@ PrefabInstance:
     - target: {fileID: 1063128118414717790, guid: 86c82cfee32788c49a35e2e0e34bf7b7, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2564255422046077385, guid: 86c82cfee32788c49a35e2e0e34bf7b7, type: 3}
+      propertyPath: maxHealth
+      value: 400
+      objectReference: {fileID: 0}
+    - target: {fileID: 2564255422046077385, guid: 86c82cfee32788c49a35e2e0e34bf7b7, type: 3}
+      propertyPath: currentHealth
+      value: 400
       objectReference: {fileID: 0}
     - target: {fileID: 3399934084524781478, guid: 86c82cfee32788c49a35e2e0e34bf7b7, type: 3}
       propertyPath: m_Name

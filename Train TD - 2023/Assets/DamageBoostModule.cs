@@ -3,67 +3,35 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class DamageBoostModule : MonoBehaviour, IActivateWhenAttachedToTrain
+public class DamageBoostModule : ActivateWhenAttachedToTrain, IExtraInfo
 {
-    public int damageMultiplier = 2;
-
-    public GameObject attachmentThing;
-    public List<GameObject> attachmentThings = new List<GameObject>();
-
-    public bool isAttached = false;
+    public float damageBoost = 1;
     
-    public void AttachedToTrain() {
-        if (isAttached == false) {
-            isAttached = true;
-
-            ApplyDamageBoost(Train.s.GetNextBuilding(true, GetComponentInParent<Cart>()), true);
-            ApplyDamageBoost(Train.s.GetNextBuilding(false, GetComponentInParent<Cart>()), true);
-        }
+    protected override void _AttachedToTrain() {
+        ApplyBoost(Train.s.GetNextBuilding(true, GetComponentInParent<Cart>()), true);
+        ApplyBoost(Train.s.GetNextBuilding(false, GetComponentInParent<Cart>()), true);
     }
 
-
-    void ApplyDamageBoost(Cart target, bool doApply) {
-        if(target == null)
-            return;
-        
+    protected override bool CanApply(Cart target) {
         var gun = target.GetComponentInChildren<GunModule>();
+        return gun != null;
+    }
 
-        if (gun != null) {
-            if (doApply) {
-                gun.projectileDamage *= damageMultiplier;
-
-                attachmentThings.Add(
-                    Instantiate(attachmentThing).GetComponent<AttachmentThingScript>().SetUp(GetComponentInParent<Cart>(), target)
-                );
-
-            } else {
-                gun.projectileDamage /= damageMultiplier;
-            }
+    protected override void _ApplyBoost(Cart target, bool doApply) {
+        var gun = target.GetComponentInChildren<GunModule>();
+        if (doApply) {
+            gun.damageMultiplier += damageBoost;
+        } else {
+            gun.damageMultiplier -= damageBoost;
         }
     }
 
-    public void DetachedFromTrain() {
-        if (isAttached == true) {
-            isAttached = false;
-
-            DeleteAllAttachments();
-
-            ApplyDamageBoost(Train.s.GetNextBuilding(true, GetComponentInParent<Cart>()), false);
-            ApplyDamageBoost(Train.s.GetNextBuilding(false, GetComponentInParent<Cart>()), false);
-        }
+    protected override void _DetachedFromTrain() {
+        ApplyBoost(Train.s.GetNextBuilding(true, GetComponentInParent<Cart>()), false);
+        ApplyBoost(Train.s.GetNextBuilding(false, GetComponentInParent<Cart>()), false);
     }
-
-    void DeleteAllAttachments() {
-        for (int i = 0; i < attachmentThings.Count; i++) {
-            if (attachmentThings[i] != null) {
-                Destroy(attachmentThings[i]);
-            }
-        }
-        
-        attachmentThings.Clear();
-    }
-
-    private void OnDestroy() {
-        DeleteAllAttachments();
+    
+    public string GetInfoText() {
+        return "Doubles the damage of connected carts";
     }
 }

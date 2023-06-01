@@ -227,7 +227,8 @@ public class DataSaver {
 	
 	[Serializable]
 	public class TutorialProgress {
-		public bool tutorialDone;
+		public bool firstCityTutorialDone;
+		public bool initialCutscenePlayed;
 		public bool cameraDone;
 
 		public bool directControlHint;
@@ -246,6 +247,7 @@ public class DataSaver {
 		public int currentAct = 1;
 		
 		public StarMapState map = new StarMapState();
+		public string targetStar;
 
 		public float playtime;
 		public RunResources myResources = new RunResources();

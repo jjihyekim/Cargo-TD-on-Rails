@@ -16,6 +16,7 @@ public class Cart : MonoBehaviour {
     public int trainIndex;
 
     public bool isRepairable => !isMainEngine && !isCargo && !isCriticalComponent;
+    public bool loseGameIfYouLoseThis => isMainEngine || isCriticalComponent;
     //public bool isRepairable => !isCargo;
 
     public UpgradesController.CartLocation myLocation = UpgradesController.CartLocation.train;
@@ -134,7 +135,7 @@ public class Cart : MonoBehaviour {
     }
 
     public void SetAttachedToTrainModulesMode(bool isAttached) {
-        var attachedToTrain = GetComponentsInChildren<IActivateWhenAttachedToTrain>();
+        var attachedToTrain = GetComponentsInChildren<ActivateWhenAttachedToTrain>();
         for (int i = 0; i < attachedToTrain.Length; i++) {
             if (isAttached) {
                 attachedToTrain[i].AttachedToTrain();

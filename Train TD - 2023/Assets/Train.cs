@@ -15,7 +15,7 @@ public class Train : MonoBehaviour {
     public Vector3 trainFrontOffset;
 
     public int cartCount;
-    
+
     public List<Cart> carts = new List<Cart>();
     public List<Vector3> cartDefPositions = new List<Vector3>();
 
@@ -27,11 +27,12 @@ public class Train : MonoBehaviour {
     public UnityEvent trainUpdated = new UnityEvent();
 
     public bool isTrainDrawn = false;
+
     public int GetCargoCount() {
         GetTrainWeight(); // so that it gets updated
         return cargoCount;
     }
-    
+
     public int GetTrainWeight() {
         if (!trainWeightDirty) {
             return trainWeight;
@@ -79,10 +80,10 @@ public class Train : MonoBehaviour {
 
         carts = new List<Cart>();
         cartDefPositions = new List<Vector3>();
-        
-        if(trainFront != null)
+
+        if (trainFront != null)
             Destroy(trainFront.gameObject);
-        if(trainBack != null)
+        if (trainBack != null)
             Destroy(trainBack.gameObject);
 
         if (trainState != null) {
@@ -99,18 +100,18 @@ public class Train : MonoBehaviour {
             trainFront = new GameObject().transform;
             trainFront.SetParent(transform);
             trainFront.gameObject.name = "Train Front";
-            
+
             trainBack = new GameObject().transform;
             trainBack.SetParent(transform);
             trainBack.gameObject.name = "Train Back";
         }
-        
+
         UpdateCartPositions();
-        
+
         for (int i = 0; i < carts.Count; i++) {
             carts[i].SetAttachedToTrainModulesMode(true);
         }
-        
+
         trainUpdatedThroughNonBuildingActions?.Invoke();
         trainUpdated?.Invoke();
 
@@ -123,11 +124,13 @@ public class Train : MonoBehaviour {
             Invoke(nameof(OneFrameLater), 0.01f);
         }
     }
-    void OneFrameLater() { // because sometimes train doesnt get updated fast enough
+
+    void OneFrameLater() {
+        // because sometimes train doesnt get updated fast enough
         DataSaver.s.GetCurrentSave().currentRun.myTrain = GetTrainState();
         DataSaver.s.SaveActiveGame();
     }
-    
+
     public DataSaver.TrainState GetTrainState() {
         var trainState = new DataSaver.TrainState();
 
@@ -167,10 +170,10 @@ public class Train : MonoBehaviour {
 
     public static DataSaver.TrainState.CartState GetStateFromCart(Cart cart) {
         var state = new DataSaver.TrainState.CartState();
-        ApplyCartToState(cart,state);
+        ApplyCartToState(cart, state);
         return state;
     }
-    
+
     public static void ApplyStateToCart(Cart cart, DataSaver.TrainState.CartState cartState) {
         /*if (cartState.health > 0) {
             cart.SetCurrentHealth(cartState.health);
@@ -192,6 +195,43 @@ public class Train : MonoBehaviour {
         if (cargoModule != null) {
             cargoModule.SetCargo(cartState.cargoState);
         }
+    }
+
+    public void RightBeforeLeaveMissionRewardArea() {
+        StopShake();
+        StopCoroutine(nameof(LerpTrain));
+        StartCoroutine(LerpTrain(Vector3.zero, Vector3.forward, 2f ,false));
+        showEntryMovement = true;
+    }
+
+    public bool showEntryMovement = false;
+    public void OnEnterShopArea() {
+        StopShake();
+        StopCoroutine(nameof(LerpTrain));
+        if(showEntryMovement) // only show this if the player just left the mission reward area
+            StartCoroutine(LerpTrain(Vector3.back,Vector3.zero, 2f , true));
+    }
+
+
+    IEnumerator LerpTrain(Vector3 startPos, Vector3 endPos, float time, bool stopSparkles) {
+        transform.position = startPos;
+        var totalTime = time;
+        if (stopSparkles) {
+            SpeedController.s.currentBreakPower = 10;
+        }
+        
+        while (time >= 0f) {
+            transform.position = Vector3.Lerp(endPos, startPos, Mathf.Pow(time/totalTime, 2));
+
+            time -= Time.deltaTime;
+            yield return null;
+        }
+        
+        if (stopSparkles) {
+            SpeedController.s.currentBreakPower = 0;
+        }
+
+        transform.position = endPos;
     }
 
     public void UpdateCartPositions() {
@@ -281,7 +321,6 @@ public class Train : MonoBehaviour {
 
     private void Update() {
         if (PlayStateMaster.s.isCombatInProgress()) {
-            
             if (doShake) {
                 if (curDistance < 0) {
                     StartCoroutine(ShakeWave());
@@ -309,7 +348,7 @@ public class Train : MonoBehaviour {
         }
         
         for (int i = 0; i < carts.Count; i++) {
-            carts[i].GetHealthModule().InitializeUIBar();
+            carts[i].GetHealthModule()?.InitializeUIBar();
         }
     }
 
@@ -333,6 +372,11 @@ public class Train : MonoBehaviour {
     }
 
     public void AddCartAtIndex(int index, Cart cart) {
+        var wasShaking = doShake;
+        if (wasShaking) {
+            StopShake();
+        }
+        
         for (int i = 0; i < carts.Count; i++) {
             carts[i].SetAttachedToTrainModulesMode(false);
         }
@@ -348,11 +392,15 @@ public class Train : MonoBehaviour {
         for (int i = 0; i < carts.Count; i++) {
             carts[i].SetAttachedToTrainModulesMode(true);
         }
+
+        if (wasShaking) {
+            RestartShake();
+        }
     }
 
     public void StopShake() {
         if (doShake) {
-            StopAllCoroutines();
+            StopCoroutine(nameof(_RestartShake));
             for (int i = 0; i < carts.Count; i++) {
                 carts[i].transform.localPosition = cartDefPositions[i];
             }
@@ -623,7 +671,66 @@ public class Train : MonoBehaviour {
     }
 }
 
-public interface IActivateWhenAttachedToTrain {
-    public void AttachedToTrain();
-    public void DetachedFromTrain();
+public abstract class ActivateWhenAttachedToTrain : MonoBehaviour {
+
+    public GameObject attachmentThing;
+    public List<GameObject> attachmentThings = new List<GameObject>();
+
+    public bool isAttached = false;
+
+    public void AttachedToTrain() {
+        if (isAttached == false) {
+            isAttached = true;
+            
+            _AttachedToTrain();
+        }
+    }
+
+    protected abstract void _AttachedToTrain();
+
+    protected abstract bool CanApply(Cart target);
+
+    protected void ApplyBoost(Cart target, bool doApply) {
+        if(target == null)
+            return;
+        if (CanApply(target)) {
+            if (doApply) {
+                attachmentThings.Add(
+                    Instantiate(attachmentThing).GetComponent<AttachmentThingScript>().SetUp(GetComponentInParent<Cart>(), target)
+                );
+                _ApplyBoost(target, doApply);
+            } else {
+                _ApplyBoost(target, doApply);
+            }
+        }
+    }
+
+    protected abstract void _ApplyBoost(Cart target, bool doApply);
+
+    public void DetachedFromTrain() {
+        if (isAttached == true) {
+            isAttached = false;
+			
+            DeleteAllAttachments();
+
+            _DetachedFromTrain();
+        }
+    }
+    
+    
+    protected abstract void _DetachedFromTrain();
+	
+    void DeleteAllAttachments() {
+        for (int i = 0; i < attachmentThings.Count; i++) {
+            if (attachmentThings[i] != null) {
+                Destroy(attachmentThings[i]);
+            }
+        }
+        
+        attachmentThings.Clear();
+    }
+
+    private void OnDestroy() {
+        DeleteAllAttachments();
+    }
 }

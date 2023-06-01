@@ -17,8 +17,6 @@ public class TrainBuildingTweakableApplier : MonoBehaviour
 		var trainBuilding = GetComponent<Cart>();
 		var health = GetComponent<ModuleHealth>();
 		
-		if (cart != null) {
-			health.damageReductionMultiplier = TweakablesMaster.s.myTweakables.cartDamageReductionMultiplier;
-		}
+		
 	}
 }

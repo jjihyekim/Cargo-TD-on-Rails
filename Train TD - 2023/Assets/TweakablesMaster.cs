@@ -44,7 +44,7 @@ public class Tweakables {
     public float enemyFirerateBoost = 0.5f;
     public float playerFirerateBoost = 0.5f;
 
-    public float cartDamageReductionMultiplier = 1f;
+    
     public float magazineSizeMultiplier = 1f;
     public float gunSteamUseMultiplier = 1f;
     

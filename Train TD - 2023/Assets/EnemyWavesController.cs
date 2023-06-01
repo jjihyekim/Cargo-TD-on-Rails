@@ -23,13 +23,10 @@ public class EnemyWavesController : MonoBehaviour {
 
 	[NonSerialized] public bool debugNoRegularSpawns = false;
 
-
 	public MiniGUI_PursuerTimer pursuerTimerObject;
-
-
+	
 	public UnityEvent<EnemyIdentifier> OnEnemyWaveSpawn = new UnityEvent<EnemyIdentifier>();
 	public UnityEvent<EnemyIdentifier> OnEnemyWaveCleared = new UnityEvent<EnemyIdentifier>();
-
 
 	private void Start() {
 		Cleanup();
@@ -54,15 +51,20 @@ public class EnemyWavesController : MonoBehaviour {
 		enemiesInitialized = !segment.isEncounter;
 		if (enemiesInitialized) {
 
-			PowerUpScriptable powerUpScriptable = null;
-			if (segment.rewardPowerUpAtTheEnd) {
-				powerUpScriptable = DataHolder.s.GetPowerUp(segment.powerUpRewardUniqueName);
-				powerUpScriptables.Enqueue(powerUpScriptable);
-			}
+			
 
 			var enemiesOnPath = segment.enemiesOnPath;
 			for (int i = 0; i < enemiesOnPath.Length; i++) {
-				SpawnEnemy(enemiesOnPath[i].enemyIdentifier, segmentStartDistance+ enemiesOnPath[i].distanceOnPath, false, enemiesOnPath[i].isLeft, powerUpScriptable);
+				PowerUpScriptable powerUpScriptable = null;
+				if (enemiesOnPath[i].hasReward) {
+					powerUpScriptable = DataHolder.s.GetPowerUp(segment.powerUpRewardUniqueName);
+					powerUpScriptables.Enqueue(powerUpScriptable);
+				}
+				
+				SpawnEnemy(enemiesOnPath[i].enemyIdentifier, 
+					segmentStartDistance+ enemiesOnPath[i].distanceOnPath, 
+					false, enemiesOnPath[i].isLeft, 
+					powerUpScriptable);
 			}
 		}
 	}

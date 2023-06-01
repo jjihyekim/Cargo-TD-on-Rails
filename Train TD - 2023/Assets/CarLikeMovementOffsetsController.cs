@@ -17,9 +17,9 @@ public class CarLikeMovementOffsetsController : MonoBehaviour{
     public float curSmallTime = 1f;
     public Vector2 randomSmallBumpForce = new Vector2(50, 400);
 
-    public float positionDelta = 0.5f;
-    public float lerpSpeed = 5f;
-    public float targetMoveSpeed = 1f;
+    public float positionDelta = 0.2f;
+    public float lerpSpeed = 3f;
+    public float targetMoveSpeed = 0.1f;
     public Vector3 target;
     public Vector3 targetTargetPosition;
 

@@ -51,9 +51,25 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 2564255422046077385, guid: 86c82cfee32788c49a35e2e0e34bf7b7, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2564255422046077385, guid: 86c82cfee32788c49a35e2e0e34bf7b7, type: 3}
+      propertyPath: invincibleTutorial
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 3399934084524781478, guid: 86c82cfee32788c49a35e2e0e34bf7b7, type: 3}
       propertyPath: m_Name
       value: Empty Cart
+      objectReference: {fileID: 0}
+    - target: {fileID: 3756307987550949569, guid: 86c82cfee32788c49a35e2e0e34bf7b7, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4724468226665651248, guid: 86c82cfee32788c49a35e2e0e34bf7b7, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8139748349479078024, guid: 86c82cfee32788c49a35e2e0e34bf7b7, type: 3}
       propertyPath: Icon
@@ -69,6 +85,8 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 7427781900297684245, guid: 86c82cfee32788c49a35e2e0e34bf7b7, type: 3}
+    - {fileID: 2564255422046077385, guid: 86c82cfee32788c49a35e2e0e34bf7b7, type: 3}
+    - {fileID: -2084665083962906048, guid: 86c82cfee32788c49a35e2e0e34bf7b7, type: 3}
   m_SourcePrefab: {fileID: 100100000, guid: 86c82cfee32788c49a35e2e0e34bf7b7, type: 3}
 --- !u!1 &9011912884359218676 stripped
 GameObject:
