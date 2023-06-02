@@ -360,7 +360,9 @@ MonoBehaviour:
   fireDelay: 1
   fireBarrageCount: 2
   fireBarrageDelay: 0.1
+  fireRateMultiplier: 1
   projectileDamage: 2
+  damageMultiplier: 1
   rotateSpeed: 10
   gunActive: 1
   IsBarrelPointingCorrectly: 0
@@ -459,7 +461,9 @@ MonoBehaviour:
   fireDelay: 1
   fireBarrageCount: 2
   fireBarrageDelay: 0.1
+  fireRateMultiplier: 1
   projectileDamage: 2
+  damageMultiplier: 1
   rotateSpeed: 10
   gunActive: 1
   IsBarrelPointingCorrectly: 0
@@ -1188,7 +1192,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ffd4c45972e0fc54a84560b4d5de93b9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxAmmo: 15
+  _maxAmmo: 15
+  maxAmmoMultiplier: 1
   ammoPerBarrage: 1
   myGunModules: []
   OnUse:
@@ -1211,7 +1216,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   tooltip:
-    text: Your average gun. Does medium damage and uses some ammo.
+    text: Your average gun. Does medium damage and has some ammo.
   info: Anti Vehicle Rifle
 --- !u!1 &6888987467562409437
 GameObject:
@@ -1845,6 +1850,14 @@ PrefabInstance:
     - target: {fileID: 1063128118414717790, guid: 86c82cfee32788c49a35e2e0e34bf7b7, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2564255422046077385, guid: 86c82cfee32788c49a35e2e0e34bf7b7, type: 3}
+      propertyPath: maxHealth
+      value: 400
+      objectReference: {fileID: 0}
+    - target: {fileID: 2564255422046077385, guid: 86c82cfee32788c49a35e2e0e34bf7b7, type: 3}
+      propertyPath: currentHealth
+      value: 400
       objectReference: {fileID: 0}
     - target: {fileID: 3399934084524781478, guid: 86c82cfee32788c49a35e2e0e34bf7b7, type: 3}
       propertyPath: m_Name

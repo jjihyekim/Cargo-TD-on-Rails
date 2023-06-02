@@ -31,8 +31,12 @@ public class GunModule : MonoBehaviour, IComponentWithTarget, IActiveDuringComba
     public float GetFireDelay() { return fireDelay * GetAttackSpeedMultiplier();}
     public int fireBarrageCount = 5;
     public float fireBarrageDelay = 0.1f;// dont use this
+    public float fireRateMultiplier = 1f;
     public float GetFireBarrageDelay() { return fireBarrageDelay * GetAttackSpeedMultiplier();}
-    public float projectileDamage = 2f;
+    public float projectileDamage = 2f; // dont use this
+    public float damageMultiplier = 1f;
+    public float GetDamage() { return projectileDamage*GetDamageMultiplier(); }
+    
 
     public float rotateSpeed = 10f;
 
@@ -122,19 +126,19 @@ public class GunModule : MonoBehaviour, IComponentWithTarget, IActiveDuringComba
     }
 
     float GetAttackSpeedMultiplier() {
-        var boost = 1f;
+        var boost = 1f/fireRateMultiplier;
 
         if (isPlayer) {
             boost /= TweakablesMaster.s.myTweakables.playerFirerateBoost;
         } else {
             boost /= TweakablesMaster.s.myTweakables.enemyFirerateBoost;
         }
-        
+
         return boost;
     }
 
     float GetDamageMultiplier() {
-        var dmgMul = 1f;
+        var dmgMul = damageMultiplier;
         
         if (isPlayer) {
             dmgMul *= TweakablesMaster.s.myTweakables.playerDamageMultiplier;
@@ -194,20 +198,23 @@ public class GunModule : MonoBehaviour, IComponentWithTarget, IActiveDuringComba
                 var muzzleFlash = Instantiate(muzzleFlashPrefab, position, rotation);
                 var projectile = bullet.GetComponent<Projectile>();
                 projectile.myOriginObject = this.transform.root.gameObject;
-                projectile.damage = projectileDamage*GetDamageMultiplier();
+                projectile.damage = GetDamage();
                 projectile.target = target;
                 //projectile.isTargetSeeking = true;
                 projectile.canPenetrateArmor = canPenetrateArmor;
-                
+                if (beingDirectControlled) {
+                    projectile.speed *= 2;
+                    projectile.acceleration *= 2;
+                }
+
                 projectile.SetIsPlayer(isPlayer);
                 projectile.source = this;
 
                 projectile.onHitCallback = onHitCallback;
 
                 //if(myCart != null)
-                if(isPlayer)
-                    LogShotData(projectileDamage*GetDamageMultiplier());
-
+                if (isPlayer)
+                    LogShotData(GetDamage());
                 if (isPlayer && !isFree) {
                     SpeedController.s.UseSteam(steamUsePerShot*TweakablesMaster.s.myTweakables.gunSteamUseMultiplier);
                 }
@@ -226,7 +233,7 @@ public class GunModule : MonoBehaviour, IComponentWithTarget, IActiveDuringComba
     public IEnumerator ShakeGun() {
         yield return null;
         
-        var range = Mathf.Clamp01(projectileDamage / 10f) + Mathf.Clamp01(projectileDamage / 10f);
+        var range = Mathf.Clamp01(GetDamage() / 10f) + Mathf.Clamp01(GetDamage() / 10f);
         range /= 2f;
 
         var defaultPositions = new List<Vector3>();
@@ -352,10 +359,6 @@ public class GunModule : MonoBehaviour, IComponentWithTarget, IActiveDuringComba
         return target;
     }
 
-    public int GetDamage() {
-        return (int)(projectileDamage*GetDamageMultiplier());
-    }
-    
     public void ActivateForCombat() {
         this.enabled = true;
     }

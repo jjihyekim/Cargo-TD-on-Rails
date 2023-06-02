@@ -2,68 +2,34 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class AmmoBoostModule : MonoBehaviour, IActivateWhenAttachedToTrain {
-
-	public int ammoMultiplier = 2;
-
-	public GameObject attachmentThing;
-	public List<GameObject> attachmentThings = new List<GameObject>();
-
-	public bool isAttached = false;
-
-	public void AttachedToTrain() {
-		if (isAttached == false) {
-			isAttached = true;
-
-			ApplyAmmoBoost(Train.s.GetNextBuilding(true, GetComponentInParent<Cart>()), true);
-			ApplyAmmoBoost(Train.s.GetNextBuilding(false, GetComponentInParent<Cart>()), true);
-		}
-	}
-
-
-	void ApplyAmmoBoost(Cart target, bool doApply) {
-		if(target == null)
-			return;
-		
-		
-		var ammo = target.GetComponentInChildren<ModuleAmmo>();
-
-		if (ammo != null) {
-			if (doApply) {
-				ammo.ChangeMaxAmmo(ammo.maxAmmo * ammoMultiplier);
-
-				attachmentThings.Add(
-					Instantiate(attachmentThing).GetComponent<AttachmentThingScript>().SetUp(GetComponentInParent<Cart>(), target)
-				);
-				
-			} else {
-				ammo.ChangeMaxAmmo(ammo.maxAmmo / ammoMultiplier);
-			}
-		}
-	}
-
-	public void DetachedFromTrain() {
-		if (isAttached == true) {
-			isAttached = false;
-			
-			DeleteAllAttachments();
-
-			ApplyAmmoBoost(Train.s.GetNextBuilding(true, GetComponentInParent<Cart>()), false);
-			ApplyAmmoBoost(Train.s.GetNextBuilding(false, GetComponentInParent<Cart>()), false);
-		}
-	}
+public class AmmoBoostModule : ActivateWhenAttachedToTrain, IExtraInfo {
+	public float ammoBoost = 1;
 	
-	void DeleteAllAttachments() {
-		for (int i = 0; i < attachmentThings.Count; i++) {
-			if (attachmentThings[i] != null) {
-				Destroy(attachmentThings[i]);
-			}
-		}
-        
-		attachmentThings.Clear();
+	protected override void _AttachedToTrain() {
+		ApplyBoost(Train.s.GetNextBuilding(true, GetComponentInParent<Cart>()), true);
+		ApplyBoost(Train.s.GetNextBuilding(false, GetComponentInParent<Cart>()), true);
 	}
 
-	private void OnDestroy() {
-		DeleteAllAttachments();
+	protected override bool CanApply(Cart target) {
+		var ammo = target.GetComponentInChildren<ModuleAmmo>();
+		return ammo != null;
+	}
+
+	protected override void _ApplyBoost(Cart target, bool doApply) {
+		var ammo = target.GetComponentInChildren<ModuleAmmo>();
+		if (doApply) {
+			ammo.ChangeMaxAmmo(ammoBoost);
+		} else {
+			ammo.ChangeMaxAmmo(-ammoBoost);
+		}
+	}
+
+	protected override void _DetachedFromTrain() {
+		ApplyBoost(Train.s.GetNextBuilding(true, GetComponentInParent<Cart>()), false);
+		ApplyBoost(Train.s.GetNextBuilding(false, GetComponentInParent<Cart>()), false);
+	}
+
+	public string GetInfoText() {
+		return "Doubles the max ammo of connected carts";
 	}
 }

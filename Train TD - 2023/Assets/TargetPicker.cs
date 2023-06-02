@@ -116,5 +116,5 @@ public interface IComponentWithTarget {
     public Transform GetRangeOrigin();
     public Transform GetActiveTarget();
 
-    public int GetDamage();
+    public float GetDamage();
 } 

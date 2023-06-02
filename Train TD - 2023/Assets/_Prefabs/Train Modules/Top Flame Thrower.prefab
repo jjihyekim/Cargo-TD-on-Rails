@@ -256,7 +256,9 @@ MonoBehaviour:
   fireDelay: 0.25
   fireBarrageCount: 5
   fireBarrageDelay: 0.05
+  fireRateMultiplier: 1
   projectileDamage: 0.25
+  damageMultiplier: 1
   rotateSpeed: 10
   gunActive: 1
   IsBarrelPointingCorrectly: 0
@@ -293,8 +295,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   tooltip:
-    text: 'Deals more damage over time as target gets hotter and hotter. Uses fuel
-      instead of ammo. Also makes a nice show. Penetrates armor. '
+    text: 'Deals more damage over time as target gets hotter and hotter. Have limited
+      range. Penetrates armor. '
   info: Flame Thrower
 --- !u!1 &5901234116158881788
 GameObject:

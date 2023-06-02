@@ -85,12 +85,11 @@ public class LevelReferences : MonoBehaviour {
     public Sprite eliteEnemyIcon;
     public Sprite bossEnemyIcon;
 
-    public EnemyIdentifier powerUpSpawnerEnemy;
-
-
     public GameObject resourceParticleScraps;
     public GameObject resourceParticleAmmo;
     public GameObject resourceParticleFuel;
+
+    public GameObject enemyCartReward;
     
     
     public GameObject resourceLostParticleScraps;

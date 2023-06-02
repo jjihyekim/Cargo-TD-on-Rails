@@ -371,7 +371,9 @@ MonoBehaviour:
   fireDelay: 0.5
   fireBarrageCount: 2
   fireBarrageDelay: 0.1
+  fireRateMultiplier: 1
   projectileDamage: 3.5
+  damageMultiplier: 1
   rotateSpeed: 10
   gunActive: 1
   IsBarrelPointingCorrectly: 0
@@ -408,7 +410,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   tooltip:
-    text: Your average gun. Does medium damage and uses some ammo.
+    text: Your average gun. Does medium damage.
   info: Anti Vehicle Rifle
 --- !u!1 &5901234116158881788
 GameObject:

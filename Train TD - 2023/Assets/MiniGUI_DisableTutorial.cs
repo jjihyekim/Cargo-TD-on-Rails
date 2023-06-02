@@ -5,7 +5,7 @@ using UnityEngine.UI;
 
 public class MiniGUI_DisableTutorial : MonoBehaviour, IInitRequired
 {
-    const string exposedName = "tutorial";
+    public const string exposedName = "tutorial";
     public Toggle myToggle;
     
     public void Initialize() {
@@ -21,7 +21,7 @@ public class MiniGUI_DisableTutorial : MonoBehaviour, IInitRequired
     }
 
     void SetVal(bool val) {
-        DataSaver.s.GetCurrentSave().tutorialProgress.tutorialDone = !val;
+        DataSaver.s.GetCurrentSave().tutorialProgress.firstCityTutorialDone = !val;
     }
 
     public static bool IsTutorialActive() {

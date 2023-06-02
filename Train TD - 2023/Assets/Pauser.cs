@@ -19,12 +19,20 @@ public class Pauser : MonoBehaviour {
     public InputActionReference pauseButton;
 
     public bool isPaused = false;
-
     public GameObject pauseMenu;
-
     public Button gamepadSelect;
 
-    public MenuToggle settingsMenu;
+    private void OnApplicationFocus(bool hasFocus) {
+        if(enabled && !Application.isEditor)
+            if(!hasFocus)
+                Pause();
+    }
+
+    private void OnApplicationPause(bool pauseStatus) {
+        if(enabled && !Application.isEditor)
+            if(pauseStatus)
+                Pause();
+    }
 
     private void OnEnable() {
         pauseButton.action.Enable();
@@ -112,7 +120,7 @@ public class Pauser : MonoBehaviour {
         );
         
         Unpause();
-        FirstTimeTutorialController.s.StopTutorial();
+        FirstTimeTutorialController.s.StopInitialCutscene();
         MissionLoseFinisher.s.MissionLost();
     }
 }

@@ -49,7 +49,7 @@ public class MapController : MonoBehaviour {
 
     private void Start() {
 	    //GenerateStarMap();
-	    targetStarInfoScreen.Hide();
+	    //targetStarInfoScreen.Hide();
 	    //selectedStarInfoScreen.Hide();
 	    /*if(ApplyStarMap)
 			ApplyStarMapFromSave();*/
@@ -313,7 +313,7 @@ public class MapController : MonoBehaviour {
     }
 
 
-    public MiniGUI_StarInfoPanel targetStarInfoScreen;
+    //public MiniGUI_StarInfoPanel targetStarInfoScreen;
     public MiniGUI_StarInfoPanel targetStarInfoScreenBudget;
     //public MiniGUI_StarInfoPanel selectedStarInfoScreen;
 
@@ -400,6 +400,14 @@ public class MapController : MonoBehaviour {
 	    Cleanup();
     }
 
+    public void TravelToStar(StarState starState) {
+	    if (starState != null) {
+		    RemovePlayerFromStar();
+		    PutPlayerInStar(starState);
+		    Cleanup();
+	    }
+    }
+
     public void DebugTravelToSelectStar() {
 	    travelToStarWaiting = true;
 
@@ -418,7 +426,7 @@ public class MapController : MonoBehaviour {
     }
 
     public void DeselectStar() {
-	    targetStarInfoScreen.Hide();
+	    //targetStarInfoScreen.Hide();
 	    //selectedStarInfoScreen.Hide();
 	    targetStarInfoScreenBudget.Hide();
     }

@@ -12,7 +12,6 @@ public class OverlayCamsReference : MonoBehaviour {
     }
 
     public Camera uiCam;
-    public Camera tooltipCam;
 
     
     public const float planeDistance = 1.5f;
@@ -21,6 +20,5 @@ public class OverlayCamsReference : MonoBehaviour {
         var camData = MainCameraReference.s.cam.GetUniversalAdditionalCameraData();
         camData.cameraStack.Clear();
         camData.cameraStack.Add(uiCam);
-        camData.cameraStack.Add(tooltipCam);
     }
 }

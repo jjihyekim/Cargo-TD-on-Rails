@@ -48,9 +48,20 @@ public class TimeController : MonoBehaviour {
         ProcessFastForward();
     }
 
+    private bool canFastForward = false;
+    public void OnCombatStart() {
+        canFastForward = true;
+        GamepadControlsHelper.s.AddPossibleActions(GamepadControlsHelper.PossibleActions.fastForward);
+    }
+
+    public void OnCombatEnd() {
+        canFastForward = false;
+        GamepadControlsHelper.s.RemovePossibleAction(GamepadControlsHelper.PossibleActions.fastForward);
+    }
+
     public void ProcessFastForward() {
         //print(fastForwardKey.action.ReadValue<float>());
-        if (fastForwardKey.action.IsPressed()) {
+        if (fastForwardKey.action.IsPressed() && canFastForward) {
             currentTimeScale = 8f;
             if (!isPaused) {
                 Time.timeScale = currentTimeScale;

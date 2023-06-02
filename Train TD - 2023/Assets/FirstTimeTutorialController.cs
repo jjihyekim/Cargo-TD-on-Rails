@@ -10,7 +10,7 @@ public class FirstTimeTutorialController : MonoBehaviour {
 
     private DataSaver.TutorialProgress _progress => DataSaver.s.GetCurrentSave().tutorialProgress;
     
-    public bool tutorialEngaged = false;
+    public bool initialCutsceneEngaged = false;
     public GameObject tutorialUI;
 
     [Space]
@@ -25,23 +25,41 @@ public class FirstTimeTutorialController : MonoBehaviour {
     private void Awake() {
         s = this;
         tutorialUI.SetActive(false);
-        enabled = false;
     }
 
     public void TutorialCheck() {
+        tutorialUI.SetActive(false);
         ClearActiveHints();
-        if(DataSaver.s.GetCurrentSave().currentRun.map.GetPlayerStar().starChunk == 0)
-            _progress.tutorialDone = !MiniGUI_DisableTutorial.IsTutorialActive();
-        
-        if (!_progress.tutorialDone && !tutorialEngaged) {
-            EngageFirstTimeTutorial();
+
+        if (!_progress.initialCutscenePlayed && !initialCutsceneEngaged) {
+            EngageInitialCutscene();
+        }else if (!_progress.firstCityTutorialDone) {
+            tutorialUI.SetActive(true);
+            
+            leaveTheCity.SetActive(true);
+            
+            emptyCart = null;
+            for (int i = 0; i < Train.s.carts.Count; i++) {
+                if (Train.s.carts[i].modulesParent.childCount == 0) {
+                    emptyCart = Train.s.carts[i];
+                    break;
+                }
+            }
+
+            if (emptyCart != null) {
+                getRidOfEmpty.SetActive(true);
+                getRidOfEmpty.GetComponent<UIElementFollowWorldTarget>().SetUp(emptyCart.uiTargetTransform);
+                emptyCartThingActive = true;
+            }
+
+            hoverOverThingsToGetInfo.SetActive(true);
+            
+            ShowCameraControls();
         }
     }
 
-    public void NewCharacterTutorialReset() {
-        var camDone = _progress.cameraDone;
-        DataSaver.s.GetCurrentSave().tutorialProgress = new DataSaver.TutorialProgress();
-        _progress.cameraDone = camDone;
+    public void NewCharacterCutsceneReset() {
+        _progress.initialCutscenePlayed = !MiniGUI_DisableTutorial.IsTutorialActive();
     }
 
     public void ReDoTutorial() {
@@ -52,9 +70,8 @@ public class FirstTimeTutorialController : MonoBehaviour {
         SceneLoader.s.ForceReloadScene();
     }
 
-    void EngageFirstTimeTutorial() {
-        tutorialEngaged = true;
-        this.enabled = true;
+    void EngageInitialCutscene() {
+        initialCutsceneEngaged = true;
 
         cameraHint.SetActive(false);
 
@@ -69,7 +86,7 @@ public class FirstTimeTutorialController : MonoBehaviour {
         StartCoroutine(_PlayObjectiveAnimation());
     }
 
-    public InputActionReference click;
+    public InputActionReference skip;
 
     public GameObject thisIsYourCargo;
 
@@ -111,9 +128,10 @@ public class FirstTimeTutorialController : MonoBehaviour {
 
         PlayerWorldInteractionController.s.canSelect = false;
         
-        click.action.Enable();
+        skip.action.Enable();
 
-        while (!click.action.WasPerformedThisFrame()) {
+        GamepadControlsHelper.s.AddPossibleActions(GamepadControlsHelper.PossibleActions.cutsceneSkip);
+        while (!skip.action.WasPerformedThisFrame()) {
             yield return null;
         }
         
@@ -138,7 +156,7 @@ public class FirstTimeTutorialController : MonoBehaviour {
             camLerpTransform.position = Vector3.Lerp(startPos, lerpTarget.position, worldMapLerp.Evaluate(curTimer));
             CameraController.s.SetMainCamPos();
             curTimer += Time.deltaTime *worldMapLerpSpeed;
-            if(click.action.WasPerformedThisFrame())
+            if(skip.action.WasPerformedThisFrame())
                 break;
             yield return null;
         }
@@ -153,33 +171,40 @@ public class FirstTimeTutorialController : MonoBehaviour {
         CameraController.s.SetMainCamPos();
         WorldMapCreator.s.canSelectCastles = true;
         
-        yield return WaitForSecondsSmart(1f);
-        
-        leaveTheCity.SetActive(true);
-        CameraController.s.SetMainCamPos();
-        
-        yield return WaitForSecondsSmart(1f);
+        if (!_progress.firstCityTutorialDone) {
+            yield return WaitForSecondsSmart(1f);
 
-        if (emptyCart != null) {
-            getRidOfEmpty.SetActive(true);
-            getRidOfEmpty.GetComponent<UIElementFollowWorldTarget>().SetUp(emptyCart.uiTargetTransform);
-            emptyCartThingActive = true;
+            leaveTheCity.SetActive(true);
+            CameraController.s.SetMainCamPos();
+
+            yield return WaitForSecondsSmart(1f);
+
+            if (emptyCart != null) {
+                getRidOfEmpty.SetActive(true);
+                getRidOfEmpty.GetComponent<UIElementFollowWorldTarget>().SetUp(emptyCart.uiTargetTransform);
+                emptyCartThingActive = true;
+            }
+
+            CameraController.s.SetMainCamPos();
+
+            yield return WaitForSecondsSmart(1f);
+            
+            hoverOverThingsToGetInfo.SetActive(true);
         }
-        CameraController.s.SetMainCamPos();
-
-        yield return WaitForSecondsSmart(1f);
-
-        hoverOverThingsToGetInfo.SetActive(true);
         
 
         CameraController.s.SetCameraControllerStatus(true);
         PlayerWorldInteractionController.s.canSelect = true;
         ShopStateController.s.starterUI.SetActive(true);
         
-        yield return WaitForSecondsSmart(1f);
+        //yield return WaitForSecondsSmart(1f);
         
         ShopStateController.s.mapOpenButton.interactable = true;
         ShowCameraControls();
+        
+        GamepadControlsHelper.s.RemovePossibleAction(GamepadControlsHelper.PossibleActions.cutsceneSkip);
+        
+        InitialCutsceneComplete();
     }
 
     IEnumerator WaitForSecondsSmart(float toWait) {
@@ -187,7 +212,7 @@ public class FirstTimeTutorialController : MonoBehaviour {
         var curTimer = 0f;
         while (curTimer <= toWait) {
             curTimer += Time.deltaTime;
-            if(click.action.WasPerformedThisFrame())
+            if(skip.action.WasPerformedThisFrame())
                 break;
             yield return null;
         }
@@ -210,7 +235,7 @@ public class FirstTimeTutorialController : MonoBehaviour {
     }
 
     private void Update() {
-        if (tutorialEngaged) {
+        if (!_progress.firstCityTutorialDone) {
             if (!_progress.cameraDone) {
                 if (CameraController.s.moveAction.action.ReadValue<Vector2>().magnitude > 0) {
                     cameraWASDMoved = true;
@@ -239,6 +264,7 @@ public class FirstTimeTutorialController : MonoBehaviour {
     public GameObject reloadHintPrefab;
     public GameObject directControlHint;
     public void OnEnterCombat() {
+        _progress.firstCityTutorialDone = true;
         ClearActiveHints();
         
         emptyCartThingActive = false;
@@ -269,6 +295,7 @@ public class FirstTimeTutorialController : MonoBehaviour {
     }
 
     void ClearActiveHints() {
+        thisIsYourCargo.SetActive(false);
         for (int i = 0; i < activeHints.Count; i++) {
             if(activeHints[i] != null)
                 Destroy(activeHints[i].gameObject);
@@ -292,7 +319,7 @@ public class FirstTimeTutorialController : MonoBehaviour {
 
     public void OnEnterShop() {
         ClearActiveHints();
-        TutorialComplete();
+        TutorialCheck();
     }
 
     public void ReloadHintShown() {
@@ -315,22 +342,17 @@ public class FirstTimeTutorialController : MonoBehaviour {
         cameraHint.SetActive(false);
     }
 
-    void TutorialComplete() {
-        tutorialEngaged = false;
-        DataSaver.s.GetCurrentSave().tutorialProgress.tutorialDone = true;
-        tutorialUI.SetActive(false);
+    void InitialCutsceneComplete() {
+        initialCutsceneEngaged = false;
+        DataSaver.s.GetCurrentSave().tutorialProgress.initialCutscenePlayed = true;
+        DataSaver.s.SaveActiveGame();
     }
     
-    public void SkipTutorial (){
-        if (tutorialEngaged) {
-            TutorialComplete();
-        }
-    }
 
-    public void StopTutorial() {
-        if (tutorialEngaged) {
+    public void StopInitialCutscene() {
+        if (initialCutsceneEngaged) {
             tutorialUI.SetActive(false);
-            tutorialEngaged = false;
+            initialCutsceneEngaged = false;
         }
     }
 }

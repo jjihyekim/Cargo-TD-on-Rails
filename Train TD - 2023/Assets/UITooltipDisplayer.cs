@@ -18,6 +18,10 @@ public class UITooltipDisplayer : MonoBehaviour {
             Vector2 mousePos = Mouse.current.position.ReadValue();
             if (RectTransformUtility.RectangleContainsScreenPoint(GetComponent<RectTransform>(), mousePos, OverlayCamsReference.s.uiCam)) {
                 curTimer += Time.deltaTime;
+                if (PlayerWorldInteractionController.s.showDetailClick.action.WasPerformedThisFrame()) {
+                    curTimer = 100000;
+                }
+                
             } else {
                 curTimer = 0;
             }

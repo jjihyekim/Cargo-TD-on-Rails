@@ -15,11 +15,13 @@ public class SettingsController : MonoBehaviour {
     public GameObject settingsParent;
 
     public bool forceDisableGamepadMode = false;
+    public bool forceEnableGamepadMode = false;
     
     void Start()
     {
 #if !UNITY_EDITOR
         forceDisableGamepadMode = false;
+        forceEnableGamepadMode = false;
 #endif
         
         var initRequiredSettings = settingsParent.GetComponentsInChildren<IInitRequired>();
@@ -66,9 +68,20 @@ public class SettingsController : MonoBehaviour {
         DataSaver.s.ClearCurrentSave();
     }
 
+    public void ReloadScene() {
+        SceneLoader.s.ForceReloadScene();
+    }
+
 
     public static bool GamepadMode() {
-        return Gamepad.all.Count > 0 && !SettingsController.s.forceDisableGamepadMode;
+        if (s != null)
+            return (Gamepad.all.Count > 0 && !s.forceDisableGamepadMode) || s.forceEnableGamepadMode;
+        else
+            return Gamepad.all.Count > 0;
+    }
+
+    public static bool ShowButtonPrompts() {
+        return MiniGUI_ShowButtonHints.ShowButtonHints();
     }
     
 }

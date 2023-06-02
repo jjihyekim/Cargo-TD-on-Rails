@@ -21,11 +21,12 @@ MonoBehaviour:
         enemyCount: 2
       distanceOnPath: 0
       isLeft: 0
+      hasReward: 0
     - enemyIdentifier:
         enemyUniqueName: BuggyCannon
-        enemyCount: 2
+        enemyCount: 4
       distanceOnPath: 35
       isLeft: 0
-    rewardPowerUpAtTheEnd: 1
+      hasReward: 1
     segmentLength: 150
     powerUpRewardUniqueName: 

@@ -429,8 +429,10 @@ MonoBehaviour:
   fireDelay: 0.25
   fireBarrageCount: 5
   fireBarrageDelay: 0.05
+  fireRateMultiplier: 1
   projectileDamage: 2
-  rotateSpeed: 10
+  damageMultiplier: 1
+  rotateSpeed: 5
   gunActive: 1
   IsBarrelPointingCorrectly: 0
   hasAmmo: 1
@@ -466,7 +468,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   tooltip:
-    text: Pew Pew Pew! also eats ammo for breakfast.
+    text: Shoots lots of bullets. Also might shake you to the core.
   info: Gatling gun
 --- !u!1 &5901234116158881788
 GameObject:

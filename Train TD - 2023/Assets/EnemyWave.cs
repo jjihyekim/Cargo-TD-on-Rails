@@ -57,7 +57,7 @@ public class EnemyWave : MonoBehaviour, IShowOnDistanceRadar, ISpeedForEngineSou
             Debug.LogError($"Enemy is missing swarm maker {en.gameObject.name} {data.enemyUniqueName}");
         }
 
-        bool hasPowerUp = data.enemyUniqueName == LevelReferences.s.powerUpSpawnerEnemy.enemyUniqueName;
+        bool hasPowerUp = powerUp != null;
        
         mySpeed = mySwarm.speed;
         isTeleporting = mySwarm.isTeleporting;
@@ -273,11 +273,11 @@ public class EnemyWave : MonoBehaviour, IShowOnDistanceRadar, ISpeedForEngineSou
     void SpawnEnemy(bool hasPowerUp, PowerUpScriptable powerUp) {
         drawnEnemies = Instantiate(DataHolder.s.GetEnemy(myEnemy.enemyUniqueName), transform).GetComponent<EnemySwarmMaker>();
         drawnEnemies.transform.ResetTransformation();
-        waveSpawnXSpread = drawnEnemies.SetData(myEnemy.enemyCount);
+        waveSpawnXSpread = drawnEnemies.SetData(myEnemy.enemyCount, powerUp);
 
-        if (hasPowerUp) {
+        /*if (hasPowerUp) {
             drawnEnemies.enemyIcon = powerUp.icon;
-        }
+        }*/
     }
 
     void DestroyRouteDisplay() {

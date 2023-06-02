@@ -9,7 +9,12 @@ public class ModuleAmmo : MonoBehaviour, IActiveDuringCombat, IActiveDuringShopp
 
     [ShowInInspector]
     public float curAmmo { get; private set; }
-    public int maxAmmo = 100;
+    public int _maxAmmo = 100;
+    public float maxAmmoMultiplier = 1f;
+    public int maxAmmo {
+        get { return Mathf.RoundToInt(_maxAmmo * maxAmmoMultiplier); }
+    }
+    
     public float ammoPerBarrage = 1;
 
     public GunModule[] myGunModules;
@@ -61,8 +66,8 @@ public class ModuleAmmo : MonoBehaviour, IActiveDuringCombat, IActiveDuringShopp
         OnReload?.Invoke(showEffect);
     }
 
-    public void ChangeMaxAmmo(int newMax) {
-        maxAmmo = newMax;
+    public void ChangeMaxAmmo(float multiplierChange) {
+        maxAmmoMultiplier += multiplierChange;
         curAmmo = maxAmmo;
         OnUse?.Invoke();
         OnReload?.Invoke(false);

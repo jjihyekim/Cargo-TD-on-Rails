@@ -24,6 +24,7 @@ public class EnemyHealth : MonoBehaviour, IHealth {
 	public bool isAlive = true;
 
 	public Transform uiTransform;
+	[SerializeField] Transform cartRewardTransform;
 
 	public static UnityEvent<bool> winSelfDestruct = new UnityEvent<bool>();
 	
@@ -125,6 +126,7 @@ public class EnemyHealth : MonoBehaviour, IHealth {
 		isAlive = false;
 
 		var extraRewards = GetComponentsInChildren<EnemyReward>();
+		var otherRewards = GetComponentInChildren<EnemyCartReward>();
 
 		for (int i = 0; i < extraRewards.Length; i++) {
 			switch (extraRewards[i].type) {
@@ -139,8 +141,12 @@ public class EnemyHealth : MonoBehaviour, IHealth {
 				scrapReward*TweakablesMaster.s.myTweakables.scrapEnemyRewardMultiplier, 
 				aliveObject.transform.position);
 
-			if (rewardPowerUp) {
+			/*if (rewardPowerUp) {
 				//PlayerActionsController.s.GetPowerUp(EnemyWavesController.s.powerUpScriptables.Dequeue());
+			}*/
+
+			if (otherRewards != null) {
+				otherRewards.RewardPlayerCart();
 			}
 		}
 
@@ -190,6 +196,17 @@ public class EnemyHealth : MonoBehaviour, IHealth {
 
 	public Transform GetUITransform() {
 		return uiTransform;
+	}
+
+	public Transform GetCartRewardTransform() {
+		if (cartRewardTransform != null) {
+			return cartRewardTransform;
+		} else {
+			cartRewardTransform = new GameObject("cart reward transform").transform;
+			cartRewardTransform.SetParent(transform.GetChild(0));
+			cartRewardTransform.localPosition = Vector3.back*0.5f + Vector3.down*0.25f;
+			return cartRewardTransform;
+		}
 	}
 
 	[ReadOnly]

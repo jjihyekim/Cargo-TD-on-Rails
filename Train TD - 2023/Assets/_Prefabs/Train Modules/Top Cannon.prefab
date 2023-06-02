@@ -403,8 +403,10 @@ MonoBehaviour:
   fireDelay: 1
   fireBarrageCount: 1
   fireBarrageDelay: 0.1
+  fireRateMultiplier: 1
   projectileDamage: 30
-  rotateSpeed: 10
+  damageMultiplier: 1
+  rotateSpeed: 5
   gunActive: 1
   IsBarrelPointingCorrectly: 0
   hasAmmo: 1
@@ -440,8 +442,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   tooltip:
-    text: A heavy duty cannon. Uses more ammo than AVC but hits a lot harder. Penetrates
-      armor.
+    text: A heavy duty cannon. Goes "BANG!". Penetrates armor.
   info: Cannon
 --- !u!1 &5467841153190192380
 GameObject:

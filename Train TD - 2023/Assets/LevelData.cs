@@ -37,6 +37,8 @@ public class EnemyOnPathData {
 	public int distanceOnPath = 45;
 	[HideInInspector]
 	public bool isLeft = false;
+
+	public bool hasReward = false;
 }
 
 [Serializable]

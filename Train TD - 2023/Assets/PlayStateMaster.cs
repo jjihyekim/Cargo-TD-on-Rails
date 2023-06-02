@@ -59,6 +59,10 @@ public class PlayStateMaster : MonoBehaviour {
         return myGameState == GameState.shop;
     }
     
+    public bool isShopOrEndGame() {
+        return myGameState == GameState.shop || myGameState == GameState.levelFinished;
+    }
+    
     public bool isMainMenu() {
         return myGameState == GameState.mainMenu;
     }
@@ -99,13 +103,23 @@ public class PlayStateMaster : MonoBehaviour {
         StartCoroutine(Transition(false, () => DoOpenMainMenu()));
     }
 
+    private void Start() {
+        _gameState = GameState.mainMenu;
+        OnMainMenuEntered?.Invoke();
+    }
+
     void DoOpenMainMenu() {
         _gameState = GameState.mainMenu;
         MainMenu.s.OpenProfileMenu();
 
+        if (isCombatInProgress()) {
+            OnCombatFinished?.Invoke();
+        }
+
         if (isCombatStarted()) {
             OnLeavingMissionRewardArea?.Invoke();
         }
+        
         OnMainMenuEntered?.Invoke();
     }
 
@@ -115,6 +129,8 @@ public class PlayStateMaster : MonoBehaviour {
 
     public void LeaveMissionRewardArea() {
         _gameState = GameState.shop;
+
+        Train.s.RightBeforeLeaveMissionRewardArea();
         
         StopAllCoroutines();
         StartCoroutine(Transition(false, () => {
@@ -132,11 +148,10 @@ public class PlayStateMaster : MonoBehaviour {
             if (WorldGenerationProgress() >= 1f) {
                 StartCoroutine(Transition(false, () => OnShopEntered?.Invoke()));
             } else {
-                
                 StartCoroutine(Transition(true, () => {
                     OnDrawWorld?.Invoke();
-                    OnShopEntered?.Invoke();
-                }, WorldGenerationProgress));
+                }, WorldGenerationProgress,
+                    () => {OnShopEntered?.Invoke();}));
             }
         } else {
             StartCoroutine(Transition(false, () => {
@@ -151,23 +166,32 @@ public class PlayStateMaster : MonoBehaviour {
         
         StopAllCoroutines();
         WorldMapCreator.s.ResetWorldMapGenerationProgress();
-        StartCoroutine(Transition(true, () => {
+        StartCoroutine(Transition(true, 
+            () => {
             OnCharacterSelected?.Invoke();
             OnNewWorldCreation?.Invoke();
-            OnShopEntered?.Invoke();
-            CharacterSelector.s.CheckAndShowCharSelectionScreen();
-        }, WorldGenerationProgress));
+        }, WorldGenerationProgress,
+            () => { OnShopEntered?.Invoke(); }
+            ));
     }
 
     public void EnterNewAct() {
         _gameState = GameState.shop;
         
+        Train.s.RightBeforeLeaveMissionRewardArea();
+        
         StopAllCoroutines();
         WorldMapCreator.s.ResetWorldMapGenerationProgress();
-        StartCoroutine(Transition(true, () => {
-            OnNewWorldCreation?.Invoke();
-            OnShopEntered?.Invoke();
-        }, WorldGenerationProgress));
+        StartCoroutine(Transition(true,
+            () => {
+                OnLeavingMissionRewardArea?.Invoke();
+                OnNewWorldCreation?.Invoke();
+            }, 
+            WorldGenerationProgress,
+            () => {
+                OnShopEntered?.Invoke();
+            }
+            ));
     }
 
     float WorldGenerationProgress() {
@@ -185,7 +209,7 @@ public class PlayStateMaster : MonoBehaviour {
     public CanvasGroup canvasGroup;
     public float currentFadeValue;
     public float fadeTime = 0.2f;
-    IEnumerator Transition(bool showLoading, Action toCallInTheMiddle, LoadDelegate loadProgress = null) {
+    IEnumerator Transition(bool showLoading, Action toCallInTheMiddle, LoadDelegate loadProgress = null, Action toCallAtTheEnd = null) {
         isLoading = true;
         loadingProgress = 0;
         loadingSlider.value = loadingProgress;
@@ -205,6 +229,10 @@ public class PlayStateMaster : MonoBehaviour {
                 yield return null;
             }
         }
+
+        if(toCallAtTheEnd != null)
+            toCallAtTheEnd();
+        
 
         yield return StartCoroutine(FadeLoadingScreen(1,0, fadeTime));
         loadingScreen.SetActive(false);

@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.InputSystem;
 using Random = UnityEngine.Random;
 
 public class PathSelectorController : MonoBehaviour {
@@ -15,6 +16,8 @@ public class PathSelectorController : MonoBehaviour {
 	public GameObject trackPrefab;
 	public GameObject switchPrefab;
 
+	[Space] public GameObject castleCityPrefab;
+	
 	private List<MiniGUI_TrackPath> _tracks = new List<MiniGUI_TrackPath>();
 	private List<MiniGUI_TrackLever> _levers = new List<MiniGUI_TrackLever>();
 
@@ -25,7 +28,29 @@ public class PathSelectorController : MonoBehaviour {
 
 	public int currentSegment = 0;
 
+	public InputActionReference trackSwitchAction;
+
+	public MiniGUI_TrackLever nextLever;
+	
+
 	private ConstructedLevel activeLevel => PlayStateMaster.s.currentLevel;
+
+	private void OnEnable() {
+		trackSwitchAction.action.Enable();
+		trackSwitchAction.action.performed += TrackSwitch;
+	}
+
+	private void TrackSwitch(InputAction.CallbackContext obj) {
+		if (nextLever != null && !nextLever.isLocked) {
+			nextLever.LeverClicked();
+		}
+	}
+
+	private void OnDisable() {
+		trackSwitchAction.action.Disable();
+		trackSwitchAction.action.performed -= TrackSwitch;
+	}
+
 	
 	public void SetUpPath() {
 		if (activeLevel == null) {
@@ -38,6 +63,10 @@ public class PathSelectorController : MonoBehaviour {
 		_levers.Clear();
 		
 		trackParent.DeleteAllChildren();
+		myTrackSwitchHexes.Clear();
+		DistanceAndEnemyRadarController.s.ClearRadar();
+
+		Instantiate(castleCityPrefab, trackParent);
 
 		var firstTrack = Instantiate(trackPrefab, trackParent);
 		firstTrack.GetComponent<MiniGUI_TrackPath>().SetUpTrack(true, activeLevel.mySegmentsA[0],activeLevel.mySegmentsB[0]);
@@ -55,6 +84,7 @@ public class PathSelectorController : MonoBehaviour {
 			var leverState = Random.value > 0.5f;
 			_lever.SetTrackState(leverState);
 			_lever.SetTrackSwitchWarningState(false);
+			_lever.SetButtonPromptState(false);
 			_lever.leverId = i;
 			_levers.Add(_lever);
 
@@ -65,12 +95,20 @@ public class PathSelectorController : MonoBehaviour {
 			_track.doubleLever.SetTrackState(leverState);
 			_track.doubleLever.leverId = i;
 			_track.doubleLever.SetTrackSwitchWarningState(false);
+			_track.doubleLever.SetButtonPromptState(false);
 			_tracks.Add(_track);
 		}
 
 		for (int i = 0; i < _tracks.Count; i++) {
 			_tracks[i].SetTrackState(_tracks[i].currentState, true);
 		}
+
+		nextLever = _levers[0];
+		nextLever.SetButtonPromptState(true);
+		_tracks[0].doubleLever.SetButtonPromptState(true);
+		
+		
+		Instantiate(castleCityPrefab, trackParent);
 		
 		ReCalculateMissionLength();
 		layoutGroup.isDirty = true;
@@ -127,7 +165,7 @@ public class PathSelectorController : MonoBehaviour {
 			
 			
 			if (nextSegmentChangeDistance > 0 && SpeedController.s.currentDistance > nextSegmentChangeDistance) {
-				trainCrossingAudioSource.Pause();
+				trainCrossingAudioSource.Stop();
 				isPlayingTrackSwitchWarning = false;
 				
 				_tracks[currentSegment].LockTrackState();
@@ -143,7 +181,9 @@ public class PathSelectorController : MonoBehaviour {
 				
 				_levers[currentSegment].SetTrackSwitchWarningState(false);
 				_levers[currentSegment].SetVisibility(false);
+				_levers[currentSegment].SetButtonPromptState(false);
 				_tracks[currentSegment].doubleLever.SetTrackSwitchWarningState(false);
+				_tracks[currentSegment].doubleLever.SetButtonPromptState(false);
 
 				EnemyWavesController.s.PhaseOutExistingEnemies();
 				EnemyWavesController.s.SpawnEnemiesOnSegment(nextSegmentChangeDistance, upcomingSegment);
@@ -156,7 +196,14 @@ public class PathSelectorController : MonoBehaviour {
 				}
 
 				currentSegment += 1;
-				
+
+
+				if (currentSegment < _levers.Count) {
+					nextLever = _levers[currentSegment];
+					nextLever.SetButtonPromptState(true);
+					_tracks[currentSegment].doubleLever.SetButtonPromptState(true);
+				}
+
 				SpeedController.s.PlayEngineStartEffects();
 			}
 		}
