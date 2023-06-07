@@ -193,11 +193,12 @@ public class HexGrid : MonoBehaviour {
 	public Vector2 zRangesToFill;
 	Biome currentBiome;
 	void CreateChunks() {
-		if (!DataSaver.s.GetCurrentSave().isInARun || !DataSaver.s.GetCurrentSave().isRealSaveFile )
+		var currentSave = DataSaver.s.GetCurrentSave();
+		if (!currentSave.isInARun || !currentSave.isRealSaveFile || currentSave.currentRun.map.GetPlayerStar() == null)
 			biomeOverride = 0;
 
 		if (biomeOverride < 0) {
-			var targetBiome = DataSaver.s.GetCurrentSave().currentRun.map.GetPlayerStar().biome;
+			var targetBiome = currentSave.currentRun.map.GetPlayerStar().biome;
 			if (targetBiome < 0 || targetBiome > biomes.Length) {
 				Debug.LogError($"Illegal biome {targetBiome}");
 				targetBiome = 0;

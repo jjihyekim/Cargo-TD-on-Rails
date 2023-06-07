@@ -68,7 +68,7 @@ public class LevelArchetypeScriptable : ScriptableObject {
 
         level.dynamicSpawnData = possibleDynamicSpawns[Random.Range(0, possibleDynamicSpawns.Length)];
 
-        if (possibleEncounters.Length > 0) {
+        if (possibleEncounters!= null && possibleEncounters.Length > 0) {
             var encounterCount = NumberWithWeights.WeightedRandomRoll(encounterChances);
 
             for (int i = 0; i < encounterCount; i++) {
@@ -82,7 +82,7 @@ public class LevelArchetypeScriptable : ScriptableObject {
             }
         }
         
-        if (possibleEliteLevels.Length > 0) {
+        if (possibleEliteLevels!= null && possibleEliteLevels.Length > 0) {
             var eliteCount = NumberWithWeights.WeightedRandomRoll(eliteChances);
 
             for (int i = 0; i < eliteCount; i++) {
