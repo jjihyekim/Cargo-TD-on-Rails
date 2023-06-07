@@ -186,7 +186,11 @@ public class PathSelectorController : MonoBehaviour {
 				_tracks[currentSegment].doubleLever.SetButtonPromptState(false);
 
 				EnemyWavesController.s.PhaseOutExistingEnemies();
-				EnemyWavesController.s.SpawnEnemiesOnSegment(nextSegmentChangeDistance, upcomingSegment);
+				if (upcomingSegment.isEncounter) {
+					EncounterController.s.EngageEncounter(upcomingSegment.levelName);
+				} else {
+					EnemyWavesController.s.SpawnEnemiesOnSegment(nextSegmentChangeDistance, upcomingSegment);
+				}
 
 				if (currentSegment < _tracks.Count - 1) {
 					nextSegmentChangeDistance += upcomingSegment.segmentLength;

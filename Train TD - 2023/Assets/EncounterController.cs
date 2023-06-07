@@ -4,14 +4,16 @@ using System.Collections.Generic;
 using System.Xml;
 using TMPro;
 using UnityEngine;
+using UnityEngine.InputSystem;
 using UnityEngine.UI;
 
 public class EncounterController : MonoBehaviour {
     public static EncounterController s;
 
-    public GameObject[] stuffToDisableDuringEncounter;
     public CameraController camCont;
 
+    public GameObject encounterMasterUI;
+    
     public GameObject encounterTextUI;
     public TMP_Text titleText;
     public TMP_Text mainText;
@@ -24,27 +26,132 @@ public class EncounterController : MonoBehaviour {
     public EncounterTitle currentEncounter;
     public EncounterNode currentNode;
 
+
+    public InputActionReference stopByAction;
+    public InputActionReference ridePastAction;
+
     
     private void Awake() {
         s = this;
     }
 
     private void Start() {
-        encounterTextUI.SetActive(false);
-        fadeUI.SetActive(false);
+        ResetEncounter();
     }
 
-    
+    public void ResetEncounter() {
+        encounterMasterUI.SetActive(false);
+        encounterTextUI.SetActive(false);
+        fadeUI.SetActive(false);
+        encounterStopByUI.gameObject.SetActive(false);
+        encounterStopByUI.optionChoosen = true;
+        
+        youRodePast.SetActive(false);
+        enemyAmbush.SetActive(false);
+
+        if (encounterObj != null) {
+            Destroy(encounterObj);
+            encounterObj = null;
+        }
+        
+        StopAllCoroutines();
+
+        SpeedController.s.encounterOverride = false;
+        EnemyWavesController.s.encounterMode = false;
+        
+        GamepadControlsHelper.s.RemovePossibleAction(GamepadControlsHelper.PossibleActions.encounterButtons);
+    }
+
+    private void OnEnable() {
+        stopByAction.action.Enable();
+        ridePastAction.action.Enable();
+        stopByAction.action.performed += Stop;
+        ridePastAction.action.performed += RidePast;
+    }
+
+    private void RidePast(InputAction.CallbackContext obj) {
+        encounterStopByUI.RidePast();
+    }
+
+    private void Stop(InputAction.CallbackContext obj) {
+        encounterStopByUI.Stop();
+    }
+
+    private void OnDisable() {
+        stopByAction.action.Disable();
+        ridePastAction.action.Disable();
+        stopByAction.action.performed -= Stop;
+        ridePastAction.action.performed -= RidePast;
+    }
+
+
     public void EngageEncounter(LevelData data) {
         EngageEncounter(data.levelName);
     }
 
+    public MiniGUI_EncounterStopBy encounterStopByUI;
+
     public GameObject encounterObj;
+    public GameObject youRodePast;
+    public GameObject enemyAmbush;
     public void EngageEncounter(string encounterName) {
-        encounterObj = Instantiate(DataHolder.s.GetEncounter(encounterName), Vector3.zero, Quaternion.identity);
+        ResetEncounter();
+        
+        encounterObj = Instantiate(DataHolder.s.GetEncounter(encounterName), Vector3.forward*100, Quaternion.identity);
         currentEncounter = encounterObj.GetComponent<EncounterTitle>();
         currentNode = currentEncounter.initialNode;
-        StartCoroutine(EncounterStartAnimation());
+
+        EnemyWavesController.s.encounterMode = true;
+        
+        SpeedController.s.DisableLowPower();
+        Invoke(nameof(ReallyEngageEncounter), 3f);
+    }
+
+    public void ReallyEngageEncounter() {
+        encounterMasterUI.SetActive(true);
+        encounterStopByUI.gameObject.SetActive(true);
+        encounterStopByUI.SetUp(currentEncounter);
+        GamepadControlsHelper.s.AddPossibleActions(GamepadControlsHelper.PossibleActions.encounterButtons);
+    }
+    
+    
+    public void Stop() {
+        if (currentEncounter != null) {
+            
+            encounterStopByUI.gameObject.SetActive(false);
+            
+            StartCoroutine(EncounterStartAnimation());
+        }
+    }
+
+    public void RidePast() {
+        if (currentEncounter != null) {
+            // do stuff like secret ambush
+            
+            encounterStopByUI.gameObject.SetActive(false);
+            encounterTextUI.SetActive(false);
+
+            StartCoroutine(RidePastAnimation());
+        }
+    }
+
+    public LevelSegmentScriptable ridePastAmbush;
+
+    IEnumerator RidePastAnimation() {
+        fadeUI.SetActive(true);
+        var ridePastFade = 1f;
+        
+        StartCoroutine(FadeOverlay(0, 1, ridePastFade));
+        yield return new WaitForSeconds(ridePastFade );
+        
+        yield return new WaitForSeconds(0.5f);
+        EnemyWavesController.s.SpawnAmbush(ridePastAmbush.GetData());
+        yield return new WaitForSeconds(0.5f);
+        
+        StartCoroutine(FadeOverlay(1, 0, ridePastFade));
+        enemyAmbush.SetActive(true);
+        //youRodePast.SetActive(true);
+        Invoke(nameof(EncounterComplete), 2f);
     }
 
     public GameObject fadeUI;
@@ -58,11 +165,11 @@ public class EncounterController : MonoBehaviour {
         
         yield return new WaitForSeconds(fadeDurations);
         
-        for (int i = 0; i < stuffToDisableDuringEncounter.Length; i++) {
-            if(stuffToDisableDuringEncounter[i] != null)
-                stuffToDisableDuringEncounter[i].SetActive(false);
-        }
-        
+        encounterObj.transform.position = Vector3.zero;
+
+        SpeedController.s.encounterOverride = true;
+        LevelReferences.s.speed = 0;
+
         StartCoroutine(FadeOverlay(1, 0, fadeDurations));
         
         var train = Train.s.gameObject;
@@ -84,7 +191,8 @@ public class EncounterController : MonoBehaviour {
 
 
         pos.z = -dist + (train.transform.position - Train.s.trainFront.position).z;
-        
+
+        SpeedController.s.currentBreakPower = 10;
         while (timer > 0f) {
             pos.z += v * Time.deltaTime;
             v += -a * Time.deltaTime;
@@ -93,6 +201,7 @@ public class EncounterController : MonoBehaviour {
             timer -= Time.deltaTime;
             yield return null;
         }
+        SpeedController.s.currentBreakPower = 0;
         
         yield return new WaitForSeconds(0.5f);
 
@@ -103,6 +212,8 @@ public class EncounterController : MonoBehaviour {
         camCont.enabled = true;
         
         StartEncounter();
+        encounterStopByUI.gameObject.SetActive(false);
+        encounterTextUI.SetActive(true);
         
         
         StartCoroutine(FadeOverlay(1, 0, fadeDurations));
@@ -151,7 +262,6 @@ public class EncounterController : MonoBehaviour {
     public void MoveToNewNode(EncounterNode node) {
         if (node == null) {
             encounterTextUI.SetActive(false);
-            Invoke(nameof(EncounterComplete), fadeDurations);
             StartCoroutine(EncounterEndAnimation());
             return;
         }
@@ -171,12 +281,10 @@ public class EncounterController : MonoBehaviour {
     }
 
     void EncounterComplete() {
-        //DataSaver.s.GetCurrentSave().currentRun.unclaimedRewards = new List<string>();
-        DataSaver.s.GetCurrentSave().currentRun.shopInitialized = false;
-        MapController.s.FinishTravelingToStar();
-        DataSaver.s.SaveActiveGame();
-        PlayStateMaster.s.EnterShopState();
-        //PlayStateMaster.s.afterTransferCalls.Enqueue(() => DoComplete());
+        ResetEncounter();
+        
+        PlayerWorldInteractionController.s.canSelect = true;
+        
     }
     
     
@@ -202,16 +310,7 @@ public class EncounterController : MonoBehaviour {
 
         train.transform.position = Vector3.zero;
         camCont.enabled = true;
-    }
-
-    void DoComplete() {
-        if (encounterObj != null) {
-            Destroy(encounterObj);
-        }
         
-        for (int i = 0; i < stuffToDisableDuringEncounter.Length; i++) {
-            if(stuffToDisableDuringEncounter[i] != null)
-                stuffToDisableDuringEncounter[i].SetActive(true);
-        }
+        EncounterComplete();
     }
 }

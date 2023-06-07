@@ -16,7 +16,8 @@ public class GamepadControlsHelper : MonoBehaviour {
     }
     
     public enum PossibleActions {
-        move, reload, repair, directControl, openMap, pause, fastForward, showDetails, shoot, exitDirectControl, flipCamera, cutsceneSkip, clickGate, changeTrack
+        move, reload, repair, directControl, openMap, pause, fastForward, showDetails, shoot, exitDirectControl, flipCamera, cutsceneSkip, clickGate, changeTrack, engineBoost,
+        encounterButtons
     }
 
     public GameObject gamepadSelector;

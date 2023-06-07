@@ -15,6 +15,8 @@ public class PhysicalHealthBar : MonoBehaviour {
     private ModuleHealth myHp;
     private void Start() {
         myHp = GetComponentInParent<ModuleHealth>();
+        if (myHp == null)
+            enabled = false;
     }
 
     private void Update() {

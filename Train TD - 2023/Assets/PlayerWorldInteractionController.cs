@@ -33,6 +33,7 @@ public class PlayerWorldInteractionController : MonoBehaviour {
     public InputActionReference repairCart;
     public InputActionReference reloadCart;
     public InputActionReference directControlCart;
+    public InputActionReference engineBoost;
 
 
     public bool canSelect = true;
@@ -47,6 +48,7 @@ public class PlayerWorldInteractionController : MonoBehaviour {
         repairCart.action.Enable();
         reloadCart.action.Enable();
         directControlCart.action.Enable();
+        engineBoost.action.Enable();
         
         showDetailClick.action.Enable();
     }
@@ -63,6 +65,7 @@ public class PlayerWorldInteractionController : MonoBehaviour {
         repairCart.action.Disable();
         reloadCart.action.Disable();
         directControlCart.action.Disable();
+        engineBoost.action.Disable();
         
         showDetailClick.action.Disable();
     }
@@ -72,6 +75,7 @@ public class PlayerWorldInteractionController : MonoBehaviour {
     public Color repairColor = Color.green;
     public Color reloadColor = Color.yellow;
     public Color directControlColor = Color.magenta;
+    public Color engineBoostColor = Color.red;
 
     private void Update() {
         if (!canSelect) {
@@ -414,6 +418,9 @@ public class PlayerWorldInteractionController : MonoBehaviour {
                     case SelectMode.directControl:
                         DirectControlMaster.s.AssumeDirectControl(selectedCart.GetComponentInChildren<DirectControllable>());
                         break;
+                    case SelectMode.engineBoost:
+                        SpeedController.s.ActivateBoost();
+                        break;
                 }
             }
             
@@ -440,6 +447,14 @@ public class PlayerWorldInteractionController : MonoBehaviour {
                     DirectControlMaster.s.AssumeDirectControl(directControllable);
                 }
             }
+            
+            if (engineBoost.action.WasPerformedThisFrame()) {
+                HideBuildingInfo();
+                var engineBoostable = selectedCart.GetComponentInChildren<EngineBoostable>();
+                if (engineBoostable != null) {
+                    SpeedController.s.ActivateBoost();
+                }
+            }
         }
     }
 
@@ -447,10 +462,14 @@ public class PlayerWorldInteractionController : MonoBehaviour {
         cart.GetHealthModule()?.Repair(repairAmountPerClick);
     }
 
-    public void UIReloadOrDirectControl(Cart cart) {
+    public void UIReloadOrDirectControlOrBoost(Cart cart) {
         cart.GetComponentInChildren<ModuleAmmo>()?.Reload(reloadAmountPerClick);
         if (cart.GetComponentInChildren<DirectControllable>()) {
             DirectControlMaster.s.AssumeDirectControl(cart.GetComponentInChildren<DirectControllable>());
+        }
+
+        if (cart.GetComponentInChildren<EngineBoostable>()) {
+            SpeedController.s.ActivateBoost();
         }
     }
 
@@ -463,7 +482,7 @@ public class PlayerWorldInteractionController : MonoBehaviour {
     }
 
     public enum SelectMode {
-        cart, reload, directControl
+        cart, reload, directControl, engineBoost, emptyCart
     }
 
     public SelectMode currentSelectMode = SelectMode.cart;
@@ -486,7 +505,10 @@ public class PlayerWorldInteractionController : MonoBehaviour {
 
         if (Physics.SphereCast(ray, GetSphereCastRadius(), out hit, 100f, LevelReferences.s.buildingLayer)) {
             var lastSelectMode = currentSelectMode;
-            currentSelectMode = SelectMode.cart;
+            currentSelectMode = SelectMode.emptyCart;
+            
+            if(hit.collider.GetComponentInParent<ModuleHealth>())
+                currentSelectMode = SelectMode.cart;
             
             var directControllable = hit.collider.GetComponentInParent<DirectControllable>();
             if (directControllable != null) {
@@ -496,6 +518,11 @@ public class PlayerWorldInteractionController : MonoBehaviour {
             var reloadable = hit.collider.GetComponentInParent<Reloadable>();
             if (reloadable != null) {
                 currentSelectMode = SelectMode.reload;
+            }
+            
+            var engineBoostable = hit.collider.GetComponentInParent<EngineBoostable>();
+            if (engineBoostable != null) {
+                currentSelectMode = SelectMode.engineBoost;
             }
             
             var cart = hit.collider.GetComponentInParent<Cart>();
@@ -578,6 +605,13 @@ public class PlayerWorldInteractionController : MonoBehaviour {
                         myColor = directControlColor;
                         GamepadControlsHelper.s.AddPossibleActions(GamepadControlsHelper.PossibleActions.directControl);
                         break;
+                    case SelectMode.engineBoost:
+                        myColor = engineBoostColor;
+                        GamepadControlsHelper.s.AddPossibleActions(GamepadControlsHelper.PossibleActions.engineBoost);
+                        break;
+                    case SelectMode.emptyCart:
+                        myColor = cantActColor;
+                        break;
                 }
             }
 
@@ -588,6 +622,7 @@ public class PlayerWorldInteractionController : MonoBehaviour {
             GamepadControlsHelper.s.RemovePossibleAction(GamepadControlsHelper.PossibleActions.reload);
             GamepadControlsHelper.s.RemovePossibleAction(GamepadControlsHelper.PossibleActions.directControl);
             GamepadControlsHelper.s.RemovePossibleAction(GamepadControlsHelper.PossibleActions.showDetails);
+            GamepadControlsHelper.s.RemovePossibleAction(GamepadControlsHelper.PossibleActions.engineBoost);
         }
         
 

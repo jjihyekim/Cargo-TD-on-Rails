@@ -34,6 +34,8 @@ public class CarLikeMovementOffsetsController : MonoBehaviour{
     private void Start() {
         rg = GetComponent<Rigidbody>();
         rg.centerOfMass = centerOfMass;
+        transform.position += Vector3.up*1;
+        rg.velocity = Vector3.zero;
     }
 
     private void FixedUpdate() {
@@ -65,7 +67,7 @@ public class CarLikeMovementOffsetsController : MonoBehaviour{
         }
 
         if (transform.position.y < -1) {
-            transform.position += Vector3.up*20;
+            transform.position += Vector3.up*1;
             rg.velocity = Vector3.zero;
         }
 

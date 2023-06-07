@@ -35,8 +35,16 @@ public class GunModule : MonoBehaviour, IComponentWithTarget, IActiveDuringComba
     public float GetFireBarrageDelay() { return fireBarrageDelay * GetAttackSpeedMultiplier();}
     public float projectileDamage = 2f; // dont use this
     public float damageMultiplier = 1f;
-    public float GetDamage() { return projectileDamage*GetDamageMultiplier(); }
-    
+    public bool dontGetAffectByMultipliers = false;
+
+    public float GetDamage() {
+        if (dontGetAffectByMultipliers) {
+            return projectileDamage;
+        } else {
+            return projectileDamage * GetDamageMultiplier();
+        }
+    }
+
 
     public float rotateSpeed = 10f;
 

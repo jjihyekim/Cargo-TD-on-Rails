@@ -304,6 +304,8 @@ public class Train : MonoBehaviour {
             MissionLoseFinisher.s.MissionLost();
         }
         
+        trainWeightDirty = true;
+        
         // draw train already calls this
         //trainUpdatedThroughNonBuildingActions?.Invoke();
     }
@@ -354,6 +356,8 @@ public class Train : MonoBehaviour {
 
 
     public void RemoveCart(Cart cart) {
+        trainWeightDirty = true;
+        
         for (int i = 0; i < carts.Count; i++) {
             carts[i].SetAttachedToTrainModulesMode(false);
         }
@@ -372,6 +376,8 @@ public class Train : MonoBehaviour {
     }
 
     public void AddCartAtIndex(int index, Cart cart) {
+        trainWeightDirty = true;
+        
         var wasShaking = doShake;
         if (wasShaking) {
             StopShake();

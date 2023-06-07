@@ -150,6 +150,15 @@
                     "initialStateCheck": false
                 },
                 {
+                    "name": "Engine Boost Click Cart",
+                    "type": "Button",
+                    "id": "5c93f292-9dd7-4772-8fe9-966209071628",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
                     "name": "Repair Click Cart",
                     "type": "Button",
                     "id": "56b43908-7b9d-48a7-a257-2acfc7cbcbad",
@@ -202,6 +211,24 @@
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": true
+                },
+                {
+                    "name": "Encounter Stop",
+                    "type": "Button",
+                    "id": "326ae3fb-f769-435b-a16c-c4261379ac88",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "Encounter Ride Past",
+                    "type": "Button",
+                    "id": "812863e4-eb64-47e8-a953-b1c7ff45e7fb",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
                 }
             ],
             "bindings": [
@@ -598,6 +625,39 @@
                     "processors": "",
                     "groups": "",
                     "action": "Aim Gamepad",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "65cf1dd5-737d-42d8-875c-d6c56e266fb4",
+                    "path": "<Gamepad>/buttonWest",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Engine Boost Click Cart",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "cfa0347d-443c-4044-8a9a-cd9e1f635394",
+                    "path": "<Gamepad>/buttonWest",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Encounter Stop",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "1be4c048-bd08-4644-b50a-70dd2134adcd",
+                    "path": "<Gamepad>/buttonEast",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Encounter Ride Past",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

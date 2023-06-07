@@ -11,6 +11,8 @@ public class RarityDisplay : MonoBehaviour {
     // Start is called before the first frame update
     void Start() {
         var cart = GetComponentInParent<Cart>();
+        if(cart == null)
+            return;
 
         var renderers = GetComponentsInChildren<MeshRenderer>();
         Material material = common;

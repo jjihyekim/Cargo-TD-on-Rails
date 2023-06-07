@@ -94,8 +94,8 @@ public class ModuleAmmo : MonoBehaviour, IActiveDuringCombat, IActiveDuringShopp
         myUINoAmmoWarningThing.SetActive(!hasAmmo);
         
 
-        if (GetComponent<EngineModule>())
-            GetComponent<EngineModule>().hasFuel = curAmmo > 0;
+        /*if (GetComponent<EngineModule>())
+            GetComponent<EngineModule>().hasFuel = curAmmo > 0;*/
     }
 
     public float AmmoPercent() {

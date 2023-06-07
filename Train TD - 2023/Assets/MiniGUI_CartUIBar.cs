@@ -8,13 +8,13 @@ public class MiniGUI_CartUIBar : MonoBehaviour {
 
     public Image icon;
 
+    public RectTransform mainRect;
+    
     public RectTransform ammoBar;
-
     public RectTransform healthBar;
 
-    public RectTransform mainRect;
-
     public RectTransform directControl;
+    public RectTransform engineBoost;
 
 
     public Cart myCart;
@@ -30,19 +30,28 @@ public class MiniGUI_CartUIBar : MonoBehaviour {
     public float ammoMinHeight;
     public float ammoMaxHeight;
 
+    
+    public float boostMinHeight;
+    public float boostMaxHeight;
+    
     public float cartLengthToWidth = 100;
 
     public GameObject warning;
 
     public bool showWarning = false;
 
+    public bool isBoost = false;
+
     public void SetUp(Cart cart, ModuleHealth moduleHealth, ModuleAmmo moduleAmmo) {
         myCart = cart;
         myHealth = moduleHealth;
         myAmmo = moduleAmmo;
         isAmmo = myAmmo != null;
+        var boostable = cart.GetComponentInChildren<EngineBoostable>();
+        isBoost = boostable != null;
         ammoBar.gameObject.SetActive(isAmmo);
         directControl.gameObject.SetActive(cart.GetComponentInChildren<DirectControllable>() != null);
+        engineBoost.gameObject.SetActive(isBoost);
         
         mainRect.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, cartLengthToWidth*myCart.length);
         Update();
@@ -67,6 +76,8 @@ public class MiniGUI_CartUIBar : MonoBehaviour {
         SetHealthBarValue();
         if (isAmmo)
             SetAmmoBarValue();
+        if (isBoost)
+            SetBoostBarValue();
     }
 
     void SetHealthBarValue() {
@@ -89,6 +100,11 @@ public class MiniGUI_CartUIBar : MonoBehaviour {
         percent = Mathf.Clamp(percent, 0, 1f);
         
         ammoBar.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, Mathf.Lerp(ammoMinHeight, ammoMaxHeight, percent));
+    }
+    
+    void SetBoostBarValue() {
+        var percent = SpeedController.s.boostGraphicPercent;
+        engineBoost.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, percent.Remap(0,1,boostMinHeight, boostMaxHeight));
     }
     
     private Color GetHealthColor(float percentage) {
@@ -123,6 +139,6 @@ public class MiniGUI_CartUIBar : MonoBehaviour {
     }
 
     public void ClickReloadOrDirectControl() {
-        PlayerWorldInteractionController.s.UIReloadOrDirectControl(myCart);
+        PlayerWorldInteractionController.s.UIReloadOrDirectControlOrBoost(myCart);
     }
 }

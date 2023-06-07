@@ -44,7 +44,7 @@ public class MiniGUI_TrackPath : MonoBehaviour {
     
 
     void SpawnUnitsOnSegment(LevelSegment segment, RectTransform parent) {
-        if (!segment.isEncounter) {
+        //if (!segment.isEncounter) {
             /*for (int i = 0; i < segment.enemiesOnPath.Length; i++) {
                 var unitIcon = DataHolder.s.GetEnemy(segment.enemiesOnPath[i].enemyIdentifier.enemyUniqueName).GetComponent<EnemySwarmMaker>().enemyIcon;
                 if (segment.rewardPowerUpAtTheEnd && i == segment.enemiesOnPath.Length - 1) {
@@ -67,17 +67,19 @@ public class MiniGUI_TrackPath : MonoBehaviour {
             var icon = LevelReferences.s.smallEnemyIcon;
             if (segment.eliteEnemy)
                 icon = LevelReferences.s.eliteEnemyIcon;
+            if (segment.isEncounter)
+                icon = LevelReferences.s.encounterIcon;
             
             unit.GetComponent<MiniGUI_RadarUnit>().SetUp(icon, percentage);
             
-        } else {
+        /*} else {
             var percentage = 0.5f;
             //var distance = percentage * parent.rect.width;
             
             var unit = Instantiate(unitsPrefab, parent);
             unitDisplays.Add(unit);
             unit.GetComponent<MiniGUI_RadarUnit>().SetUp(LevelReferences.s.encounterIcon, percentage);
-        }
+        }*/
     }
 
     public void TrackClicked() {

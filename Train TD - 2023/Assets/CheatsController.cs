@@ -23,41 +23,51 @@ public class CheatsController : MonoBehaviour
     public bool restartOnStart = false;
     public bool autoRestartWithSelectedCharacter = false;
     public bool dontDrawMap = false;
+    public bool everyPathIsEncounter = false;
     
     public EnemyIdentifier debugEnemy;
 
-    private void Start() {
-#if !UNITY_EDITOR
-        infiniteLevel = false;
-        debugNoRegularSpawns = false;
-        instantEnterPlayMode = false;
-        playerIsImmune= false;
-        restartOnStart = false;
-        autoRestartWithSelectedCharacter = false;
-        dontDrawMap = false;
-#endif
-        
-        /*if(debugNoRegularSpawns || infiniteLevel || infiniteLevel || instantEnterPlayMode || playerIsImmune || restartOnStart || dontDrawMap || autoRestartWithSelectedCharacter)
-            Debug.LogError("Debug options active! See _CheatsController for more info");
-        
-        if (debugNoRegularSpawns)
-            EnemyWavesController.s.debugNoRegularSpawns = true;
-
-        if (restartOnStart)
-            DataSaver.s.GetCurrentSave().isInARun = false;
-        
-        if(dontDrawMap)
-            WorldMapCreator.s.QuickStartNoWorldMap();
-
-        if (autoRestartCharacter || autoRestartWithSelectedCharacter) {
-            PlayerPrefs.SetInt(MiniGUI_DisableTutorial.exposedName, 0);
+    private void Awake() {
+        if (!Application.isEditor) {
+            infiniteLevel = false;
+            debugNoRegularSpawns = false;
+            instantEnterPlayMode = false;
+            playerIsImmune= false;
+            restartOnStart = false;
+            autoRestartWithSelectedCharacter = false;
+            dontDrawMap = false;
+            everyPathIsEncounter = false;
         }
+    }
 
-        if (autoRestartWithSelectedCharacter) {
-            Invoke(nameof(QuickRestartWithCheaterCharacter),0.01f);
-        }else if (instantEnterPlayMode) {
-           Invoke(nameof(QuickStart),0.01f);
-        }*/
+    private void Start() {
+        if (Application.isEditor) {
+            if (infiniteLevel || debugNoRegularSpawns  || instantEnterPlayMode ||playerIsImmune
+                || restartOnStart || autoRestartWithSelectedCharacter  ||  dontDrawMap|| everyPathIsEncounter)
+                Debug.LogError("Debug options active! See _CheatsController for more info");
+
+            LevelArchetypeScriptable.everyPathEncounterCheat = everyPathIsEncounter;
+                
+            
+            if (debugNoRegularSpawns)
+                EnemyWavesController.s.debugNoRegularSpawns = true;
+
+            if (restartOnStart)
+                DataSaver.s.GetCurrentSave().isInARun = false;
+
+            if (dontDrawMap)
+                WorldMapCreator.s.QuickStartNoWorldMap();
+
+            if (autoRestartCharacter && autoRestartWithSelectedCharacter) {
+                PlayerPrefs.SetInt(MiniGUI_DisableTutorial.exposedName, 0);
+            }
+
+            if (autoRestartWithSelectedCharacter) {
+                Invoke(nameof(QuickRestartWithCheaterCharacter), 0.01f);
+            } else if (instantEnterPlayMode) {
+                Invoke(nameof(QuickStart), 0.01f);
+            }
+        }
     }
 
     void QuickStart() {

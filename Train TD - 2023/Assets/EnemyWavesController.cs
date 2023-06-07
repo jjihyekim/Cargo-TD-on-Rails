@@ -28,6 +28,8 @@ public class EnemyWavesController : MonoBehaviour {
 	public UnityEvent<EnemyIdentifier> OnEnemyWaveSpawn = new UnityEvent<EnemyIdentifier>();
 	public UnityEvent<EnemyIdentifier> OnEnemyWaveCleared = new UnityEvent<EnemyIdentifier>();
 
+	public bool encounterMode = false;
+
 	private void Start() {
 		Cleanup();
 	}
@@ -44,15 +46,14 @@ public class EnemyWavesController : MonoBehaviour {
 	}
 
 	public Queue<PowerUpScriptable> powerUpScriptables = new Queue<PowerUpScriptable>();
+
 	public void SpawnEnemiesOnSegment(float segmentStartDistance, LevelSegment segment) {
 		if (debugNoRegularSpawns)
 			return;
 
+
 		enemiesInitialized = !segment.isEncounter;
 		if (enemiesInitialized) {
-
-			
-
 			var enemiesOnPath = segment.enemiesOnPath;
 			for (int i = 0; i < enemiesOnPath.Length; i++) {
 				PowerUpScriptable powerUpScriptable = null;
@@ -60,10 +61,10 @@ public class EnemyWavesController : MonoBehaviour {
 					powerUpScriptable = DataHolder.s.GetPowerUp(segment.powerUpRewardUniqueName);
 					powerUpScriptables.Enqueue(powerUpScriptable);
 				}
-				
-				SpawnEnemy(enemiesOnPath[i].enemyIdentifier, 
-					segmentStartDistance+ enemiesOnPath[i].distanceOnPath, 
-					false, enemiesOnPath[i].isLeft, 
+
+				SpawnEnemy(enemiesOnPath[i].enemyIdentifier,
+					segmentStartDistance + enemiesOnPath[i].distanceOnPath,
+					false, enemiesOnPath[i].isLeft,
 					powerUpScriptable);
 			}
 		}
@@ -89,6 +90,23 @@ public class EnemyWavesController : MonoBehaviour {
 		waves.Add(wave);
 		UpdateEnemyTargetables();
 		OnEnemyWaveSpawn.Invoke(enemyIdentifier);
+	}
+
+	public void SpawnAmbush(LevelSegment ambush) {
+		var segment = ambush;
+		var enemiesOnPath = segment.enemiesOnPath;
+		for (int i = 0; i < enemiesOnPath.Length; i++) {
+			PowerUpScriptable powerUpScriptable = null;
+			if (enemiesOnPath[i].hasReward) {
+				powerUpScriptable = DataHolder.s.GetPowerUp(segment.powerUpRewardUniqueName);
+				powerUpScriptables.Enqueue(powerUpScriptable);
+			}
+
+			SpawnEnemy(enemiesOnPath[i].enemyIdentifier,
+				SpeedController.s.currentDistance + enemiesOnPath[i].distanceOnPath,
+				true, enemiesOnPath[i].isLeft,
+				powerUpScriptable);
+		}
 	}
 
 	public void UpdateEnemyTargetables() {
@@ -117,6 +135,11 @@ public class EnemyWavesController : MonoBehaviour {
 				return;
 
 			if (waves.Count < maxConcurrentWaves) {
+				if (encounterMode) {
+					pursuerTimerObject.gameObject.SetActive(false);
+					return;
+				}
+				
 				//for (int i = 0; i < SceneLoader.s.currentLevel.dynamicSpawnEnemies.Length; i++) {
 					var dynamicSpawnEnemy = PlayStateMaster.s.currentLevel.dynamicSpawnData;
 					
