@@ -21,17 +21,12 @@ public class SpeedController : MonoBehaviour, IShowOnDistanceRadar {
 
     public float missionDistance = 300; //100 engine power goes 1 distance per second
 
+    public float currentEnginePower = 0;
     public float enginePower = 0;
-    public float fuelPower = 0;
-    public float nuclearPower = 0;
     public float enginePowerBoost = 1f;
     public float targetSpeed;
     public float speedMultiplier = 1.5f;
 
-    public TMP_Text enginePowerText;
-    public TMP_Text trainWeightText;
-    public TMP_Text trainSpeedText;
-    
     public TMP_Text timeText;
     public TMP_Text distanceText;
 
@@ -90,9 +85,9 @@ public class SpeedController : MonoBehaviour, IShowOnDistanceRadar {
     public float enginePowerChangeDelta = 100f;
 
     public float enginePowerToSpeedMultiplier = 1;
-    
-    public SpeedometerScript mySpeedometer;
-    public SpeedometerScript myEngineSpeedometer;
+
+    public MiniGUI_SpeedDisplayArea speedDisplayArea;
+    public MiniGUI_SpeedDisplayArea speedDisplayAreaShop;
 
     public float breakPower = 1f;
 
@@ -104,7 +99,11 @@ public class SpeedController : MonoBehaviour, IShowOnDistanceRadar {
     public float enginePowerPlayerControl = 1f;
     public float currentBreakPower = 0;
 
+    public bool encounterOverride = false;
+
     public void OnLevelStart() {
+        CancelInvoke();
+        DisableLowPower();
         PlayEngineStartEffects();
     }
 
@@ -114,92 +113,109 @@ public class SpeedController : MonoBehaviour, IShowOnDistanceRadar {
         }
     }
     
+    public void SetEngineBoostEffects(bool isBoosting, bool isLowPower) {
+        for (int i = 0; i < engines.Count; i++) {
+            engines[i].OnEngineBoost?.Invoke(isBoosting);
+        }
+        for (int i = 0; i < engines.Count; i++) {
+            engines[i].OnEngineLowPower?.Invoke(isLowPower);
+        }
+    }
+
+    public float maxSpeed = 8;
+    
     private void Update() {
-        if (PlayStateMaster.s.isCombatInProgress()) {
-            fuelPower = 0;
-            nuclearPower = 0;
-            for (int i = 0; i < engines.Count; i++) {
-                if (engines[i].isNuclear) {
-                    nuclearPower += engines[i].enginePower;
-                    activeEngines += 1;
-                } else {
-                    if (engines[i].hasFuel) {
-                        fuelPower += engines[i].enginePower;
-                        activeEngines += 1;
-                    }
-                }
-            }
-
-            var trainWeight = Train.s.GetTrainWeight();
-            trainWeightText.text = trainWeight.ToString();
-            trainWeight = (int)(trainWeight * trainWeightMultiplier);
-
-            var engineTarget = (fuelPower+nuclearPower) * enginePowerBoost;
-            enginePower = Mathf.MoveTowards(enginePower, engineTarget, enginePowerChangeDelta * Time.deltaTime);
-
-            var enginePowerReal = enginePower * enginePowerToSpeedMultiplier;
-
-            var minSpeed = 0.5f / Train.s.carts.Count;
-            targetSpeed = speedMultiplier* (2 * (enginePowerReal / (Mathf.Sqrt(trainWeight)*17)) + minSpeed);
-            var stabilizedSpeed = speedMultiplier* (2 * (enginePowerReal / (Mathf.Sqrt(trainWeight)*17)) + minSpeed); // used for the engine power speedometer
-            var acceleration = 0.4f - ((float)trainWeight).Remap(0,2000,0,0.4f);
-            acceleration = Mathf.Clamp(acceleration, 0.1f, 0.4f);
-            if (targetSpeed > LevelReferences.s.speed) {
-                var excessEnginePower = (enginePowerReal / trainWeight);
-                acceleration += excessEnginePower.Remap(0,0.5f,0,0.2f);
+        enginePower = 0;
+        for (int i = 0; i < engines.Count; i++) {
+            if (engines[i]) {
+                enginePower += engines[i].enginePower;
+                activeEngines += 1;
             } 
+        }
 
+        var trainWeight = Train.s.GetTrainWeight();
+        trainWeight = (int)(trainWeight * trainWeightMultiplier);
 
-            internalRealSpeed = Mathf.MoveTowards(internalRealSpeed, targetSpeed, acceleration * Time.deltaTime);
-            LevelReferences.s.speed = Mathf.Max( internalRealSpeed - slowAmount, 0f);
-            
-            if (debugSpeedOverride > 0) {
-                LevelReferences.s.speed = debugSpeedOverride;
+        if (isBoosting || isSlow) {
+            enginePower *= currentBoostMultiplier;
+            if (isBoosting) {
+                boostTimer -= Time.deltaTime;
+            } else {
+                boostTimer += Time.deltaTime;
             }
-            
-            slowAmount = Mathf.Lerp(slowAmount, 0, slowDecay * Time.deltaTime);
-            slowAmount = Mathf.Clamp(slowAmount, 0, 5);
-            if (slowAmount <= 0.2f) {
-                ToggleSlowedEffect(false);
-            }
+        }
 
-            trainSpeedText.text = $"{LevelReferences.s.speed:F1}";
-            mySpeedometer.SetSpeed(LevelReferences.s.speed);
-            myEngineSpeedometer.SetSpeed(stabilizedSpeed); // used for the engine power speedometer
-            enginePowerText.text = enginePower.ToString("F0");
+        var engineTarget = enginePower * enginePowerBoost;
 
-            currentTime += Time.deltaTime;
-            timeText.text = GetNiceTime(currentTime);
+        var enginePowerReal = currentEnginePower * enginePowerToSpeedMultiplier;
 
-            currentDistance += LevelReferences.s.speed * Time.deltaTime;
+        var minSpeed = 0.5f / Train.s.carts.Count;
+        targetSpeed = speedMultiplier* (2 * (enginePowerReal / (Mathf.Sqrt(trainWeight)*17)) + minSpeed);
+        var stabilizedSpeed = speedMultiplier* (2 * (engineTarget / (Mathf.Sqrt(trainWeight)*17)) + minSpeed); // used for the engine power speedometer
 
-            distanceText.text = ((int)currentDistance).ToString();
+        targetSpeed = Mathf.Clamp(targetSpeed, minSpeed, maxSpeed);
+        stabilizedSpeed = Mathf.Clamp(stabilizedSpeed, minSpeed, maxSpeed);
+
+        speedDisplayArea.UpdateValues(Train.s.GetTrainWeight(), (int)enginePower, stabilizedSpeed, LevelReferences.s.speed);
+        speedDisplayAreaShop.UpdateValues(Train.s.GetTrainWeight(), (int)enginePower, stabilizedSpeed, LevelReferences.s.speed);
 
 
-            if (currentDistance > missionDistance) {
-                MissionWinFinisher.s.MissionWon();
-                CalculateStopAcceleration();
-            }
-        } else if (PlayStateMaster.s.isCombatFinished()) {
-            var stopProgress = (currentDistance - beforeStopDistance) / stopLength;
-            stopProgress = Mathf.Clamp01(stopProgress);
+        if (!encounterOverride) {
+            if (PlayStateMaster.s.isCombatInProgress()) {
 
-            if (stopProgress < 1) {
-                LevelReferences.s.speed = Mathf.Lerp(beforeStopSpeed, 0, stopProgress*stopProgress);
-                LevelReferences.s.speed = Mathf.Clamp(LevelReferences.s.speed, 0.2f, float.MaxValue);
+                currentEnginePower = Mathf.MoveTowards(currentEnginePower, engineTarget, enginePowerChangeDelta * Time.deltaTime);
+                var acceleration = 0.4f - ((float)trainWeight).Remap(0, 2000, 0, 0.4f);
+                acceleration = Mathf.Clamp(acceleration, 0.1f, 0.4f);
+                if (targetSpeed > LevelReferences.s.speed) {
+                    var excessEnginePower = (enginePowerReal / trainWeight);
+                    acceleration += excessEnginePower.Remap(0, 0.5f, 0, 0.2f);
+                }
 
-                currentBreakPower = 10;
+
+                internalRealSpeed = Mathf.MoveTowards(internalRealSpeed, targetSpeed, acceleration * Time.deltaTime);
+                LevelReferences.s.speed = Mathf.Max(internalRealSpeed - slowAmount, 0f);
+
+                if (debugSpeedOverride > 0) {
+                    LevelReferences.s.speed = debugSpeedOverride;
+                }
+
+                slowAmount = Mathf.Lerp(slowAmount, 0, slowDecay * Time.deltaTime);
+                slowAmount = Mathf.Clamp(slowAmount, 0, 5);
+                if (slowAmount <= 0.2f) {
+                    ToggleSlowedEffect(false);
+                }
+
+                currentTime += Time.deltaTime;
+                timeText.text = GetNiceTime(currentTime);
 
                 currentDistance += LevelReferences.s.speed * Time.deltaTime;
+
+                distanceText.text = ((int)currentDistance).ToString();
+
+                if (currentDistance > missionDistance) {
+                    MissionWinFinisher.s.MissionWon();
+                    CalculateStopAcceleration();
+                }
+            } else if (PlayStateMaster.s.isCombatFinished()) {
+                var stopProgress = (currentDistance - beforeStopDistance) / stopLength;
+                stopProgress = Mathf.Clamp01(stopProgress);
+
+                if (stopProgress < 1) {
+                    LevelReferences.s.speed = Mathf.Lerp(beforeStopSpeed, 0, stopProgress * stopProgress);
+                    LevelReferences.s.speed = Mathf.Clamp(LevelReferences.s.speed, 0.2f, float.MaxValue);
+
+                    currentBreakPower = 10;
+
+                    currentDistance += LevelReferences.s.speed * Time.deltaTime;
+                } else {
+                    LevelReferences.s.speed = 0;
+                    currentBreakPower = 0;
+                    currentDistance = stopMissionDistanceTarget;
+                }
             } else {
                 LevelReferences.s.speed = 0;
-                currentBreakPower = 0;
-                currentDistance = stopMissionDistanceTarget;
+                currentEnginePower = 0;
             }
-        } else {
-            LevelReferences.s.speed = 0;
-            enginePower = 0;
-            enginePowerText.text = fuelPower.ToString("F0");
         }
     }
 
@@ -235,6 +251,83 @@ public class SpeedController : MonoBehaviour, IShowOnDistanceRadar {
         // not used anymore
     }
 
+    [Header("Boost stuff")]
+    public bool canBoost = true;
+    public bool isBoosting = false;
+    public bool isSlow = false;
+    public float boostDuration = 30f;
+    public float boostMultiplier = 2f;
+    public float lowPowerMultiplier = 0.5f;
+    public float lowPowerDuration = 60f;
+    public float currentBoostMultiplier = 1;
+    public float boostTimer;
+    public float boostTotalTime;
+    public float boostGraphicPercent {
+        get {
+            return Mathf.Clamp((boostTimer*2) / boostTotalTime,0,2f);
+        }
+    }
+
+    public void ActivateBoost() {
+        if (canBoost && !encounterOverride) {
+            for (int i = 0; i < engines.Count; i++) {
+                var boostable = engines[i].GetComponentInChildren<EngineBoostable>();
+                if (boostable) {
+                    boostable.gameObject.SetActive(false);
+                }
+            }
+
+            isBoosting = true;
+            currentBoostMultiplier = boostMultiplier;
+            
+            PlayEngineStartEffects();
+            SetEngineBoostEffects(true, false);
+            CameraController.s.BoostFOV();
+            boostTimer = boostDuration;
+            boostTotalTime = boostDuration;
+            Invoke(nameof(DisableBoostAndActivateLowPowerMode), boostDuration);
+        }
+    }
+
+
+    void DisableBoostAndActivateLowPowerMode() {
+        currentBoostMultiplier = lowPowerMultiplier;
+        CameraController.s.SlowFOV();
+
+        isSlow = true;
+        isBoosting = false;
+    
+        boostTimer = 0;
+        boostTotalTime = lowPowerDuration;
+        SetEngineBoostEffects(false, true);
+        Invoke(nameof(DisableLowPower), lowPowerDuration);
+    }
+
+    public void DisableLowPower() {
+        CancelInvoke(nameof(DisableBoostAndActivateLowPowerMode));
+        CancelInvoke(nameof(DisableLowPower));
+        
+        SetEngineBoostEffects(false, false);
+        PlayEngineStartEffects();
+        CameraController.s.ReturnToRegularFOV();
+        
+        canBoost = true;
+        currentBoostMultiplier = 1;
+        isBoosting = false;
+        isSlow = false;
+        
+        
+        boostTimer = 1;
+        boostTotalTime = 2;
+        
+        for (int i = 0; i < engines.Count; i++) {
+            var boostable = engines[i].GetComponentInChildren<EngineBoostable>();
+            if (boostable) {
+                boostable.gameObject.SetActive(true);
+            }
+        }
+    }
+
     public float GetDistance() {
         return currentDistance;
     }
@@ -253,9 +346,11 @@ public class SpeedController : MonoBehaviour, IShowOnDistanceRadar {
         return false;
     }
 
+    public float slowMultiplier = 0.5f;
     public float slowAmount;
     public float slowDecay = 0.1f;
     public void AddSlow(float amount) {
+        amount *= slowMultiplier;
         if (slowAmount > 1)
             amount /= slowAmount;
         slowAmount += amount;

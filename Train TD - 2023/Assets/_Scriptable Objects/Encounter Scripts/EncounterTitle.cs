@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -10,4 +11,11 @@ public class EncounterTitle : MonoBehaviour {
     public EncounterNode initialNode;
 
     public Transform encounterCam;
+
+    [NonSerialized]
+    public string doYouWantToStopText = "You see something interesting by the side of the rails";
+    [NonSerialized]
+    public float autoRidePastTimer = 10f;
+
+    //public LevelSegmentScriptable ridePastAmbush;
 }

@@ -179,10 +179,13 @@ MonoBehaviour:
   fireDelay: 3
   fireBarrageCount: 1
   fireBarrageDelay: 0.2
+  fireRateMultiplier: 1
   projectileDamage: 1
+  damageMultiplier: 1
+  dontGetAffectByMultipliers: 1
   rotateSpeed: 1
   gunActive: 1
-  CanShoot: 0
+  IsBarrelPointingCorrectly: 0
   hasAmmo: 1
   isPlayer: 0
   rangeOrigin: {fileID: 0}
@@ -217,10 +220,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   rotationSpan: 360
   range: 7
-  myOverride:
-    isOverride: 0
-    rotations: 
-    rotationSpanOverride: 0
   myPossibleTargets: 01000000
 --- !u!114 &8967220105404282961
 MonoBehaviour:

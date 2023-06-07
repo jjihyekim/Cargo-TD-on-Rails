@@ -31,6 +31,8 @@ public class MissionLoseFinisher : MonoBehaviour {
         if (isMissionLost)
             return;
 
+        tipText.text = loseTips[Random.Range(0, loseTips.Length)];
+
 
         isMissionLost = true;
         PlayStateMaster.s.FinishCombat();

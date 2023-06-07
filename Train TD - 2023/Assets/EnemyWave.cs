@@ -161,15 +161,19 @@ public class EnemyWave : MonoBehaviour, IShowOnDistanceRadar, ISpeedForEngineSou
             }
 
             var showRouteDisplay = distance > 10 && distance < 60;
-            if (waveDisplay != null && !showRouteDisplay) {
+            
+            if (waveDisplay != null && distance < 10) {
                 PlayEnemyEnterSound();
             }
-
+            
             if (showRouteDisplay) {
                 CreateRouteDisplay();
             } else {
                 DestroyRouteDisplay();
             }
+            
+            
+
             
             if (distance > 100 && isLeaving) {
                 Destroy(gameObject);
@@ -228,8 +232,8 @@ public class EnemyWave : MonoBehaviour, IShowOnDistanceRadar, ISpeedForEngineSou
         }
     }
 
-    private void SetTargetPosition() {
-        if (!isStealing) {
+    private void SetTargetPosition(bool overrideStealCheck = false) {
+        if (!isStealing || overrideStealCheck) {
             var trainLength = Train.s.GetTrainLength();
             var halfLength = (trainLength / 2f) + DataHolder.s.cartLength;
             targetDistanceOffset = Random.Range(-halfLength, halfLength);
@@ -245,7 +249,11 @@ public class EnemyWave : MonoBehaviour, IShowOnDistanceRadar, ISpeedForEngineSou
     private ModuleStorage lastCargo;
     void SetTargetPositionStealing() {
         var cargos = Train.s.GetComponentsInChildren<ModuleStorage>();
-
+        if (cargos.Length == 0) {
+            SetTargetPosition(true);
+            return;
+        }
+        
         ModuleStorage randomCargo = null;
         for (int i = 0; i < 10; i++) {
             randomCargo = cargos[Random.Range(0, cargos.Length)];

@@ -817,6 +817,7 @@ MonoBehaviour:
         currentAct: 1
         map:
           chunks: []
+        targetStar: 
         playtime: 0
         myResources:
           scraps: 200
@@ -831,27 +832,19 @@ MonoBehaviour:
           rightCargo:
             cargoReward: 
             isLeftCargo: 0
+        fleaMarketRarityBoost: -0.05
+        destinationRarityBoost: -0.15
       xpProgress:
         xp: 0
       tutorialProgress:
-        tutorialDone: 0
+        firstCityTutorialDone: 0
+        initialCutscenePlayed: 0
         cameraDone: 0
-        cargoPutOnTrain: 0
-        scrapsScrapped: 0
-        mapTargetSelected: 0
-        levelStarted: 0
-        shiftToGoFast: 0
-        changeTracks: 0
-        reload: 0
-        repair: 0
-        directControl: 0
-        powerup: 0
-        trainSpeed: 0
-        levelFinishedOnce: 0
-        getRewards: 0
-        repairAtTheStation: 0
-        moveThingsAround: 0
-        putTheNewStuff: 0
+        directControlHint: 0
+        reloadHint: 0
+        repairCriticalHint: 0
+        repairHint: 0
+        deliverCargoHint: 0
     - saveName: unnamed
       isActiveSave: 0
       isRealSaveFile: 0
@@ -873,6 +866,7 @@ MonoBehaviour:
         currentAct: 1
         map:
           chunks: []
+        targetStar: 
         playtime: 0
         myResources:
           scraps: 200
@@ -887,27 +881,19 @@ MonoBehaviour:
           rightCargo:
             cargoReward: 
             isLeftCargo: 0
+        fleaMarketRarityBoost: -0.05
+        destinationRarityBoost: -0.15
       xpProgress:
         xp: 0
       tutorialProgress:
-        tutorialDone: 0
+        firstCityTutorialDone: 0
+        initialCutscenePlayed: 0
         cameraDone: 0
-        cargoPutOnTrain: 0
-        scrapsScrapped: 0
-        mapTargetSelected: 0
-        levelStarted: 0
-        shiftToGoFast: 0
-        changeTracks: 0
-        reload: 0
-        repair: 0
-        directControl: 0
-        powerup: 0
-        trainSpeed: 0
-        levelFinishedOnce: 0
-        getRewards: 0
-        repairAtTheStation: 0
-        moveThingsAround: 0
-        putTheNewStuff: 0
+        directControlHint: 0
+        reloadHint: 0
+        repairCriticalHint: 0
+        repairHint: 0
+        deliverCargoHint: 0
     - saveName: unnamed
       isActiveSave: 0
       isRealSaveFile: 0
@@ -929,6 +915,7 @@ MonoBehaviour:
         currentAct: 1
         map:
           chunks: []
+        targetStar: 
         playtime: 0
         myResources:
           scraps: 200
@@ -943,27 +930,19 @@ MonoBehaviour:
           rightCargo:
             cargoReward: 
             isLeftCargo: 0
+        fleaMarketRarityBoost: -0.05
+        destinationRarityBoost: -0.15
       xpProgress:
         xp: 0
       tutorialProgress:
-        tutorialDone: 0
+        firstCityTutorialDone: 0
+        initialCutscenePlayed: 0
         cameraDone: 0
-        cargoPutOnTrain: 0
-        scrapsScrapped: 0
-        mapTargetSelected: 0
-        levelStarted: 0
-        shiftToGoFast: 0
-        changeTracks: 0
-        reload: 0
-        repair: 0
-        directControl: 0
-        powerup: 0
-        trainSpeed: 0
-        levelFinishedOnce: 0
-        getRewards: 0
-        repairAtTheStation: 0
-        moveThingsAround: 0
-        putTheNewStuff: 0
+        directControlHint: 0
+        reloadHint: 0
+        repairCriticalHint: 0
+        repairHint: 0
+        deliverCargoHint: 0
     loadingComplete: 0
     dontSave: 0
     saveLockTimer: 0
@@ -1373,15 +1352,14 @@ MonoBehaviour:
   m_CameraType: 0
   m_Cameras:
   - {fileID: 0}
-  - {fileID: 0}
   m_RendererIndex: -1
   m_VolumeLayerMask:
     serializedVersion: 2
     m_Bits: 1
   m_VolumeTrigger: {fileID: 0}
   m_VolumeFrameworkUpdateModeOption: 2
-  m_RenderPostProcessing: 0
-  m_Antialiasing: 0
+  m_RenderPostProcessing: 1
+  m_Antialiasing: 2
   m_AntialiasingQuality: 0
   m_StopNaN: 0
   m_Dithering: 0

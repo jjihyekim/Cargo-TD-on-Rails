@@ -14,6 +14,7 @@ public class LevelArchetypeScriptable : ScriptableObject {
 
     public LevelSegmentScriptable firstLevel;
     public LevelSegmentScriptable[] possibleLevels;
+    public LevelSegmentScriptable[] possibleEliteLevels;
     public EncounterTitle[] possibleEncounters;
     public EnemyDynamicSpawnData[] possibleDynamicSpawns;
 
@@ -24,85 +25,81 @@ public class LevelArchetypeScriptable : ScriptableObject {
         new NumberWithWeights() { number = 2, weight = 0.1f }
     };
     
+    // elite chances
+    private NumberWithWeights[] eliteChances = new[] { 
+        new NumberWithWeights() { number = 0, weight = 0.2f },
+        new NumberWithWeights() { number = 1, weight = 0.8f },
+        new NumberWithWeights() { number = 2, weight = 0.1f }
+    };
+    
     private NumberWithWeights[] enemyDirectionsChances = new[] { 
         new NumberWithWeights() { number = 0, weight = 1 }, // all same direction
-        new NumberWithWeights() { number = 1, weight = 5 }, // different directions
-        new NumberWithWeights() { number = 2, weight = 3 }, // all random
-        new NumberWithWeights() { number = 3, weight = 8 }, // one direction one random
+        new NumberWithWeights() { number = 1, weight = 3 }, // all random
     };
 
-    private float allOneSideChance = 0.5f;
     public int segmentCount = 4;
 
+    public static bool everyPathEncounterCheat = false;
+    
     public ConstructedLevel GenerateLevel() {
         var level = new ConstructedLevel();
+
+        level.isBossLevel = isBossLevel;
 
         level.mySegmentsA = new LevelSegment[segmentCount];
         level.mySegmentsB = new LevelSegment[segmentCount];
 
         for (int i = 0; i < segmentCount; i++) {
             if (i == 0 && firstLevel != null) {
-                level.mySegmentsA[0] = GenerateSegment(firstLevel, 0);
-                level.mySegmentsB[0] = GenerateSegment(firstLevel, 0);
+                level.mySegmentsA[0] = GenerateFirstSegment();
+                level.mySegmentsB[0] = GenerateFirstSegment();
                 continue;
             }
-            
-            var segmentType = NumberWithWeights.WeightedRandomRoll(enemyDirectionsChances);
-            
-            switch (segmentType) {
-                case 0: {
-                    int direction = Random.value > 0.5f ? 1 : 2;
-                    level.mySegmentsA[i] = GenerateSegment(direction);
-                    level.mySegmentsB[i] = GenerateSegment(direction);
-                    break;
-                }
-                case 1: {
-                    bool isLeft = Random.value > 0.5f;
-                    level.mySegmentsA[i] = GenerateSegment(isLeft ? 2 : 3);
-                    level.mySegmentsB[i] = GenerateSegment(!isLeft ? 2 : 3);
-                    break;
-                }
-                case 2: {
-                    level.mySegmentsA[i] = GenerateSegment(0);
-                    level.mySegmentsB[i] = GenerateSegment(0);
-                    break;
-                }
-                case 3: {
-                    bool isTop = Random.value > 0.5f;
-                    bool isLeft = Random.value > 0.5f;
-                    int top = isLeft ? 2 : 3;
-                    int bottom = isLeft ? 2 : 3;
-                    if (isTop) top = 0;
-                    
-                    level.mySegmentsA[i] = GenerateSegment(top);
-                    level.mySegmentsB[i] = GenerateSegment(bottom);
-                    break;
-                }
+
+
+            if (!everyPathEncounterCheat || possibleEncounters.Length == 0) {
+                level.mySegmentsA[i] = GenerateRegularSegment();
+                level.mySegmentsB[i] = GenerateRegularSegment();
+            } else {
+                level.mySegmentsA[i] = GenerateEncounterSegment();
+                level.mySegmentsB[i] = GenerateEncounterSegment();
             }
-            
         }
 
         level.dynamicSpawnData = possibleDynamicSpawns[Random.Range(0, possibleDynamicSpawns.Length)];
 
         if (possibleEncounters.Length > 0) {
             var encounterCount = NumberWithWeights.WeightedRandomRoll(encounterChances);
-            encounterCount = 0;
 
             for (int i = 0; i < encounterCount; i++) {
                 var mySegment = Random.Range(1, segmentCount); // first one is never an encounter
-
-                var encounter = "e_" + possibleEncounters[Random.Range(0, possibleEncounters.Length)].gameObject.name;
+                
                 if (Random.value > 0.5f) {
-                    level.mySegmentsA[mySegment] = new LevelSegment() { isEncounter = true, levelName = encounter };
+                    level.mySegmentsA[mySegment] = GenerateEncounterSegment();
                 } else {
-                    level.mySegmentsB[mySegment] = new LevelSegment() { isEncounter = true, levelName = encounter };
+                    level.mySegmentsB[mySegment] = GenerateEncounterSegment();
                 }
             }
         }
+        
+        if (possibleEliteLevels.Length > 0) {
+            var eliteCount = NumberWithWeights.WeightedRandomRoll(eliteChances);
+
+            for (int i = 0; i < eliteCount; i++) {
+                var mySegment = Random.Range(1, segmentCount); // first one is never an elite
+
+                if (Random.value > 0.5f) {
+                    level.mySegmentsA[mySegment] = GenerateEliteSegment();
+                } else {
+                    level.mySegmentsB[mySegment] = GenerateEliteSegment();
+                }
+            }
+        }
+        
 
         level.levelName = name + " level " + Random.Range(100,1000);
         level.levelNiceName = name;
-        return level.Copy();
+        return level;
     }
 
 
@@ -110,16 +107,42 @@ public class LevelArchetypeScriptable : ScriptableObject {
     public int lastEnemyAndSegmentEndDistance = 70;
     public int powerUpEnemyDistanceFromLastEnemy = 50;
 
-    LevelSegment GenerateSegment(LevelSegmentScriptable segmentScriptable, int type) {
-        var segment =  segmentScriptable.GetData().Copy();
-        return _GenerateSegment(segment, type);
+    LevelSegment GenerateEncounterSegment() {
+        var encounter = "e_" + possibleEncounters[Random.Range(0, possibleEncounters.Length)].gameObject.name;
+        return new LevelSegment() { isEncounter = true, levelName = encounter, segmentLength = 200 };
     }
-    LevelSegment GenerateSegment(int type) {
+    
+    LevelSegment GenerateFirstSegment() {
+        var segment =  firstLevel.GetData().Copy();
+        return _GenerateSegment(segment);
+    }
+    LevelSegment GenerateRegularSegment() {
         var segment =  possibleLevels[Random.Range(0, possibleLevels.Length)].GetData().Copy();
-        return _GenerateSegment(segment, type);
+        return _GenerateSegment(segment);
+    }
+    
+    LevelSegment GenerateEliteSegment() {
+        var segment =  possibleEliteLevels[Random.Range(0, possibleEliteLevels.Length)].GetData().Copy();
+        return _GenerateSegment(segment);
     }
 
-    LevelSegment _GenerateSegment(LevelSegment segment, int type) { // 0 -> random 1 -> all left 2 -> all right 
+    LevelSegment _GenerateSegment(LevelSegment segment) { // 0 -> random 1 -> all left 2 -> all right 
+        var segmentType = NumberWithWeights.WeightedRandomRoll(enemyDirectionsChances);
+        int type = 0;
+            
+        switch (segmentType) {
+            case 0: {
+                int direction = Random.value > 0.5f ? 1 : 2;
+                type = direction;
+                break;
+            }
+            case 1: {
+                type = 0;
+                break;
+            }
+        }
+        
+        
 
         var enemyOffset = firstEnemyInSegmentDistance;
 

@@ -106,6 +106,12 @@ public class CameraController : MonoBehaviour {
         SetMainCamPos();
     }
 
+    private void Update() {
+        if (mainCamera.fieldOfView != targetFOV) {
+            mainCamera.fieldOfView = Mathf.MoveTowards(mainCamera.fieldOfView, targetFOV, fovChangeSpeed * Time.deltaTime);
+        }
+    }
+
     private bool snappedToTrainLastFrame = false;
 
     public UnityEvent AfterCameraPosUpdate = new UnityEvent();
@@ -554,5 +560,24 @@ public class CameraController : MonoBehaviour {
 
     public void ManualRotateDirectControl(float amount) {
         rotTarget.x += amount/1.5f;
+    }
+
+
+    [Header("Boost FOV Settings")]
+    public float boostFOV = 62;
+    public float regularFOV = 60;
+    public float slowFOV = 58;
+    public float targetFOV = 60;
+    public float fovChangeSpeed = 1f;
+    public void BoostFOV() {
+        targetFOV = boostFOV;
+    }
+
+    public void SlowFOV() {
+        targetFOV = slowFOV;
+    }
+
+    public void ReturnToRegularFOV() {
+        targetFOV = regularFOV;
     }
 }

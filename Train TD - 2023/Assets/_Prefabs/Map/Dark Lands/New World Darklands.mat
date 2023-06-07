@@ -21,7 +21,7 @@ Material:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: New World Darklands
-  m_Shader: {fileID: -6465566751694194690, guid: df12fff405e1f2845a1747100605529d, type: 3}
+  m_Shader: {fileID: -6465566751694194690, guid: 8fe563ba13a08c84ab67e7d7166ad304, type: 3}
   m_ValidKeywords: []
   m_InvalidKeywords: []
   m_LightmapFlags: 4
@@ -65,6 +65,10 @@ Material:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
+    - _Noise_texture:
+        m_Texture: {fileID: 2800000, guid: 9040277024b05034daae1581ed43f23a, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     - _OcclusionMap:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
@@ -79,6 +83,10 @@ Material:
         m_Offset: {x: 0, y: 0}
     - _Side_normal:
         m_Texture: {fileID: 2800000, guid: e332b677da580784b9a910a873606bb9, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _Sparkle_Texture:
+        m_Texture: {fileID: 2800000, guid: 7cb159762bdb1904f988a9b2885c4fa8, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _SpecGlossMap:
@@ -107,6 +115,8 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
+    - Vector1_1: 3.42
+    - Vector1_24390fd01c6f40cab2198ab7ae9751ff: 5.27
     - _AlphaClip: 0
     - _Blend: 8.3
     - _Blend_Sharpness: 2
@@ -144,6 +154,7 @@ Material:
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
     - _Main_Color: {r: 0.21067438, g: 0.75471693, b: 0.13171947, a: 1}
     - _Side_Color: {r: 0.5372549, g: 0.5372549, b: 0.5372549, a: 1}
+    - _Sparkle_Color: {r: 0, g: 1.9657943, b: 2.0078435, a: 1}
     - _SpecColor: {r: 0.19999996, g: 0.19999996, b: 0.19999996, a: 1}
     - _Top_Color: {r: 0.18039216, g: 0.17254902, b: 0.5019608, a: 1}
   m_BuildTextureStacks: []

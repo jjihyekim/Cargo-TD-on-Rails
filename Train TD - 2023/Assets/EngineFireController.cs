@@ -58,7 +58,10 @@ public class EngineFireController : MonoBehaviour {
 	    
 
 	    if (PlayStateMaster.s.isCombatInProgress()) {
-		    var speedTier = 0;
+		    var speedTier = -1;
+
+		    if (LevelReferences.s.speed > 0)
+			    speedTier += 1;
 		    if (LevelReferences.s.speed > slowSoundMaxSpeed)
 			    speedTier += 1;
 		    if (LevelReferences.s.speed > mediumSoundMaxSpeed)
@@ -66,7 +69,12 @@ public class EngineFireController : MonoBehaviour {
 
 		    if (speedTier != lastSpeedTier) {
 			    StopAllCoroutines();
-			    StartCoroutine(ChangeSpeedSound(speedSounds[speedTier]));
+			    if (speedTier >= 0) {
+				    StartCoroutine(ChangeSpeedSound(speedSounds[speedTier]));
+			    } else {
+				    _audio.loop = false;
+			    }
+
 			    lastSpeedTier = speedTier;
 		    }
 	    }
@@ -111,7 +119,7 @@ public class EngineFireController : MonoBehaviour {
 		    // Engine Boost
 		    var playerControlAdjusted = lastEnginePowerPlayerControl;
 		    var powerLow = lastEnginePowerPlayerControl.Remap(0, 1.5f,6,60) * (_engine.enginePower / 300f);
-		    var powerHigh = lastEnginePowerPlayerControl.Remap(0, 1.5f,8,80) * (_engine.enginePower / 300f);
+		    var powerHigh = lastEnginePowerPlayerControl.Remap(0, 1.5f,8,65) * (_engine.enginePower / 300f);
 		    mainModule.startSpeed = new ParticleSystem.MinMaxCurve(powerLow, powerHigh);
 		    /*if (lastEnginePower > 300) {
 			    mainModule.startSpeed = new ParticleSystem.MinMaxCurve(50, 80);

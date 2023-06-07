@@ -8,15 +8,15 @@ public class ActivateParticlesIfEngineActive : MonoBehaviour {
     public EngineModule myModule;
     void Start()
     {
-        for (int i = 0; i < particles.Length; i++) {
+        /*for (int i = 0; i < particles.Length; i++) {
             particles[i].Stop();
-        }
+        }*/
     }
 
     private bool lastState ;
     void Update()
     {
-        if (lastState != myModule.hasFuel) {
+        /*if (lastState != myModule.hasFuel) {
             for (int i = 0; i < particles.Length; i++) {
                 if (myModule.hasFuel) {
                     particles[i].Play();
@@ -26,6 +26,6 @@ public class ActivateParticlesIfEngineActive : MonoBehaviour {
             }
 
             lastState = myModule.hasFuel;
-        }
+        }*/
     }
 }

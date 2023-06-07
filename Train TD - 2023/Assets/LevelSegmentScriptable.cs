@@ -32,6 +32,9 @@ public class LevelSegment {
 	
 	public bool eliteEnemy {
 		get {
+			if (enemiesOnPath == null)
+				return false;
+			
 			for (int i = 0; i < enemiesOnPath.Length; i++) {
 				if (enemiesOnPath[i].hasReward) {
 					return true;

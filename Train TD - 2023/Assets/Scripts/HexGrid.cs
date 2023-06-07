@@ -193,7 +193,7 @@ public class HexGrid : MonoBehaviour {
 	public Vector2 zRangesToFill;
 	Biome currentBiome;
 	void CreateChunks() {
-		if (!DataSaver.s.GetCurrentSave().isInARun)
+		if (!DataSaver.s.GetCurrentSave().isInARun || !DataSaver.s.GetCurrentSave().isRealSaveFile )
 			biomeOverride = 0;
 
 		if (biomeOverride < 0) {
