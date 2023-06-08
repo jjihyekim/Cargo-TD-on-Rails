@@ -121,13 +121,16 @@ MonoBehaviour:
   muzzleFlashPrefab: {fileID: 980176138545819842, guid: d13b04fe45d03c24fab8310c0c9450fb, type: 3}
   target: {fileID: 0}
   mortarRotation: 0
-  fireDelay: 0.5
+  fireDelay: 2
   fireBarrageCount: 5
-  fireBarrageDelay: 0.1
-  projectileDamage: 0.6
+  fireBarrageDelay: 0.4
+  fireRateMultiplier: 1
+  projectileDamage: 2.5
+  damageMultiplier: 1
+  dontGetAffectByMultipliers: 0
   rotateSpeed: 10
   gunActive: 1
-  CanShoot: 0
+  IsBarrelPointingCorrectly: 0
   hasAmmo: 1
   isPlayer: 0
   rangeOrigin: {fileID: 0}
@@ -162,10 +165,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   rotationSpan: 360
   range: 5
-  myOverride:
-    isOverride: 0
-    rotations: 
-    rotationSpanOverride: 0
   myPossibleTargets: 01000000
 --- !u!114 &8013603585726342313
 MonoBehaviour:

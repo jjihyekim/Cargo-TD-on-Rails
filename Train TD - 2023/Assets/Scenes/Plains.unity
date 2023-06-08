@@ -7947,7 +7947,7 @@ MonoBehaviour:
   trainRadarImg: {fileID: 21300000, guid: 889b1f9ff81b88041a3788953b9a4bb1, type: 3}
   slowMultiplier: 0.5
   slowAmount: 0
-  slowDecay: 0.1
+  slowDecay: 0.08
   activeSlowedEffects: []
 --- !u!114 &272389286
 MonoBehaviour:
@@ -9390,9 +9390,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   myTweakables:
     scrapEnemyRewardMultiplier: 1
-    enemyDamageMutliplier: 3.5
+    enemyDamageMutliplier: 1
     playerDamageMultiplier: 1.1
-    enemyFirerateBoost: 0.5
+    enemyFirerateBoost: 1
     playerFirerateBoost: 0.5
     magazineSizeMultiplier: 1
     gunSteamUseMultiplier: 1
@@ -49871,7 +49871,7 @@ RectTransform:
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
@@ -51863,7 +51863,6 @@ MonoBehaviour:
       enemyIdentifier:
         enemyUniqueName: unset
         enemyCount: 1
-      distanceFromTrain: 30
       firstSpawnTime: 45
       spawnInterval: 45
       increaseInNumberInterval: 3
@@ -70798,7 +70797,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1688897079
 RectTransform:
   m_ObjectHideFlags: 0
@@ -105144,7 +105143,6 @@ MonoBehaviour:
     enemyIdentifier:
       enemyUniqueName: unset
       enemyCount: 1
-    distanceFromTrain: 30
     firstSpawnTime: 30
     spawnInterval: 30
     increaseInNumberInterval: 2

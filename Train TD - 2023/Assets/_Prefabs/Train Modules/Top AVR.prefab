@@ -368,12 +368,13 @@ MonoBehaviour:
   muzzleFlashPrefab: {fileID: 980176138545819842, guid: 3a4d3fe2abd806c46964330e5993cfa2, type: 3}
   target: {fileID: 0}
   mortarRotation: 0
-  fireDelay: 0.5
+  fireDelay: 1
   fireBarrageCount: 2
   fireBarrageDelay: 0.1
   fireRateMultiplier: 1
-  projectileDamage: 3.5
+  projectileDamage: 4
   damageMultiplier: 1
+  dontGetAffectByMultipliers: 0
   rotateSpeed: 10
   gunActive: 1
   IsBarrelPointingCorrectly: 0

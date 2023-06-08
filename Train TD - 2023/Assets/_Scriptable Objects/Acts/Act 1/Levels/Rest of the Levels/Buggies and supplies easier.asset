@@ -21,16 +21,18 @@ MonoBehaviour:
         enemyCount: 3
       distanceOnPath: 0
       isLeft: 0
+      hasReward: 0
     - enemyIdentifier:
         enemyUniqueName: SupplierSafe
         enemyCount: 2
       distanceOnPath: 40
       isLeft: 0
+      hasReward: 0
     - enemyIdentifier:
         enemyUniqueName: BuggyPneumatic
-        enemyCount: 1
+        enemyCount: 6
       distanceOnPath: 90
       isLeft: 0
-    rewardPowerUpAtTheEnd: 0
+      hasReward: 0
     segmentLength: 150
     powerUpRewardUniqueName: 

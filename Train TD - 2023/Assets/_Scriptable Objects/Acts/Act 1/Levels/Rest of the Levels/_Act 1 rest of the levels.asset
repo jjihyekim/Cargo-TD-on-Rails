@@ -13,16 +13,16 @@ MonoBehaviour:
   m_Name: _Act 1 rest of the levels
   m_EditorClassIdentifier: 
   isBossLevel: 0
-  firstLevel: {fileID: 0}
+  firstLevel: {fileID: 11400000, guid: ff9e930bbddf0c6428a7ed31176ca207, type: 2}
   possibleLevels:
   - {fileID: 11400000, guid: 35c020389996ae741a6a17d19d582ca4, type: 2}
   - {fileID: 11400000, guid: 32ba59f0e626e8a438a85df40785b61c, type: 2}
   - {fileID: 11400000, guid: db5fde552def7654fb6a9e645089596b, type: 2}
-  - {fileID: 11400000, guid: 4b30ca6075105a743ac74943c4a36f04, type: 2}
   - {fileID: 11400000, guid: 1ff9e15b0cfc41e4d9604c7a90fed6e2, type: 2}
   - {fileID: 11400000, guid: 965b72fe9b3df7b4a8e921a4363b8e76, type: 2}
   - {fileID: 11400000, guid: ff9e930bbddf0c6428a7ed31176ca207, type: 2}
   - {fileID: 11400000, guid: aff526d5cc3181644925731359678221, type: 2}
+  possibleEliteLevels: []
   possibleEncounters:
   - {fileID: 3295736480921032522, guid: e5b4698d874016b4886952250af6da6e, type: 3}
   - {fileID: 3295736480921032522, guid: 380f2f2ffc7ba96488db14e67d456a22, type: 3}
@@ -35,32 +35,25 @@ MonoBehaviour:
   - enemyIdentifier:
       enemyUniqueName: BuggyAVC
       enemyCount: 1
-    distanceFromTrain: 30
     firstSpawnTime: 45
     spawnInterval: 45
     increaseInNumberInterval: 3
   - enemyIdentifier:
       enemyUniqueName: BuggyCannon
       enemyCount: 1
-    distanceFromTrain: 30
     firstSpawnTime: 120
     spawnInterval: 60
     increaseInNumberInterval: 2
   - enemyIdentifier:
       enemyUniqueName: BuggyPneumatic
       enemyCount: 1
-    distanceFromTrain: 30
     firstSpawnTime: 60
     spawnInterval: 30
     increaseInNumberInterval: 3
   - enemyIdentifier:
       enemyUniqueName: Biker
       enemyCount: 2
-    distanceFromTrain: 30
     firstSpawnTime: 60
     spawnInterval: 30
     increaseInNumberInterval: 2
   segmentCount: 3
-  firstEnemyInSegmentDistance: 75
-  lastEnemyAndSegmentEndDistance: 75
-  powerUpEnemyDistanceFromLastEnemy: 75

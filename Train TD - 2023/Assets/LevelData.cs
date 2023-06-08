@@ -45,6 +45,7 @@ public class EnemyOnPathData {
 public class EnemyDynamicSpawnData {
 	public EnemyIdentifier enemyIdentifier = new EnemyIdentifier();
 
+	[NonSerialized]
 	public int distanceFromTrain = 30;
 	public float firstSpawnTime = 45;
 	public float spawnInterval = 45;

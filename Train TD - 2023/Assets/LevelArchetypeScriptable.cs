@@ -20,15 +20,15 @@ public class LevelArchetypeScriptable : ScriptableObject {
 
     // encounter chances
     private NumberWithWeights[] encounterChances = new[] { 
-        new NumberWithWeights() { number = 0, weight = 0.2f },
-        new NumberWithWeights() { number = 1, weight = 0.8f },
+        new NumberWithWeights() { number = 0, weight = 0.15f },
+        new NumberWithWeights() { number = 1, weight = 0.75f },
         new NumberWithWeights() { number = 2, weight = 0.1f }
     };
     
     // elite chances
     private NumberWithWeights[] eliteChances = new[] { 
-        new NumberWithWeights() { number = 0, weight = 0.2f },
-        new NumberWithWeights() { number = 1, weight = 0.8f },
+        new NumberWithWeights() { number = 0, weight = 0.15f },
+        new NumberWithWeights() { number = 1, weight = 0.75f },
         new NumberWithWeights() { number = 2, weight = 0.1f }
     };
     
@@ -70,6 +70,7 @@ public class LevelArchetypeScriptable : ScriptableObject {
 
         if (possibleEncounters!= null && possibleEncounters.Length > 0) {
             var encounterCount = NumberWithWeights.WeightedRandomRoll(encounterChances);
+            encounterCount = 0;
 
             for (int i = 0; i < encounterCount; i++) {
                 var mySegment = Random.Range(1, segmentCount); // first one is never an encounter
@@ -103,9 +104,9 @@ public class LevelArchetypeScriptable : ScriptableObject {
     }
 
 
-    public int firstEnemyInSegmentDistance = 50;
-    public int lastEnemyAndSegmentEndDistance = 70;
-    public int powerUpEnemyDistanceFromLastEnemy = 50;
+    int firstEnemyInSegmentDistance = 50;
+    int lastEnemyAndSegmentEndDistance = 70;
+    int powerUpEnemyDistanceFromLastEnemy = 50;
 
     LevelSegment GenerateEncounterSegment() {
         var encounter = "e_" + possibleEncounters[Random.Range(0, possibleEncounters.Length)].gameObject.name;
