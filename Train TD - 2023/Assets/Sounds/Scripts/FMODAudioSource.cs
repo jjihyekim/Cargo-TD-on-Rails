@@ -9,18 +9,24 @@ public class FMODAudioSource : MonoBehaviour
 {
     public EventReference clip;
     public bool pauseOnGamePause = true;
-    public bool playOnAwake = true;
+    public bool playOnStart = true;
+    [Range(0f, 3f)]public float volume = 1;
 
     private EventInstance soundInstance;
     private int pausedPosition;
 
-    private void Awake()
+    private void Start()
     {
         if(!clip.Equals(default(EventReference)))
             soundInstance = AudioManager.CreateFmodEventInstance(clip);
 
-        if (playOnAwake)
+        if (playOnStart)
             Play();
+    }
+
+    private void Update()
+    {
+        soundInstance.setVolume(volume);
     }
 
     private void OnEnable()
@@ -51,22 +57,17 @@ public class FMODAudioSource : MonoBehaviour
     }
     public void Pause()
     {
-        //Debug.Log("PAUSE");
-        soundInstance.getTimelinePosition(out int position);
-        pausedPosition = position;
-        Stop(FMOD.Studio.STOP_MODE.IMMEDIATE);
-        
-        //soundInstance.getChannelGroup(out ChannelGroup channel);
-        //channel.setPaused(true);
-        //soundInstance.setPaused(true);
+        soundInstance.setPaused(true);
+        // Invoke("PauseDelay", 0.5f);
     }
+    private void PauseDelay()
+    {
+        soundInstance.setPaused(true);
+    }
+
     public void UnPause()
     {
-        //Play();
-        LoadClip(clip, true);
-        soundInstance.setTimelinePosition(pausedPosition);
-        //channel.setPaused(false);
-        //soundInstance.setPaused(false);
+        soundInstance.setPaused(false);
     }
     public void TogglePause()
     {
@@ -96,6 +97,12 @@ public class FMODAudioSource : MonoBehaviour
     public void SetParamByName(string paramName, float value)
     {
         soundInstance.setParameterByName(paramName, value);
+    }
+
+    public float GetParamByName(string paramName)
+    {
+        soundInstance.getParameterByName(paramName, out float value);
+        return value;
     }
 
     public void LoadClip(EventReference clip, bool startPlaying = false)
