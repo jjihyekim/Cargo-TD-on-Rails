@@ -55,6 +55,11 @@ public class SpeedController : MonoBehaviour, IShowOnDistanceRadar {
 
     public void SetUpOnMissionStart() {
         ResetDistance();
+        DisableLowPower();
+        PlayEngineStartEffects();
+    }
+
+    public void RegisterRadar() {
         DistanceAndEnemyRadarController.s.RegisterUnit(this);
     }
 
@@ -100,12 +105,6 @@ public class SpeedController : MonoBehaviour, IShowOnDistanceRadar {
     public float currentBreakPower = 0;
 
     public bool encounterOverride = false;
-
-    public void OnLevelStart() {
-        CancelInvoke();
-        DisableLowPower();
-        PlayEngineStartEffects();
-    }
 
     public void PlayEngineStartEffects() {
         for (int i = 0; i < engines.Count; i++) {
@@ -196,9 +195,11 @@ public class SpeedController : MonoBehaviour, IShowOnDistanceRadar {
                     MissionWinFinisher.s.MissionWon();
                     CalculateStopAcceleration();
                 }
-            } else if (PlayStateMaster.s.isCombatFinished()) {
+            } else if (PlayStateMaster.s.isCombatFinished() && !MissionLoseFinisher.s.isMissionLost) {
                 var stopProgress = (currentDistance - beforeStopDistance) / stopLength;
-                stopProgress = Mathf.Clamp01(stopProgress);
+                if (currentDistance >= stopMissionDistanceTarget) {
+                    stopProgress = 1;
+                }
 
                 if (stopProgress < 1) {
                     LevelReferences.s.speed = Mathf.Lerp(beforeStopSpeed, 0, stopProgress * stopProgress);
@@ -219,7 +220,8 @@ public class SpeedController : MonoBehaviour, IShowOnDistanceRadar {
         }
     }
 
-    public readonly float stopDistance = 10f;
+    //public readonly float stopDistance = 10f;
+    public readonly float stopDistance = 7.5f;
     public float stopMissionDistanceTarget;
     public float beforeStopSpeed;
     public float beforeStopDistance;
@@ -231,7 +233,7 @@ public class SpeedController : MonoBehaviour, IShowOnDistanceRadar {
             beforeStopSpeed = LevelReferences.s.speed;
         }
 
-        stopLength = stopDistance - (Train.s.GetTrainLength()/2f);
+        stopLength = stopDistance/* - (Train.s.GetTrainLength()/2f)*/;
         stopMissionDistanceTarget = missionDistance + stopLength;
         beforeStopDistance = missionDistance;
     }
@@ -271,7 +273,7 @@ public class SpeedController : MonoBehaviour, IShowOnDistanceRadar {
     public void ActivateBoost() {
         if (canBoost && !encounterOverride) {
             for (int i = 0; i < engines.Count; i++) {
-                var boostable = engines[i].GetComponentInChildren<EngineBoostable>();
+                var boostable = engines[i].GetComponentInChildren<EngineBoostable>(true);
                 if (boostable) {
                     boostable.gameObject.SetActive(false);
                 }
@@ -321,11 +323,15 @@ public class SpeedController : MonoBehaviour, IShowOnDistanceRadar {
         boostTotalTime = 2;
         
         for (int i = 0; i < engines.Count; i++) {
-            var boostable = engines[i].GetComponentInChildren<EngineBoostable>();
+            var boostable = engines[i].GetComponentInChildren<EngineBoostable>(true);
             if (boostable) {
                 boostable.gameObject.SetActive(true);
             }
         }
+    }
+
+    public void OnCombatFinished() {
+        DisableLowPower();
     }
 
     public float GetDistance() {

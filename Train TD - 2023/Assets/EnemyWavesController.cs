@@ -144,7 +144,7 @@ public class EnemyWavesController : MonoBehaviour {
 					var dynamicSpawnEnemy = PlayStateMaster.s.currentLevel.dynamicSpawnData;
 					
 					if (dynamicSpawnEnemy.curTime <= 0) {
-						SpawnEnemy(dynamicSpawnEnemy.enemyIdentifier, playerDistance - dynamicSpawnEnemy.distanceFromTrain, true, Random.value > 0.5f);
+						SpawnEnemy(dynamicSpawnEnemy.enemyIdentifier, playerDistance - EnemyDynamicSpawnData.distanceFromTrain, true, Random.value > 0.5f);
 						dynamicSpawnEnemy.curTime = dynamicSpawnEnemy.spawnInterval;
 
 						dynamicSpawnEnemy.curIncreaseInNumberCount += 1;

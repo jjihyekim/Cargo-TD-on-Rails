@@ -44,6 +44,16 @@ public class UpgradesController : MonoBehaviour {
 	public Cart leftCargo;
 	public Cart rightCargo;
 
+	public bool shopArea_destinationSelected = false;
+	public bool shopArea_fleaMarketFull = false;
+	public bool shopArea_noFreeCarts = false;
+
+	public bool endGame_noCargoOnTrain;
+	public bool endGame_noFreeCarts;
+	
+	public MiniGUI_DepartureChecklist shopChecklist;
+	public MiniGUI_DepartureChecklist endGameAreaChecklist;
+
 	public void RemoveCartFromShop(Cart cart) {
 		shopCarts.Remove(cart);
 		SaveShopCartState();
@@ -177,7 +187,7 @@ public class UpgradesController : MonoBehaviour {
 		var shopState = new ShopState();
 		for (int i = 0; i < shopCarts.Count; i++) {
 			var cart = shopCarts[i];
-			if (cart.isCargo && PlayStateMaster.s.isShop()) { // if we aren't in the shop cargos are also regular carts
+			if (cart.isCargo && !PlayStateMaster.s.isEndGame()) { // in the end game area cargos are also regular carts
 				var cargo = cart.GetComponentInChildren<CargoModule>();
 				if (cargo.isLeftCargo) { 
 					shopState.leftCargo = new DataSaver.TrainState.CartState.CargoState() {
@@ -307,13 +317,15 @@ public class UpgradesController : MonoBehaviour {
 			}
 			
 		} else {
+			var n = 0;
 			for (int i = 0; i < currentRun.shopState.cartStates.Count; i++) {
 				var cart = currentRun.shopState.cartStates[i];
 				
 				var thingy = Instantiate(DataHolder.s.GetCart(cart.state.uniqueName).gameObject, shopableComponentsParent);
 				Train.ApplyStateToCart(thingy.GetComponent<Cart>(), cart.state);
 				if (cart.location == CartLocation.market) { // we don't properly load from carts in the forge
-					var location = fleaMarketLocations[i];
+					var location = fleaMarketLocations[n];
+					n++;
 					
 					location.SnapToLocation(thingy);
 					AddCartToShop(thingy.GetComponent<Cart>(), CartLocation.market, false);
@@ -413,6 +425,11 @@ public class UpgradesController : MonoBehaviour {
 				MissionWinFinisher.s.SetCanGo();
 			}
 			
+			
+			endGame_noFreeCarts = looseCartCount == 0;
+			endGame_noCargoOnTrain = cargoCount == 0;
+			endGameAreaChecklist.UpdateStatus(new []{endGame_noCargoOnTrain, endGame_noFreeCarts});
+			
 			ShopStateController.s.SetCannotGo(ShopStateController.CanStartLevelStatus.needToSelectDestination);
 
 			return cargoCount;
@@ -424,30 +441,39 @@ public class UpgradesController : MonoBehaviour {
 					fleaMarketCount += 1;
 				}
 			}
+			shopArea_fleaMarketFull = fleaMarketCount == 3;
 			
 			if (leftCargo.myLocation == CartLocation.train) {
+				shopArea_destinationSelected = true;
 				ShopStateController.s.SetGoingLeft();
 			}
 
 			if (rightCargo.myLocation == CartLocation.train) {
+				shopArea_destinationSelected = true;
 				ShopStateController.s.SetGoingRight();
 			}
 
-			if (fleaMarketCount < 3) {
+
+			if (!shopArea_fleaMarketFull) {
 				ShopStateController.s.SetCannotGo(ShopStateController.CanStartLevelStatus.needToPutThingInFleaMarket);
 			}
 
+			shopArea_noFreeCarts = true;
 			for (int i = 0; i < shopCarts.Count; i++) {
 				if (shopCarts[i].myLocation == CartLocation.world) {
+					shopArea_noFreeCarts = false;
 					ShopStateController.s.SetCannotGo(ShopStateController.CanStartLevelStatus.needToPickUpFreeCarts);
+					break;
 				}
 			}
 			
 			if (leftCargo.myLocation != CartLocation.train && rightCargo.myLocation != CartLocation.train) {
+				shopArea_destinationSelected = false;
 				ShopStateController.s.SetCannotGo(ShopStateController.CanStartLevelStatus.needToSelectDestination);
 			}
 
 			
+			shopChecklist.UpdateStatus(new []{shopArea_destinationSelected, shopArea_fleaMarketFull, shopArea_noFreeCarts});
 			MissionWinFinisher.s.SetCannotGo(true);
 			return fleaMarketCount;
 		}

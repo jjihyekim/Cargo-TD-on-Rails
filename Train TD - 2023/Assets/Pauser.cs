@@ -83,6 +83,7 @@ public class Pauser : MonoBehaviour {
         TimeController.s.Pause();
         isPaused = true;
         
+        
         if (CameraController.s.directControlActive) {
             Cursor.lockState = CursorLockMode.None;
         }
@@ -120,7 +121,7 @@ public class Pauser : MonoBehaviour {
         );
         
         Unpause();
-        FirstTimeTutorialController.s.StopInitialCutscene();
+        FirstTimeTutorialController.s.RemoveAllTutorialStuff();
         MissionLoseFinisher.s.MissionLost();
     }
 }

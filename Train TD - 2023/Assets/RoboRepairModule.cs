@@ -24,8 +24,9 @@ public class RoboRepairModule : ActivateWhenAttachedToTrain, IActiveDuringCombat
 
     void Update() {
         myTrain = GetComponentInParent<Train>();
+        myCart = GetComponentInParent<Cart>();
         
-        if (myTrain == null)
+        if (myTrain == null || myCart == null)
             this.enabled = false;
         if (PlayStateMaster.s.isCombatInProgress()) {
             if (curRepairDelay <= 0 && !myCart.isDestroyed) {
@@ -40,8 +41,6 @@ public class RoboRepairModule : ActivateWhenAttachedToTrain, IActiveDuringCombat
 
 
     bool BreadthFirstRepairSearch() {
-        if(myTrain == null)
-            myTrain = GetComponentInParent<Train>();
         var carts = new List<Cart>();
 
         var range = Mathf.Min(myTrain.carts.Count, repairRange);

@@ -45,4 +45,8 @@ public class CharacterSelector : MonoBehaviour {
 
         PlayStateMaster.s.FinishCharacterSelection();
     }
+
+    public void CharSelectionAndWorldGenerationComplete() {
+        DataSaver.s.GetCurrentSave().isInARun = true;
+    }
 }

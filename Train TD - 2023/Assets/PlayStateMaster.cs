@@ -63,6 +63,10 @@ public class PlayStateMaster : MonoBehaviour {
         return myGameState == GameState.shop || myGameState == GameState.levelFinished;
     }
     
+    public bool isEndGame() {
+        return myGameState == GameState.levelFinished;
+    }
+    
     public bool isMainMenu() {
         return myGameState == GameState.mainMenu;
     }
@@ -100,7 +104,9 @@ public class PlayStateMaster : MonoBehaviour {
     public void OpenMainMenu() {
         StopAllCoroutines();
         
-        StartCoroutine(Transition(false, () => DoOpenMainMenu()));
+        SceneLoader.s.ForceReloadScene();
+        
+        //StartCoroutine(Transition(false, () => DoOpenMainMenu()));
     }
 
     private void Start() {
@@ -171,7 +177,10 @@ public class PlayStateMaster : MonoBehaviour {
             OnCharacterSelected?.Invoke();
             OnNewWorldCreation?.Invoke();
         }, WorldGenerationProgress,
-            () => { OnShopEntered?.Invoke(); }
+            () => {
+                OnShopEntered?.Invoke(); 
+                CharacterSelector.s.CharSelectionAndWorldGenerationComplete();
+            }
             ));
     }
 

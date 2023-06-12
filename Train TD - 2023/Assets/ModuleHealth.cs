@@ -269,7 +269,7 @@ public class ModuleHealth : MonoBehaviour, IHealth, IActiveDuringCombat, IActive
     }
 
     public bool burnResistant = false;
-    float burnReduction = 0.5f;
+    float burnReduction = 0.6f;
     public float currentBurn = 0;
     public float burnSpeed = 0;
     private float lastBurn;
@@ -428,6 +428,8 @@ public class ModuleHealth : MonoBehaviour, IHealth, IActiveDuringCombat, IActive
         var duringCombat = GetComponentsInChildren<IActiveDuringCombat>();
         
         for (int i = 0; i < duringCombat.Length; i++) { duringCombat[i].Disable(); }
+
+        burnSpeed = 0;
     }
 
     [Button]

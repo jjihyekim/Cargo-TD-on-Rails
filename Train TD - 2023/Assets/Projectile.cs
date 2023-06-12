@@ -405,7 +405,7 @@ public class Projectile : MonoBehaviour {
     }
 
     private void ContactDamage(Collision other) {
-        var health = other.gameObject.GetComponentInParent<IHealth>();
+        var health = other.collider.gameObject.GetComponentInParent<IHealth>();
         
         DealDamage(health);
         
@@ -453,7 +453,7 @@ public class Projectile : MonoBehaviour {
             return;
 
         var force = collider.transform.position - transform.position;
-        force = force.normalized * damage * hitForceMultiplier;
+        force = (damage * hitForceMultiplier/2f)*force.normalized;
         
         rigidbody.AddForceAtPosition(force, closestPoint);
     }

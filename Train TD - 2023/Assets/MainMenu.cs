@@ -2,6 +2,8 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
+using UnityEngine.UI;
 
 public class MainMenu : MonoBehaviour {
     public static MainMenu s;
@@ -79,6 +81,8 @@ public class MainMenu : MonoBehaviour {
                 Train.s.DrawTrain(profileScreenTrain);
         }
         RangeVisualizer.SetAllRangeVisualiserState(false);
+        
+        EventSystem.current.SetSelectedGameObject(ProfileUI.GetComponentInChildren<Button>().gameObject);
     }
 
     public void StartGame() {

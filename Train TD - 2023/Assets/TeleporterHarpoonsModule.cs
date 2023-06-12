@@ -220,7 +220,7 @@ public class TeleporterHarpoonsModule : MonoBehaviour
         // after teleporting state do the teleport
         if (bothHarpoons[0].activeTeleportingEffectObject != null) {
             
-            //Train.s.SwapCarts(bothHarpoons[0].target, bothHarpoons[1].target);
+            Train.s.SwapCarts(bothHarpoons[0].target, bothHarpoons[1].target);
             
 
             Instantiate(teleportingCartEndEffect, bothHarpoons[0].target.transform.position, bothHarpoons[0].target.transform.rotation);
@@ -251,7 +251,7 @@ public class TeleporterHarpoonsModule : MonoBehaviour
         if (currentHarpoon.target == null) {
             var doCount = 0;
             do {
-                //currentHarpoon.target = Train.s.carts[Random.Range(0, Train.s.carts.Count)].GetComponent<Cart>();
+                currentHarpoon.target = Train.s.carts[Random.Range(0, Train.s.carts.Count)].GetComponent<Cart>();
                 doCount += 1;
             } while (currentHarpoon.target == otherHarpoon.target && doCount < 20);
 

@@ -120,6 +120,7 @@ public class WorldMapCreator : MonoBehaviour {
 
 	public void OpenWorldMap() {
 		if (!worldMapOpen) {
+			hexGrid.gameObject.SetActive(true);
 			for (int i = 0; i < castles.Count; i++) {
 				castles[i].Refresh();
 				if (castles[i].myInfo.isPlayerHere) {
@@ -156,6 +157,7 @@ public class WorldMapCreator : MonoBehaviour {
 
 	public void ReturnToRegularMap() {
 		if (worldMapOpen) {
+			hexGrid.gameObject.SetActive(false);
 			mapText.text = "Map";
 			ShopStateController.s.SetStarterUIStatus(true);
 
@@ -239,6 +241,7 @@ public class WorldMapCreator : MonoBehaviour {
 		hexGrid.MeshCombine();
 		
 		worldMapGenerationProgress = 1;
+		hexGrid.gameObject.SetActive(false);
 	}
 
 	public LayerMask castleSnapGroundLayerMask;

@@ -55,6 +55,7 @@ public class EncounterController : MonoBehaviour {
         }
         
         StopAllCoroutines();
+        CancelInvoke();
 
         SpeedController.s.encounterOverride = false;
         EnemyWavesController.s.encounterMode = false;

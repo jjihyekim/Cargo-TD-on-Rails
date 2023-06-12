@@ -78,7 +78,7 @@ public class PlayerWorldInteractionController : MonoBehaviour {
     public Color engineBoostColor = Color.red;
 
     private void Update() {
-        if (!canSelect) {
+        if (!canSelect || Pauser.s.isPaused || PlayStateMaster.s.isLoading) {
             if (selectedCart != null)
                 SelectBuilding(selectedCart, false);
 
@@ -220,6 +220,13 @@ public class PlayerWorldInteractionController : MonoBehaviour {
                         UpgradesController.s.UpdateCargoHighlights();
                     }
 
+                    if (selectedCart.isCriticalComponent && selectedCart.myLocation != UpgradesController.CartLocation.train) {
+                        UpgradesController.s.RemoveCartFromShop(selectedCart);
+                        Train.s.AddCartAtIndex(1, selectedCart);
+                        selectedCart.GetComponent<Rigidbody>().isKinematic = true;
+                        selectedCart.GetComponent<Rigidbody>().useGravity = false;
+                    }
+
 
                     UpgradesController.s.SaveCartStateWithDelay();
                     Train.s.SaveTrainState();
@@ -264,7 +271,7 @@ public class PlayerWorldInteractionController : MonoBehaviour {
                     var snapLocation = hit.collider.gameObject.GetComponentInParent<SnapCartLocation>();
 
                     var snapLocationValidAndNew = snapLocation != null && snapLocation != currentSnapLoc;
-                    var snapLocationCanAcceptCart = !snapLocation.onlySnapCargo || selectedCart.isCargo;
+                    var snapLocationCanAcceptCart = (!snapLocation.onlySnapCargo || selectedCart.isCargo) && !selectedCart.isCriticalComponent;
                     var snapLocationEmpty = snapLocation.snapTransform.childCount == 0;
                     var canSnap = snapLocationValidAndNew && snapLocationCanAcceptCart && snapLocationEmpty;
 
@@ -308,11 +315,14 @@ public class PlayerWorldInteractionController : MonoBehaviour {
 
         bool inserted = false;
         float distance = 0;
+
+        var sourceSnapIsMarket = sourceSnapLocation != null && sourceSnapLocation.myLocation == UpgradesController.CartLocation.market;
+        
         for (int i = 0; i < carts.Count; i++) {
             var cart = carts[i];
             currentSpot += -Vector3.forward * cart.length;
 
-            if (i != 0) {
+            if (i != 0 || sourceSnapIsMarket) {
                 distance = Mathf.Abs((currentSpot.z + (cart.length / 2f)) - zPos);
                 if (currentSpot.z + (cart.length / 2f) < zPos && distance < cart.length*4) {
                     if (cart != selectedCart) {
@@ -322,6 +332,7 @@ public class PlayerWorldInteractionController : MonoBehaviour {
                             UpgradesController.s.RemoveCartFromShop(selectedCart);
                         }
 
+                        var canBeSwapped = true;
                         if (sourceSnapLocation != null && UpgradesController.s.WorldCartCount() <= 0) {
                             if (sourceSnapLocation.snapTransform.childCount > 0) {
                                 var prevCart = sourceSnapLocation.GetComponentInChildren<Cart>();
@@ -331,20 +342,30 @@ public class PlayerWorldInteractionController : MonoBehaviour {
                                 }
                             }
 
-                            if (sourceSnapLocation.myLocation == UpgradesController.CartLocation.market) {
+                            if (sourceSnapIsMarket) {
                                 var swapCart = Train.s.carts[i];
-                                Train.s.RemoveCart(swapCart);
-                                UpgradesController.s.AddCartToShop(swapCart, sourceSnapLocation.myLocation);
-                                swapCart.transform.SetParent(sourceSnapLocation.snapTransform);
-                                prevCartTrainSnapIndex = i;
+                                canBeSwapped = !swapCart.isCriticalComponent && !swapCart.isCargo && !swapCart.isMainEngine;
+                                if (canBeSwapped) {
+                                    Train.s.RemoveCart(swapCart);
+                                    UpgradesController.s.AddCartToShop(swapCart, sourceSnapLocation.myLocation);
+                                    swapCart.transform.SetParent(sourceSnapLocation.snapTransform);
+                                    prevCartTrainSnapIndex = i;
+                                } else {
+                                    i += 1;
+                                }
                             }
                         }
 
-                        Train.s.AddCartAtIndex(i, selectedCart);
+                        //if (canBeSwapped) {
+                            inserted = true;
+                            Train.s.AddCartAtIndex(i, selectedCart);
+                        //}
+                    } else {
+                        inserted = true;
                     }
 
-                    inserted = true;
-                    return true;
+                    if(inserted)
+                        return true;
                 }
             }
         }
@@ -511,16 +532,25 @@ public class PlayerWorldInteractionController : MonoBehaviour {
                 currentSelectMode = SelectMode.cart;
             
             var directControllable = hit.collider.GetComponentInParent<DirectControllable>();
+            if (SettingsController.GamepadMode() && directControllable == null) {
+                directControllable = hit.rigidbody.gameObject.GetComponentInChildren<DirectControllable>();
+            }
             if (directControllable != null) {
                 currentSelectMode = SelectMode.directControl;
             }
             
             var reloadable = hit.collider.GetComponentInParent<Reloadable>();
+            if (SettingsController.GamepadMode() && reloadable == null) {
+                reloadable = hit.rigidbody.gameObject.GetComponentInChildren<Reloadable>();
+            }
             if (reloadable != null) {
                 currentSelectMode = SelectMode.reload;
             }
             
             var engineBoostable = hit.collider.GetComponentInParent<EngineBoostable>();
+            if (SettingsController.GamepadMode() && engineBoostable == null) {
+                engineBoostable = hit.rigidbody.gameObject.GetComponentInChildren<EngineBoostable>();
+            }
             if (engineBoostable != null) {
                 currentSelectMode = SelectMode.engineBoost;
             }
@@ -540,7 +570,7 @@ public class PlayerWorldInteractionController : MonoBehaviour {
                 SelectBuilding(selectedCart, true);
 
             } else {
-                if (showDetailClick.action.WasPerformedThisFrame() /*|| (holdOverTimer > infoShowTime && !SettingsController.GamepadMode())*/) {
+                if (PlayStateMaster.s.isShopOrEndGame() && showDetailClick.action.WasPerformedThisFrame() /*|| (holdOverTimer > infoShowTime && !SettingsController.GamepadMode())*/) {
                     ShowSelectedBuildingInfo();
                 }
             }
@@ -577,10 +607,9 @@ public class PlayerWorldInteractionController : MonoBehaviour {
 
         if (isSelecting) {
             Color myColor = moveColor;
-            
-            GamepadControlsHelper.s.AddPossibleActions(GamepadControlsHelper.PossibleActions.showDetails);
-            
+
             if (PlayStateMaster.s.isShopOrEndGame()) {
+                GamepadControlsHelper.s.AddPossibleActions(GamepadControlsHelper.PossibleActions.showDetails);
                 GamepadControlsHelper.s.AddPossibleActions(GamepadControlsHelper.PossibleActions.move);
                 if (!CanDragCart(building)) {
                     myColor = cantActColor;

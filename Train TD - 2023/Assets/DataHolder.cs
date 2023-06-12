@@ -91,6 +91,8 @@ public class DataHolder : MonoBehaviour {
         }
 
         Debug.LogError($"Can't find building <{buildingName}>");
+        PlayStateMaster.s.OpenMainMenu(); // bail
+        
         return null;
     }
     

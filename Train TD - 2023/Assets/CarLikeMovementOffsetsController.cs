@@ -66,7 +66,7 @@ public class CarLikeMovementOffsetsController : MonoBehaviour{
             targetTargetPosition = new Vector3(randomInCircle.x, 0, randomInCircle.y);
         }
 
-        if (transform.position.y < -1) {
+        if (transform.position.y < 0.19f) {
             transform.position += Vector3.up*1;
             rg.velocity = Vector3.zero;
         }

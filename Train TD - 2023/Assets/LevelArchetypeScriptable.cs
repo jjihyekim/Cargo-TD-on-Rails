@@ -96,7 +96,20 @@ public class LevelArchetypeScriptable : ScriptableObject {
                 }
             }
         }
-        
+
+        try {
+            var doDebugBuggy = Random.value < 0.00001f && DataSaver.s.GetCurrentSave().tutorialProgress.firstCityTutorialDone;
+            if (doDebugBuggy) {
+                var mySegment = Random.Range(1, segmentCount); // first one is never debug buggy
+
+                if (Random.value > 0.5f) {
+                    level.mySegmentsA[mySegment] = _GenerateSegment(LevelReferences.s.debugBuggyLevel.GetData().Copy());
+                } else {
+                    level.mySegmentsB[mySegment] = _GenerateSegment(LevelReferences.s.debugBuggyLevel.GetData().Copy());
+                }
+            }
+        }catch{}
+
 
         level.levelName = name + " level " + Random.Range(100,1000);
         level.levelNiceName = name;

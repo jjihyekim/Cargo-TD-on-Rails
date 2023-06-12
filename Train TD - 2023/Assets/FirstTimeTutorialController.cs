@@ -30,6 +30,9 @@ public class FirstTimeTutorialController : MonoBehaviour {
     public void TutorialCheck() {
         tutorialUI.SetActive(false);
         ClearActiveHints();
+        
+        if (!MiniGUI_DisableTutorial.IsTutorialActive())
+            return;
 
         if (!_progress.initialCutscenePlayed && !initialCutsceneEngaged) {
             EngageInitialCutscene();
@@ -38,20 +41,6 @@ public class FirstTimeTutorialController : MonoBehaviour {
             
             leaveTheCity.SetActive(true);
             
-            emptyCart = null;
-            for (int i = 0; i < Train.s.carts.Count; i++) {
-                if (Train.s.carts[i].modulesParent.childCount == 0) {
-                    emptyCart = Train.s.carts[i];
-                    break;
-                }
-            }
-
-            if (emptyCart != null) {
-                getRidOfEmpty.SetActive(true);
-                getRidOfEmpty.GetComponent<UIElementFollowWorldTarget>().SetUp(emptyCart.uiTargetTransform);
-                emptyCartThingActive = true;
-            }
-
             hoverOverThingsToGetInfo.SetActive(true);
             
             ShowCameraControls();
@@ -66,6 +55,7 @@ public class FirstTimeTutorialController : MonoBehaviour {
         //TutorialComplete();
         DataSaver.s.GetCurrentSave().isInARun = false;
         DataSaver.s.GetCurrentSave().tutorialProgress = new DataSaver.TutorialProgress();
+        MiniGUI_DisableTutorial.SetVal(true);
         //ShopStateController.s.BackToMainMenu();
         SceneLoader.s.ForceReloadScene();
     }
@@ -236,24 +226,26 @@ public class FirstTimeTutorialController : MonoBehaviour {
 
     private void Update() {
         if (!_progress.firstCityTutorialDone) {
-            if (!_progress.cameraDone) {
-                if (CameraController.s.moveAction.action.ReadValue<Vector2>().magnitude > 0) {
-                    cameraWASDMoved = true;
-                }
-                if (Mathf.Abs(CameraController.s.zoomAction.action.ReadValue<float>()) > 0) {
-                    cameraZoomed = true;
-                }
-
-                if (cameraWASDMoved && cameraZoomed && cameraRRotated) {
-                    _progress.cameraDone = true;
-                    Invoke(nameof(DisableCameraMovesetHint), 2f);
-                }
-            }
-
             if (emptyCartThingActive) {
                 var isOnTrain = emptyCart.myLocation == UpgradesController.CartLocation.train;
                 var isLookingAtShop = !WorldMapCreator.s.worldMapOpen;
                 getRidOfEmpty.SetActive(isOnTrain && isLookingAtShop);
+            }
+        }
+        
+        if (!_progress.cameraDone) {
+            if (CameraController.s.moveAction.action.ReadValue<Vector2>().magnitude > 0||
+                CameraController.s.moveGamepadAction.action.ReadValue<Vector2>().magnitude > 0 ) {
+                cameraWASDMoved = true;
+            }
+            if (Mathf.Abs(CameraController.s.zoomAction.action.ReadValue<float>()) > 0 ||
+                Mathf.Abs(CameraController.s.zoomGamepadAction.action.ReadValue<float>()) > 0) {
+                cameraZoomed = true;
+            }
+
+            if (cameraWASDMoved && cameraZoomed && cameraRRotated) {
+                _progress.cameraDone = true;
+                Invoke(nameof(DisableCameraMovesetHint), 2f);
             }
         }
     }
@@ -271,6 +263,9 @@ public class FirstTimeTutorialController : MonoBehaviour {
         getRidOfEmpty.SetActive(false);
         leaveTheCity.SetActive(false);
         hoverOverThingsToGetInfo.SetActive(false);
+
+        if (!MiniGUI_DisableTutorial.IsTutorialActive())
+            return;
 
 
         for (int i = 0; i < Train.s.carts.Count; i++) {
@@ -309,6 +304,9 @@ public class FirstTimeTutorialController : MonoBehaviour {
     public void OnFinishCombat() {
         ClearActiveHints();
         
+        if (!MiniGUI_DisableTutorial.IsTutorialActive())
+            return;
+        
         for (int i = 0; i < Train.s.carts.Count; i++) {
             var cart = Train.s.carts[i];
             if (!_progress.deliverCargoHint && cart.GetComponentInChildren<CargoModule>()) {
@@ -339,6 +337,7 @@ public class FirstTimeTutorialController : MonoBehaviour {
     }
     
     void DisableCameraMovesetHint() {
+        _progress.cameraDone = true;
         cameraHint.SetActive(false);
     }
 
@@ -349,10 +348,9 @@ public class FirstTimeTutorialController : MonoBehaviour {
     }
     
 
-    public void StopInitialCutscene() {
-        if (initialCutsceneEngaged) {
-            tutorialUI.SetActive(false);
-            initialCutsceneEngaged = false;
-        }
+    public void RemoveAllTutorialStuff() {
+        tutorialUI.SetActive(false);
+        initialCutsceneEngaged = false;
+        ClearActiveHints();
     }
 }

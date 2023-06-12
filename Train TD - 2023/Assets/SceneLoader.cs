@@ -69,9 +69,9 @@ public class SceneLoader : MonoBehaviour {
         yield return StartCoroutine(FadeLoadingScreen(currentFadeValue,1, 0.5f));
 
         var operation = SceneManager.LoadSceneAsync(sceneReference.ScenePath, LoadSceneMode.Single);
-        while (!operation.isDone)
-        {
-            loadingProgress = Mathf.Clamp01(operation.progress / 0.9f);
+        while (!operation.isDone) {
+            loadingProgress = operation.progress;
+            loadingProgress = Mathf.Clamp(loadingProgress, 0f,1f);
             yield return null;
         }
 

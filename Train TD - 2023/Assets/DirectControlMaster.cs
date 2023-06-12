@@ -59,6 +59,8 @@ public class DirectControlMaster : MonoBehaviour {
 	public float directControlLock = 0;
 	public void AssumeDirectControl(DirectControllable source) {
 		if (!directControlInProgress && directControlLock <= 0) {
+			PlayerWorldInteractionController.s.canSelect = false;
+			
 			CameraController.s.ActivateDirectControl(source.GetDirectControlTransform());
 			directControllable = source;
 
@@ -115,6 +117,7 @@ public class DirectControlMaster : MonoBehaviour {
 
 	private void DisableDirectControl(InputAction.CallbackContext obj) {
 		if (directControlInProgress) {
+			PlayerWorldInteractionController.s.canSelect = true;
 			CameraController.s.DisableDirectControl();
 
 			if (myGun != null) {
@@ -162,7 +165,7 @@ public class DirectControlMaster : MonoBehaviour {
 
 	private bool reticleIsGreen = false;
 	private void Update() {
-		if (directControlInProgress) {
+		if (directControlInProgress && !Pauser.s.isPaused) {
 			if (directControlTrainBuilding == null || directControlTrainBuilding.isDead || myGun == null) {
 				// in case our module gets destroyed
 				DisableDirectControl();
@@ -331,7 +334,7 @@ public class DirectControlMaster : MonoBehaviour {
 	void OnShoot() {
 		//if (doShake) {
 		var range = Mathf.Clamp01(myGun.projectileDamage / 10f) ;
-		range /= 2f;
+		range /= 4f;
 		
 		//print(range);
 		if (doShake) {

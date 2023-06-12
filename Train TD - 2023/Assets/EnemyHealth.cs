@@ -36,6 +36,8 @@ public class EnemyHealth : MonoBehaviour, IHealth {
 
 	public bool rewardPowerUp = false;
 
+	public bool isComponentEnemy = false;
+
 	public void DealDamage(float damage) {
 		currentHealth -= damage;
 
@@ -109,6 +111,9 @@ public class EnemyHealth : MonoBehaviour, IHealth {
 		healthBar = Instantiate(LevelReferences.s.enemyHealthPrefab, LevelReferences.s.uiDisplayParent).GetComponent<MiniGUI_HealthBar>();
 		healthBar.SetUp(this);
 		enemySpawned += 1;
+
+		maxHealth *= 1 + WorldDifficultyController.s.currentHealthIncrease;
+		currentHealth = maxHealth;
 	}
 
 	private void OnEnable() {
@@ -156,9 +161,10 @@ public class EnemyHealth : MonoBehaviour, IHealth {
 		Destroy(aliveObject.gameObject);
 		Destroy(healthBar.gameObject);
 		
-		Instantiate(deathPrefab, pos, rot);
+		if(deathPrefab != null)
+			Instantiate(deathPrefab, pos, rot);
 		
-		if(giveRewards)
+		if(!isComponentEnemy)
 			GetComponentInParent<EnemySwarmMaker>().EnemyDeath();
 
 		Destroy(gameObject);

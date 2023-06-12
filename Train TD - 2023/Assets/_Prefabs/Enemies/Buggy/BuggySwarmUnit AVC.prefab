@@ -1128,8 +1128,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1a7eab1db79f56c47b0647f898b7c2c9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxHealth: 20
-  currentHealth: 20
+  maxHealth: 40
+  currentHealth: 40
   scrapReward: 2
   ammoReward: 0
   fuelReward: 0
@@ -1137,6 +1137,7 @@ MonoBehaviour:
   aliveObject: {fileID: 2942942886986099026}
   isAlive: 1
   uiTransform: {fileID: 2740932883121660032}
+  cartRewardTransform: {fileID: 0}
   healthBar: {fileID: 0}
   isArmored: 0
   rewardPowerUp: 0
@@ -1157,6 +1158,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   myType: 0
   targetTransform: {fileID: 3935271781729781793}
+  velocity: {x: 0, y: 0, z: 0}
 --- !u!114 &-5213072349006234106
 MonoBehaviour:
   m_ObjectHideFlags: 0

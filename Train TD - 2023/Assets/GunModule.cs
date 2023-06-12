@@ -151,7 +151,7 @@ public class GunModule : MonoBehaviour, IComponentWithTarget, IActiveDuringComba
         if (isPlayer) {
             dmgMul *= TweakablesMaster.s.myTweakables.playerDamageMultiplier;
         } else {
-            dmgMul *= TweakablesMaster.s.myTweakables.enemyDamageMutliplier;
+            dmgMul *= TweakablesMaster.s.myTweakables.enemyDamageMutliplier + WorldDifficultyController.s.currentDamageIncrease;
         }
 
         return dmgMul;
@@ -349,6 +349,7 @@ public class GunModule : MonoBehaviour, IComponentWithTarget, IActiveDuringComba
             }
         }
     }
+
 
     public void UnsetTarget() {
         this.target = null;

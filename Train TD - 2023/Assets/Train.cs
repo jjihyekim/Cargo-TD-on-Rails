@@ -419,19 +419,26 @@ public class Train : MonoBehaviour {
             Invoke(nameof(_RestartShake), 0.01f); // one frame later so that any transform changes have been applied
     }
 
-    public void SwapBuildings(/*Cart cart1, Cart cart2*/) {
-        throw new NotImplementedException();
-        /*StopShake();
+    public void SwapCarts(Cart cart1, Cart cart2) {
+        var cart1Index = carts.IndexOf(cart1);
+        var cart2Index = carts.IndexOf(cart2);
+
+        if (cart1Index > cart2Index) {
+            SwapCarts(cart2, cart1);
+            return;
+        }
+        
+        StopShake();
+        
+        RemoveCart(cart1);
+        RemoveCart(cart2);
 
         (cart1.transform.position, cart2.transform.position) = (cart2.transform.position, cart1.transform.position);
+        
+        AddCartAtIndex(cart2Index, cart1);
+        AddCartAtIndex(cart1Index, cart2);
 
-        var cart1Index = carts.IndexOf(cart1.transform);
-        var cart2Index = carts.IndexOf(cart2.transform);
-
-        carts[cart1Index] = cart2.transform;
-        carts[cart2Index] = cart1.transform;
-
-        RestartShake();*/
+        RestartShake();
     }
 
     void _RestartShake() {

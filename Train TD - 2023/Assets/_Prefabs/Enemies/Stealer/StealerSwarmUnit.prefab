@@ -296,6 +296,7 @@ MonoBehaviour:
   aliveObject: {fileID: 3038431740301894644}
   isAlive: 1
   uiTransform: {fileID: 4734297801412349416}
+  cartRewardTransform: {fileID: 0}
   healthBar: {fileID: 0}
   isArmored: 0
   rewardPowerUp: 0
@@ -316,6 +317,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   myType: 0
   targetTransform: {fileID: 3774341611181933191}
+  velocity: {x: 0, y: 0, z: 0}
 --- !u!114 &7440264286695437326
 MonoBehaviour:
   m_ObjectHideFlags: 0

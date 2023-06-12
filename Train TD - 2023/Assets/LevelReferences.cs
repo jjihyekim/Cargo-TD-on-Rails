@@ -55,6 +55,23 @@ public class LevelReferences : MonoBehaviour {
     public float speed = 1f;
 
     public static List<PossibleTarget> allTargets = new List<PossibleTarget>();
+    public static TargetValues[] allTargetValues = new TargetValues[0];
+    public static bool targetsDirty;
+    
+    public struct TargetValues {
+        public bool enabled;
+        public PossibleTarget.Type type;
+        //public float health;
+        public Vector3 position;
+        public bool avoid;
+        public TargetValues(PossibleTarget target) {
+            enabled = target.enabled;
+            type = target.myType;
+            //health = target.GetHealth();
+            position = target.targetTransform.position;
+            avoid = target.avoid;
+        }
+    }
 
     public GameObject scrapPile;
     public GameObject fuelPile;
@@ -99,6 +116,8 @@ public class LevelReferences : MonoBehaviour {
     public GameObject emptyCart;
 
     public GameObject noAmmoWarning;
+
+    public LevelSegmentScriptable debugBuggyLevel;
 
     public GameObject GetResourceParticle(ResourceTypes types) {
         switch (types) {
@@ -190,5 +209,18 @@ public class LevelReferences : MonoBehaviour {
         } else {
             pile.GetComponent<ScrapPile>().CollectPileWithTarget(customCollectTargetTransform);
         }
+    }
+
+    private void Update() {
+        if (allTargetValues.Length != allTargets.Count || targetsDirty) {
+            allTargetValues = new TargetValues[allTargets.Count];
+        }
+
+        for (int i = 0; i < allTargetValues.Length; i++) {
+            allTargetValues[i] = new TargetValues(allTargets[i]);
+            allTargets[i].myId = i;
+        }
+
+        targetsDirty = false;
     }
 }

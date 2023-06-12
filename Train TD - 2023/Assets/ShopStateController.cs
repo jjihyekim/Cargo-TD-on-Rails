@@ -20,8 +20,7 @@ public class ShopStateController : MonoBehaviour {
 
 	public GameObject starterUI;
 	public GameObject gameUI;
-	
-	
+
 	public int selectedLevelIndex = -1;
 
 	public enum CanStartLevelStatus {
@@ -157,7 +156,7 @@ public class ShopStateController : MonoBehaviour {
 				SoundscapeController.s.PlayMissionStartSound();
 				
 				if(currentLevel.isBossLevel)
-					MiniGUI_BossNameUI.s.ShowBossName(currentLevel.levelName);
+					MiniGUI_BossNameUI.s.ShowBossName(currentLevel.levelNiceName);
 			} 
 			/*} else {
 				SceneLoader.s.FinishLevel();

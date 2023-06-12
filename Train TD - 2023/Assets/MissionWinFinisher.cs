@@ -21,6 +21,8 @@ public class MissionWinFinisher : MonoBehaviour {
 	public GameObject[] gameObjectsToDisable;
 
 	public GameObject winUI;
+	public GameObject winInitialUI;
+	public GameObject winCheckoutUI;
 
 	public CameraSwitcher cameraSwitcher;
 	
@@ -76,6 +78,8 @@ public class MissionWinFinisher : MonoBehaviour {
 		
 		cameraSwitcher.Engage();
 		winUI.SetActive(true);
+		winInitialUI.SetActive(true);
+		winCheckoutUI.SetActive(false);
 
 
 		if (PlayStateMaster.s.currentLevel != null)  { // if level is null that means we are getting unclaimed rewards. hence no need to send data again.
@@ -141,7 +145,8 @@ public class MissionWinFinisher : MonoBehaviour {
 		}
 		
 		cameraSwitcher.Disengage();
-		winUI.SetActive(false);
+		winInitialUI.SetActive(false);
+		winCheckoutUI.SetActive(true);
 		
 		for (int i = 0; i < scriptsToDisable.Length; i++) {
 			scriptsToDisable[i].enabled = true;
@@ -166,6 +171,7 @@ public class MissionWinFinisher : MonoBehaviour {
 		}
 
 		isWon = false;
+		winUI.SetActive(false);
 	}
 
 	public void CleanupWhenLeavingMissionRewardArea() {

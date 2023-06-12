@@ -36,10 +36,15 @@ public class MissionLoseFinisher : MonoBehaviour {
 
         isMissionLost = true;
         PlayStateMaster.s.FinishCombat();
+
+        Time.timeScale = 0;
+        Pauser.s.isPaused = true;
         
         for (int i = 0; i < scriptsToDisable.Length; i++) {
             scriptsToDisable[i].enabled = false;
         }
+
+        PlayerWorldInteractionController.s.canSelect = false;
 		
         for (int i = 0; i < gameObjectsToDisable.Length; i++) {
             gameObjectsToDisable[i].SetActive(false);
@@ -69,8 +74,7 @@ public class MissionLoseFinisher : MonoBehaviour {
         
         MusicPlayer.s.Stop();
         DirectControlMaster.s.DisableDirectControl();
-        
-        
+
         if(SettingsController.GamepadMode())
             EventSystem.current.SetSelectedGameObject(loseContinueButton);
     }
@@ -85,7 +89,7 @@ public class MissionLoseFinisher : MonoBehaviour {
     public void BackToMenu() {
         isMissionLost = false;
         loseUI.SetActive(false);
-        MissionWinFinisher.s.ContinueToClearOutOfCombat();
+        //MissionWinFinisher.s.ContinueToClearOutOfCombat();
         DataSaver.s.GetCurrentSave().currentRun = null;
         DataSaver.s.GetCurrentSave().isInARun = false;
         DataSaver.s.SaveActiveGame();
