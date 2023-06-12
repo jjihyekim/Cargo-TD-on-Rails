@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<objects serializationModel="Studio.02.02.00">
+	<object class="ParameterPreset" id="{40226959-7d89-4924-8a5a-0d2ec4612bdb}">
+		<property name="name">
+			<value>NumOfEngagingWaves</value>
+		</property>
+		<relationship name="folder">
+			<destination>{6646dcc1-62a3-4c3e-aed8-0c2eaae38a1e}</destination>
+		</relationship>
+		<relationship name="parameter">
+			<destination>{bc092f54-3f19-41e1-bf2a-13cd4ad5b17d}</destination>
+		</relationship>
+	</object>
+	<object class="GameParameter" id="{bc092f54-3f19-41e1-bf2a-13cd4ad5b17d}">
+		<property name="parameterType">
+			<value>1</value>
+		</property>
+		<property name="maximum">
+			<value>3</value>
+		</property>
+		<property name="initialValue">
+			<value>0</value>
+		</property>
+	</object>
+</objects>

@@ -18645,7 +18645,8 @@ MonoBehaviour:
       Data4: 971584131
     Path: event:/Music/GameMusic
   pauseOnGamePause: 1
-  playOnAwake: 1
+  playOnStart: 1
+  volume: 1
 --- !u!114 &661588737
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -18661,11 +18662,11 @@ MonoBehaviour:
   speaker: {fileID: 661588736}
   gameMusicTracks:
     Guid:
-      Data1: 482004292
-      Data2: 1316269202
-      Data3: -913753173
-      Data4: 971584131
-    Path: event:/Music/GameMusic
+      Data1: -965147683
+      Data2: 1287698533
+      Data3: 287922836
+      Data4: 780140477
+    Path: event:/Music/BattleMusic
   menuMusicTracks:
     Guid:
       Data1: 1214803733
@@ -18674,6 +18675,9 @@ MonoBehaviour:
       Data4: 243352148
     Path: event:/Music/MenuMusic
   isPaused: 0
+  numOfEngagingWave: 0
+  numOfBuggy: 0
+  numOfBiker: 0
 --- !u!1 &665440663
 GameObject:
   m_ObjectHideFlags: 0
@@ -42137,19 +42141,19 @@ MonoBehaviour:
   - {fileID: 3295736480921032522, guid: f90aaae99e686cd4a803117ef511e49a, type: 3}
   - {fileID: 3295736480921032522, guid: 74e11eec2b679cc4ca2084d1fe90b999, type: 3}
   levels:
-  - {fileID: 11400000, guid: 7c8f4efe62c155e43b56816446150dfb, type: 2}
-  - {fileID: 11400000, guid: c393bb40291095e48b464e33e27d5f70, type: 2}
-  - {fileID: 11400000, guid: 30b53525c2cad324b9b1a0d5f74721ae, type: 2}
-  - {fileID: 11400000, guid: 2e6ba252936a8194290bd71d222c9888, type: 2}
-  - {fileID: 11400000, guid: a6d894180c4c0344599ffeb1bad1ea6c, type: 2}
-  - {fileID: 11400000, guid: 3197762caf9c5ba4c8dcbf4b0b650d4c, type: 2}
-  - {fileID: 11400000, guid: 5494274709734124b94f4de092f26f37, type: 2}
-  - {fileID: 11400000, guid: a01fb8147b9dd37489d7bbc5472b905d, type: 2}
-  - {fileID: 11400000, guid: 5d355632f840f6041992abb50da73eb7, type: 2}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
   - {fileID: 11400000, guid: 38490de6d7c4ad64eb55726eb400f2f4, type: 2}
   - {fileID: 11400000, guid: 2934dcbe138a9d044894315d34635c71, type: 2}
-  - {fileID: 11400000, guid: 85455ea1b6fdf8c4ba6c4ee2558f7ccb, type: 2}
-  - {fileID: 11400000, guid: cf92652e50cc41e46a04029d20b8d7c0, type: 2}
+  - {fileID: 0}
+  - {fileID: 0}
   - {fileID: 11400000, guid: a1c4466aa860fe2469a79e0d82c89854, type: 2}
   - {fileID: 11400000, guid: 265cd3cc99700d14bb8e1419f05ea8e5, type: 2}
   - {fileID: 11400000, guid: 50c616aa7de02154783b5e380a624a7f, type: 2}

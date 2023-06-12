@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<objects serializationModel="Studio.02.02.00">
+	<object class="ParameterPreset" id="{c3b4b14b-417e-4ecf-a8e9-aa11ae5f4faf}">
+		<property name="name">
+			<value>NumOfBuggy</value>
+		</property>
+		<relationship name="folder">
+			<destination>{6646dcc1-62a3-4c3e-aed8-0c2eaae38a1e}</destination>
+		</relationship>
+		<relationship name="parameter">
+			<destination>{d08c5eef-a15c-4936-8686-74b915781fe9}</destination>
+		</relationship>
+	</object>
+	<object class="GameParameter" id="{d08c5eef-a15c-4936-8686-74b915781fe9}">
+		<property name="parameterType">
+			<value>1</value>
+		</property>
+		<property name="maximum">
+			<value>3</value>
+		</property>
+		<property name="initialValue">
+			<value>0</value>
+		</property>
+	</object>
+</objects>

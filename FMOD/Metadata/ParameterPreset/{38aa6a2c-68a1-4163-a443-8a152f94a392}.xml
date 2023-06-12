@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<objects serializationModel="Studio.02.02.00">
+	<object class="ParameterPreset" id="{38aa6a2c-68a1-4163-a443-8a152f94a392}">
+		<property name="name">
+			<value>NumOfBiker</value>
+		</property>
+		<relationship name="folder">
+			<destination>{6646dcc1-62a3-4c3e-aed8-0c2eaae38a1e}</destination>
+		</relationship>
+		<relationship name="parameter">
+			<destination>{8c9c393b-4ab7-4265-820c-59b1e3a2138b}</destination>
+		</relationship>
+	</object>
+	<object class="GameParameter" id="{8c9c393b-4ab7-4265-820c-59b1e3a2138b}">
+		<property name="parameterType">
+			<value>1</value>
+		</property>
+		<property name="maximum">
+			<value>3</value>
+		</property>
+		<property name="initialValue">
+			<value>0</value>
+		</property>
+	</object>
+</objects>
