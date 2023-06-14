@@ -16,8 +16,9 @@ public class FMODMusicPlayer : MonoBehaviour
 
     private EventReference currentTracks;   // the current track that is loaded
 
-    [field: Header("Playing Status")]
+    [Header("Playing Status")]
     public bool isPaused;
+    private float targetVolume = 1;
 
     [Header("Dynamic Music")]
     public int numOfEngagingWave;
@@ -38,6 +39,7 @@ public class FMODMusicPlayer : MonoBehaviour
         enemyWaves = EnemyWavesController.s.waves;
     }
 
+    #region Track Handling
     /// <summary>
     /// Based on "isGame" parameter, load game/menu tracks, and play them automatically
     /// </summary>
@@ -67,6 +69,7 @@ public class FMODMusicPlayer : MonoBehaviour
             PlayTracks();
         }
     }
+
     public void PlayMenuMusic()
     {
         SwapMusicTracksAndPlay(false);
@@ -77,7 +80,6 @@ public class FMODMusicPlayer : MonoBehaviour
         SwapMusicTracksAndPlay(true);
     }
 
-
     /// <summary>
     /// Stop the currently-playing track. Start playing the tracks loaded in the "currentTracks" variable.
     /// </summary>
@@ -85,19 +87,54 @@ public class FMODMusicPlayer : MonoBehaviour
     {
         speaker.LoadClip(currentTracks, true);
     }
-    void PauseUnPauseOnGamePause(bool paused)
+
+    #endregion
+
+    #region Pause/Unpause Handling
+    public void PauseMusic()
     {
-        if (!paused)
-        {
-            speaker.UnPause();
-            isPaused = false;
-        }
-        else
+        if (!isPaused)
         {
             speaker.Pause();
             isPaused = true;
         }
     }
+
+    public void UnpauseMusic()
+    {
+        if (isPaused)
+        {
+            speaker.UnPause();
+            isPaused = false;
+        }
+    }
+
+    void PauseUnPauseOnGamePause(bool paused)
+    {
+        if (!paused)
+        {
+            UnpauseMusic();
+        }
+        else
+        {
+            PauseMusic();
+        }
+    }
+    #endregion
+
+    #region Temporary Volume Reduce
+    public void TemporaryVolumeReduce(float time)
+    {
+        CancelInvoke();
+        targetVolume = 0.7f;
+        Invoke("ResetVolume", time);
+    }
+
+    private void ResetVolume() 
+    {
+        targetVolume = 1;
+    }
+    #endregion
 
     private void Update()
     {
@@ -143,6 +180,6 @@ public class FMODMusicPlayer : MonoBehaviour
             }
         }
 
-        speaker.volume = Mathf.Lerp(speaker.volume, isPaused ? 0 : 1, Time.unscaledDeltaTime * 8f);
+        speaker.volume = Mathf.Lerp(speaker.volume, isPaused ? 0 : targetVolume, Time.unscaledDeltaTime * 8f);
     }
 }
