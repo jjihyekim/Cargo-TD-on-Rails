@@ -160,9 +160,11 @@ public class GunModule : MonoBehaviour, IComponentWithTarget, IActiveDuringComba
 
     private IEnumerator ActiveShootCycle;
     private bool isShooting = false;
+    public float waitTimer;
     IEnumerator ShootCycle() {
         while (true) {
-            while (!IsBarrelPointingCorrectly || !hasAmmo) {
+            while (!IsBarrelPointingCorrectly || !hasAmmo || waitTimer > 0) {
+                waitTimer -= Time.deltaTime;
                 yield return null;
             }
             
@@ -171,8 +173,8 @@ public class GunModule : MonoBehaviour, IComponentWithTarget, IActiveDuringComba
             } else {
                 break;
             }
-            
-            yield return new WaitForSeconds(GetFireDelay());
+
+            waitTimer = GetFireDelay();
         }
     }
 

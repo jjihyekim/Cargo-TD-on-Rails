@@ -9,6 +9,7 @@ public class MiniGUI_InfoCard_ExtraEffect : MonoBehaviour, IBuildingInfoCard {
     public TMP_Text myText;
 
     [ReadOnly] public IExtraInfo extraInfo;
+    [ReadOnly] public ClickableEntityInfo tooltip;
     public void SetUp(Cart building) {
         extraInfo = building.GetComponentInChildren<IExtraInfo>();
         
@@ -20,6 +21,19 @@ public class MiniGUI_InfoCard_ExtraEffect : MonoBehaviour, IBuildingInfoCard {
         }
 
         myText.text = extraInfo.GetInfoText();
+    }
+
+    public void SetUp(EnemyHealth enemy) {
+        tooltip = enemy.GetComponent<ClickableEntityInfo>();
+
+        if (tooltip == null) {
+            gameObject.SetActive(false);
+            return;
+        } else {
+            gameObject.SetActive(true);
+        }
+
+        myText.text = tooltip.GetTooltip().text;
     }
 }
 

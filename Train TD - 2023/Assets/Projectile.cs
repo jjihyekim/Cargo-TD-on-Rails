@@ -34,6 +34,7 @@ public class Projectile : MonoBehaviour {
 
     public GenericCallback onHitCallback;
 
+    public bool ballistaHitEffect = false;
     
     public enum HitType {
         Bullet, Rocket, Mortar, Laser
@@ -421,8 +422,11 @@ public class Projectile : MonoBehaviour {
             
         }else{
             if (health is ModuleHealth) {
-                hitPrefab = LevelReferences.s.metalBulletHitEffectPrefab;
-
+                if (ballistaHitEffect) {
+                    hitPrefab = LevelReferences.s.rocketExplosionEffectPrefab;
+                } else {
+                    hitPrefab = LevelReferences.s.metalBulletHitEffectPrefab;
+                }
             } else {
                 ApplyHitForceToObject(health);
 
@@ -452,7 +456,9 @@ public class Projectile : MonoBehaviour {
         if(rigidbody == null)
             return;
 
-        var force = collider.transform.position - transform.position;
+        //var force = collider.transform.position - transform.position;
+        var force = transform.forward;
+        //var force = GetComponent<Rigidbody>().velocity;
         force = (damage * hitForceMultiplier/2f)*force.normalized;
         
         rigidbody.AddForceAtPosition(force, closestPoint);

@@ -12,6 +12,7 @@ public class MiniGUI_RepairHint :MiniGUI_TutorialHint
         }
         var show = target.GetHealthModule().GetHealthPercent() < 0.25f;
         SetStatus(show);
+        
         if(show)
             FirstTimeTutorialController.s.RepairHintShown();
     }

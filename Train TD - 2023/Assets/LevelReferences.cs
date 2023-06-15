@@ -59,17 +59,17 @@ public class LevelReferences : MonoBehaviour {
     public static bool targetsDirty;
     
     public struct TargetValues {
-        public bool enabled;
         public PossibleTarget.Type type;
         //public float health;
         public Vector3 position;
         public bool avoid;
+        public bool flying;
         public TargetValues(PossibleTarget target) {
-            enabled = target.enabled;
             type = target.myType;
             //health = target.GetHealth();
             position = target.targetTransform.position;
             avoid = target.avoid;
+            flying = target.flying;
         }
     }
 
@@ -98,8 +98,10 @@ public class LevelReferences : MonoBehaviour {
     public Color rightColor = Color.white;
 
     public Sprite encounterIcon;
+    public Color encounterColor = Color.cyan;
     public Sprite smallEnemyIcon;
     public Sprite eliteEnemyIcon;
+    public Color eliteColor = Color.red;
     public Sprite bossEnemyIcon;
 
     public GameObject resourceParticleScraps;

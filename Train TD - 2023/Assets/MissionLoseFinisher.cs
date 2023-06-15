@@ -71,8 +71,8 @@ public class MissionLoseFinisher : MonoBehaviour {
         
         
         Debug.Log("Mission Lost Analytics: " + analyticsResult);
-        
-        MusicPlayer.s.Stop();
+
+        FMODMusicPlayer.s.PauseMusic();
         DirectControlMaster.s.DisableDirectControl();
 
         if(SettingsController.GamepadMode())
@@ -95,7 +95,7 @@ public class MissionLoseFinisher : MonoBehaviour {
         DataSaver.s.SaveActiveGame();
 
         // MusicPlayer.s.SwapMusicTracksAndPlay(false);
-        FMODMusicPlayer.s.SwapMusicTracksAndPlay(false);
+        //FMODMusicPlayer.s.SwapMusicTracksAndPlay(false);
 
         SceneLoader.s.ForceReloadScene();
     }

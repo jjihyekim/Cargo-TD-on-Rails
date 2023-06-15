@@ -966,6 +966,7 @@ GameObject:
   - component: {fileID: 9165746279452390608}
   - component: {fileID: 9165746279452390622}
   - component: {fileID: 9165746279452390609}
+  - component: {fileID: 2889810110383419579}
   m_Layer: 14
   m_Name: car gfx
   m_TagString: Untagged
@@ -1042,6 +1043,24 @@ MonoBehaviour:
   centerOfMass: {x: 0, y: -0.1, z: 0}
   forwardForce: 10
   stickToGround: 0
+--- !u!114 &2889810110383419579
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9165746279452390611}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5fea29bb7c508c244a1f805a5fd3fc4d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  outlineMode: 0
+  outlineColor: {r: 1, g: 1, b: 1, a: 1}
+  outlineWidth: 2
+  precomputeOutline: 0
+  bakeKeys: []
+  bakeValues: []
 --- !u!1001 &3682116699347545190
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1257,7 +1276,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 590309703709213484, guid: 531bbf658c2a02842871eeffb7e055b8, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0.27263
+      value: 0.254
       objectReference: {fileID: 0}
     - target: {fileID: 590309703709213484, guid: 531bbf658c2a02842871eeffb7e055b8, type: 3}
       propertyPath: m_LocalPosition.z

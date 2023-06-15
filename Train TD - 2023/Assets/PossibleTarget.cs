@@ -16,6 +16,7 @@ public class PossibleTarget : MonoBehaviour, IActiveDuringCombat {
     public Transform targetTransform;
 
     public bool avoid = false;
+    public bool flying = false;
     private void OnEnable() {
         if (targetTransform == null) {
             var building = GetComponent<Cart>();

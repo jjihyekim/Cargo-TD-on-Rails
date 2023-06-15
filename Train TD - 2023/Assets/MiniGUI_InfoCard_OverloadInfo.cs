@@ -19,4 +19,8 @@ public class MiniGUI_InfoCard_OverloadInfo : MonoBehaviour, IBuildingInfoCard {
             gameObject.SetActive(true);
         }
     }
+
+    public void SetUp(EnemyHealth enemy) {
+        gameObject.SetActive(false);
+    }
 }

@@ -92,6 +92,7 @@ MonoBehaviour:
   healthBar: {fileID: 0}
   isArmored: 0
   rewardPowerUp: 0
+  isComponentEnemy: 0
   currentBurn: 0
   burnSpeed: 0
   _outlines: []
@@ -107,8 +108,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 457bc320c770c7e419cae2d477ce9623, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  myId: 0
   myType: 0
   targetTransform: {fileID: 4039267019348523305}
+  avoid: 0
   velocity: {x: 0, y: 0, z: 0}
 --- !u!114 &593568044335744060
 MonoBehaviour:
@@ -148,6 +151,7 @@ GameObject:
   - component: {fileID: 2757841070207719514}
   - component: {fileID: 2757841070207719508}
   - component: {fileID: 2757841070207719515}
+  - component: {fileID: 1797511867236264021}
   m_Layer: 14
   m_Name: car gfx
   m_TagString: Untagged
@@ -222,6 +226,24 @@ MonoBehaviour:
   centerOfMass: {x: 0, y: -0.1, z: 0}
   forwardForce: 10
   stickToGround: 0
+--- !u!114 &1797511867236264021
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2757841070207719513}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5fea29bb7c508c244a1f805a5fd3fc4d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  outlineMode: 0
+  outlineColor: {r: 1, g: 1, b: 1, a: 1}
+  outlineWidth: 2
+  precomputeOutline: 0
+  bakeKeys: []
+  bakeValues: []
 --- !u!1 &2841306339864593342
 GameObject:
   m_ObjectHideFlags: 0

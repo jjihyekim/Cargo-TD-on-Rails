@@ -88,7 +88,7 @@ public class EnemyWave : MonoBehaviour, IShowOnDistanceRadar, ISpeedForEngineSou
     }
 
 
-    public float speedChangeDelta = 0.5f;
+    const float speedChangeDelta = 1f;
     public float currentSpeed = 0;
     public float targetSpeed = 0;
     public float distance;
@@ -136,7 +136,7 @@ public class EnemyWave : MonoBehaviour, IShowOnDistanceRadar, ISpeedForEngineSou
                 ToggleSlowedEffect(false);
             }
             
-            currentDistanceOffset = Mathf.MoveTowards(currentDistanceOffset, targetDistanceOffset, effectiveSpeed / 2f * Time.deltaTime);
+            currentDistanceOffset = Mathf.MoveTowards(currentDistanceOffset, targetDistanceOffset, effectiveSpeed / 10f * Time.deltaTime);
 
             targetDistChangeTimer -= Time.deltaTime;
             if (targetDistChangeTimer <= 0 && !isLeaving) {

@@ -117,9 +117,9 @@ public class LevelArchetypeScriptable : ScriptableObject {
     }
 
 
-    int firstEnemyInSegmentDistance = 50;
-    int lastEnemyAndSegmentEndDistance = 70;
-    int powerUpEnemyDistanceFromLastEnemy = 50;
+    const int firstEnemyInSegmentDistance = 50;
+    const int lastEnemyAndSegmentEndDistance = 120;
+    const int powerUpEnemyDistanceFromLastEnemy = 50;
 
     LevelSegment GenerateEncounterSegment() {
         var encounter = "e_" + possibleEncounters[Random.Range(0, possibleEncounters.Length)].gameObject.name;

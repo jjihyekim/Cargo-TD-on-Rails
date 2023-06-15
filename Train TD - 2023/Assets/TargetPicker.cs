@@ -14,6 +14,8 @@ public class TargetPicker : MonoBehaviour, IActiveDuringCombat {
     public List<PossibleTarget.Type> myPossibleTargets;
 
     private PossibleTarget mySelfTarget;
+
+    public bool canHitFlying = false;
     
     private void Start() {
         targeter = GetComponent<IComponentWithTarget>();
@@ -57,11 +59,13 @@ public class TargetPicker : MonoBehaviour, IActiveDuringCombat {
 
         for (int i = 0; i < allTargets.Length; i++) {
             if (i != myId) {
-                var canTarget = allTargets[i].enabled && (myPossibleTargets.Contains(allTargets[i].type));
+                var target = allTargets[i];
+                var canTarget = myPossibleTargets.Contains(target.type);
                 //var targetHasEnoughHealth = !doHealthCheck || (allTargets[i].health >= myDamage);
-                var targetAvoided = !allTargets[i].avoid || !doAvoidCheck;
+                var targetNotAvoided = !target.avoid || !doAvoidCheck;
+                var canHitBecauseFlying = canHitFlying || !target.flying;
 
-                if (canTarget && targetAvoided) {
+                if (canTarget && targetNotAvoided && canHitBecauseFlying) {
                     if (IsPointInsideCone(allTargets[i].position, myPosition, myForward, rotationSpan, range, out float distance)) {
                         if (distance < closestTargetDistance) {
                             closestTarget = allTargetsReal[i].targetTransform;

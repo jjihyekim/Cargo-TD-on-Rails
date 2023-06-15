@@ -28,9 +28,10 @@ public class MiniGUI_RadarUnit : MonoBehaviour {
             background.color = LevelReferences.s.rightColor;
             bottom.color = LevelReferences.s.rightColor;
         }
+        
     }
 
-    public void SetUp(Sprite _icon, float percentDistance) { // for the train or for stuff with no sides
+    public void SetUp(Sprite _icon, float percentDistance, bool isElite, bool isEncounter) { // for the train or for stuff with no sides
         percentage = percentDistance;
         icon.sprite = _icon;
         
@@ -38,6 +39,11 @@ public class MiniGUI_RadarUnit : MonoBehaviour {
         bottom.gameObject.SetActive(false);
         
         background.color = Color.white;
+
+        if (isElite)
+            background.color = LevelReferences.s.eliteColor;
+        if (isEncounter)
+            background.color = LevelReferences.s.encounterColor;
     }
 
     private void LateUpdate() {

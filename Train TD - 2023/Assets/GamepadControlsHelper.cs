@@ -31,13 +31,23 @@ public class GamepadControlsHelper : MonoBehaviour {
 
     private void Start() {
         AddActionsAlwaysAvailable();
-        PlayerWorldInteractionController.s.OnSelectBuilding.AddListener(UpdateCartButtonPromptsLocation);
+        PlayerWorldInteractionController.s.OnSelectBuilding.AddListener(UpdateButtonPromptsLocation);
+        PlayerWorldInteractionController.s.OnSelectEnemy.AddListener(UpdateButtonPromptsLocation);
         PlayerWorldInteractionController.s.OnSelectGate.AddListener(UpdateGateSelectPrompt);
     }
 
-    private void UpdateCartButtonPromptsLocation(Cart cart, bool isSelecting) {
+    private void UpdateButtonPromptsLocation(Cart cart, bool isSelecting) {
         if (isSelecting) {
             cartSelectPrompts.SetUp(cart.uiTargetTransform);
+            cartSelectPrompts.gameObject.SetActive(true);
+        } else {
+            cartSelectPrompts.gameObject.SetActive(false);
+        }
+    }
+    
+    private void UpdateButtonPromptsLocation(EnemyHealth enemy, bool isSelecting) {
+        if (isSelecting) {
+            cartSelectPrompts.SetUp(enemy.uiTransform);
             cartSelectPrompts.gameObject.SetActive(true);
         } else {
             cartSelectPrompts.gameObject.SetActive(false);

@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: _Act 1 First Level
   m_EditorClassIdentifier: 
   isBossLevel: 0
-  firstLevel: {fileID: 11400000, guid: 3a5e584208a346044947d6b5dacf58fb, type: 2}
+  firstLevel: {fileID: 11400000, guid: 5434dad4ab89251469f1b1d013fbbea5, type: 2}
   possibleLevels:
   - {fileID: 11400000, guid: af93dac2f75fbbd4d97814ea63bb7830, type: 2}
   - {fileID: 11400000, guid: 516f1eb23e7795c418146c62ae477ae9, type: 2}
@@ -27,18 +27,13 @@ MonoBehaviour:
   - enemyIdentifier:
       enemyUniqueName: BuggyPneumatic
       enemyCount: 1
-    distanceFromTrain: 30
-    firstSpawnTime: 45
+    firstSpawnTime: 4500
     spawnInterval: 45
     increaseInNumberInterval: 3
   - enemyIdentifier:
       enemyUniqueName: Biker
       enemyCount: 2
-    distanceFromTrain: 30
-    firstSpawnTime: 45
+    firstSpawnTime: 4500
     spawnInterval: 30
     increaseInNumberInterval: 3
   segmentCount: 3
-  firstEnemyInSegmentDistance: 50
-  lastEnemyAndSegmentEndDistance: 70
-  powerUpEnemyDistanceFromLastEnemy: 50

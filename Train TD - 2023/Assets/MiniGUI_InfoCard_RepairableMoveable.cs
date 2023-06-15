@@ -17,4 +17,8 @@ public class MiniGUI_InfoCard_RepairableMoveable : MonoBehaviour, IBuildingInfoC
         fragile.isOn = !building.isRepairable;
         moveable.isOn = !building.isMainEngine;
     }
+    
+    public void SetUp(EnemyHealth enemy) {
+        gameObject.SetActive(false);
+    }
 }

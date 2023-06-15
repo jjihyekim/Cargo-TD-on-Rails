@@ -51,7 +51,8 @@ public class SoundscapeController : MonoBehaviour {
     void PlayClip(AudioClip clip, float volume = 1f) {
         if (clip != null && _source != null && MusicPlayer.s != null) {
             _source.PlayOneShot(clip, volume);
-            MusicPlayer.s.TemporaryVolumeReduce(clip.length);
+            //MusicPlayer.s.TemporaryVolumeReduce(clip.length);
+            FMODMusicPlayer.s.TemporaryVolumeReduce(clip.length);
         } else {
             Debug.LogError("Tried to play empty clip!");
         }

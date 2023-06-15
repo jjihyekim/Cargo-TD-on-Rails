@@ -160,8 +160,7 @@ public class CameraController : MonoBehaviour {
     public UIElementFollowWorldTarget realLocation;
     public UIElementFollowWorldTarget velocityTrackedLocation;
     public MiniGUI_LineBetweenObjects miniGUILine;
-    
-    
+
     void ProcessVelocityPredictionAndAimAssist() {
         var targets = EnemyWavesController.s.allEnemyTargetables;
  

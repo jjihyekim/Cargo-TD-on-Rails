@@ -58,7 +58,7 @@ public class CheatsController : MonoBehaviour
             if (dontDrawMap)
                 WorldMapCreator.s.QuickStartNoWorldMap();
 
-            if (autoRestartCharacter && autoRestartWithSelectedCharacter) {
+            if (autoRestartCharacter || autoRestartWithSelectedCharacter || instantEnterPlayMode) {
                 PlayerPrefs.SetInt(MiniGUI_DisableTutorial.exposedName, 0);
             }
 

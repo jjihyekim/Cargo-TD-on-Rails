@@ -9,13 +9,13 @@ public class CarLikeMovementOffsetsController : MonoBehaviour{
     
     public Transform[] wheels;
 
-    public Vector2 randomBumpTimer = new Vector2(0.1f, 1f);
+    public Vector2 randomBumpTimer = new Vector2(0.05f, 0.7f);
     public float curTime = 1f;
-    public Vector2 randomBumpForce = new Vector2(200, 1000);
+    public Vector2 randomBumpForce = new Vector2(200, 600);
     
     public Vector2 randomSmallBumpTimer = new Vector2(0.05f, 0.2f);
     public float curSmallTime = 1f;
-    public Vector2 randomSmallBumpForce = new Vector2(50, 400);
+    public Vector2 randomSmallBumpForce = new Vector2(0, 0);
 
     public float positionDelta = 0.2f;
     public float lerpSpeed = 3f;
@@ -27,7 +27,7 @@ public class CarLikeMovementOffsetsController : MonoBehaviour{
     
     public Vector3 centerOfMass  = new Vector3(0, -0.1f, 0);
 
-    public float forwardForce = 100f;
+    public float forwardForce = 10;
 
     private Rigidbody rg;
     

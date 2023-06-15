@@ -18,6 +18,8 @@ public class PlayerWorldInteractionController : MonoBehaviour {
     private void OnDestroy() {
         s = null;
     }
+
+    public EnemyHealth selectedEnemy;
     
     public Cart selectedCart;
     public Vector3 cartBasePos;
@@ -79,20 +81,19 @@ public class PlayerWorldInteractionController : MonoBehaviour {
 
     private void Update() {
         if (!canSelect || Pauser.s.isPaused || PlayStateMaster.s.isLoading) {
-            if (selectedCart != null)
-                SelectBuilding(selectedCart, false);
-
+            Deselect();
             return;
         }
 
         if (DirectControlMaster.s.directControlInProgress) {
-            if (selectedCart != null)
-                SelectBuilding(selectedCart, false);
+            Deselect();
             return;
         }
 
         if (!isDragStarted && !infoCard.isActiveAndEnabled) {
             CastRayToOutlineCart();
+            if(PlayStateMaster.s.isCombatInProgress())
+                CastRayToOutlineEnemy();
         }
 
         if (PlayStateMaster.s.isCombatInProgress()) {
@@ -108,8 +109,12 @@ public class PlayerWorldInteractionController : MonoBehaviour {
         GamepadControlsHelper.s.RemovePossibleAction(GamepadControlsHelper.PossibleActions.clickGate);
     }
 
+    public void OnFinishCombat() {
+        Deselect();
+    }
+
     public void OnEnterShopScreen() {
-        SelectBuilding(null, false);
+        Deselect();
     }
 
 
@@ -133,7 +138,7 @@ public class PlayerWorldInteractionController : MonoBehaviour {
             }
 
             if (clickCart.action.WasPressedThisFrame() || clickGate.action.WasPressedThisFrame()) {
-                HideBuildingInfo();
+                HideInfo();
                 clickedOnGate = true;
             }
 
@@ -166,7 +171,7 @@ public class PlayerWorldInteractionController : MonoBehaviour {
     void CheckAndDoDrag() {
         if (selectedCart != null) {
             if (clickCart.action.WasPressedThisFrame() || moveCart.action.WasPressedThisFrame()) {
-                HideBuildingInfo();
+                HideInfo();
                 if (CanDragCart(selectedCart)) {
                     currentSnapLoc = null;
                     isSnapping = false;
@@ -428,7 +433,7 @@ public class PlayerWorldInteractionController : MonoBehaviour {
     void CheckAndDoClick() {
         if (selectedCart != null) {
             if (clickCart.action.WasPerformedThisFrame()) {
-                HideBuildingInfo();
+                HideInfo();
                 switch (currentSelectMode) {
                     case SelectMode.cart:
                         selectedCart.GetHealthModule().Repair(repairAmountPerClick);
@@ -446,7 +451,7 @@ public class PlayerWorldInteractionController : MonoBehaviour {
             }
             
             if (repairCart.action.WasPerformedThisFrame()) {
-                HideBuildingInfo();
+                HideInfo();
                 var health = selectedCart.GetHealthModule();
                 if (health != null) {
                     health.Repair(repairAmountPerClick);
@@ -454,7 +459,7 @@ public class PlayerWorldInteractionController : MonoBehaviour {
             }
 
             if (reloadCart.action.WasPerformedThisFrame()) {
-                HideBuildingInfo();
+                HideInfo();
                 var ammo = selectedCart.GetComponentInChildren<ModuleAmmo>();
                 if (ammo != null) {
                     ammo.Reload(reloadAmountPerClick);
@@ -462,7 +467,7 @@ public class PlayerWorldInteractionController : MonoBehaviour {
             }
             
             if (directControlCart.action.WasPerformedThisFrame()) {
-                HideBuildingInfo();
+                HideInfo();
                 var directControllable = selectedCart.GetComponentInChildren<DirectControllable>();
                 if (directControllable != null) {
                     DirectControlMaster.s.AssumeDirectControl(directControllable);
@@ -470,11 +475,16 @@ public class PlayerWorldInteractionController : MonoBehaviour {
             }
             
             if (engineBoost.action.WasPerformedThisFrame()) {
-                HideBuildingInfo();
+                HideInfo();
                 var engineBoostable = selectedCart.GetComponentInChildren<EngineBoostable>();
                 if (engineBoostable != null) {
                     SpeedController.s.ActivateBoost();
                 }
+            }
+        }else if (selectedEnemy != null) {
+            if (clickCart.action.WasPerformedThisFrame() || repairCart.action.WasPerformedThisFrame() || reloadCart.action.WasPerformedThisFrame() ||
+                directControlCart.action.WasPerformedThisFrame() || engineBoost.action.WasPerformedThisFrame()) {
+                HideInfo();
             }
         }
     }
@@ -562,45 +572,98 @@ public class PlayerWorldInteractionController : MonoBehaviour {
             }
             
             if (cart != selectedCart || lastSelectMode != currentSelectMode) {
-                if (selectedCart != null)
-                    SelectBuilding(selectedCart, false);
-                
-                selectedCart = cart;
-
-                SelectBuilding(selectedCart, true);
+                SelectBuilding(cart, true);
 
             } else {
                 if (PlayStateMaster.s.isShopOrEndGame() && showDetailClick.action.WasPerformedThisFrame() /*|| (holdOverTimer > infoShowTime && !SettingsController.GamepadMode())*/) {
-                    ShowSelectedBuildingInfo();
+                    ShowSelectedThingInfo();
                 }
             }
 
         } else {
-            if (selectedCart != null) {
-                SelectBuilding(selectedCart, false);
-                selectedCart = null;
+            if(selectedCart != null)
+                Deselect();
+        }
+    }
+    
+    void CastRayToOutlineEnemy() {
+        RaycastHit hit;
+        Ray ray = GetRay();
+
+        if (Physics.SphereCast(ray, GetSphereCastRadius(), out hit, 100f, LevelReferences.s.enemyLayer)) {
+            var enemy = hit.collider.GetComponentInParent<EnemyHealth>();
+            if (enemy != selectedEnemy) {
+                SelectEnemy(enemy, true);
+            } else {
+                if (showDetailClick.action.WasPerformedThisFrame() /*|| (holdOverTimer > infoShowTime && !SettingsController.GamepadMode())*/) {
+                    ShowSelectedThingInfo();
+                }
             }
+
+        } else {
+            if(selectedEnemy != null)
+                Deselect();
         }
     }
     
     
 
-    void ShowSelectedBuildingInfo() {
+    void ShowSelectedThingInfo() {
         if (!infoCard.isActiveAndEnabled) {
-            infoCard.SetUp(selectedCart);
+            if(selectedCart != null)
+                infoCard.SetUp(selectedCart);
+            else if (selectedEnemy != null)
+                infoCard.SetUp(selectedEnemy);
         }
     }
 
-    void HideBuildingInfo() {
+    void HideInfo() {
         infoCard.Hide();
+    }
+
+    void Deselect() {
+        if (selectedCart != null) {
+            var cart = selectedCart;
+            selectedCart = null;
+            SelectBuilding(cart, false);
+        }
+
+        if (selectedEnemy != null) {
+            var enemy = selectedEnemy;
+            selectedEnemy = null;
+            SelectEnemy(enemy, false);
+        }
+        HideInfo();
+    }
+
+    void SelectEnemy(EnemyHealth enemy, bool isSelecting) {
+        Deselect();
+
+        Outline outline = null;
+        if(enemy != null)
+            outline = enemy.GetComponentInChildren<Outline>();
+        
+        if (isSelecting) {
+            GamepadControlsHelper.s.AddPossibleActions(GamepadControlsHelper.PossibleActions.showDetails);
+            selectedEnemy = enemy;
+        } else {
+            GamepadControlsHelper.s.RemovePossibleAction(GamepadControlsHelper.PossibleActions.showDetails);
+        }
+
+        if (enemy != null) {
+            outline.enabled = isSelecting;
+        }
+
+        OnSelectEnemy?.Invoke(enemy, isSelecting);
     }
 
 
     [HideInInspector]
     public UnityEvent<Cart, bool> OnSelectBuilding = new UnityEvent<Cart, bool>();
+    public UnityEvent<EnemyHealth, bool> OnSelectEnemy = new UnityEvent<EnemyHealth, bool>();
     public UnityEvent<GateScript, bool> OnSelectGate = new UnityEvent<GateScript, bool>();
     void SelectBuilding(Cart building, bool isSelecting) {
-        HideBuildingInfo();
+        Deselect();
         Outline outline = null;
         if(building != null)
             outline = building.GetComponentInChildren<Outline>();
@@ -645,6 +708,7 @@ public class PlayerWorldInteractionController : MonoBehaviour {
             }
 
             outline.OutlineColor = myColor;
+            selectedCart = building;
         } else {
             GamepadControlsHelper.s.RemovePossibleAction(GamepadControlsHelper.PossibleActions.move);
             GamepadControlsHelper.s.RemovePossibleAction(GamepadControlsHelper.PossibleActions.repair);
@@ -661,6 +725,7 @@ public class PlayerWorldInteractionController : MonoBehaviour {
             for (int i = 0; i < ranges.Length; i++) {
                 ranges[i].ChangeVisualizerEdgeShowState(isSelecting);
             }
+
         }
 
         OnSelectBuilding?.Invoke(building, isSelecting);

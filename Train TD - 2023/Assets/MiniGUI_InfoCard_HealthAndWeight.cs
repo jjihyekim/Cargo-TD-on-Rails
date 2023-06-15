@@ -10,7 +10,9 @@ public class MiniGUI_InfoCard_HealthAndWeight : MonoBehaviour, IBuildingInfoCard
     public TMP_Text health;
     public TMP_Text weight;
 
+    public bool enemyMode = false;
     [ReadOnly] public ModuleHealth healthModule;
+    [ReadOnly] public EnemyHealth enemyHealth;
     public void SetUp(Cart building) {
 	    healthModule = building.GetComponentInChildren<ModuleHealth>();
         
@@ -23,10 +25,24 @@ public class MiniGUI_InfoCard_HealthAndWeight : MonoBehaviour, IBuildingInfoCard
         
         Update();
 
+        weight.gameObject.SetActive(true);
         weight.text = $"Weight: {building.weight}";
+        enemyMode = false;
     }
-    
+
+    public void SetUp(EnemyHealth enemy) {
+        enemyHealth = enemy;
+        
+        weight.gameObject.SetActive(false);
+        enemyMode = true;
+        Update();
+    }
+
     private void Update() {
-        health.text = $"Health: {healthModule.currentHealth}/{healthModule.maxHealth}";
+        if (!enemyMode) {
+            health.text = $"Health: {healthModule.currentHealth}/{healthModule.maxHealth}";
+        } else {
+            health.text = $"Health: {enemyHealth.currentHealth}/{enemyHealth.maxHealth}";
+        }
     }
 }
