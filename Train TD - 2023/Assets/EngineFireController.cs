@@ -78,6 +78,9 @@ public class EngineFireController : MonoBehaviour {
 			    lastSpeedTier = speedTier;
 		    }
 	    }
+
+		// for FMOD
+		UpdateLocomotiveSound();
     }
 
     IEnumerator ChangeSpeedSound(AudioClip target) {
@@ -146,4 +149,15 @@ public class EngineFireController : MonoBehaviour {
     public void ActivateEngineFire() {
 	    fireActive = true;
     }
+
+	[Header("FMOD Engine Sound")]
+	// FMOD locmotive sound
+	public FMODAudioSource speaker;
+
+	void UpdateLocomotiveSound()
+	{
+        speaker.SetParamByName("LocomotiveSpeed", LevelReferences.s.speed * 0.1f);
+
+		speaker.volume = Mathf.Lerp(speaker.volume, FMODMusicPlayer.s.numOfEngagingWave == 0 ? 1 : 0, Time.unscaledDeltaTime * 3);
+	}
 }
