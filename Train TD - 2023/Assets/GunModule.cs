@@ -35,6 +35,7 @@ public class GunModule : MonoBehaviour, IComponentWithTarget, IActiveDuringComba
     public float GetFireBarrageDelay() { return fireBarrageDelay * GetAttackSpeedMultiplier();}
     public float projectileDamage = 2f; // dont use this
     public float damageMultiplier = 1f;
+    public float artifactDamageMultiplier = 1f;
     public bool dontGetAffectByMultipliers = false;
 
     public float GetDamage() {
@@ -146,7 +147,7 @@ public class GunModule : MonoBehaviour, IComponentWithTarget, IActiveDuringComba
     }
 
     float GetDamageMultiplier() {
-        var dmgMul = damageMultiplier;
+        var dmgMul = damageMultiplier * artifactDamageMultiplier;
         
         if (isPlayer) {
             dmgMul *= TweakablesMaster.s.myTweakables.playerDamageMultiplier;

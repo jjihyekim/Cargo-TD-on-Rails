@@ -111,6 +111,8 @@ public class Train : MonoBehaviour {
         for (int i = 0; i < carts.Count; i++) {
             carts[i].SetAttachedToTrainModulesMode(true);
         }
+        
+        ArtifactsController.s.OnArmArtifacts();
 
         trainUpdatedThroughNonBuildingActions?.Invoke();
         trainUpdated?.Invoke();
@@ -354,9 +356,11 @@ public class Train : MonoBehaviour {
         }
     }
 
-
+    
     public void RemoveCart(Cart cart) {
         trainWeightDirty = true;
+        
+        ArtifactsController.s.OnDisarmArtifacts();
         
         for (int i = 0; i < carts.Count; i++) {
             carts[i].SetAttachedToTrainModulesMode(false);
@@ -373,6 +377,8 @@ public class Train : MonoBehaviour {
         for (int i = 0; i < carts.Count; i++) {
             carts[i].SetAttachedToTrainModulesMode(true);
         }
+        
+        ArtifactsController.s.OnArmArtifacts();
     }
 
     public void AddCartAtIndex(int index, Cart cart) {
@@ -382,6 +388,8 @@ public class Train : MonoBehaviour {
         if (wasShaking) {
             StopShake();
         }
+        
+        ArtifactsController.s.OnDisarmArtifacts();
         
         for (int i = 0; i < carts.Count; i++) {
             carts[i].SetAttachedToTrainModulesMode(false);
@@ -398,6 +406,8 @@ public class Train : MonoBehaviour {
         for (int i = 0; i < carts.Count; i++) {
             carts[i].SetAttachedToTrainModulesMode(true);
         }
+        
+        ArtifactsController.s.OnArmArtifacts();
 
         if (wasShaking) {
             RestartShake();
@@ -747,3 +757,4 @@ public abstract class ActivateWhenAttachedToTrain : MonoBehaviour {
         DeleteAllAttachments();
     }
 }
+

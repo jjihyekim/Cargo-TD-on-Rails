@@ -1,0 +1,77 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a0c4fe353d996bd4ba6e61968d6269fe, type: 3}
+  m_Name: le Cheater full
+  m_EditorClassIdentifier: 
+  myCharacter:
+    uniqueName: Le Cheater
+    description: For when you wanna test out all the guns.
+    starterTrain:
+      myCarts:
+      - uniqueName: engine_nuclear
+        cargoState:
+          cargoReward: 
+          isLeftCargo: 0
+      - uniqueName: cargo_mystery
+        cargoState:
+          cargoReward: 
+          isLeftCargo: 0
+      - uniqueName: top_gatling
+        cargoState:
+          cargoReward: 
+          isLeftCargo: 0
+      - uniqueName: damageboost
+        cargoState:
+          cargoReward: 
+          isLeftCargo: 0
+      - uniqueName: side_gatling
+        cargoState:
+          cargoReward: 
+          isLeftCargo: 0
+      - uniqueName: ammoboost
+        cargoState:
+          cargoReward: 
+          isLeftCargo: 0
+      - uniqueName: side_pneumatic
+        cargoState:
+          cargoReward: 
+          isLeftCargo: 0
+      - uniqueName: top_rockets
+        cargoState:
+          cargoReward: 
+          isLeftCargo: 0
+      - uniqueName: side_rockets
+        cargoState:
+          cargoReward: 
+          isLeftCargo: 0
+      - uniqueName: side_lazer
+        cargoState:
+          cargoReward: 
+          isLeftCargo: 0
+      - uniqueName: roborepair
+        cargoState:
+          cargoReward: 
+          isLeftCargo: 0
+      - uniqueName: barricade
+        cargoState:
+          cargoReward: 
+          isLeftCargo: 0
+      - uniqueName: top_flame
+        cargoState:
+          cargoReward: 
+          isLeftCargo: 0
+      - uniqueName: miniEngine
+        cargoState:
+          cargoReward: 
+          isLeftCargo: 0
+    starterResources:
+      scraps: 0

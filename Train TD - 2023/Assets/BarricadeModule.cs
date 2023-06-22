@@ -17,14 +17,16 @@ public class BarricadeModule : ActivateWhenAttachedToTrain, IExtraInfo
         ApplyBoost(Train.s.GetNextBuilding(true, GetComponentInParent<Cart>()), true);
         ApplyBoost(Train.s.GetNextBuilding(false, GetComponentInParent<Cart>()), true);
     }
-
+    
     protected override bool CanApply(Cart target) {
         var health = target.GetComponentInChildren<ModuleHealth>();
-        return health != null;
+        var barricade = target.GetComponentInChildren<BarricadeModule>();
+        return health != null && barricade == null;
     }
 
     protected override void _ApplyBoost(Cart target, bool doApply) {
         var health = target.GetComponentInChildren<ModuleHealth>();
+
         if (doApply) {
             health.damageDefenders.Add(ProtectFromDamage);
             health.burnDefenders.Add(ProtectFromBurn);
