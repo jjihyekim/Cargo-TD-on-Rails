@@ -20,6 +20,7 @@ public class PlayerWorldInteractionController : MonoBehaviour {
     }
 
     public EnemyHealth selectedEnemy;
+    public Artifact selectedArtifact;
     
     public Cart selectedCart;
     public Vector3 cartBasePos;
@@ -38,7 +39,19 @@ public class PlayerWorldInteractionController : MonoBehaviour {
     public InputActionReference engineBoost;
 
 
-    public bool canSelect = true;
+    [SerializeField]
+    private bool _canSelect;
+    public bool canSelect {
+        get {
+            return _canSelect;
+        }
+        set {
+            _canSelect = value;
+        }
+}
+
+    public bool canRepair = true;
+    public bool canReload = true;
     
     protected void OnEnable()
     {
@@ -89,11 +102,19 @@ public class PlayerWorldInteractionController : MonoBehaviour {
             Deselect();
             return;
         }
+        
+        if (infoCardActive) {
+            if (showDetailClick.action.WasPerformedThisFrame() || clickCart.action.WasPerformedThisFrame()) {
+                HideInfo();
+            }
+        }
 
-        if (!isDragStarted && !infoCard.isActiveAndEnabled) {
+        if (!isDragStarted && !infoCardActive) {
             CastRayToOutlineCart();
             if(PlayStateMaster.s.isCombatInProgress())
                 CastRayToOutlineEnemy();
+            else
+                CastRayToOutlineArtifact();
         }
 
         if (PlayStateMaster.s.isCombatInProgress()) {
@@ -225,7 +246,7 @@ public class PlayerWorldInteractionController : MonoBehaviour {
                         UpgradesController.s.UpdateCargoHighlights();
                     }
 
-                    if (selectedCart.isCriticalComponent && selectedCart.myLocation != UpgradesController.CartLocation.train) {
+                    if (selectedCart.isMysteriousCart && selectedCart.myLocation != UpgradesController.CartLocation.train) {
                         UpgradesController.s.RemoveCartFromShop(selectedCart);
                         Train.s.AddCartAtIndex(1, selectedCart);
                         selectedCart.GetComponent<Rigidbody>().isKinematic = true;
@@ -233,11 +254,20 @@ public class PlayerWorldInteractionController : MonoBehaviour {
                     }
 
 
-                    UpgradesController.s.SaveCartStateWithDelay();
-                    Train.s.SaveTrainState();
+                    if (PlayStateMaster.s.isShop()) {
+                        UpgradesController.s.SaveCartStateWithDelay();
+                        Train.s.SaveTrainState();
+                    }
                 }
             }
-            
+        }
+
+
+        if (selectedArtifact != null) {
+            if (clickCart.action.WasPerformedThisFrame()) {
+                selectedArtifact.EquipArtifact();
+                Deselect();
+            }
         }
         
         UpdateTrainCartPositionsSlowly();
@@ -276,7 +306,7 @@ public class PlayerWorldInteractionController : MonoBehaviour {
                     var snapLocation = hit.collider.gameObject.GetComponentInParent<SnapCartLocation>();
 
                     var snapLocationValidAndNew = snapLocation != null && snapLocation != currentSnapLoc;
-                    var snapLocationCanAcceptCart = (!snapLocation.onlySnapCargo || selectedCart.isCargo) && !selectedCart.isCriticalComponent;
+                    var snapLocationCanAcceptCart = (!snapLocation.onlySnapCargo || selectedCart.isCargo) && !selectedCart.isMysteriousCart;
                     var snapLocationEmpty = snapLocation.snapTransform.childCount == 0;
                     var canSnap = snapLocationValidAndNew && snapLocationCanAcceptCart && snapLocationEmpty;
 
@@ -349,7 +379,7 @@ public class PlayerWorldInteractionController : MonoBehaviour {
 
                             if (sourceSnapIsMarket) {
                                 var swapCart = Train.s.carts[i];
-                                canBeSwapped = !swapCart.isCriticalComponent && !swapCart.isCargo && !swapCart.isMainEngine;
+                                canBeSwapped = !swapCart.isMysteriousCart && !swapCart.isCargo && !swapCart.isMainEngine;
                                 if (canBeSwapped) {
                                     Train.s.RemoveCart(swapCart);
                                     UpgradesController.s.AddCartToShop(swapCart, sourceSnapLocation.myLocation);
@@ -450,7 +480,7 @@ public class PlayerWorldInteractionController : MonoBehaviour {
                 }
             }
             
-            if (repairCart.action.WasPerformedThisFrame()) {
+            if (repairCart.action.WasPerformedThisFrame() && canRepair) {
                 HideInfo();
                 var health = selectedCart.GetHealthModule();
                 if (health != null) {
@@ -458,7 +488,7 @@ public class PlayerWorldInteractionController : MonoBehaviour {
                 }
             }
 
-            if (reloadCart.action.WasPerformedThisFrame()) {
+            if (reloadCart.action.WasPerformedThisFrame() && canReload) {
                 HideInfo();
                 var ammo = selectedCart.GetComponentInChildren<ModuleAmmo>();
                 if (ammo != null) {
@@ -482,8 +512,7 @@ public class PlayerWorldInteractionController : MonoBehaviour {
                 }
             }
         }else if (selectedEnemy != null) {
-            if (clickCart.action.WasPerformedThisFrame() || repairCart.action.WasPerformedThisFrame() || reloadCart.action.WasPerformedThisFrame() ||
-                directControlCart.action.WasPerformedThisFrame() || engineBoost.action.WasPerformedThisFrame()) {
+            if (clickCart.action.WasPerformedThisFrame()) {
                 HideInfo();
             }
         }
@@ -538,7 +567,7 @@ public class PlayerWorldInteractionController : MonoBehaviour {
             var lastSelectMode = currentSelectMode;
             currentSelectMode = SelectMode.emptyCart;
             
-            if(hit.collider.GetComponentInParent<ModuleHealth>())
+            if(hit.collider.GetComponentInParent<ModuleHealth>() && canRepair)
                 currentSelectMode = SelectMode.cart;
             
             var directControllable = hit.collider.GetComponentInParent<DirectControllable>();
@@ -553,7 +582,7 @@ public class PlayerWorldInteractionController : MonoBehaviour {
             if (SettingsController.GamepadMode() && reloadable == null) {
                 reloadable = hit.rigidbody.gameObject.GetComponentInChildren<Reloadable>();
             }
-            if (reloadable != null) {
+            if (reloadable != null && canReload) {
                 currentSelectMode = SelectMode.reload;
             }
             
@@ -607,17 +636,43 @@ public class PlayerWorldInteractionController : MonoBehaviour {
     }
     
     
+    void CastRayToOutlineArtifact() {
+        RaycastHit hit;
+        Ray ray = GetRay();
 
+        if (Physics.SphereCast(ray, GetSphereCastRadius(), out hit, 100f, LevelReferences.s.artifactLayer)) {
+            var artifact = hit.collider.GetComponentInParent<Artifact>();
+            if (artifact != selectedArtifact) {
+                SelectArtifact(artifact, true);
+            } else {
+                if (showDetailClick.action.WasPerformedThisFrame() /*|| (holdOverTimer > infoShowTime && !SettingsController.GamepadMode())*/) {
+                    ShowSelectedThingInfo();
+                }
+            }
+        } else {
+            if(selectedArtifact != null)
+                Deselect();
+        }
+    }
+
+
+    private bool infoCardActive = false;
     void ShowSelectedThingInfo() {
-        if (!infoCard.isActiveAndEnabled) {
+        if (!infoCardActive) {
+            infoCardActive = true;
             if(selectedCart != null)
                 infoCard.SetUp(selectedCart);
             else if (selectedEnemy != null)
                 infoCard.SetUp(selectedEnemy);
-        }
+            else if (selectedArtifact != null)
+                infoCard.SetUp(selectedArtifact);
+            else
+                infoCardActive = false;
+        } 
     }
 
     void HideInfo() {
+        infoCardActive = false;
         infoCard.Hide();
     }
 
@@ -633,6 +688,13 @@ public class PlayerWorldInteractionController : MonoBehaviour {
             selectedEnemy = null;
             SelectEnemy(enemy, false);
         }
+        
+        if (selectedArtifact != null) {
+            var artifact = selectedArtifact;
+            selectedArtifact = null;
+            SelectArtifact(artifact, false);
+        }
+        
         HideInfo();
     }
 
@@ -656,11 +718,35 @@ public class PlayerWorldInteractionController : MonoBehaviour {
 
         OnSelectEnemy?.Invoke(enemy, isSelecting);
     }
+    
+    void SelectArtifact(Artifact artifact, bool isSelecting) {
+        Deselect();
+
+        Outline outline = null;
+        if(artifact != null)
+            outline = artifact.GetComponentInChildren<Outline>();
+        
+        if (isSelecting) {
+            GamepadControlsHelper.s.AddPossibleActions(GamepadControlsHelper.PossibleActions.equipArtifact);
+            GamepadControlsHelper.s.AddPossibleActions(GamepadControlsHelper.PossibleActions.showDetails);
+            selectedArtifact = artifact;
+        } else {
+            GamepadControlsHelper.s.AddPossibleActions(GamepadControlsHelper.PossibleActions.equipArtifact);
+            GamepadControlsHelper.s.RemovePossibleAction(GamepadControlsHelper.PossibleActions.showDetails);
+        }
+
+        if (outline != null) {
+            outline.enabled = isSelecting;
+        }
+
+        OnSelectArtifact?.Invoke(artifact, isSelecting);
+    }
 
 
     [HideInInspector]
     public UnityEvent<Cart, bool> OnSelectBuilding = new UnityEvent<Cart, bool>();
     public UnityEvent<EnemyHealth, bool> OnSelectEnemy = new UnityEvent<EnemyHealth, bool>();
+    public UnityEvent<Artifact, bool> OnSelectArtifact = new UnityEvent<Artifact, bool>();
     public UnityEvent<GateScript, bool> OnSelectGate = new UnityEvent<GateScript, bool>();
     void SelectBuilding(Cart building, bool isSelecting) {
         Deselect();

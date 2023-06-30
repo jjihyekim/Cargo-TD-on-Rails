@@ -82,7 +82,8 @@ public class MainMenu : MonoBehaviour {
         }
         RangeVisualizer.SetAllRangeVisualiserState(false);
         
-        EventSystem.current.SetSelectedGameObject(ProfileUI.GetComponentInChildren<Button>().gameObject);
+        if(SettingsController.GamepadMode())
+            EventSystem.current.SetSelectedGameObject(ProfileUI.GetComponentInChildren<Button>().gameObject);
     }
 
     public void StartGame() {

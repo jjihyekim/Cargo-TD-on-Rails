@@ -45,8 +45,6 @@ public class EnemyWavesController : MonoBehaviour {
 		curDynamicSpawn.curTime = curDynamicSpawn.firstSpawnTime;
 	}
 
-	public Queue<PowerUpScriptable> powerUpScriptables = new Queue<PowerUpScriptable>();
-
 	public void SpawnEnemiesOnSegment(float segmentStartDistance, LevelSegment segment) {
 		if (debugNoRegularSpawns)
 			return;
@@ -56,16 +54,15 @@ public class EnemyWavesController : MonoBehaviour {
 		if (enemiesInitialized) {
 			var enemiesOnPath = segment.enemiesOnPath;
 			for (int i = 0; i < enemiesOnPath.Length; i++) {
-				PowerUpScriptable powerUpScriptable = null;
+				Artifact artifact = null;
 				if (enemiesOnPath[i].hasReward) {
-					powerUpScriptable = DataHolder.s.GetPowerUp(segment.powerUpRewardUniqueName);
-					powerUpScriptables.Enqueue(powerUpScriptable);
+					artifact = DataHolder.s.GetArtifact(segment.artifactRewardUniqueName);
 				}
 
 				SpawnEnemy(enemiesOnPath[i].enemyIdentifier,
 					segmentStartDistance + enemiesOnPath[i].distanceOnPath,
 					false, enemiesOnPath[i].isLeft,
-					powerUpScriptable);
+					artifact);
 			}
 		}
 	}
@@ -82,11 +79,11 @@ public class EnemyWavesController : MonoBehaviour {
 
 	public int maxConcurrentWaves = 6;
 
-	void SpawnEnemy(EnemyIdentifier enemyIdentifier, float distance, bool startMoving, bool isLeft, PowerUpScriptable powerUp = null) {
+	void SpawnEnemy(EnemyIdentifier enemyIdentifier, float distance, bool startMoving, bool isLeft, Artifact artifact = null) {
 		var playerDistance = SpeedController.s.currentDistance;
 		var wave = Instantiate(enemyWavePrefab, Vector3.forward * (distance - playerDistance), Quaternion.identity).GetComponent<EnemyWave>();
 		wave.transform.SetParent(transform);
-		wave.SetUp(enemyIdentifier, distance, startMoving, isLeft, powerUp);
+		wave.SetUp(enemyIdentifier, distance, startMoving, isLeft, artifact);
 		waves.Add(wave);
 		UpdateEnemyTargetables();
 		OnEnemyWaveSpawn.Invoke(enemyIdentifier);
@@ -96,16 +93,15 @@ public class EnemyWavesController : MonoBehaviour {
 		var segment = ambush;
 		var enemiesOnPath = segment.enemiesOnPath;
 		for (int i = 0; i < enemiesOnPath.Length; i++) {
-			PowerUpScriptable powerUpScriptable = null;
+			Artifact artifact = null;
 			if (enemiesOnPath[i].hasReward) {
-				powerUpScriptable = DataHolder.s.GetPowerUp(segment.powerUpRewardUniqueName);
-				powerUpScriptables.Enqueue(powerUpScriptable);
+				artifact = DataHolder.s.GetArtifact(segment.artifactRewardUniqueName);
 			}
 
 			SpawnEnemy(enemiesOnPath[i].enemyIdentifier,
 				SpeedController.s.currentDistance + enemiesOnPath[i].distanceOnPath,
 				true, enemiesOnPath[i].isLeft,
-				powerUpScriptable);
+				artifact);
 		}
 	}
 
@@ -176,6 +172,5 @@ public class EnemyWavesController : MonoBehaviour {
 		pursuerTimerObject.gameObject.SetActive(false);
 		transform.DeleteAllChildren();
 		enemiesInitialized = false;
-		powerUpScriptables.Clear();
 	}
 }

@@ -10,13 +10,13 @@ public class Cart : MonoBehaviour {
     public UpgradesController.CartRarity myRarity;
     
     public bool isMainEngine = false;
-    public bool isCriticalComponent = false;
+    public bool isMysteriousCart = false;
     public bool isCargo = false;
 
     public int trainIndex;
 
-    public bool isRepairable => !isMainEngine && !isCargo && !isCriticalComponent;
-    public bool loseGameIfYouLoseThis => isMainEngine || isCriticalComponent;
+    public bool isRepairable => !isMainEngine && !isCargo && !isMysteriousCart;
+    public bool loseGameIfYouLoseThis => isMainEngine || isMysteriousCart;
     //public bool isRepairable => !isCargo;
 
     public UpgradesController.CartLocation myLocation = UpgradesController.CartLocation.train;

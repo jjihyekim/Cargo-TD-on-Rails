@@ -14,7 +14,7 @@ public class MiniGUI_DeliveredCargo : MonoBehaviour {
         
         icon.sprite = data.GetRewardIcon();
         
-        var reward = myCargo.GetReward();
+        var reward = myCargo.GetRewardCart();
         cargoMoney.text = reward.ToString();
 
         return -1;

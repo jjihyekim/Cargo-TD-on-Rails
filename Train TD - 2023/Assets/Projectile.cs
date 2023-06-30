@@ -55,6 +55,10 @@ public class Projectile : MonoBehaviour {
     private void Start() {
         Invoke("DestroySelf", lifetime);
 
+        if (Artifact_HomingBullets.isHomingBullets) {
+            seekStrength *= 5;
+        }
+        
         switch (myHitType) {
             case HitType.Bullet:
                 curSpeed = speed;

@@ -97,6 +97,7 @@ public class DataSaver {
 		if (!dontSave) {
 			saveInNextFrame = true;
 		}
+		Debug.Log("Initiating Save");
 	}
 
 	void DoSaveActiveGame() {
@@ -243,6 +244,7 @@ public class DataSaver {
 		public CharacterData character = new CharacterData();
 
 		public TrainState myTrain = new TrainState();
+		public string[] artifacts = new string[0];
 
 		public int currentAct = 1;
 		
@@ -256,12 +258,15 @@ public class DataSaver {
 
 
 		public bool isInEndRunArea = false;
+		public EndRunAreaInfo endRunAreaInfo;
 		
 		public bool shopInitialized = false;
 		public UpgradesController.ShopState shopState;
 
 		public float fleaMarketRarityBoost = -0.05f;
 		public float destinationRarityBoost = -0.15f;
+
+		public float luck = 0;
 		
 		public void SetCharacter(CharacterData characterData) {
 			character = characterData;
@@ -281,6 +286,13 @@ public class DataSaver {
 				powerUps.Add("");
 			}
 		}
+	}
+	
+	
+	[Serializable]
+	public class EndRunAreaInfo {
+		public bool gotBonusArtifact = false;
+		public string bonusArtifactUniqueName;
 	}
 
 	[Serializable]
@@ -314,6 +326,9 @@ public class DataSaver {
 			public class CargoState { // dont forget to update the copy function
 				[ValueDropdown("GetAllModuleNames")]
 				public string cargoReward;
+
+				[ValueDropdown("GetAllArtifactNames")]
+				public string artifactReward;
 				public bool isLeftCargo;
 				
 				private static IEnumerable GetAllModuleNames() {
@@ -324,6 +339,27 @@ public class DataSaver {
 						buildingNames.Add(buildings[i].uniqueName);
 					}
 					return buildingNames;
+				}
+				
+				private static IEnumerable GetAllArtifactNames() {
+					var artifacts = GameObject.FindObjectOfType<DataHolder>().artifacts;
+					var artifactNames = new List<string>();
+					for (int i = 0; i < artifacts.Length; i++) {
+						artifactNames.Add(artifacts[i].uniqueName);
+					}
+					return artifactNames;
+				}
+
+				public CargoState(CargoModule module) {
+					cargoReward = module.GetRewardCart();
+					artifactReward = module.GetRewardArtifact();
+					isLeftCargo = module.isLeftCargo;
+				}
+				
+				public CargoState(string _cargoReward, string _artifactReward, bool _isLeftCargo) {
+					cargoReward =_cargoReward;
+					artifactReward = _artifactReward;
+					isLeftCargo = _isLeftCargo;
 				}
 			}
 
@@ -349,9 +385,7 @@ public class DataSaver {
 				copyState.uniqueName = uniqueName;
 				//copyState.health = health;
 				//copyState.ammo = ammo;
-				copyState.cargoState = new CargoState();
-				copyState.cargoState.cargoReward = cargoState.cargoReward;
-				copyState.cargoState.isLeftCargo = cargoState.isLeftCargo;
+				copyState.cargoState = new CargoState(cargoState.cargoReward, cargoState.artifactReward, cargoState.isLeftCargo);
 				return copyState;
 			}
 		}

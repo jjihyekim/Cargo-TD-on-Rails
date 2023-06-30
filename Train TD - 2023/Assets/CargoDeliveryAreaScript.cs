@@ -10,15 +10,16 @@ public class CargoDeliveryAreaScript : MonoBehaviour {
 
     public Transform rotatingPlatform;
 
-    
+    public Transform regularArtifactArea;
+    public Transform bonusArtifactArea;
+
+    public Transform extraArtifactEffectParent;
+
     void Update()
     {
         if (!isEngaged && !PlayerWorldInteractionController.s.isDragStarted) {
-            if (location1.snapTransform.childCount > 0) {
+            if (location1.snapTransform.childCount > 0) 
                 StartCoroutine(EngagePlatform(location1, location2));
-            } else if (location2.snapTransform.childCount > 0) {
-                StartCoroutine(EngagePlatform(location2, location1));
-            }
         }
     }
 
@@ -26,18 +27,27 @@ public class CargoDeliveryAreaScript : MonoBehaviour {
     public float rotateAcceleration = 20;
 
     private bool isEngaged = false;
+    
     IEnumerator EngagePlatform(SnapCartLocation fullPlatform, SnapCartLocation emptyPlatform) {
         isEngaged = true;
-        SetColliderStatus(fullPlatform.gameObject, false);
+        PlayerWorldInteractionController.s.canSelect = false;
+        CameraController.s.cannotSelectButCanMoveOverride = true;
+        SetColliderStatus(rotatingPlatform.gameObject, false);
 
         //yield return null; //wait a frame for good luck
 
         var cargoModule = fullPlatform.GetComponentInChildren<CargoModule>();
-        var reward = DataHolder.s.GetCart(cargoModule.GetReward());
-        var rewardCart = Instantiate(reward.gameObject, emptyPlatform.snapTransform);
-        
-        SetColliderStatus(fullPlatform.gameObject, false);
+        var rewardCart = Instantiate(DataHolder.s.GetCart(cargoModule.GetRewardCart()).gameObject, emptyPlatform.snapTransform);
+        var rewardArtifact = Instantiate(DataHolder.s.GetArtifact(cargoModule.GetRewardArtifact()).gameObject, regularArtifactArea);
+        GameObject bonusRewardArtifact = null;
+        if (ArtifactsController.s.gotBonusArtifact) {
+            bonusRewardArtifact = Instantiate(DataHolder.s.GetArtifact(ArtifactsController.s.bonusArtifactUniqueName).gameObject, bonusArtifactArea);
+            ArtifactsController.s.BonusArtifactRewarded(bonusArtifactArea);
+        }
 
+        SetColliderStatus(rotatingPlatform.gameObject, false);
+
+        var startRotation = rotatingPlatform.transform.rotation;
         var rotateTarget = (rotatingPlatform.rotation.eulerAngles.y > 25) ? Quaternion.Euler(0, 0, 0) : Quaternion.Euler(0, 180, 0);
         var totalDelta = Quaternion.Angle(rotatingPlatform.rotation, rotateTarget);
         var currentDelta = Quaternion.Angle(rotatingPlatform.rotation, rotateTarget);
@@ -54,7 +64,7 @@ public class CargoDeliveryAreaScript : MonoBehaviour {
 
         rotatingPlatform.rotation = rotateTarget;
         
-        SetColliderStatus(fullPlatform.gameObject, true);
+        SetColliderStatus(rotatingPlatform.gameObject, true);
         Destroy(fullPlatform.snapTransform.GetChild(0).gameObject);
         
         UpgradesController.s.AddCartToShop(rewardCart.GetComponent<Cart>(), UpgradesController.CartLocation.world);
@@ -64,9 +74,44 @@ public class CargoDeliveryAreaScript : MonoBehaviour {
         rewardCart.GetComponent<Rigidbody>().isKinematic = false;
         rewardCart.GetComponent<Rigidbody>().useGravity = true;
 
-        isEngaged = false;
         
         FirstTimeTutorialController.s.CargoHintShown();
+        
+        yield return new WaitForSeconds(0.5f);
+        
+        rewardArtifact.transform.SetParent(null);
+        rewardArtifact.transform.position = regularArtifactArea.position;
+        rewardArtifact.GetComponentInChildren<Rigidbody>().isKinematic = false;
+        rewardArtifact.GetComponentInChildren<Rigidbody>().useGravity = true;
+        rewardArtifact.GetComponentInChildren<Rigidbody>().AddForce(AddNoiseOnDirection(regularArtifactArea.forward, 15) * Random.Range(200,350));
+
+        yield return new WaitForSeconds(0.5f);
+
+        if (bonusRewardArtifact != null) {
+            bonusRewardArtifact.transform.SetParent(null);
+            bonusRewardArtifact.transform.position = bonusArtifactArea.position;
+            bonusRewardArtifact.GetComponentInChildren<Rigidbody>().isKinematic = false;
+            bonusRewardArtifact.GetComponentInChildren<Rigidbody>().useGravity = true;
+            bonusRewardArtifact.GetComponentInChildren<Rigidbody>().AddForce(AddNoiseOnDirection(bonusArtifactArea.forward, 15) * Random.Range(200,350));
+
+            Instantiate(LevelReferences.s.gotExtraArtifactFromEliteEnemyEffect, extraArtifactEffectParent);
+
+            yield return new WaitForSeconds(0.2f);
+        }
+
+        rotatingPlatform.transform.rotation = startRotation;
+        
+        PlayerWorldInteractionController.s.canSelect = true;
+        CameraController.s.cannotSelectButCanMoveOverride = false;
+        isEngaged = false;
+    }
+    
+    Vector3 AddNoiseOnDirection (Vector3 direction, float max)  {
+        // Generate a random rotation
+        Quaternion randomRotation = Quaternion.Euler(Random.Range(-max, max), Random.Range(-max, max), 0);
+        
+        // Apply the random rotation to the current direction
+        return randomRotation * direction;
     }
 
     void SetColliderStatus(GameObject target, bool status) {

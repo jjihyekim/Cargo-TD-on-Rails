@@ -43,7 +43,7 @@ public class MissionWinFinisher : MonoBehaviour {
 	public void MissionWon(bool isShowingPrevRewards = false) {
 		SpeedController.s.TravelToMissionEndDistance();
 		isWon = true;
-		PlayStateMaster.s.FinishCombat();
+		PlayStateMaster.s.FinishCombat(!isShowingPrevRewards);
 		EnemyWavesController.s.Cleanup();
 		PlayerWorldInteractionController.s.canSelect = false;
 		//EnemyHealth.winSelfDestruct?.Invoke(false);
@@ -71,7 +71,7 @@ public class MissionWinFinisher : MonoBehaviour {
 		
 		// save our resources
 		mySave.currentRun.myResources.scraps = Mathf.FloorToInt(MoneyController.s.scraps);
-		mySave.currentRun.myTrain = Train.s.GetTrainState();
+		Train.s.SaveTrainState(true);
 		mySave.currentRun.isInEndRunArea = true;
 		
 		DataSaver.s.SaveActiveGame();
@@ -91,9 +91,6 @@ public class MissionWinFinisher : MonoBehaviour {
 					{ "Level", PlayStateMaster.s.currentLevel.levelName },
 
 					{ "character", DataSaver.s.GetCurrentSave().currentRun.character.uniqueName },
-
-					{ "buildingsBuild", ModuleHealth.buildingsBuild },
-					{ "buildingsDestroyed", ModuleHealth.buildingsDestroyed },
 
 					{ "enemiesLeftAlive", EnemyHealth.enemySpawned - EnemyHealth.enemyKilled },
 					{ "winTime", SpeedController.s.currentTime },
@@ -152,11 +149,16 @@ public class MissionWinFinisher : MonoBehaviour {
 			scriptsToDisable[i].enabled = true;
 		}
 
-		PlayerWorldInteractionController.s.canSelect = true;
 		
 		UpgradesController.s.UpdateCargoHighlights();
 		
 		PlayStateMaster.s.EnterMissionRewardArea();
+
+		Invoke(nameof(SplitSecondLater), 0.05f);
+	}
+
+	void SplitSecondLater() {
+		PlayerWorldInteractionController.s.canSelect = true;
 	}
 
 	public void ContinueToNextCity() {
@@ -177,7 +179,7 @@ public class MissionWinFinisher : MonoBehaviour {
 	public void CleanupWhenLeavingMissionRewardArea() {
 		DataSaver.s.GetCurrentSave().currentRun.shopInitialized = false;
 		DataSaver.s.GetCurrentSave().currentRun.isInEndRunArea = false;
-		Train.s.SaveTrainState();
+		Train.s.SaveTrainState(true);
 		DataSaver.s.SaveActiveGame();
 	}
 	

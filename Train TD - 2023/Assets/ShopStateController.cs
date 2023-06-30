@@ -177,8 +177,6 @@ public class ShopStateController : MonoBehaviour {
 	}*/
 
 	void ClearStaticTrackers() {
-		ModuleHealth.buildingsBuild = 0;
-		ModuleHealth.buildingsDestroyed = 0;
 		EnemyHealth.enemySpawned = 0;
 		EnemyHealth.enemyKilled = 0;
 		//PlayerBuildingController.s.currentLevelStats = new Dictionary<string, PlayerBuildingController.BuildingData>();

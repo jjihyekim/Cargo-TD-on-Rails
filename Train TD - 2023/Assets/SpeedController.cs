@@ -229,7 +229,7 @@ public class SpeedController : MonoBehaviour, IShowOnDistanceRadar {
     void CalculateStopAcceleration() {
         beforeStopSpeed = LevelReferences.s.speed;
         if (beforeStopSpeed < 2f) {
-            LevelReferences.s.speed = 2;
+            LevelReferences.s.speed = 4;
             beforeStopSpeed = LevelReferences.s.speed;
         }
 

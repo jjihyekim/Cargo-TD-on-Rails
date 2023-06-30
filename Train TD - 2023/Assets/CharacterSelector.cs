@@ -23,7 +23,9 @@ public class CharacterSelector : MonoBehaviour {
             SetUpCharPanel();
         } else {
             charSelectUI.SetActive(false);
-            PlayerWorldInteractionController.s.canSelect = true;
+            if (!MissionWinFinisher.s.isWon) {
+                PlayerWorldInteractionController.s.canSelect = true;
+            }
         }
     }
 

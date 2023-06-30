@@ -20,6 +20,7 @@ public class CheatsController : MonoBehaviour
     public bool debugNoRegularSpawns = false;
     public bool instantEnterPlayMode = false;
     public bool playerIsImmune;
+    public bool playerDealMaxDamage;
     public bool restartOnStart = false;
     public bool autoRestartWithSelectedCharacter = false;
     public bool dontDrawMap = false;
@@ -37,6 +38,7 @@ public class CheatsController : MonoBehaviour
             autoRestartWithSelectedCharacter = false;
             dontDrawMap = false;
             everyPathIsEncounter = false;
+            playerDealMaxDamage = false;
         }
     }
 
@@ -66,6 +68,11 @@ public class CheatsController : MonoBehaviour
                 Invoke(nameof(QuickRestartWithCheaterCharacter), 0.01f);
             } else if (instantEnterPlayMode) {
                 Invoke(nameof(QuickStart), 0.01f);
+            }
+
+            if (playerDealMaxDamage) {
+                TweakablesMaster.s.myTweakables.playerDamageMultiplier = 10000;
+                TweakablesMaster.s.ApplyTweakableChange();
             }
         }
     }

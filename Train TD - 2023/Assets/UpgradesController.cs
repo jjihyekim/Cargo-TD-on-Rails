@@ -16,7 +16,7 @@ public class UpgradesController : MonoBehaviour {
 	
 	
 	public enum CartRarity {
-		common, rare, epic
+		common, rare, epic, boss, special
 	}
 
 	[ValueDropdown("GetAllModuleNames")]
@@ -53,6 +53,8 @@ public class UpgradesController : MonoBehaviour {
 	
 	public MiniGUI_DepartureChecklist shopChecklist;
 	public MiniGUI_DepartureChecklist endGameAreaChecklist;
+
+	public float luck => DataSaver.s.GetCurrentSave().currentRun.luck;
 
 	public void RemoveCartFromShop(Cart cart) {
 		shopCarts.Remove(cart);
@@ -146,10 +148,7 @@ public class UpgradesController : MonoBehaviour {
 
 		var shopState = DataSaver.s.GetCurrentSave().currentRun.shopState;
 		var cargo = cart.GetComponentInChildren<CargoModule>();
-		var cargoState = new DataSaver.TrainState.CartState.CargoState() {
-			cargoReward = cargo.GetReward(),
-			isLeftCargo = cargo.isLeftCargo
-		};
+		var cargoState = new DataSaver.TrainState.CartState.CargoState(cargo);
 		
 		if (isLeft) {
 			shopState.leftCargo = cargoState;
@@ -190,15 +189,9 @@ public class UpgradesController : MonoBehaviour {
 			if (cart.isCargo && !PlayStateMaster.s.isEndGame()) { // in the end game area cargos are also regular carts
 				var cargo = cart.GetComponentInChildren<CargoModule>();
 				if (cargo.isLeftCargo) { 
-					shopState.leftCargo = new DataSaver.TrainState.CartState.CargoState() {
-						cargoReward = cargo.GetReward(),
-						isLeftCargo = cargo.isLeftCargo
-					};
+					shopState.leftCargo = new DataSaver.TrainState.CartState.CargoState(cargo);
 				} else { 
-					shopState.rightCargo = new DataSaver.TrainState.CartState.CargoState() {
-						cargoReward = cargo.GetReward(),
-						isLeftCargo = cargo.isLeftCargo
-					};
+					shopState.rightCargo = new DataSaver.TrainState.CartState.CargoState(cargo);
 				}
 			} else {
 				shopState.cartStates.Add(new WorldCartState() {
@@ -248,14 +241,16 @@ public class UpgradesController : MonoBehaviour {
 			});
 		}
 
-		state.shopState.leftCargo = new DataSaver.TrainState.CartState.CargoState() {
-			cargoReward = GetRandomBuildingCargoForDestinationReward(),
-			isLeftCargo = true
-		};
-		state.shopState.rightCargo = new DataSaver.TrainState.CartState.CargoState() {
-			cargoReward = GetRandomBuildingCargoForDestinationReward(),
-			isLeftCargo = false
-		};
+		state.shopState.leftCargo = new DataSaver.TrainState.CartState.CargoState(
+			GetRandomBuildingCargoForDestinationReward(),
+			GetRandomArtifactForDestinationReward(),
+			true
+		);
+		state.shopState.rightCargo = new DataSaver.TrainState.CartState.CargoState(
+			GetRandomBuildingCargoForDestinationReward(),
+			GetRandomArtifactForDestinationReward(),
+			false
+		);
 
 		state.shopInitialized = true;
 		DataSaver.s.SaveActiveGame();
@@ -388,7 +383,7 @@ public class UpgradesController : MonoBehaviour {
 	void SpawnRewardAtPos(Transform pos, CargoModule module) {
 		pos.DeleteAllChildren();
 
-		var rewardCart = Instantiate(DataHolder.s.GetCart(module.GetReward()), pos);
+		var rewardCart = Instantiate(DataHolder.s.GetCart(module.GetRewardCart()), pos);
 
 		rewardCart.canPlayerDrag = false;
 		rewardCart.myLocation = CartLocation.rewardDisplay;
@@ -522,6 +517,10 @@ public class UpgradesController : MonoBehaviour {
 	public string GetRandomBuildingCargoForDestinationReward() {
 		return _GetRandomBuildingCargo(tier1Buildings, ref DataSaver.s.GetCurrentSave().currentRun.destinationRarityBoost, destinationRarity);
 	}
+	
+	public string GetRandomArtifactForDestinationReward() {
+		return GetRandomRegularArtifact().uniqueName;
+	}
 
 	public string GetRandomBuildingCargoForFleaMarket() {
 		List<string> rollSource = tier1Buildings;
@@ -567,12 +566,10 @@ public class UpgradesController : MonoBehaviour {
 
 	string _GetRandomBuildingCargo(List<string> rollSource, ref float rarityBoost, RarityPickChance rarityPickChance, bool careRecentlySpawned) {
 		List<string> possibleCarts = new List<string>();
-		
 
+		var cartRarityRoll = Random.value - rarityBoost - luck;
 
-		var cartRarityRoll = Random.value;
-
-		if (cartRarityRoll < rarityPickChance.epicChance + rarityBoost) {
+		if (cartRarityRoll < rarityPickChance.epicChance) {
 			// rolled an epic cart
 			for (int i = 0; i < rollSource.Count; i++) {
 				if (DataHolder.s.GetCart(rollSource[i]).myRarity == CartRarity.epic) {
@@ -584,7 +581,7 @@ public class UpgradesController : MonoBehaviour {
 			
 		}
 		// if there are no carts of the higher tier available, roll a lower tier
-		if (possibleCarts.Count == 0 && cartRarityRoll < rarityPickChance.rareChance + (rarityPickChance.epicChance + rarityBoost)) {
+		if (possibleCarts.Count == 0 && cartRarityRoll < rarityPickChance.rareChance + rarityPickChance.epicChance) {
 			//rolled a rare cart
 			
 			for (int i = 0; i < rollSource.Count; i++) {
@@ -660,5 +657,20 @@ public class UpgradesController : MonoBehaviour {
 		}
 
 		return count;
+	}
+
+
+	public Artifact GetRandomRegularArtifact() {
+		var allArtifacts = DataHolder.s.artifacts;
+
+		List<Artifact> regularArtifacts = new List<Artifact>();
+
+		for (int i = 0; i < allArtifacts.Length; i++) {
+			if (allArtifacts[i].myRarity != CartRarity.boss) {
+				regularArtifacts.Add(allArtifacts[i]);
+			}
+		}
+
+		return allArtifacts[Random.Range(0, allArtifacts.Length)];
 	}
 }

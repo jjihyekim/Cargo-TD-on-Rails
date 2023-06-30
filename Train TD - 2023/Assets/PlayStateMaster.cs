@@ -21,7 +21,7 @@ public class PlayStateMaster : MonoBehaviour {
     public UnityEvent OnShopEntered = new UnityEvent();
     public UnityEvent OnCombatEntered = new UnityEvent();
     
-    public UnityEvent OnCombatFinished = new UnityEvent();
+    public UnityEvent<bool> OnCombatFinished = new UnityEvent<bool>();
     public UnityEvent OnEnterMissionRewardArea = new UnityEvent();
     public UnityEvent OnLeavingMissionRewardArea = new UnityEvent();
     
@@ -76,9 +76,9 @@ public class PlayStateMaster : MonoBehaviour {
         OnCombatEntered?.Invoke();
     }
 
-    public void FinishCombat() {
+    public void FinishCombat(bool realCombat) {
         _gameState = GameState.levelFinished;
-        OnCombatFinished?.Invoke();
+        OnCombatFinished?.Invoke(realCombat);
     }
 
     public bool isCombatInProgress() {
@@ -114,7 +114,7 @@ public class PlayStateMaster : MonoBehaviour {
         OnMainMenuEntered?.Invoke();
     }
 
-    void DoOpenMainMenu() {
+    /*void DoOpenMainMenu() {
         _gameState = GameState.mainMenu;
         MainMenu.s.OpenProfileMenu();
 
@@ -127,7 +127,7 @@ public class PlayStateMaster : MonoBehaviour {
         }
         
         OnMainMenuEntered?.Invoke();
-    }
+    }*/
 
     public void EnterMissionRewardArea() {
         OnEnterMissionRewardArea?.Invoke();

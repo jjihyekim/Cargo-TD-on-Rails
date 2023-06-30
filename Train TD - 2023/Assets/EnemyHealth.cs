@@ -7,6 +7,10 @@ using UnityEngine.Events;
 using UnityEngine.Serialization;
 
 public class EnemyHealth : MonoBehaviour, IHealth {
+
+	public float baseHealth = 200f;
+	
+	[ReadOnly]
 	public float maxHealth = 20f;
 	public float currentHealth = 20f;
 
@@ -33,8 +37,6 @@ public class EnemyHealth : MonoBehaviour, IHealth {
 
 	[Tooltip("Will reduce incoming damage by 50% if gun doesn't have armor penetration")]
 	public bool isArmored = false;
-
-	public bool rewardPowerUp = false;
 
 	public bool isComponentEnemy = false;
 
@@ -125,13 +127,16 @@ public class EnemyHealth : MonoBehaviour, IHealth {
 	}
 
 
+	public bool rewardArtifactOnDeath = false;
+	public string artifactRewardUniqueName;
+	public Transform bonusArtifactUIStar;
 	[Button]
 	void Die(bool giveRewards = true) {
 		enemyKilled += 1;
 		isAlive = false;
 
 		var extraRewards = GetComponentsInChildren<EnemyReward>();
-		var otherRewards = GetComponentInChildren<EnemyCartReward>();
+		//var otherRewards = GetComponentInChildren<EnemyCartReward>();
 
 		for (int i = 0; i < extraRewards.Length; i++) {
 			switch (extraRewards[i].type) {
@@ -150,8 +155,12 @@ public class EnemyHealth : MonoBehaviour, IHealth {
 				//PlayerActionsController.s.GetPowerUp(EnemyWavesController.s.powerUpScriptables.Dequeue());
 			}*/
 
-			if (otherRewards != null) {
+			/*if (otherRewards != null) {
 				otherRewards.RewardPlayerCart();
+			}*/
+
+			if (rewardArtifactOnDeath) {
+				ArtifactsController.s.GetBonusArtifact(bonusArtifactUIStar, artifactRewardUniqueName);
 			}
 		}
 

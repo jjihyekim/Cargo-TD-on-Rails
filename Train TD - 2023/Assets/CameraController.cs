@@ -68,7 +68,9 @@ public class CameraController : MonoBehaviour {
     public float minSnapDistance = 2f;
 
     public bool canEdgeMove = false;
-    
+
+    public bool cannotSelectButCanMoveOverride;
+
     protected void OnEnable()
     {
         moveAction.action.Enable();
@@ -126,7 +128,7 @@ public class CameraController : MonoBehaviour {
                 ProcessDirectControl(aimAction.action.ReadValue<Vector2>(), aimGamepadAction.action.ReadValue<Vector2>());
                 ProcessVelocityPredictionAndAimAssist();
             } else {
-                if (PlayerWorldInteractionController.s.canSelect) {
+                if (PlayerWorldInteractionController.s.canSelect || cannotSelectButCanMoveOverride) {
                     var mousePos = Mouse.current.position.ReadValue();
                     if (canEdgeMove)
                         ProcessScreenCorners(mousePos);

@@ -182,8 +182,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1a7eab1db79f56c47b0647f898b7c2c9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxHealth: 300
-  currentHealth: 300
+  maxHealth: 200
+  currentHealth: 200
   scrapReward: 2
   ammoReward: 0
   fuelReward: 0
@@ -194,10 +194,12 @@ MonoBehaviour:
   cartRewardTransform: {fileID: 0}
   healthBar: {fileID: 0}
   isArmored: 0
-  rewardPowerUp: 0
   isComponentEnemy: 0
   currentBurn: 0
   burnSpeed: 0
+  rewardArtifactOnDeath: 0
+  artifactRewardUniqueName: 
+  bonusArtifactUIStar: {fileID: 0}
   _outlines: []
 --- !u!114 &2942942888468131775
 MonoBehaviour:
@@ -1241,7 +1243,7 @@ MeshRenderer:
   m_RenderingLayerMask: 4294967295
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: b7ab284ff1ed5c84ca9f8d95833bccca, type: 2}
+  - {fileID: 2100000, guid: 6b617a0c21e14624092b8badc6e35cbe, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0

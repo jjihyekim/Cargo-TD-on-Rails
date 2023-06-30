@@ -12,7 +12,7 @@ public class LevelArchetypeScriptable : ScriptableObject {
 
     public bool isBossLevel;
 
-    public LevelSegmentScriptable firstLevel;
+    public LevelSegmentScriptable[] firstLevels;
     public LevelSegmentScriptable[] possibleLevels;
     public LevelSegmentScriptable[] possibleEliteLevels;
     public EncounterTitle[] possibleEncounters;
@@ -50,7 +50,7 @@ public class LevelArchetypeScriptable : ScriptableObject {
         level.mySegmentsB = new LevelSegment[segmentCount];
 
         for (int i = 0; i < segmentCount; i++) {
-            if (i == 0 && firstLevel != null) {
+            if (i == 0 && firstLevels.Length > 0) {
                 level.mySegmentsA[0] = GenerateFirstSegment();
                 level.mySegmentsB[0] = GenerateFirstSegment();
                 continue;
@@ -127,7 +127,7 @@ public class LevelArchetypeScriptable : ScriptableObject {
     }
     
     LevelSegment GenerateFirstSegment() {
-        var segment =  firstLevel.GetData().Copy();
+        var segment =  firstLevels[Random.Range(0, firstLevels.Length)].GetData().Copy();
         return _GenerateSegment(segment);
     }
     LevelSegment GenerateRegularSegment() {
@@ -185,23 +185,7 @@ public class LevelArchetypeScriptable : ScriptableObject {
         
 
         if (segment.eliteEnemy) {
-            /*if (furthestEnemyDistance + (lastEnemyAndSegmentEndDistance*2) > segment.segmentLength) {
-                segment.segmentLength = furthestEnemyDistance + (lastEnemyAndSegmentEndDistance*2);
-            }*/
-            
-            /*furthestEnemyDistance += powerUpEnemyDistanceFromLastEnemy;
-            var enemiesOnPath = new List<EnemyOnPathData>(segment.enemiesOnPath);
-            enemiesOnPath.Add(new EnemyOnPathData() {
-                distanceOnPath = furthestEnemyDistance,
-                enemyIdentifier =  LevelReferences.s.powerUpSpawnerEnemy,
-                isLeft = segment.enemiesOnPath[segment.enemiesOnPath.Length-1].isLeft
-            });
-
-
-            segment.enemiesOnPath = enemiesOnPath.ToArray();*/
-
-            segment.powerUpRewardUniqueName = DataHolder.s.powerUps[Random.Range(0, DataHolder.s.powerUps.Length)].name;
-
+            segment.artifactRewardUniqueName = UpgradesController.s.GetRandomRegularArtifact().uniqueName;
         }
 
         segment.segmentLength = furthestEnemyDistance + lastEnemyAndSegmentEndDistance;

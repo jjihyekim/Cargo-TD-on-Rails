@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class FaceCamera : MonoBehaviour {
 	private Transform camera;
-    void Start() {
+	void Start() {
 	    camera = MainCameraReference.s.cam.transform;
     }
 

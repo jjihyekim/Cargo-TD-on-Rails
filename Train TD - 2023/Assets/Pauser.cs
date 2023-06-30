@@ -113,9 +113,6 @@ public class Pauser : MonoBehaviour {
                 
                 {"character", DataSaver.s.GetCurrentSave().currentRun.character.uniqueName},
 
-                { "buildingsBuild", ModuleHealth.buildingsBuild },
-                { "buildingsDestroyed", ModuleHealth.buildingsDestroyed },
-                
                 { "enemiesLeftAlive", EnemyHealth.enemySpawned - EnemyHealth.enemyKilled},
             }
         );

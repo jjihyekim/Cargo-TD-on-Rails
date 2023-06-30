@@ -79,6 +79,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1a7eab1db79f56c47b0647f898b7c2c9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  baseHealth: 400
   maxHealth: 400
   currentHealth: 400
   scrapReward: 5
@@ -91,10 +92,12 @@ MonoBehaviour:
   cartRewardTransform: {fileID: 0}
   healthBar: {fileID: 0}
   isArmored: 1
-  rewardPowerUp: 0
   isComponentEnemy: 0
   currentBurn: 0
   burnSpeed: 0
+  rewardArtifactOnDeath: 0
+  artifactRewardUniqueName: 
+  bonusArtifactUIStar: {fileID: 0}
   _outlines: []
 --- !u!114 &3038431739623073049
 MonoBehaviour:
@@ -112,6 +115,7 @@ MonoBehaviour:
   myType: 0
   targetTransform: {fileID: 3774341611181933191}
   avoid: 0
+  flying: 0
   velocity: {x: 0, y: 0, z: 0}
 --- !u!114 &7440264286695437326
 MonoBehaviour:

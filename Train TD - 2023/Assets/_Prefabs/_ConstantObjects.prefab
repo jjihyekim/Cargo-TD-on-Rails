@@ -813,6 +813,7 @@ MonoBehaviour:
           - uniqueName: 
             cargoState:
               cargoReward: 
+              artifactReward: 
               isLeftCargo: 0
         currentAct: 1
         map:
@@ -828,9 +829,11 @@ MonoBehaviour:
           cartStates: []
           leftCargo:
             cargoReward: 
+            artifactReward: 
             isLeftCargo: 0
           rightCargo:
             cargoReward: 
+            artifactReward: 
             isLeftCargo: 0
         fleaMarketRarityBoost: -0.05
         destinationRarityBoost: -0.15
@@ -862,6 +865,7 @@ MonoBehaviour:
           - uniqueName: 
             cargoState:
               cargoReward: 
+              artifactReward: 
               isLeftCargo: 0
         currentAct: 1
         map:
@@ -877,9 +881,11 @@ MonoBehaviour:
           cartStates: []
           leftCargo:
             cargoReward: 
+            artifactReward: 
             isLeftCargo: 0
           rightCargo:
             cargoReward: 
+            artifactReward: 
             isLeftCargo: 0
         fleaMarketRarityBoost: -0.05
         destinationRarityBoost: -0.15
@@ -911,6 +917,7 @@ MonoBehaviour:
           - uniqueName: 
             cargoState:
               cargoReward: 
+              artifactReward: 
               isLeftCargo: 0
         currentAct: 1
         map:
@@ -926,9 +933,11 @@ MonoBehaviour:
           cartStates: []
           leftCargo:
             cargoReward: 
+            artifactReward: 
             isLeftCargo: 0
           rightCargo:
             cargoReward: 
+            artifactReward: 
             isLeftCargo: 0
         fleaMarketRarityBoost: -0.05
         destinationRarityBoost: -0.15
@@ -1309,7 +1318,7 @@ Camera:
   m_Depth: 0
   m_CullingMask:
     serializedVersion: 2
-    m_Bits: 524087
+    m_Bits: 1048375
   m_RenderingPath: -1
   m_TargetTexture: {fileID: 0}
   m_TargetDisplay: 0

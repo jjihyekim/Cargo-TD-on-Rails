@@ -96,7 +96,7 @@ public class FirstTimeTutorialController : MonoBehaviour {
         emptyCart = null;
 
         for (int i = 0; i < Train.s.carts.Count; i++) {
-            if (Train.s.carts[i].isCriticalComponent) {
+            if (Train.s.carts[i].isMysteriousCart) {
                 cargo = Train.s.carts[i];
             }
 
@@ -279,7 +279,7 @@ public class FirstTimeTutorialController : MonoBehaviour {
                 activeHints.Add(Instantiate(reloadHintPrefab, LevelReferences.s.uiDisplayParent).GetComponent<MiniGUI_TutorialHint>().SetUp(cart));
             }
 
-            if (cart.isMainEngine || cart.isCriticalComponent) {
+            if (cart.isMainEngine || cart.isMysteriousCart) {
                 if(!_progress.repairHint)
                     activeHints.Add(Instantiate(repairCriticalHintPrefab, LevelReferences.s.uiDisplayParent).GetComponent<MiniGUI_TutorialHint>().SetUp(cart));
             } else {

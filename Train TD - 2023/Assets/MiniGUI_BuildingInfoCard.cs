@@ -110,6 +110,25 @@ public class MiniGUI_BuildingInfoCard : MonoBehaviour
         transform.position = lerpTarget.position;
         isLerping = true;
     }
+    
+    
+    public void SetUp(Artifact artifact) {
+        Start();
+        Show();
+        armorPenetrationIcon.gameObject.SetActive(false);
+
+        icon.sprite = artifact.uiPart.GetComponentInChildren<Image>().sprite;
+        moduleName.text = artifact.displayName;
+        moduleDescription.text = artifact.GetComponent<UITooltipDisplayer>().myTooltip.text;
+        
+        infoCardsParent.gameObject.SetActive(false);
+
+        sourceTransform = artifact.uiTransform;
+        worldTarget.SetUp(sourceTransform);
+        transform.SetParent(lerpTarget);
+        transform.localPosition = Vector3.zero;
+        isLerping = false;
+    }
 
     public void Show() {
         gameObject.SetActive(true);

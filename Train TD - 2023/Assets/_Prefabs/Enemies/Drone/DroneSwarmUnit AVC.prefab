@@ -1176,7 +1176,6 @@ MonoBehaviour:
   positionDelta: 0.2
   lerpSpeed: 2
   lerpForce: 10
-  maxLerpForce: 200
   targetMoveSpeed: 0.1
   target: {x: 0, y: 0, z: 0}
   targetTargetPosition: {x: 0, y: 0, z: 0}
@@ -1232,6 +1231,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1a7eab1db79f56c47b0647f898b7c2c9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  baseHealth: 20
   maxHealth: 20
   currentHealth: 20
   scrapReward: 2
@@ -1244,10 +1244,12 @@ MonoBehaviour:
   cartRewardTransform: {fileID: 0}
   healthBar: {fileID: 0}
   isArmored: 0
-  rewardPowerUp: 0
   isComponentEnemy: 0
   currentBurn: 0
   burnSpeed: 0
+  rewardArtifactOnDeath: 0
+  artifactRewardUniqueName: 
+  bonusArtifactUIStar: {fileID: 0}
   _outlines: []
 --- !u!114 &2942942888468131775
 MonoBehaviour:

@@ -90,6 +90,7 @@ public class LevelReferences : MonoBehaviour {
     public LayerMask buildingLayer;
     public LayerMask cartSnapLocationsLayer;
     public LayerMask gateMask;
+    public LayerMask artifactLayer;
 
     public SingleUnityLayer playerBulletLayer;
     public SingleUnityLayer enemyBulletLayer;
@@ -109,6 +110,7 @@ public class LevelReferences : MonoBehaviour {
     public GameObject resourceParticleFuel;
 
     public GameObject enemyCartReward;
+    public GameObject enemyHasArtifactStar;
     
     
     public GameObject resourceLostParticleScraps;
@@ -120,6 +122,8 @@ public class LevelReferences : MonoBehaviour {
     public GameObject noAmmoWarning;
 
     public LevelSegmentScriptable debugBuggyLevel;
+
+    public GameObject gotExtraArtifactFromEliteEnemyEffect;
 
     public GameObject GetResourceParticle(ResourceTypes types) {
         switch (types) {

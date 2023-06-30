@@ -69,6 +69,7 @@ public class Train : MonoBehaviour {
 
     public void DrawTrainBasedOnSaveData() {
         DrawTrain(DataSaver.s.GetCurrentSave().currentRun.myTrain);
+        ArtifactsController.s.CreateArtifactsBasedOnSaveData();
     }
 
     public void DrawTrain(DataSaver.TrainState trainState) {
@@ -107,12 +108,8 @@ public class Train : MonoBehaviour {
         }
 
         UpdateCartPositions();
-
-        for (int i = 0; i < carts.Count; i++) {
-            carts[i].SetAttachedToTrainModulesMode(true);
-        }
         
-        ArtifactsController.s.OnArmArtifacts();
+        UpdateThingsAffectingOtherThings(true);
 
         trainUpdatedThroughNonBuildingActions?.Invoke();
         trainUpdated?.Invoke();
@@ -121,7 +118,12 @@ public class Train : MonoBehaviour {
     }
 
 
-    public void SaveTrainState() {
+    public void SaveTrainState(bool isInstant = false) {
+        if (isInstant) {
+            OneFrameLater();
+            return;
+        }
+        
         if (!PlayStateMaster.s.isCombatInProgress()) {
             Invoke(nameof(OneFrameLater), 0.01f);
         }
@@ -130,6 +132,7 @@ public class Train : MonoBehaviour {
     void OneFrameLater() {
         // because sometimes train doesnt get updated fast enough
         DataSaver.s.GetCurrentSave().currentRun.myTrain = GetTrainState();
+        ArtifactsController.s.SaveArtifacts();
         DataSaver.s.SaveActiveGame();
     }
 
@@ -151,9 +154,7 @@ public class Train : MonoBehaviour {
 
             var cargo = cart.GetComponentInChildren<CargoModule>();
             if (cargo != null) {
-                buildingState.cargoState = new DataSaver.TrainState.CartState.CargoState();
-                buildingState.cargoState.cargoReward = cargo.GetReward();
-                buildingState.cargoState.isLeftCargo = cargo.isLeftCargo;
+                buildingState.cargoState = new DataSaver.TrainState.CartState.CargoState(cargo);
             } else {
                 buildingState.cargoState = null;
             }
@@ -295,7 +296,7 @@ public class Train : MonoBehaviour {
                 hasEngine = true;
             }
 
-            if (carts[i].isCriticalComponent) {
+            if (carts[i].isMysteriousCart) {
                 hasCriticalComponent = true;
             }
         }
@@ -345,26 +346,37 @@ public class Train : MonoBehaviour {
         }
     }
 
-    public void TrainCleanupForCombat() {
-        LevelReferences.s.cartHealthParent.DeleteAllChildren();
+    public void HpBarsCleanup(bool activate) {
         for (int i = 0; i < carts.Count; i++) {
             carts[i].transform.SetSiblingIndex((carts.Count - 1) - i);
         }
         
         for (int i = 0; i < carts.Count; i++) {
-            carts[i].GetHealthModule()?.InitializeUIBar();
+            carts[i].GetHealthModule()?.InitializeUIBar(activate);
         }
     }
 
+
+    public void UpdateThingsAffectingOtherThings(bool isActivating) {
+        if (isActivating) {
+            ArtifactsController.s.OnArmArtifacts();
+            for (int i = 0; i < carts.Count; i++) {
+                carts[i].SetAttachedToTrainModulesMode(true);
+            }
+            HpBarsCleanup(true);
+        } else {
+            ArtifactsController.s.OnDisarmArtifacts();
+            for (int i = 0; i < carts.Count; i++) {
+                carts[i].SetAttachedToTrainModulesMode(false);
+            }
+            HpBarsCleanup(false);
+        }
+    }
     
     public void RemoveCart(Cart cart) {
         trainWeightDirty = true;
-        
-        ArtifactsController.s.OnDisarmArtifacts();
-        
-        for (int i = 0; i < carts.Count; i++) {
-            carts[i].SetAttachedToTrainModulesMode(false);
-        }
+
+        UpdateThingsAffectingOtherThings(false);
         
         carts.Remove(cart);
         cart.myLocation = UpgradesController.CartLocation.world;
@@ -374,11 +386,7 @@ public class Train : MonoBehaviour {
             carts[i].trainIndex = i;
         }
         
-        for (int i = 0; i < carts.Count; i++) {
-            carts[i].SetAttachedToTrainModulesMode(true);
-        }
-        
-        ArtifactsController.s.OnArmArtifacts();
+        UpdateThingsAffectingOtherThings(true);
     }
 
     public void AddCartAtIndex(int index, Cart cart) {
@@ -389,11 +397,7 @@ public class Train : MonoBehaviour {
             StopShake();
         }
         
-        ArtifactsController.s.OnDisarmArtifacts();
-        
-        for (int i = 0; i < carts.Count; i++) {
-            carts[i].SetAttachedToTrainModulesMode(false);
-        }
+        UpdateThingsAffectingOtherThings(false);
         
         carts.Insert(index, cart);
         cart.myLocation = UpgradesController.CartLocation.train;
@@ -403,15 +407,20 @@ public class Train : MonoBehaviour {
             carts[i].trainIndex = i;
         }
         
-        for (int i = 0; i < carts.Count; i++) {
-            carts[i].SetAttachedToTrainModulesMode(true);
-        }
         
-        ArtifactsController.s.OnArmArtifacts();
+        UpdateThingsAffectingOtherThings(true);
+        
 
         if (wasShaking) {
             RestartShake();
         }
+        
+        
+    }
+
+    public void ArtifactsChanged() {
+        UpdateThingsAffectingOtherThings(false);
+        UpdateThingsAffectingOtherThings(true);
     }
 
     public void StopShake() {
@@ -439,6 +448,7 @@ public class Train : MonoBehaviour {
         }
         
         StopShake();
+        UpdateThingsAffectingOtherThings(false);
         
         RemoveCart(cart1);
         RemoveCart(cart2);
@@ -447,8 +457,12 @@ public class Train : MonoBehaviour {
         
         AddCartAtIndex(cart2Index, cart1);
         AddCartAtIndex(cart1Index, cart2);
+        
+        UpdateThingsAffectingOtherThings(true);
 
         RestartShake();
+        
+        
     }
 
     void _RestartShake() {

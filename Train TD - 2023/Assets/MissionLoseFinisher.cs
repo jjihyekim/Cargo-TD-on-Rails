@@ -35,7 +35,7 @@ public class MissionLoseFinisher : MonoBehaviour {
 
 
         isMissionLost = true;
-        PlayStateMaster.s.FinishCombat();
+        PlayStateMaster.s.FinishCombat(true);
 
         Time.timeScale = 0;
         Pauser.s.isPaused = true;

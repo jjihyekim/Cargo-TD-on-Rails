@@ -9,7 +9,7 @@ public class UIElementFollowWorldTarget : MonoBehaviour {
     public bool avoidOverlaps = true;
 
      bool transformMode = true;
-    public void SetUp(Transform target) {
+    public Transform SetUp(Transform target) {
         transformMode = true;
         sourceTransform = target;
         
@@ -19,6 +19,7 @@ public class UIElementFollowWorldTarget : MonoBehaviour {
         mainCam = LevelReferences.s.mainCam;
 
         this.enabled = true;
+        return transform;
     }
     
     public void UpdateTarget(Vector3 location) {

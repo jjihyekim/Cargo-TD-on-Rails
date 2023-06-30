@@ -49,7 +49,7 @@ public class EnemyWave : MonoBehaviour, IShowOnDistanceRadar, ISpeedForEngineSou
         lineRenderer = GetComponentInChildren<LineRenderer>();
     }
 
-    public void SetUp(EnemyIdentifier data, float position, bool isMoving, bool _isLeft, PowerUpScriptable powerUp) {
+    public void SetUp(EnemyIdentifier data, float position, bool isMoving, bool _isLeft, Artifact artifact) {
         myEnemy = data;
         var en = DataHolder.s.GetEnemy(myEnemy.enemyUniqueName);
         var mySwarm = en.GetComponent<EnemySwarmMaker>();
@@ -57,7 +57,7 @@ public class EnemyWave : MonoBehaviour, IShowOnDistanceRadar, ISpeedForEngineSou
             Debug.LogError($"Enemy is missing swarm maker {en.gameObject.name} {data.enemyUniqueName}");
         }
 
-        bool hasPowerUp = powerUp != null;
+        bool hasPowerUp = artifact != null;
        
         mySpeed = mySwarm.speed;
         isTeleporting = mySwarm.isTeleporting;
@@ -71,7 +71,7 @@ public class EnemyWave : MonoBehaviour, IShowOnDistanceRadar, ISpeedForEngineSou
         }
         
         isLeft = _isLeft;
-        SpawnEnemy(hasPowerUp, powerUp);
+        SpawnEnemy(hasPowerUp, artifact);
         
         SetTargetPosition();
         myXOffset = targetXOffset;
@@ -278,10 +278,10 @@ public class EnemyWave : MonoBehaviour, IShowOnDistanceRadar, ISpeedForEngineSou
         if (!isLeft)
             targetXOffset = -targetXOffset;
     }
-    void SpawnEnemy(bool hasPowerUp, PowerUpScriptable powerUp) {
+    void SpawnEnemy(bool hasPowerUp, Artifact artifact) {
         drawnEnemies = Instantiate(DataHolder.s.GetEnemy(myEnemy.enemyUniqueName), transform).GetComponent<EnemySwarmMaker>();
         drawnEnemies.transform.ResetTransformation();
-        waveSpawnXSpread = drawnEnemies.SetData(myEnemy.enemyCount, powerUp);
+        waveSpawnXSpread = drawnEnemies.SetData(myEnemy.enemyCount, artifact);
 
         /*if (hasPowerUp) {
             drawnEnemies.enemyIcon = powerUp.icon;

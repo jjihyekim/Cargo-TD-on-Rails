@@ -17,15 +17,16 @@ MonoBehaviour:
     isEncounter: 0
     enemiesOnPath:
     - enemyIdentifier:
-        enemyUniqueName: TeleportingBuggyCannon
+        enemyUniqueName: BuggyAVC
         enemyCount: 3
       distanceOnPath: 0
       isLeft: 0
+      hasReward: 0
     - enemyIdentifier:
         enemyUniqueName: TeleportingBuggyGatling
-        enemyCount: 2
+        enemyCount: 1
       distanceOnPath: 40
       isLeft: 0
-    rewardPowerUpAtTheEnd: 0
+      hasReward: 0
     segmentLength: 200
-    powerUpRewardUniqueName: 
+    artifactRewardUniqueName: 

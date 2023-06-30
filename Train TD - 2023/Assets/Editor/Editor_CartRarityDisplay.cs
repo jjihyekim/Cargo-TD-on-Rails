@@ -35,29 +35,55 @@ public class Editor_CartRarityDisplay {
         }
         
         
-        // If we're don't have a Cart script, ignore it.
+        GUIContent icon;
         var cart = go.GetComponent<Cart>();
-        if (cart == null) {
+        var artifact = go.GetComponent<Artifact>();
+        if (cart != null) {
+            switch (cart.myRarity) {
+                case UpgradesController.CartRarity.epic:
+                    icon = EditorGUIUtility.IconContent("sv_icon_dot5_pix16_gizmo");
+                
+                    break;
+                case UpgradesController.CartRarity.rare:
+                    icon = EditorGUIUtility.IconContent("sv_icon_dot1_pix16_gizmo");
+                
+                    break;
+                case UpgradesController.CartRarity.common:
+                default:
+                
+                    icon = EditorGUIUtility.IconContent("sv_icon_dot0_pix16_gizmo");
+                    break;
+            }
+        }else if (artifact != null) {
+            switch (artifact.myRarity) {
+                case UpgradesController.CartRarity.special:
+                    icon = EditorGUIUtility.IconContent("sv_icon_dot3_pix16_gizmo");
+                    
+                    break;
+                case UpgradesController.CartRarity.boss:
+                    icon = EditorGUIUtility.IconContent("sv_icon_dot6_pix16_gizmo");
+                    
+                    break;
+                case UpgradesController.CartRarity.epic:
+                    icon = EditorGUIUtility.IconContent("sv_icon_dot5_pix16_gizmo");
+                
+                    break;
+                case UpgradesController.CartRarity.rare:
+                    icon = EditorGUIUtility.IconContent("sv_icon_dot1_pix16_gizmo");
+                
+                    break;
+                case UpgradesController.CartRarity.common:
+                default:
+                
+                    icon = EditorGUIUtility.IconContent("sv_icon_dot0_pix16_gizmo");
+                    break;
+            }
+        } else {
             return;
         }
 
-        GUIContent icon;
 
-        switch (cart.myRarity) {
-            case UpgradesController.CartRarity.epic:
-                icon = EditorGUIUtility.IconContent("sv_icon_dot5_pix16_gizmo");
-                
-                break;
-            case UpgradesController.CartRarity.rare:
-                icon = EditorGUIUtility.IconContent("sv_icon_dot1_pix16_gizmo");
-                
-                break;
-            case UpgradesController.CartRarity.common:
-            default:
-                
-                icon = EditorGUIUtility.IconContent("sv_icon_dot0_pix16_gizmo");
-                break;
-        }
+        
 
         Vector2 selectionPosition = selectionRect.position;
         Vector2 selectionSize = selectionRect.size;

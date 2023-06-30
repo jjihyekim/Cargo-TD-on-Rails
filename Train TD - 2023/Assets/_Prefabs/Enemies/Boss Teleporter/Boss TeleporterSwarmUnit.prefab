@@ -123,6 +123,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1a7eab1db79f56c47b0647f898b7c2c9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  baseHealth: 4000
   maxHealth: 4000
   currentHealth: 4000
   scrapReward: 25
@@ -135,10 +136,12 @@ MonoBehaviour:
   cartRewardTransform: {fileID: 0}
   healthBar: {fileID: 0}
   isArmored: 0
-  rewardPowerUp: 0
   isComponentEnemy: 0
   currentBurn: 0
   burnSpeed: 0
+  rewardArtifactOnDeath: 0
+  artifactRewardUniqueName: 
+  bonusArtifactUIStar: {fileID: 0}
   _outlines: []
 --- !u!114 &3038431739623073049
 MonoBehaviour:
@@ -156,6 +159,7 @@ MonoBehaviour:
   myType: 0
   targetTransform: {fileID: 3774341611181933191}
   avoid: 1
+  flying: 0
   velocity: {x: 0, y: 0, z: 0}
 --- !u!114 &7440264286695437326
 MonoBehaviour:
@@ -334,6 +338,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1a7eab1db79f56c47b0647f898b7c2c9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  baseHealth: 200
   maxHealth: 500
   currentHealth: 500
   scrapReward: 10
@@ -346,10 +351,12 @@ MonoBehaviour:
   cartRewardTransform: {fileID: 677720628383939467}
   healthBar: {fileID: 0}
   isArmored: 0
-  rewardPowerUp: 0
   isComponentEnemy: 1
   currentBurn: 0
   burnSpeed: 0
+  rewardArtifactOnDeath: 0
+  artifactRewardUniqueName: 
+  bonusArtifactUIStar: {fileID: 0}
   _outlines: []
 --- !u!114 &2566350374031917171
 MonoBehaviour:
@@ -367,6 +374,7 @@ MonoBehaviour:
   myType: 0
   targetTransform: {fileID: 4288206456427033381}
   avoid: 0
+  flying: 0
   velocity: {x: 0, y: 0, z: 0}
 --- !u!1 &5582219786172079475
 GameObject:
@@ -2653,6 +2661,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1a7eab1db79f56c47b0647f898b7c2c9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  baseHealth: 200
   maxHealth: 500
   currentHealth: 500
   scrapReward: 10
@@ -2665,10 +2674,12 @@ MonoBehaviour:
   cartRewardTransform: {fileID: 90277407465082495}
   healthBar: {fileID: 0}
   isArmored: 0
-  rewardPowerUp: 0
   isComponentEnemy: 1
   currentBurn: 0
   burnSpeed: 0
+  rewardArtifactOnDeath: 0
+  artifactRewardUniqueName: 
+  bonusArtifactUIStar: {fileID: 0}
   _outlines: []
 --- !u!114 &3237756680805762530
 MonoBehaviour:
@@ -2686,6 +2697,7 @@ MonoBehaviour:
   myType: 0
   targetTransform: {fileID: 4773956975253314624}
   avoid: 0
+  flying: 0
   velocity: {x: 0, y: 0, z: 0}
 --- !u!1001 &582367567636979020
 PrefabInstance:

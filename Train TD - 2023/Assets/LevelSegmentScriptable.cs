@@ -49,7 +49,7 @@ public class LevelSegment {
 	public int segmentLength = 200;
 	
 	[HideInInspector]
-	public string powerUpRewardUniqueName;
+	public string artifactRewardUniqueName;
 	
 	public bool isRealLevel() {
 		return levelName != "unset";

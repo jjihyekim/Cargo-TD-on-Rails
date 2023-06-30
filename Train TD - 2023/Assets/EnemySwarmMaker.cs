@@ -44,14 +44,18 @@ public class EnemySwarmMaker : MonoBehaviour
 
     public float currentXSpread = 0;
     public float xSpreadAdd = 0;
-    public float SetData(float data, PowerUpScriptable powerUpScriptable) {
+    public float SetData(float data, Artifact artifact) {
         var totalCount = Mathf.RoundToInt(data);
         currentXSpread = 0;
+        var artifactEnemy = Random.Range(0, totalCount);
 
         if (totalCount == 1) {
             var buggy = Instantiate(enemyPrefab, transform);
             buggy.transform.localPosition = Vector3.zero;
             activeEnemies += 1;
+            
+            AddArtifactToEnemy(artifact, buggy);
+            ArtifactsController.s.ModifyEnemy(buggy.GetComponent<EnemyHealth>());
 
         } else {
             int n = 0;
@@ -71,21 +75,33 @@ public class EnemySwarmMaker : MonoBehaviour
                     buggy.transform.localPosition = posWithSpread;
                     currentXSpread = Mathf.Max(currentXSpread, posWithSpread.x);
                     activeEnemies += 1;
+                    
+                    
+                    if (i == artifactEnemy && artifact != null)
+                        AddArtifactToEnemy(artifact, buggy);
+                    ArtifactsController.s.ModifyEnemy(buggy.GetComponent<EnemyHealth>());
                 }
 
                 n++;
             }
         }
 
-        if (powerUpScriptable != null) {
-            var powerUpCarrier = transform.GetChild(Random.Range(0, transform.childCount));
-            var powerUpParent = powerUpCarrier.GetComponent<EnemyHealth>().GetCartRewardTransform();
-            Instantiate(LevelReferences.s.enemyCartReward, powerUpParent).transform.ResetTransformation();
+        if (artifact != null) {
+            
         }
 
         currentXSpread += xSpreadAdd;
 
         return currentXSpread;
+    }
+
+    void AddArtifactToEnemy(Artifact artifact, GameObject enemy) {
+            var artifactCarrier = enemy.GetComponent<EnemyHealth>();
+            var hasArtifactDisplayParent = artifactCarrier.GetUITransform();
+            var uiStar = Instantiate(LevelReferences.s.enemyHasArtifactStar, LevelReferences.s.uiDisplayParent).GetComponent<UIElementFollowWorldTarget>().SetUp(hasArtifactDisplayParent);
+            artifactCarrier.rewardArtifactOnDeath = true;
+            artifactCarrier.artifactRewardUniqueName = artifact.uniqueName;
+            artifactCarrier.bonusArtifactUIStar = uiStar;
     }
 
     public void EnemyDeath(bool playDeathSounds = true) {

@@ -97,6 +97,8 @@ public class MiniGUI_DamageNumber : MonoBehaviour {
             result = damage / 2f + 11;
         }
 
+        result = Mathf.Clamp(result, 2, 100);
+
         return result;
     }
 
