@@ -57,6 +57,10 @@ public class LevelReferences : MonoBehaviour {
     public static List<PossibleTarget> allTargets = new List<PossibleTarget>();
     public static TargetValues[] allTargetValues = new TargetValues[0];
     public static bool targetsDirty;
+
+
+    public Material[] cartLevelMats;
+
     
     public struct TargetValues {
         public PossibleTarget.Type type;

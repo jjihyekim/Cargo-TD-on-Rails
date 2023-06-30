@@ -16,8 +16,9 @@ public class Artifact_CartValueAffector : ActivateWhenOnArtifactRow {
 
 
     protected override void _Arm() {
-        for (int i = 0; i < Train.s.carts.Count; i++) {
-            var cart = Train.s.carts[i];
+        var carts = GetAllCarts();
+        for (int i = 0; i < carts.Count; i++) {
+            var cart = carts[i];
 
             if (engineOnly && !cart.isMainEngine) {
                 return;
@@ -36,7 +37,7 @@ public class Artifact_CartValueAffector : ActivateWhenOnArtifactRow {
             }
 
             foreach (var gunModule in cart.GetComponentsInChildren<GunModule>()) {
-                gunModule.artifactDamageMultiplier += damageMultiplier-1;
+                gunModule.damageMultiplier += damageMultiplier-1;
             }
 
             if (cart.GetComponentInChildren<ModuleAmmo>() != null) {
@@ -46,32 +47,6 @@ public class Artifact_CartValueAffector : ActivateWhenOnArtifactRow {
     }
 
     protected override void _Disarm() {
-        for (int i = 0; i < Train.s.carts.Count; i++) {
-            var cart = Train.s.carts[i];
-            
-            if (engineOnly && !cart.isMainEngine) {
-                return;
-            }
-
-            if (cargoOnly && (!cart.isCargo && !cart.isMysteriousCart)) {
-                return;
-            }
-
-            if (cart.GetHealthModule() != null) {
-                cart.GetHealthModule().maxHealth /= healthMultiplier;
-                cart.GetHealthModule().currentHealth /= healthMultiplier;
-                
-                cart.GetHealthModule().maxShields -= addShieldAmount;
-                cart.GetHealthModule().maxShields -= addShieldAsHpPercent * cart.GetHealthModule().maxHealth;
-            }
-
-            foreach (var gunModule in cart.GetComponentsInChildren<GunModule>()) {
-                gunModule.artifactDamageMultiplier -= damageMultiplier-1;
-            }
-            
-            if (cart.GetComponentInChildren<ModuleAmmo>() != null) {
-                cart.GetComponentInChildren<ModuleAmmo>().ChangeMaxAmmo(-(ammoMultiplier-1));
-            }
-        }
+        // do nothing
     }
 }

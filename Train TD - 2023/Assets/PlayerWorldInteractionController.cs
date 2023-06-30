@@ -458,7 +458,16 @@ public class PlayerWorldInteractionController : MonoBehaviour {
     }
 
     public float repairAmountPerClick = 50f;
+    public float repairAmountMultiplier = 1;
     public float reloadAmountPerClick = 2;
+    public float reloadAmountMultiplier = 1;
+
+    public void ResetValues() {
+        repairAmountMultiplier = 1;
+        reloadAmountMultiplier = 1;
+        canRepair = true;
+        canReload = true;
+    }
 
     void CheckAndDoClick() {
         if (selectedCart != null) {
@@ -466,10 +475,10 @@ public class PlayerWorldInteractionController : MonoBehaviour {
                 HideInfo();
                 switch (currentSelectMode) {
                     case SelectMode.cart:
-                        selectedCart.GetHealthModule().Repair(repairAmountPerClick);
+                        selectedCart.GetHealthModule().Repair(repairAmountPerClick*repairAmountMultiplier);
                         break;
                     case SelectMode.reload:
-                        selectedCart.GetComponentInChildren<ModuleAmmo>().Reload(reloadAmountPerClick);
+                        selectedCart.GetComponentInChildren<ModuleAmmo>().Reload(reloadAmountPerClick*reloadAmountMultiplier);
                         break;
                     case SelectMode.directControl:
                         DirectControlMaster.s.AssumeDirectControl(selectedCart.GetComponentInChildren<DirectControllable>());
@@ -484,7 +493,7 @@ public class PlayerWorldInteractionController : MonoBehaviour {
                 HideInfo();
                 var health = selectedCart.GetHealthModule();
                 if (health != null) {
-                    health.Repair(repairAmountPerClick);
+                    health.Repair(repairAmountPerClick*repairAmountMultiplier);
                 }
             }
 
@@ -492,7 +501,7 @@ public class PlayerWorldInteractionController : MonoBehaviour {
                 HideInfo();
                 var ammo = selectedCart.GetComponentInChildren<ModuleAmmo>();
                 if (ammo != null) {
-                    ammo.Reload(reloadAmountPerClick);
+                    ammo.Reload(reloadAmountPerClick*reloadAmountMultiplier);
                 }
             }
             
@@ -676,7 +685,7 @@ public class PlayerWorldInteractionController : MonoBehaviour {
         infoCard.Hide();
     }
 
-    void Deselect() {
+    public void Deselect() {
         if (selectedCart != null) {
             var cart = selectedCart;
             selectedCart = null;

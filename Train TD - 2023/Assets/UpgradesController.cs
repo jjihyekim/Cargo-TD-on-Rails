@@ -46,7 +46,7 @@ public class UpgradesController : MonoBehaviour {
 
 	public bool shopArea_destinationSelected = false;
 	public bool shopArea_fleaMarketFull = false;
-	public bool shopArea_noFreeCarts = false;
+	//public bool shopArea_noFreeCarts = false;
 
 	public bool endGame_noCargoOnTrain;
 	public bool endGame_noFreeCarts;
@@ -54,6 +54,8 @@ public class UpgradesController : MonoBehaviour {
 	public MiniGUI_DepartureChecklist shopChecklist;
 	public MiniGUI_DepartureChecklist endGameAreaChecklist;
 
+	
+	//public GameObject cargoLyingAroundParticles;
 	public float luck => DataSaver.s.GetCurrentSave().currentRun.luck;
 
 	public void RemoveCartFromShop(Cart cart) {
@@ -182,6 +184,7 @@ public class UpgradesController : MonoBehaviour {
 		}
 	}
 
+	
 	public void SaveShopCartState() {
 		var shopState = new ShopState();
 		for (int i = 0; i < shopCarts.Count; i++) {
@@ -453,14 +456,15 @@ public class UpgradesController : MonoBehaviour {
 				ShopStateController.s.SetCannotGo(ShopStateController.CanStartLevelStatus.needToPutThingInFleaMarket);
 			}
 
-			shopArea_noFreeCarts = true;
+			/*shopArea_noFreeCarts = true;
 			for (int i = 0; i < shopCarts.Count; i++) {
-				if (shopCarts[i].myLocation == CartLocation.world) {
+				if (shopCarts[i].myLocation == CartLocation.world || shopCarts[i].myLocation == CartLocation.forge) {
+					//Instantiate(cargoLyingAroundParticles, shopCarts[i].genericParticlesParent);
 					shopArea_noFreeCarts = false;
 					ShopStateController.s.SetCannotGo(ShopStateController.CanStartLevelStatus.needToPickUpFreeCarts);
 					break;
 				}
-			}
+			}*/
 			
 			if (leftCargo.myLocation != CartLocation.train && rightCargo.myLocation != CartLocation.train) {
 				shopArea_destinationSelected = false;
@@ -468,7 +472,7 @@ public class UpgradesController : MonoBehaviour {
 			}
 
 			
-			shopChecklist.UpdateStatus(new []{shopArea_destinationSelected, shopArea_fleaMarketFull, shopArea_noFreeCarts});
+			shopChecklist.UpdateStatus(new []{shopArea_destinationSelected, shopArea_fleaMarketFull/*, shopArea_noFreeCarts*/});
 			MissionWinFinisher.s.SetCannotGo(true);
 			return fleaMarketCount;
 		}
@@ -672,5 +676,15 @@ public class UpgradesController : MonoBehaviour {
 		}
 
 		return allArtifacts[Random.Range(0, allArtifacts.Length)];
+	}
+
+
+	public void OnCombatStart() {
+		for (int i = 0; i < shopCarts.Count; i++) {
+			if (shopCarts[i].myLocation == CartLocation.world) {
+				shopCarts[i].gameObject.AddComponent<RubbleFollowFloor>().InstantAttachToFloor();
+				
+			}
+		}
 	}
 }

@@ -409,6 +409,7 @@ MonoBehaviour:
   _maxAmmo: 5
   maxAmmoMultiplier: 1
   ammoPerBarrage: 1
+  ammoPerBarrageMultiplier: 1
   myGunModules: []
   OnUse:
     m_PersistentCalls:
@@ -913,6 +914,10 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2564255422046077385, guid: 86c82cfee32788c49a35e2e0e34bf7b7, type: 3}
       propertyPath: maxHealth
+      value: 400
+      objectReference: {fileID: 0}
+    - target: {fileID: 2564255422046077385, guid: 86c82cfee32788c49a35e2e0e34bf7b7, type: 3}
+      propertyPath: baseHealth
       value: 400
       objectReference: {fileID: 0}
     - target: {fileID: 2564255422046077385, guid: 86c82cfee32788c49a35e2e0e34bf7b7, type: 3}

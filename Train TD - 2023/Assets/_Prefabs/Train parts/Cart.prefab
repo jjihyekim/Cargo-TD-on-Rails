@@ -122,6 +122,7 @@ Transform:
   - {fileID: 297169626957785689}
   - {fileID: 1691629272263448227}
   - {fileID: 2849140471503338825}
+  - {fileID: 317267816422079952}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -137,9 +138,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f5b56326a28e8a24c91959aa3382ef6a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  level: 0
   myRarity: 0
   isMainEngine: 0
-  isCriticalComponent: 0
+  isMysteriousCart: 0
   isCargo: 0
   trainIndex: 0
   myLocation: 0
@@ -154,7 +156,11 @@ MonoBehaviour:
   uiTargetTransform: {fileID: 260396750736902120}
   shootingTargetTransform: {fileID: 8617060669197175679}
   modulesParent: {fileID: 2849140471503338825}
+  cartOverlayMaterial: {fileID: 2100000, guid: 3c79052101c614f40ada40d6288877ca, type: 2}
+  cartMaterial: {fileID: 2531015871176094516}
+  genericParticlesParent: {fileID: 317267816422079952}
   _outlines: []
+  _meshes: []
 --- !u!114 &2564255422046077385
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -167,6 +173,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b09e23bb0990b1b4e9262ab25f3b6442, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  maxShields: 0
+  currentShields: 0
+  curShieldDelay: 0
+  baseHealth: 500
   maxHealth: 500
   currentHealth: 500
   damageReductionMultiplier: 1
@@ -176,8 +186,10 @@ MonoBehaviour:
   damageNearCartsOnDeath: 0
   selfDamage: 0
   selfDamageAmounts: 140000000a000000
-  invincibleTutorial: 0
+  unDying: 0
+  invincible: 0
   myBar: {fileID: 638180950173769427}
+  boostHealthOnUpgrade: 0.5
   explosionDamages: 640000003200000019000000
   burnResistant: 0
   currentBurn: 0
@@ -194,8 +206,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 457bc320c770c7e419cae2d477ce9623, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  myId: 0
   myType: 1
   targetTransform: {fileID: 562937242484905868}
+  avoid: 0
+  flying: 0
+  velocity: {x: 0, y: 0, z: 0}
 --- !u!114 &-2084665083962906048
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -284,6 +300,37 @@ Transform:
   m_Children: []
   m_Father: {fileID: 1063128118414717790}
   m_RootOrder: 7
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &3594827500495483965
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 317267816422079952}
+  m_Layer: 11
+  m_Name: GenericParticlesParent
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &317267816422079952
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3594827500495483965}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0.7, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1063128118414717790}
+  m_RootOrder: 8
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &3756307987550949569
 GameObject:
@@ -643,8 +690,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5927460583573825002}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.1923, y: 0.5457, z: 0}
-  m_LocalScale: {x: 0.027819972, y: 0.033447158, z: 0.49804372}
+  m_LocalPosition: {x: -0.1923, y: 0.5457, z: 0.099608734}
+  m_LocalScale: {x: 0.027819972, y: 0.033447158, z: 0.29882622}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 297169626957785689}
@@ -1419,6 +1466,11 @@ PrefabInstance:
 --- !u!4 &1057484122331921 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 8aed300f5cd4af3478627e9935a801ee, type: 3}
+  m_PrefabInstance: {fileID: 543097978048150778}
+  m_PrefabAsset: {fileID: 0}
+--- !u!23 &2531015871176094516 stripped
+MeshRenderer:
+  m_CorrespondingSourceObject: {fileID: 2636436733710389198, guid: 8aed300f5cd4af3478627e9935a801ee, type: 3}
   m_PrefabInstance: {fileID: 543097978048150778}
   m_PrefabAsset: {fileID: 0}
 --- !u!1001 &2279936214996989511

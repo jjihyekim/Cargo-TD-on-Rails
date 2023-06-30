@@ -186,6 +186,12 @@ public abstract class ActivateWhenOnArtifactRow : MonoBehaviour {
     
 	protected abstract void _Disarm();
 	
+	public List<Cart> GetAllCarts() {
+		var carts = new List<Cart>();
+		carts.AddRange(Train.s.carts);
+		carts.AddRange(UpgradesController.s.shopCarts);
+		return carts;
+	}
 }
 
 public abstract class ActivateWhenEnemySpawns : MonoBehaviour {

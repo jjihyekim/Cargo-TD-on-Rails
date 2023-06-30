@@ -30,8 +30,7 @@ public class CargoDeliveryAreaScript : MonoBehaviour {
     
     IEnumerator EngagePlatform(SnapCartLocation fullPlatform, SnapCartLocation emptyPlatform) {
         isEngaged = true;
-        PlayerWorldInteractionController.s.canSelect = false;
-        CameraController.s.cannotSelectButCanMoveOverride = true;
+        PlayerWorldInteractionController.s.Deselect();
         SetColliderStatus(rotatingPlatform.gameObject, false);
 
         //yield return null; //wait a frame for good luck
@@ -101,8 +100,6 @@ public class CargoDeliveryAreaScript : MonoBehaviour {
 
         rotatingPlatform.transform.rotation = startRotation;
         
-        PlayerWorldInteractionController.s.canSelect = true;
-        CameraController.s.cannotSelectButCanMoveOverride = false;
         isEngaged = false;
     }
     

@@ -49,9 +49,13 @@ public class MiniGUI_CartUIBar : MonoBehaviour {
 
     //private Material _material;
 
+    private bool showAnyHealth = false;
+
     public void SetUp(Cart cart, ModuleHealth moduleHealth, ModuleAmmo moduleAmmo) {
         myCart = cart;
         myHealth = moduleHealth;
+        
+        
         myAmmo = moduleAmmo;
         isAmmo = myAmmo != null;
         var boostable = cart.GetComponentInChildren<EngineBoostable>();
@@ -71,6 +75,14 @@ public class MiniGUI_CartUIBar : MonoBehaviour {
         showWarning = myCart.isMysteriousCart || myCart.isMainEngine;
 
         healthFill.material = new Material(healthFill.material);
+        
+        if (myHealth.invincible) {
+            healthBar.gameObject.SetActive(false);
+            shieldBar.gameObject.SetActive(false);
+            showAnyHealth = false;
+        } else {
+            showAnyHealth = true;
+        }
     }
 
     void UpdateAllSiblingPositions() {
@@ -82,8 +94,11 @@ public class MiniGUI_CartUIBar : MonoBehaviour {
     }
 
     private void Update() {
-        SetHealthBarValue();
-        SetShieldBarValue();
+        if (showAnyHealth) {
+            SetHealthBarValue();
+            SetShieldBarValue();
+        }
+
         if (isAmmo)
             SetAmmoBarValue();
         if (isBoost)

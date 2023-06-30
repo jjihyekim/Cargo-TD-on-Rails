@@ -9,6 +9,8 @@ public class RubbleFollowFloor : MonoBehaviour {
     public float deathTime = 20f;
 
 
+    public bool isAttachedToFloor = false;
+
     private void Start() {
         Invoke("DestroyNow", deathTime);
     }
@@ -24,14 +26,31 @@ public class RubbleFollowFloor : MonoBehaviour {
     
     
     private void OnCollisionEnter(Collision other) {
-        if (other.transform.parent != null && other.transform.parent.CompareTag("Ground")) {
-            other.gameObject.GetComponentInParent<HexChunk>().AddForeignObject(gameObject);
+        if (!isAttachedToFloor) {
+            if (other.transform.parent != null && other.transform.parent.CompareTag("Ground")) {
+                AttachToFloor(other.gameObject);
+            }
         }
     }
 
-    /*private void OnCollisionExit(Collision other) {
-        if (other.gameObject.tag == "Ground") {
-            transform.SetParent(null);
+    private void OnCollisionStay(Collision other) {
+        if (!isAttachedToFloor) {
+            if (other.transform.parent != null && other.transform.parent.CompareTag("Ground")) {
+                AttachToFloor(other.gameObject);
+            }
         }
-    }*/
+    }
+
+
+    void AttachToFloor(GameObject target) {
+        isAttachedToFloor = true;
+        target.GetComponentInParent<HexChunk>().AddForeignObject(gameObject);
+    }
+
+
+    public void InstantAttachToFloor() {
+        if (Physics.Raycast(transform.position+Vector3.up*5, Vector3.down, out RaycastHit hit, 6, LevelReferences.s.groundLayer)) {
+            AttachToFloor(hit.collider.gameObject);
+        }
+    }
 }

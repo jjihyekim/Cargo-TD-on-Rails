@@ -16,6 +16,7 @@ public class ModuleAmmo : MonoBehaviour, IActiveDuringCombat, IActiveDuringShopp
     }
     
     public float ammoPerBarrage = 1;
+    public float ammoPerBarrageMultiplier = 1;
 
     public GunModule[] myGunModules;
 
@@ -30,6 +31,12 @@ public class ModuleAmmo : MonoBehaviour, IActiveDuringCombat, IActiveDuringShopp
         ammoUse /= TweakablesMaster.s.myTweakables.magazineSizeMultiplier;
 
         return ammoUse;
+    }
+
+    public void ResetState() {
+        ammoPerBarrageMultiplier = 1;
+        maxAmmoMultiplier = 1;
+        ChangeMaxAmmo(0);
     }
     
     public void UseAmmo() {
@@ -68,7 +75,12 @@ public class ModuleAmmo : MonoBehaviour, IActiveDuringCombat, IActiveDuringShopp
 
     public void ChangeMaxAmmo(float multiplierChange) {
         maxAmmoMultiplier += multiplierChange;
-        curAmmo = maxAmmo;
+        if (PlayStateMaster.s.isCombatInProgress()) {
+            curAmmo = Mathf.Clamp(curAmmo, 0, maxAmmo);
+        } else {
+            curAmmo = maxAmmo;
+        }
+
         OnUse?.Invoke();
         OnReload?.Invoke(false);
     }

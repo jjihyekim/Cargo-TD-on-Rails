@@ -387,6 +387,7 @@ MonoBehaviour:
       m_Calls: []
   gunShakeOnShoot: 1
   beingDirectControlled: 0
+  waitTimer: 0
 --- !u!114 &5993221132841959538
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -402,6 +403,7 @@ MonoBehaviour:
   rotationSpan: 60
   range: 5
   myPossibleTargets: 00000000
+  canHitFlying: 0
 --- !u!1 &748108092723461709
 GameObject:
   m_ObjectHideFlags: 0
@@ -489,6 +491,7 @@ MonoBehaviour:
       m_Calls: []
   gunShakeOnShoot: 1
   beingDirectControlled: 0
+  waitTimer: 0
 --- !u!114 &4010832878868196016
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -504,6 +507,7 @@ MonoBehaviour:
   rotationSpan: 60
   range: 5
   myPossibleTargets: 00000000
+  canHitFlying: 0
 --- !u!1 &925174664117116651
 GameObject:
   m_ObjectHideFlags: 0
@@ -1197,6 +1201,7 @@ MonoBehaviour:
   _maxAmmo: 15
   maxAmmoMultiplier: 1
   ammoPerBarrage: 1
+  ammoPerBarrageMultiplier: 1
   myGunModules: []
   OnUse:
     m_PersistentCalls:
@@ -1855,6 +1860,10 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2564255422046077385, guid: 86c82cfee32788c49a35e2e0e34bf7b7, type: 3}
       propertyPath: maxHealth
+      value: 400
+      objectReference: {fileID: 0}
+    - target: {fileID: 2564255422046077385, guid: 86c82cfee32788c49a35e2e0e34bf7b7, type: 3}
+      propertyPath: baseHealth
       value: 400
       objectReference: {fileID: 0}
     - target: {fileID: 2564255422046077385, guid: 86c82cfee32788c49a35e2e0e34bf7b7, type: 3}

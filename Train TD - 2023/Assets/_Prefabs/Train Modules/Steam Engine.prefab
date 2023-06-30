@@ -10660,6 +10660,12 @@ MonoBehaviour:
   OnEngineStop:
     m_PersistentCalls:
       m_Calls: []
+  OnEngineBoost:
+    m_PersistentCalls:
+      m_Calls: []
+  OnEngineLowPower:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!114 &26677003479329346
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -30673,6 +30679,10 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2564255422046077385, guid: 86c82cfee32788c49a35e2e0e34bf7b7, type: 3}
       propertyPath: maxHealth
+      value: 1000
+      objectReference: {fileID: 0}
+    - target: {fileID: 2564255422046077385, guid: 86c82cfee32788c49a35e2e0e34bf7b7, type: 3}
+      propertyPath: baseHealth
       value: 1000
       objectReference: {fileID: 0}
     - target: {fileID: 2564255422046077385, guid: 86c82cfee32788c49a35e2e0e34bf7b7, type: 3}

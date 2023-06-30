@@ -3,13 +3,12 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class RoboRepairModule : ActivateWhenAttachedToTrain, IActiveDuringCombat{
+public class RoboRepairModule : ActivateWhenAttachedToTrain, IActiveDuringCombat, IBooster{
     private float curRepairDelay = 0.5f;
     public float repairDelay = 2;
     public float repairAmount = 25;
     public float steamUsePerRepair = 0.5f;
 
-    public int repairRange = 1;
     public int repairPerCycle = 2;
     
     private Train myTrain;
@@ -43,7 +42,7 @@ public class RoboRepairModule : ActivateWhenAttachedToTrain, IActiveDuringCombat
     bool BreadthFirstRepairSearch() {
         var carts = new List<Cart>();
 
-        var range = Mathf.Min(myTrain.carts.Count, repairRange);
+        var range = Mathf.Min(myTrain.carts.Count, baseRange + rangeBoost);
         
         for (int i = 0; i < range; i++) {
 
@@ -119,8 +118,10 @@ public class RoboRepairModule : ActivateWhenAttachedToTrain, IActiveDuringCombat
     
     
     protected override void _AttachedToTrain() {
-        ApplyBoost(Train.s.GetNextBuilding(true, GetComponentInParent<Cart>()), true);
-        ApplyBoost(Train.s.GetNextBuilding(false, GetComponentInParent<Cart>()), true);
+        for (int i = 1; i < (baseRange+rangeBoost)+1; i++) {
+            ApplyBoost(Train.s.GetNextBuilding(i, GetComponentInParent<Cart>()), true);
+            ApplyBoost(Train.s.GetNextBuilding(-i, GetComponentInParent<Cart>()), true);
+        }
     }
 
     protected override bool CanApply(Cart target) {
@@ -133,7 +134,20 @@ public class RoboRepairModule : ActivateWhenAttachedToTrain, IActiveDuringCombat
     }
 
     protected override void _DetachedFromTrain() {
-        ApplyBoost(Train.s.GetNextBuilding(true, GetComponentInParent<Cart>()), false);
-        ApplyBoost(Train.s.GetNextBuilding(false, GetComponentInParent<Cart>()), false);
+        //do nothing
+    }
+    
+    public int baseRange = 1;
+    public int rangeBoost = 0;
+    public float boostMultiplier = 1;
+
+    public void ResetState(int level) {
+        rangeBoost = level;
+        boostMultiplier = 1;
+    }
+
+    public void ModifyStats(int range, float value) {
+        rangeBoost += range;
+        boostMultiplier += value;
     }
 }

@@ -30,33 +30,6 @@ public class MiniGUI_HealthBar : MonoBehaviour{
     public static bool showHealthBars = true;
     public static bool showAmmoBars = true;
 
-    
-    public void SetUp(ModuleHealth moduleHealth, ModuleAmmo moduleAmmo) {
-        isPlayer = true;
-        myHealth = moduleHealth;
-        myModuleAmmo = moduleAmmo;
-        if (myModuleAmmo != null) {
-            isAmmoBar = true;
-
-            /*var refillType = myModuleAmmo.GetComponent<ReloadAction>().myType;
-            switch (refillType) {
-                case ResourceTypes.ammo:
-                    ammoFiller.color = bulletAmmoColor;
-                    break;
-                case ResourceTypes.fuel:
-                    ammoFiller.color = fuelAmmoColor;
-                    break;
-            }*/
-        }
-        ammoSlider.gameObject.SetActive(isAmmoBar);
-
-        if (moduleHealth.GetComponent<Cart>()) {
-            GetComponent<UIElementFollowWorldTarget>().SetUp(moduleHealth.GetComponent<Cart>().GetUITargetTransform());
-        } 
-
-        Update();
-    }
-    
     public void SetUp(EnemyHealth enemyHealth) {
         isPlayer = false;
         myHealth = enemyHealth;

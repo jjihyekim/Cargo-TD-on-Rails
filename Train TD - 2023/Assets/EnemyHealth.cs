@@ -109,12 +109,13 @@ public class EnemyHealth : MonoBehaviour, IHealth {
 		}
 	}
 
-	private void Start() {
+	public void SetUp() {
 		healthBar = Instantiate(LevelReferences.s.enemyHealthPrefab, LevelReferences.s.uiDisplayParent).GetComponent<MiniGUI_HealthBar>();
 		healthBar.SetUp(this);
 		enemySpawned += 1;
 
 		maxHealth *= 1 + WorldDifficultyController.s.currentHealthIncrease;
+		maxHealth = baseHealth;
 		currentHealth = maxHealth;
 	}
 
@@ -161,6 +162,7 @@ public class EnemyHealth : MonoBehaviour, IHealth {
 
 			if (rewardArtifactOnDeath) {
 				ArtifactsController.s.GetBonusArtifact(bonusArtifactUIStar, artifactRewardUniqueName);
+				bonusArtifactUIStar = null;
 			}
 		}
 
@@ -183,6 +185,10 @@ public class EnemyHealth : MonoBehaviour, IHealth {
 		if(healthBar != null)
 			if(healthBar.gameObject != null)
 				Destroy(healthBar.gameObject);
+
+		if (bonusArtifactUIStar != null) {
+			Destroy(bonusArtifactUIStar.gameObject);
+		}
 	}
 
 	public bool IsPlayer() {

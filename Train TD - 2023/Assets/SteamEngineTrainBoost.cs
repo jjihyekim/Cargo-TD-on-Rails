@@ -31,9 +31,7 @@ public class SteamEngineTrainBoost : ActivateWhenAttachedToTrain, IExtraInfo
     }
 
     protected override void _DetachedFromTrain() {
-        for (int i = 0; i < Train.s.carts.Count; i++) {
-            ApplyBoost(Train.s.carts[i], false);
-        }
+        //do nothing
     }
     
     public string GetInfoText() {

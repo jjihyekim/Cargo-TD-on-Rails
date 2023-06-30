@@ -135,6 +135,10 @@ public class GamepadControlsHelper : MonoBehaviour {
             gamepadSelector.SetActive(false);
             //cartSelectPrompts.gameObject.SetActive(false);
         }
+        
+        
+        if(cartSelectPrompts.sourceTransform == null)
+            cartSelectPrompts.gameObject.SetActive(false);
     }
 
     public Ray GetRay() {

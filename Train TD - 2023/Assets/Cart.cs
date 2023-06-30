@@ -1,11 +1,14 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using Sirenix.OdinInspector;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
 public class Cart : MonoBehaviour {
+
+    public int level;
 
     public UpgradesController.CartRarity myRarity;
     
@@ -46,7 +49,37 @@ public class Cart : MonoBehaviour {
         SetComponentCombatShopMode();
         PlayStateMaster.s.OnCombatEntered.AddListener(SetComponentCombatShopMode);
         PlayStateMaster.s.OnShopEntered.AddListener(SetComponentCombatShopMode);
+        SetUpOverlays();
         SetUpOutlines();
+    }
+
+
+    public Material cartOverlayMaterial;
+
+    public MeshRenderer cartMaterial;
+
+    public Transform genericParticlesParent;
+
+    public void ResetState() {
+        genericParticlesParent.DeleteAllChildren();
+        GetHealthModule().ResetState(level);
+
+        cartMaterial.material = LevelReferences.s.cartLevelMats[level];
+
+        var gunModules = GetComponentsInChildren<GunModule>();
+        for (int i = 0; i < gunModules.Length; i++) {
+            gunModules[i].ResetState(level);
+        }
+
+        var ammoModules = GetComponentsInChildren<ModuleAmmo>();
+        for (int i = 0; i < ammoModules.Length; i++) {
+            ammoModules[i].ResetState();
+        }
+
+        var boosterModules = GetComponentsInChildren<IBooster>();
+        for (int i = 0; i < boosterModules.Length; i++) {
+            boosterModules[i].ResetState(level);
+        }
     }
 
     private void Update() {
@@ -85,6 +118,9 @@ public class Cart : MonoBehaviour {
 
     
     private void OnDestroy() {
+        // Destroy material instances
+        Destroy(cartOverlayMaterial);
+        
         if(GetComponentInParent<Train>() != null)
             Train.s.CartDestroyed(this);
         
@@ -97,24 +133,31 @@ public class Cart : MonoBehaviour {
 
 
     [ReadOnly]
-    public List<Outline> _outlines = new List<Outline>();
+    public Outline[] _outlines;
+    [ReadOnly]
+    public MeshRenderer[] _meshes;
 
     void SetUpOutlines() {
-        if (_outlines.Count == 0) {
-
-            var outlines = GetComponentsInChildren<Outline>(true);
-            for (int i = 0; i < outlines.Length; i++) {
-                if(outlines[i] != null)
-                    _outlines.Add(outlines[i]);
-            }
+        if (_outlines == null || _outlines.Length ==0) {
+            _outlines = GetComponentsInChildren<Outline>(true);
         }
     }
 
-    public void SetHighlightState(bool isHighlighted) {
-        if (_outlines.Count == 0) {
-            SetUpOutlines();
+    void SetUpOverlays() {
+        if (_meshes == null || _meshes.Length == 0) {
+            cartOverlayMaterial = Instantiate(cartOverlayMaterial);
+            
+            _meshes = GetComponentsInChildren<MeshRenderer>(true);
+
+            for (int i = 0; i < _meshes.Length; i++) {
+                var materials = _meshes[i].sharedMaterials.ToList();
+                materials.Add(cartOverlayMaterial);
+                _meshes[i].materials = materials.ToArray();
+            }
         }
-        
+    }
+    
+    public void SetHighlightState(bool isHighlighted) {
         foreach (var outline in _outlines) {
             if (outline != null) {
                 outline.enabled = isHighlighted;

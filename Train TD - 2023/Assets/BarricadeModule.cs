@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class BarricadeModule : ActivateWhenAttachedToTrain, IExtraInfo
+public class BarricadeModule : ActivateWhenAttachedToTrain, IExtraInfo,IBooster
 {
     public void ProtectFromDamage(float damage) {
         GetComponentInParent<ModuleHealth>().DealDamage(damage);
@@ -14,8 +14,10 @@ public class BarricadeModule : ActivateWhenAttachedToTrain, IExtraInfo
     
     
     protected override void _AttachedToTrain() {
-        ApplyBoost(Train.s.GetNextBuilding(true, GetComponentInParent<Cart>()), true);
-        ApplyBoost(Train.s.GetNextBuilding(false, GetComponentInParent<Cart>()), true);
+        for (int i = 1; i < (baseRange+rangeBoost)+1; i++) {
+            ApplyBoost(Train.s.GetNextBuilding(i, GetComponentInParent<Cart>()), true);
+            ApplyBoost(Train.s.GetNextBuilding(-i, GetComponentInParent<Cart>()), true);
+        }
     }
     
     protected override bool CanApply(Cart target) {
@@ -37,11 +39,24 @@ public class BarricadeModule : ActivateWhenAttachedToTrain, IExtraInfo
     }
 
     protected override void _DetachedFromTrain() {
-        ApplyBoost(Train.s.GetNextBuilding(true, GetComponentInParent<Cart>()), false);
-        ApplyBoost(Train.s.GetNextBuilding(false, GetComponentInParent<Cart>()), false);
+        //do nothing
     }
 
     public string GetInfoText() {
         return "Redirects damage from attached carts to itself";
+    }
+
+    public int baseRange = 1;
+    public int rangeBoost = 0;
+    public float boostMultiplier = 1;
+
+    public void ResetState(int level) {
+        rangeBoost = level;
+        boostMultiplier = 1;
+    }
+
+    public void ModifyStats(int range, float value) {
+        rangeBoost += range;
+        boostMultiplier += value;
     }
 }

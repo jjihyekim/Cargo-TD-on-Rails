@@ -18,6 +18,8 @@ public class ModuleHealth : MonoBehaviour, IHealth, IActiveDuringCombat, IActive
     private float shieldRegenDelay = 1;
     public float curShieldDelay = 0;
 
+    public float baseHealth = 50;
+    [ReadOnly]
     public float maxHealth = 50;
     public float currentHealth = 50;
 
@@ -45,16 +47,31 @@ public class ModuleHealth : MonoBehaviour, IHealth, IActiveDuringCombat, IActive
 
     private HPLowStates hpState;
 
-    public bool invincibleTutorial = false;
-
+    public bool unDying = false;
+    public bool invincible = false;
+    
     public PhysicalHealthBar myBar;
 
     [HideInInspector] public List<Action<float>> damageDefenders = new List<Action<float>>();
 
+    public float boostHealthOnUpgrade = 0.5f;
+    
+    public void ResetState(int level) {
+        damageDefenders.Clear();
+        maxHealth = baseHealth * (1+(boostHealthOnUpgrade*level));
+        if (PlayStateMaster.s.isCombatInProgress()) {
+            currentHealth = Mathf.Clamp(currentHealth, 0, maxHealth);
+        } else {
+            currentHealth = maxHealth;
+        }
+
+        maxShields = 0;
+    }
+
     [Button]
     public void DealDamage(float damage) {
         Assert.IsTrue(damage > 0);
-        if(isImmune)
+        if(isImmune || invincible)
             return;
 
         curShieldDelay = shieldRegenDelay;
@@ -68,10 +85,15 @@ public class ModuleHealth : MonoBehaviour, IHealth, IActiveDuringCombat, IActive
             
 
             damage *= damageReductionMultiplier;
+            var shieldsWasMoreThan100 = currentShields > 100;
             if (currentShields > 0) {
                 currentShields -= damage;
+                damage = 0;
                 if (currentShields < 0) {
-                    damage = -currentShields;
+                    if (!shieldsWasMoreThan100) {
+                        damage = -currentShields;
+                    }
+
                     currentShields = 0;
                 }
             }
@@ -85,7 +107,7 @@ public class ModuleHealth : MonoBehaviour, IHealth, IActiveDuringCombat, IActive
                 if (myCart.isRepairable) {
                     GetDestroyed();
                 } else {
-                    if(!invincibleTutorial)
+                    if(!unDying)
                         Die();
                     else 
                         currentHealth = 1;
@@ -192,7 +214,7 @@ public class ModuleHealth : MonoBehaviour, IHealth, IActiveDuringCombat, IActive
     public int[] explosionDamages = new[] { 100, 50, 25 };
     void DamageNearCartsOnDeath() {
         return;
-        var myModule = GetComponent<Cart>();
+        /*var myModule = GetComponent<Cart>();
 
         var forwardWave = myModule;
         for (int i = 0; i < 3; i++) {
@@ -266,7 +288,7 @@ public class ModuleHealth : MonoBehaviour, IHealth, IActiveDuringCombat, IActive
                 enemy.DealDamage(damage);
 
             }
-        }
+        }*/
     }
 
 
@@ -336,8 +358,8 @@ public class ModuleHealth : MonoBehaviour, IHealth, IActiveDuringCombat, IActive
 
         if (curShieldDelay <= 0) {
             currentShields += shieldRegenRate * Time.deltaTime;
-            currentShields = Mathf.Clamp(currentShields, 0, maxShields);
         }
+        currentShields = Mathf.Clamp(currentShields, 0, maxShields);
     }
 
     void SelfDamage() {
@@ -348,8 +370,8 @@ public class ModuleHealth : MonoBehaviour, IHealth, IActiveDuringCombat, IActive
         var prefab = LevelReferences.s.smallDamagePrefab;
         Instantiate(prefab, transform.position, Quaternion.identity);
         
-        DealDamageToBuilding(Train.s.GetNextBuilding(true, myModule), prefab, selfDamageAmounts[1] * multiplier);
-        DealDamageToBuilding(Train.s.GetNextBuilding(false, myModule), prefab, selfDamageAmounts[1] * multiplier);
+        DealDamageToBuilding(Train.s.GetNextBuilding(1, myModule), prefab, selfDamageAmounts[1] * multiplier);
+        DealDamageToBuilding(Train.s.GetNextBuilding(-1, myModule), prefab, selfDamageAmounts[1] * multiplier);
     }
     
     private void Start() {
@@ -373,7 +395,11 @@ public class ModuleHealth : MonoBehaviour, IHealth, IActiveDuringCombat, IActive
 
     [NonSerialized]
     public UnityEvent dieEvent = new UnityEvent();
-    
+
+    private static readonly int Health = Shader.PropertyToID("_Health");
+    private static readonly int Burn = Shader.PropertyToID("_Burn");
+    private static readonly int Alive = Shader.PropertyToID("_Alive");
+
     [Button]
     public void Die() {
         /*if (damageNearCartsOnDeath) {
@@ -495,11 +521,11 @@ public class ModuleHealth : MonoBehaviour, IHealth, IActiveDuringCombat, IActive
     }
     
     void SetBuildingShaderHealth(float value) {
-        var _renderers = GetComponentsInChildren<MeshRenderer>();
+        var _renderers = myCart._meshes;
         for (int j = 0; j < _renderers.Length; j++) {
             var rend = _renderers[j];
             if (rend != null) {
-                rend.material.SetFloat("_Health", value);
+                rend.sharedMaterials[1].SetFloat(Health, value);
             }
         }
     }
@@ -511,7 +537,7 @@ public class ModuleHealth : MonoBehaviour, IHealth, IActiveDuringCombat, IActive
         for (int j = 0; j < _renderers.Length; j++) {
             var rend = _renderers[j];
             if (rend != null) {
-                rend.material.SetFloat("_Burn", value);
+                rend.sharedMaterials[1].SetFloat(Burn, value);
             }
         }
     }
@@ -522,7 +548,7 @@ public class ModuleHealth : MonoBehaviour, IHealth, IActiveDuringCombat, IActive
         for (int j = 0; j < _renderers.Length; j++) {
             var rend = _renderers[j];
             if (rend != null) {
-                rend.material.SetFloat("_Alive", value);
+                rend.sharedMaterials[1].SetFloat(Alive, value);
             }
         }
     }

@@ -366,12 +366,22 @@ public class Train : MonoBehaviour {
             HpBarsCleanup(true);
         } else {
             ArtifactsController.s.OnDisarmArtifacts();
+            
             for (int i = 0; i < carts.Count; i++) {
                 carts[i].SetAttachedToTrainModulesMode(false);
+                carts[i].ResetState();
             }
+            
+            for (int i = 0; i < UpgradesController.s.shopCarts.Count; i++) {
+                UpgradesController.s.shopCarts[i].ResetState();
+            }
+            
             HpBarsCleanup(false);
+            
+            PlayerWorldInteractionController.s.ResetValues();
         }
     }
+    
     
     public void RemoveCart(Cart cart) {
         trainWeightDirty = true;
@@ -419,6 +429,11 @@ public class Train : MonoBehaviour {
     }
 
     public void ArtifactsChanged() {
+        UpdateThingsAffectingOtherThings(false);
+        UpdateThingsAffectingOtherThings(true);
+    }
+
+    public void CartUpgraded() {
         UpdateThingsAffectingOtherThings(false);
         UpdateThingsAffectingOtherThings(true);
     }
@@ -687,23 +702,14 @@ public class Train : MonoBehaviour {
         }
 
     }
-    
-    
-    public Cart GetNextBuilding(bool isForward, Cart cart) {
-        if (isForward) {
-            var nextCart = cart.trainIndex - 1;
-            if (nextCart >= 0) {
-                return carts[nextCart];
-            } else {
-                return null;
-            }
+
+
+    public Cart GetNextBuilding(int amount, Cart cart) {
+        var nextCart = cart.trainIndex - amount;
+        if (nextCart >= 0 && nextCart < carts.Count) {
+            return carts[nextCart];
         } else {
-            var nextCart = cart.trainIndex + 1;
-            if (nextCart < Train.s.carts.Count) {
-                return carts[nextCart];
-            } else {
-                return null;
-            }
+            return null;
         }
     }
 }
@@ -770,5 +776,10 @@ public abstract class ActivateWhenAttachedToTrain : MonoBehaviour {
     private void OnDestroy() {
         DeleteAllAttachments();
     }
+}
+
+public interface IBooster {
+    public void ResetState(int level);
+    public void ModifyStats(int range, float value);
 }
 

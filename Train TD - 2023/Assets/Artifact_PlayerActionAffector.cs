@@ -10,8 +10,8 @@ public class Artifact_PlayerActionAffector : ActivateWhenOnArtifactRow {
     public bool makeCannotReload;
     
     protected override void _Arm() {
-        PlayerWorldInteractionController.s.repairAmountPerClick *= repairAmountMultiplier;
-        PlayerWorldInteractionController.s.reloadAmountPerClick *= reloadAmountMultiplier;
+        PlayerWorldInteractionController.s.repairAmountMultiplier += repairAmountMultiplier -1;
+        PlayerWorldInteractionController.s.reloadAmountMultiplier += reloadAmountMultiplier-1;
 
         if (makeCannotRepair)
             PlayerWorldInteractionController.s.canRepair = false;
@@ -21,14 +21,6 @@ public class Artifact_PlayerActionAffector : ActivateWhenOnArtifactRow {
     }
 
     protected override void _Disarm() {
-        PlayerWorldInteractionController.s.repairAmountPerClick /= repairAmountMultiplier;
-        PlayerWorldInteractionController.s.reloadAmountPerClick /= reloadAmountMultiplier;
-        
-        
-        if (makeCannotRepair)
-            PlayerWorldInteractionController.s.canRepair = true;
-        
-        if (makeCannotReload)
-            PlayerWorldInteractionController.s.canReload = true;
+        // do nothing
     }
 }
