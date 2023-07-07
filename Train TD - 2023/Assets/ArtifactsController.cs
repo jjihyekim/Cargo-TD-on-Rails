@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Sirenix.OdinInspector;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 public class ArtifactsController : MonoBehaviour {
@@ -51,14 +52,20 @@ public class ArtifactsController : MonoBehaviour {
 
 	public void OnDisarmArtifacts() {
 		for (int i = 0; i < myArtifacts.Count; i++) {
-			myArtifacts[i].GetComponent<ActivateWhenOnArtifactRow>()?.Disarm();
+			var effects = myArtifacts[i].GetComponentsInChildren<ActivateWhenOnArtifactRow>();
+			for (int j = 0; j < effects.Length; j++) {
+				effects[j].Disarm();
+			}
 		}
 	}
 
 
 	public void OnArmArtifacts() {
 		for (int i = 0; i < myArtifacts.Count; i++) {
-			myArtifacts[i].GetComponent<ActivateWhenOnArtifactRow>()?.Arm();
+			var effects = myArtifacts[i].GetComponentsInChildren<ActivateWhenOnArtifactRow>();
+			for (int j = 0; j < effects.Length; j++) {
+				effects[j].Arm();
+			}
 		}
 	}
 
@@ -146,6 +153,7 @@ public class ArtifactsController : MonoBehaviour {
 
 	public void EquipArtifact(Artifact artifact) {
 		myArtifacts.Add(artifact);
+		artifact.GetComponentInChildren<EventTrigger>().enabled = false;
 		Train.s.ArtifactsChanged();
 	}
 

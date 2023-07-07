@@ -98,7 +98,7 @@ public class LevelArchetypeScriptable : ScriptableObject {
         }
 
         try {
-            var doDebugBuggy = Random.value < 0.00001f && DataSaver.s.GetCurrentSave().tutorialProgress.firstCityTutorialDone;
+            var doDebugBuggy = Random.value < 0.00001f && DataSaver.s.GetCurrentSave().xpProgress.xp > 20;
             if (doDebugBuggy) {
                 var mySegment = Random.Range(1, segmentCount); // first one is never debug buggy
 
@@ -185,7 +185,7 @@ public class LevelArchetypeScriptable : ScriptableObject {
         
 
         if (segment.eliteEnemy) {
-            segment.artifactRewardUniqueName = UpgradesController.s.GetRandomRegularArtifact().uniqueName;
+            segment.artifactRewardUniqueName = UpgradesController.s.GetRandomRegularArtifact();
         }
 
         segment.segmentLength = furthestEnemyDistance + lastEnemyAndSegmentEndDistance;

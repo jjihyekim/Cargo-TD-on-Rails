@@ -127,7 +127,6 @@ public class LevelReferences : MonoBehaviour {
 
     public LevelSegmentScriptable debugBuggyLevel;
 
-    public GameObject gotExtraArtifactFromEliteEnemyEffect;
 
     public GameObject GetResourceParticle(ResourceTypes types) {
         switch (types) {

@@ -143,13 +143,14 @@ public class WorldMapCreator : MonoBehaviour {
 			
 			yourObjectiveUIMarker.gameObject.SetActive(true);
 
-			MiniGUI_HealthBar.showHealthBars = false;
+			//MiniGUI_EnemyUIBar.showHealthBars = false;
 			//PlayerModuleSelector.s.DisableModuleSelecting();
 			worldMapOpen = true;
 
 			mapIcon.sprite = backToTrainIcon;
 
 			PlayerWorldInteractionController.s.canSelect = false;
+			CameraController.s.cannotSelectButCanMoveOverride = true;
 			
 			CameraController.s.EnterMapMode();
 		}
@@ -163,7 +164,7 @@ public class WorldMapCreator : MonoBehaviour {
 
 			Train.s.ResetTrainPosition();
 
-			MiniGUI_HealthBar.showHealthBars = true;
+			//MiniGUI_EnemyUIBar.showHealthBars = true;
 			//PlayerModuleSelector.s.EnableModuleSelecting();
 			worldMapOpen = false;
 			targetStarInfoScreenBudget.SetActive(false);
@@ -175,6 +176,7 @@ public class WorldMapCreator : MonoBehaviour {
 			mapIcon.sprite = openMapIcon;
 
 			PlayerWorldInteractionController.s.canSelect = true;
+			CameraController.s.cannotSelectButCanMoveOverride = true;
 			
 			CameraController.s.ExitMapMode();
 			

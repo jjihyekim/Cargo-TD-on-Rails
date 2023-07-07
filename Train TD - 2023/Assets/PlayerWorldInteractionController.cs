@@ -51,7 +51,23 @@ public class PlayerWorldInteractionController : MonoBehaviour {
 }
 
     public bool canRepair = true;
+    public bool autoRepairAtStation = true;
     public bool canReload = true;
+    public bool autoReloadAtStation = true;
+    public bool canSmith = true;
+
+    public bool engineBoostDamageInstead = false;
+    
+    public void ResetValues() {
+        repairAmountMultiplier = 1;
+        reloadAmountMultiplier = 1;
+        canRepair = true;
+        canReload = true;
+        canSmith = true;
+        autoRepairAtStation = true;
+        autoReloadAtStation = true;
+        engineBoostDamageInstead = false;
+    }
     
     protected void OnEnable()
     {
@@ -241,18 +257,22 @@ public class PlayerWorldInteractionController : MonoBehaviour {
 
                     if (PlayStateMaster.s.isShop()) {
                         UpgradesController.s.SnapDestinationCargos(selectedCart);
-                        UpgradesController.s.UpdateCartShopHighlights();
-                    } else {
-                        UpgradesController.s.UpdateCargoHighlights();
                     }
 
-                    if (selectedCart.isMysteriousCart && selectedCart.myLocation != UpgradesController.CartLocation.train) {
+                    if (selectedCart.isMysteriousCart && 
+                        !(selectedCart.myLocation == UpgradesController.CartLocation.train || selectedCart.myLocation == UpgradesController.CartLocation.cargoDelivery)) {
                         UpgradesController.s.RemoveCartFromShop(selectedCart);
                         Train.s.AddCartAtIndex(1, selectedCart);
                         selectedCart.GetComponent<Rigidbody>().isKinematic = true;
                         selectedCart.GetComponent<Rigidbody>().useGravity = false;
                     }
 
+                    if (PlayStateMaster.s.isShop()) {
+                        UpgradesController.s.UpdateCartShopHighlights();
+                    } else {
+                        UpgradesController.s.UpdateCargoHighlights();
+                    }
+                    
 
                     if (PlayStateMaster.s.isShop()) {
                         UpgradesController.s.SaveCartStateWithDelay();
@@ -306,9 +326,9 @@ public class PlayerWorldInteractionController : MonoBehaviour {
                     var snapLocation = hit.collider.gameObject.GetComponentInParent<SnapCartLocation>();
 
                     var snapLocationValidAndNew = snapLocation != null && snapLocation != currentSnapLoc;
-                    var snapLocationCanAcceptCart = (!snapLocation.onlySnapCargo || selectedCart.isCargo) && !selectedCart.isMysteriousCart;
+                    var snapLocationCanAcceptCart = (!snapLocation.onlySnapCargo || selectedCart.isCargo) && (!snapLocation.onlySnapMysteriousCargo || selectedCart.isMysteriousCart);
                     var snapLocationEmpty = snapLocation.snapTransform.childCount == 0;
-                    var canSnap = snapLocationValidAndNew && snapLocationCanAcceptCart && snapLocationEmpty;
+                    var canSnap = snapLocationValidAndNew && snapLocationCanAcceptCart && snapLocationEmpty && !snapLocation.snapNothing;
 
                     if (canSnap) {
                         isSnapping = true;
@@ -462,12 +482,7 @@ public class PlayerWorldInteractionController : MonoBehaviour {
     public float reloadAmountPerClick = 2;
     public float reloadAmountMultiplier = 1;
 
-    public void ResetValues() {
-        repairAmountMultiplier = 1;
-        reloadAmountMultiplier = 1;
-        canRepair = true;
-        canReload = true;
-    }
+    
 
     void CheckAndDoClick() {
         if (selectedCart != null) {

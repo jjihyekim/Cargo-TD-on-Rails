@@ -38,48 +38,37 @@ public class Editor_CartRarityDisplay {
         GUIContent icon;
         var cart = go.GetComponent<Cart>();
         var artifact = go.GetComponent<Artifact>();
+        UpgradesController.CartRarity myRarity = UpgradesController.CartRarity.common;
         if (cart != null) {
-            switch (cart.myRarity) {
-                case UpgradesController.CartRarity.epic:
-                    icon = EditorGUIUtility.IconContent("sv_icon_dot5_pix16_gizmo");
-                
-                    break;
-                case UpgradesController.CartRarity.rare:
-                    icon = EditorGUIUtility.IconContent("sv_icon_dot1_pix16_gizmo");
-                
-                    break;
-                case UpgradesController.CartRarity.common:
-                default:
-                
-                    icon = EditorGUIUtility.IconContent("sv_icon_dot0_pix16_gizmo");
-                    break;
-            }
+            myRarity = cart.myRarity;
         }else if (artifact != null) {
-            switch (artifact.myRarity) {
-                case UpgradesController.CartRarity.special:
-                    icon = EditorGUIUtility.IconContent("sv_icon_dot3_pix16_gizmo");
-                    
-                    break;
-                case UpgradesController.CartRarity.boss:
-                    icon = EditorGUIUtility.IconContent("sv_icon_dot6_pix16_gizmo");
-                    
-                    break;
-                case UpgradesController.CartRarity.epic:
-                    icon = EditorGUIUtility.IconContent("sv_icon_dot5_pix16_gizmo");
-                
-                    break;
-                case UpgradesController.CartRarity.rare:
-                    icon = EditorGUIUtility.IconContent("sv_icon_dot1_pix16_gizmo");
-                
-                    break;
-                case UpgradesController.CartRarity.common:
-                default:
-                
-                    icon = EditorGUIUtility.IconContent("sv_icon_dot0_pix16_gizmo");
-                    break;
-            }
+            myRarity = artifact.myRarity;
         } else {
             return;
+        }
+        
+        switch (myRarity) {
+            case UpgradesController.CartRarity.special:
+                icon = EditorGUIUtility.IconContent("sv_icon_dot3_pix16_gizmo");
+                    
+                break;
+            case UpgradesController.CartRarity.boss:
+                icon = EditorGUIUtility.IconContent("sv_icon_dot6_pix16_gizmo");
+                    
+                break;
+            case UpgradesController.CartRarity.epic:
+                icon = EditorGUIUtility.IconContent("sv_icon_dot5_pix16_gizmo");
+                
+                break;
+            case UpgradesController.CartRarity.rare:
+                icon = EditorGUIUtility.IconContent("sv_icon_dot1_pix16_gizmo");
+                
+                break;
+            case UpgradesController.CartRarity.common:
+            default:
+                
+                icon = EditorGUIUtility.IconContent("sv_icon_dot0_pix16_gizmo");
+                break;
         }
 
 

@@ -50,7 +50,7 @@ public class MiniGUI_CartUIBar : MonoBehaviour {
     //private Material _material;
 
     private bool showAnyHealth = false;
-
+    
     public void SetUp(Cart cart, ModuleHealth moduleHealth, ModuleAmmo moduleAmmo) {
         myCart = cart;
         myHealth = moduleHealth;
@@ -75,6 +75,7 @@ public class MiniGUI_CartUIBar : MonoBehaviour {
         showWarning = myCart.isMysteriousCart || myCart.isMainEngine;
 
         healthFill.material = new Material(healthFill.material);
+        shieldFill.material = new Material(shieldFill.material);
         
         if (myHealth.invincible) {
             healthBar.gameObject.SetActive(false);

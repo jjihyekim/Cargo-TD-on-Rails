@@ -10,6 +10,10 @@ public class MiniGUI_InfoCard_Level : MonoBehaviour, IBuildingInfoCard {
         for (int i = 0; i < levels.Length; i++) {
             levels[i].SetActive(building.level == i);
         }
+
+        if (building.isCargo || building.isMainEngine || building.isMysteriousCart) {
+            gameObject.SetActive(false);
+        }
     }
 
     public void SetUp(EnemyHealth enemy) {

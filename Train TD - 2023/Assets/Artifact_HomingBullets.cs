@@ -16,5 +16,9 @@ public class Artifact_HomingBullets : ActivateWhenOnArtifactRow
     protected override void _Disarm() {
         isHomingBullets = false;
     }
-
+    
+    
+    private void OnDestroy() {
+        _Disarm();
+    }
 }

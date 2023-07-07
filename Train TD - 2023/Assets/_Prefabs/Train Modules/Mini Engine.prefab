@@ -7,6 +7,14 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 8481526207145170715}
     m_Modifications:
+    - target: {fileID: 3044803135225542413, guid: d82716a84e23d0a44b80f6db6b5e90ce, type: 3}
+      propertyPath: speedAdd
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 3044803135225542413, guid: d82716a84e23d0a44b80f6db6b5e90ce, type: 3}
+      propertyPath: enginePower
+      value: 2
+      objectReference: {fileID: 0}
     - target: {fileID: 4191698785256518694, guid: d82716a84e23d0a44b80f6db6b5e90ce, type: 3}
       propertyPath: m_Name
       value: NuclearEngineModule
@@ -54,6 +62,12 @@ PrefabInstance:
     - target: {fileID: 6942772974875505238, guid: d82716a84e23d0a44b80f6db6b5e90ce, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8165811245893185045, guid: d82716a84e23d0a44b80f6db6b5e90ce, type: 3}
+      propertyPath: tooltip.text
+      value: This nuclear fueled engine will generate steam for free! If it explodes
+        it will damage nearby buildings and carts. Adds 2 extra cart capacity and
+        5 extra speed.
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: d82716a84e23d0a44b80f6db6b5e90ce, type: 3}

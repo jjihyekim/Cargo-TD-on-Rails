@@ -97,7 +97,7 @@ public class DataSaver {
 		if (!dontSave) {
 			saveInNextFrame = true;
 		}
-		Debug.Log("Initiating Save");
+		//Debug.Log("Initiating Save");
 	}
 
 	void DoSaveActiveGame() {
@@ -223,7 +223,13 @@ public class DataSaver {
 
 	[Serializable]
 	public class XPProgress {
-		public int xp;
+		public int xp = 0;
+		public List<string> unlockedStarterArtifacts = new List<string>();
+		public string bonusArtifact = "";
+
+		public XPProgress() {
+			unlockedStarterArtifacts.Add("starter_artifact");
+		}
 	}
 	
 	[Serializable]
@@ -265,6 +271,7 @@ public class DataSaver {
 
 		public float fleaMarketRarityBoost = -0.05f;
 		public float destinationRarityBoost = -0.15f;
+		public float artifactRarityBoost = -0.15f;
 
 		public float luck = 0;
 		
@@ -320,12 +327,19 @@ public class DataSaver {
 			[ValueDropdown("GetAllModuleNames")]
 			public string uniqueName = "";
 
+			public int health = -1;
+			public int ammo = -1;
+
+			public int level = 0;
+
 			public CargoState cargoState;
 			
 			[Serializable]
 			public class CargoState { // dont forget to update the copy function
 				[ValueDropdown("GetAllModuleNames")]
 				public string cargoReward;
+
+				public int cargoLevel = 0;
 
 				[ValueDropdown("GetAllArtifactNames")]
 				public string artifactReward;
@@ -350,14 +364,14 @@ public class DataSaver {
 					return artifactNames;
 				}
 
-				public CargoState(CargoModule module) {
-					cargoReward = module.GetRewardCart();
-					artifactReward = module.GetRewardArtifact();
-					isLeftCargo = module.isLeftCargo;
+				public static CargoState GetStateFromModule(CargoModule module) {
+					var state = module.GetState();
+					return new CargoState(state.cargoReward, state.artifactReward, state.isLeftCargo, state.cargoLevel);
 				}
 				
-				public CargoState(string _cargoReward, string _artifactReward, bool _isLeftCargo) {
+				public CargoState(string _cargoReward, string _artifactReward, bool _isLeftCargo, int _cargoLevel) {
 					cargoReward =_cargoReward;
+					cargoLevel = _cargoLevel;
 					artifactReward = _artifactReward;
 					isLeftCargo = _isLeftCargo;
 				}
@@ -365,7 +379,9 @@ public class DataSaver {
 
 			public void EmptyState() {
 				uniqueName = "";
-				//health = -1;
+				level = 0;
+				health = -1;
+				ammo = -1;
 				/*cargoCost = -1;
 				cargoReward = -1;*/
 			}
@@ -383,9 +399,10 @@ public class DataSaver {
 			public CartState Copy() {
 				var copyState = new CartState();
 				copyState.uniqueName = uniqueName;
-				//copyState.health = health;
-				//copyState.ammo = ammo;
-				copyState.cargoState = new CargoState(cargoState.cargoReward, cargoState.artifactReward, cargoState.isLeftCargo);
+				copyState.level = level;
+				copyState.health = health;
+				copyState.ammo = ammo;
+				copyState.cargoState = new CargoState(cargoState.cargoReward, cargoState.artifactReward, cargoState.isLeftCargo, cargoState.cargoLevel);
 				return copyState;
 			}
 		}

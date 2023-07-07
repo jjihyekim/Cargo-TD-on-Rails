@@ -19,9 +19,17 @@ public class SmitheryController : MonoBehaviour
 
     void Update()
     {
-        if (!isEngaged && !PlayerWorldInteractionController.s.isDragStarted) {
+        if (!isEngaged && !PlayerWorldInteractionController.s.isDragStarted && PlayerWorldInteractionController.s.canSmith) {
             if (location1.snapTransform.childCount > 0 && location2.snapTransform.childCount > 0)
                 CheckAndDoUpgrade();
+        }
+
+        if (PlayerWorldInteractionController.s.canSmith) {
+            location1.snapNothing = false;
+            location2.snapNothing = false;
+        } else {
+            location1.snapNothing = true;
+            location2.snapNothing = true;
         }
     }
 

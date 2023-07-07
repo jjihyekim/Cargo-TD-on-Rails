@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -14,6 +15,7 @@ public class Artifact_ModifyLuck : ActivateWhenOnArtifactRow {
 	}
 
 	protected override void _Disarm() { 
-		DataSaver.s.GetCurrentSave().currentRun.luck -= modifyAmount;}
-
+		DataSaver.s.GetCurrentSave().currentRun.luck -= modifyAmount;
+	}
+	
 }

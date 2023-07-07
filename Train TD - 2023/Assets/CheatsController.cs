@@ -14,6 +14,8 @@ public class CheatsController : MonoBehaviour
     public PowerUpScriptable debugPowerUp;
     public CharacterDataScriptable autoRestartCharacter;
 
+
+
     
     // whenever you add a new cheat make sure to add it to the auto disable are below!
     public bool infiniteLevel = false;
@@ -174,4 +176,5 @@ public class CheatsController : MonoBehaviour
         } 
 
     }
+
 }

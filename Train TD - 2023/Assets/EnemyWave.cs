@@ -49,6 +49,7 @@ public class EnemyWave : MonoBehaviour, IShowOnDistanceRadar, ISpeedForEngineSou
         lineRenderer = GetComponentInChildren<LineRenderer>();
     }
 
+    private DisablerHarpoonModule _disablerHarpoonModule;
     public void SetUp(EnemyIdentifier data, float position, bool isMoving, bool _isLeft, Artifact artifact) {
         myEnemy = data;
         var en = DataHolder.s.GetEnemy(myEnemy.enemyUniqueName);
@@ -57,12 +58,13 @@ public class EnemyWave : MonoBehaviour, IShowOnDistanceRadar, ISpeedForEngineSou
             Debug.LogError($"Enemy is missing swarm maker {en.gameObject.name} {data.enemyUniqueName}");
         }
 
-        bool hasPowerUp = artifact != null;
-       
         mySpeed = mySwarm.speed;
         isTeleporting = mySwarm.isTeleporting;
         teleportTiming = mySwarm.teleportTiming;
         isStealing = mySwarm.isStealing;
+        neverLeave = mySwarm.neverLeave;
+        isNuker = mySwarm.isNuker;
+        nukingTime = mySwarm.nukingTime;
         wavePosition = position;
         isWaveMoving = isMoving;
 
@@ -71,7 +73,7 @@ public class EnemyWave : MonoBehaviour, IShowOnDistanceRadar, ISpeedForEngineSou
         }
         
         isLeft = _isLeft;
-        SpawnEnemy(hasPowerUp, artifact);
+        SpawnEnemy(artifact);
         
         SetTargetPosition();
         myXOffset = targetXOffset;
@@ -79,6 +81,8 @@ public class EnemyWave : MonoBehaviour, IShowOnDistanceRadar, ISpeedForEngineSou
         DistanceAndEnemyRadarController.s.RegisterUnit(this);
 
         teleportTimer = 0;
+
+        _disablerHarpoonModule = GetComponentInChildren<DisablerHarpoonModule>();
     }
 
     private void OnDestroy() {
@@ -98,6 +102,7 @@ public class EnemyWave : MonoBehaviour, IShowOnDistanceRadar, ISpeedForEngineSou
     public float teleportTimer;
 
     private bool instantLerp = false;
+    private bool movePos = true;
     public void UpdateBasedOnDistance(float playerPos) {
         if (PlayStateMaster.s.isCombatInProgress()) {
             distance = Mathf.Abs(playerPos - wavePosition);
@@ -123,8 +128,10 @@ public class EnemyWave : MonoBehaviour, IShowOnDistanceRadar, ISpeedForEngineSou
                 wavePosition += currentSpeed * Time.deltaTime;
             }
 
-            var targetPos = Vector3.forward * (wavePosition - playerPos + currentDistanceOffset - 0.2f) + Vector3.left * myXOffset;
-            transform.position = Vector3.Lerp(transform.position,targetPos, 20*Time.deltaTime);
+            var targetPos = Vector3.forward * (wavePosition - playerPos + currentDistanceOffset) + Vector3.left * myXOffset;
+            if(movePos)
+                transform.position = Vector3.Lerp(transform.position,targetPos, 20*Time.deltaTime);
+            
             if (instantLerp) {
                 transform.position = targetPos;
                 instantLerp = false;
@@ -232,8 +239,12 @@ public class EnemyWave : MonoBehaviour, IShowOnDistanceRadar, ISpeedForEngineSou
         }
     }
 
-    private void SetTargetPosition(bool overrideStealCheck = false) {
-        if (!isStealing || overrideStealCheck) {
+    private void SetTargetPosition() {
+        if(isStealing) {
+            SetTargetPositionStealing();
+        } else if (isNuker) {
+            SetPositionNuking();
+        } else {
             var trainLength = Train.s.GetTrainLength();
             var halfLength = (trainLength / 2f) + DataHolder.s.cartLength;
             targetDistanceOffset = Random.Range(-halfLength, halfLength);
@@ -241,44 +252,93 @@ public class EnemyWave : MonoBehaviour, IShowOnDistanceRadar, ISpeedForEngineSou
             targetXOffset = Random.Range(0.7f+waveSpawnXSpread, 3.2f-waveSpawnXSpread);
             if (!isLeft)
                 targetXOffset = -targetXOffset;
-        } else {
-            SetTargetPositionStealing();
         }
     }
+    
+    
+    public bool isNuker = false;
 
-    private ModuleStorage lastCargo;
-    void SetTargetPositionStealing() {
-        var cargos = Train.s.GetComponentsInChildren<ModuleStorage>();
-        if (cargos.Length == 0) {
-            SetTargetPosition(true);
+    public float nukingTime = 20;
+    public float currentNukingTime = 0;
+    
+    public Cart nukingTarget;
+    void SetPositionNuking() {
+        var carts = new List<Cart>();
+        for (int i = 0; i < Train.s.carts.Count; i++) {
+            var cart = Train.s.carts[i];
+            var legalCartType = !cart.isCargo && !cart.isMainEngine && !cart.isMysteriousCart;
+            var hasDirectControl = cart.GetComponentInChildren<DirectControllable>() != null;
+            var notEmpty = cart.uniqueName != LevelReferences.s.emptyCart.GetComponent<Cart>().uniqueName;
+            if (!cart.isDestroyed && legalCartType && !cart.isBeingDisabled && !hasDirectControl && notEmpty) {
+                carts.Add(cart);
+            }
+        }
+
+
+        if (carts.Count == 0) {
             return;
         }
         
-        ModuleStorage randomCargo = null;
-        for (int i = 0; i < 10; i++) {
-            randomCargo = cargos[Random.Range(0, cargos.Length)];
+        nukingTarget = carts[Random.Range(0, carts.Count)];
 
-            if(lastCargo == null)
+        targetDistanceOffset = nukingTarget.transform.position.z + Random.Range(-0.35f, 0.35f); // this works because the Train is at perfectly 0
+
+        targetXOffset = Random.Range(1.9f, 2.5f);
+        
+        GetComponentInChildren<DisablerHarpoonModule>().SetTarget(nukingTarget); // we are assuming stealers come in packs of 1
+        
+        if (!isLeft)
+            targetXOffset = -targetXOffset;
+
+        currentNukingTime = nukingTime;
+        targetDistChangeTimer = 100000;
+    }
+    
+
+    private Cart lastTarget;
+    void SetTargetPositionStealing() {
+        var carts = new List<Cart>();
+        for (int i = 0; i < Train.s.carts.Count; i++) {
+            var cart = Train.s.carts[i];
+            var legalCartType = !cart.isCargo && !cart.isMainEngine && !cart.isMysteriousCart;
+            var hasDirectControl = cart.GetComponentInChildren<DirectControllable>() != null;
+            if (!cart.isDestroyed && legalCartType && !cart.isBeingDisabled && !hasDirectControl) {
+                carts.Add(cart);
+            }
+        }
+
+
+        if (carts.Count == 0) {
+            return;
+        }
+        
+        Cart randomCart = null;
+        for (int i = 0; i < 10; i++) {
+            randomCart = carts[Random.Range(0, carts.Count)];
+
+            if(lastTarget == null)
                 break;
-            if (Vector3.Distance(randomCargo.transform.position, lastCargo.transform.position) > 0.01f) {
+            if (Vector3.Distance(randomCart.transform.position, lastTarget.transform.position) > 0.01f) {
                 break;
             }
         }
 
-        if (randomCargo == null) {
+        if (randomCart == null) {
             return;
         }
 
-        targetDistanceOffset = randomCargo.transform.position.z + Random.Range(-0.5f, 0.5f); // this works because the Train is at perfectly 0
+        lastTarget = randomCart;
 
-        targetXOffset = Random.Range(0.55f, 0.9f);
+        targetDistanceOffset = randomCart.transform.position.z + Random.Range(-0.5f, 0.5f); // this works because the Train is at perfectly 0
+
+        targetXOffset = Random.Range(0.9f, 1.7f);
         
-        GetComponentInChildren<StealerHarpoonModule>().SetTarget(randomCargo); // we are assuming stealers come in packs of 1
+        GetComponentInChildren<DisablerHarpoonModule>().SetTarget(randomCart); // we are assuming stealers come in packs of 1
         
         if (!isLeft)
             targetXOffset = -targetXOffset;
     }
-    void SpawnEnemy(bool hasPowerUp, Artifact artifact) {
+    void SpawnEnemy(Artifact artifact = null) {
         drawnEnemies = Instantiate(DataHolder.s.GetEnemy(myEnemy.enemyUniqueName), transform).GetComponent<EnemySwarmMaker>();
         drawnEnemies.transform.ResetTransformation();
         waveSpawnXSpread = drawnEnemies.SetData(myEnemy.enemyCount, artifact);
@@ -358,8 +418,49 @@ public class EnemyWave : MonoBehaviour, IShowOnDistanceRadar, ISpeedForEngineSou
     }
 
 
+    private float nukingDiveMoveSpeed = 0f;
     private void Update() {
         LerpLineRenderedAlpha();
+        if (isNuker) {
+            if (_disablerHarpoonModule != null && !isNuking) {
+                if (_disablerHarpoonModule.harpoonEngaged) {
+                    currentNukingTime -= Time.deltaTime;
+
+                    if (currentNukingTime <= 1f) {
+                        EngageNuke();
+                    }
+                } else {
+                    currentNukingTime = nukingTime;
+                }
+
+                _disablerHarpoonModule.UpdateColor(1f - currentNukingTime / nukingTime);
+            }
+
+            if (isNuking) {
+                currentNukingTime -= Time.deltaTime;
+                _disablerHarpoonModule.UpdateColor(1f - currentNukingTime / nukingTime);
+
+
+                transform.position = Vector3.MoveTowards(transform.position, nukingTarget.transform.position, nukingDiveMoveSpeed * Time.deltaTime);
+                nukingDiveMoveSpeed += 2f * Time.deltaTime;
+
+                if (Vector3.Distance(transform.position, nukingTarget.transform.position) < 0.4f) {
+                    Destroy(gameObject);
+                    var carRealPos = GetComponentInChildren<CarLikeMovementOffsetsController>();
+                    Instantiate(LevelReferences.s.bigDamagePrefab, carRealPos.transform.position, carRealPos.transform.rotation);
+                    nukingTarget.GetHealthModule().Die();
+                }
+            }
+        }
+    }
+
+    private bool isNuking = false;
+    void EngageNuke() {
+        isNuking = true;
+        targetDistanceOffset = nukingTarget.transform.position.z;
+        targetXOffset = 0;
+        movePos = false;
+        nukingDiveMoveSpeed = 0;
     }
 
     void LerpLineRenderedAlpha() {
@@ -431,7 +532,13 @@ public class EnemyWave : MonoBehaviour, IShowOnDistanceRadar, ISpeedForEngineSou
         Destroy(target);
     }
 
+
+    public bool neverLeave = false;
+
     public void Leave(bool _isForwardLeave) {
+        if(neverLeave)
+            return;
+        
         isLeaving = true;
         isStealing = false;
         isTeleporting = false;

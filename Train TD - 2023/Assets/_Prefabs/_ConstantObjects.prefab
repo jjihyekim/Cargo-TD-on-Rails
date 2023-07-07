@@ -815,6 +815,7 @@ MonoBehaviour:
               cargoReward: 
               artifactReward: 
               isLeftCargo: 0
+        artifacts: []
         currentAct: 1
         map:
           chunks: []
@@ -824,6 +825,9 @@ MonoBehaviour:
           scraps: 200
         powerUps: []
         isInEndRunArea: 0
+        endRunAreaInfo:
+          gotBonusArtifact: 0
+          bonusArtifactUniqueName: 
         shopInitialized: 0
         shopState:
           cartStates: []
@@ -837,8 +841,13 @@ MonoBehaviour:
             isLeftCargo: 0
         fleaMarketRarityBoost: -0.05
         destinationRarityBoost: -0.15
+        artifactRarityBoost: -0.15
+        luck: 0
       xpProgress:
         xp: 0
+        unlockedStarterArtifacts:
+        - starter_artifact
+        bonusArtifact: 
       tutorialProgress:
         firstCityTutorialDone: 0
         initialCutscenePlayed: 0
@@ -867,6 +876,7 @@ MonoBehaviour:
               cargoReward: 
               artifactReward: 
               isLeftCargo: 0
+        artifacts: []
         currentAct: 1
         map:
           chunks: []
@@ -876,6 +886,9 @@ MonoBehaviour:
           scraps: 200
         powerUps: []
         isInEndRunArea: 0
+        endRunAreaInfo:
+          gotBonusArtifact: 0
+          bonusArtifactUniqueName: 
         shopInitialized: 0
         shopState:
           cartStates: []
@@ -889,8 +902,13 @@ MonoBehaviour:
             isLeftCargo: 0
         fleaMarketRarityBoost: -0.05
         destinationRarityBoost: -0.15
+        artifactRarityBoost: -0.15
+        luck: 0
       xpProgress:
         xp: 0
+        unlockedStarterArtifacts:
+        - starter_artifact
+        bonusArtifact: 
       tutorialProgress:
         firstCityTutorialDone: 0
         initialCutscenePlayed: 0
@@ -919,6 +937,7 @@ MonoBehaviour:
               cargoReward: 
               artifactReward: 
               isLeftCargo: 0
+        artifacts: []
         currentAct: 1
         map:
           chunks: []
@@ -928,6 +947,9 @@ MonoBehaviour:
           scraps: 200
         powerUps: []
         isInEndRunArea: 0
+        endRunAreaInfo:
+          gotBonusArtifact: 0
+          bonusArtifactUniqueName: 
         shopInitialized: 0
         shopState:
           cartStates: []
@@ -941,8 +963,13 @@ MonoBehaviour:
             isLeftCargo: 0
         fleaMarketRarityBoost: -0.05
         destinationRarityBoost: -0.15
+        artifactRarityBoost: -0.15
+        luck: 0
       xpProgress:
         xp: 0
+        unlockedStarterArtifacts:
+        - starter_artifact
+        bonusArtifact: 
       tutorialProgress:
         firstCityTutorialDone: 0
         initialCutscenePlayed: 0
@@ -1318,7 +1345,7 @@ Camera:
   m_Depth: 0
   m_CullingMask:
     serializedVersion: 2
-    m_Bits: 1048375
+    m_Bits: 2096951
   m_RenderingPath: -1
   m_TargetTexture: {fileID: 0}
   m_TargetDisplay: 0

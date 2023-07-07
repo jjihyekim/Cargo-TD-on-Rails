@@ -32,6 +32,13 @@ public class EnemySwarmMaker : MonoBehaviour
 
     public bool isStealing = false;
 
+    public bool neverLeave = false;
+    
+    
+    public bool isNuker = false;
+
+    public float nukingTime = 20;
+
     public Sprite GetGunSprite() {
         var gunModule = enemyPrefab.GetComponentInChildren<GunModule>();
 

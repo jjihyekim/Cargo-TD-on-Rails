@@ -1,0 +1,60 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b5d10d787ef192242aedf03f5045cbbd, type: 3}
+  m_Name: _Act 3 rest of the levels
+  m_EditorClassIdentifier: 
+  isBossLevel: 0
+  firstLevels:
+  - {fileID: 11400000, guid: 9af184ddb90846946b81776950404716, type: 2}
+  - {fileID: 11400000, guid: 2b94403848f526845b17f5aca09d4496, type: 2}
+  possibleLevels:
+  - {fileID: 11400000, guid: 0d9cb09183939eb4c8f583342980f67d, type: 2}
+  - {fileID: 11400000, guid: a3815fecd2ab173468502fa9a0e3f317, type: 2}
+  - {fileID: 11400000, guid: 4817f807003b4714184c8cb935b18feb, type: 2}
+  - {fileID: 11400000, guid: aeb817cee6b1b5d4b8f6e014bd1c30b2, type: 2}
+  - {fileID: 11400000, guid: b00d0c7b1c1418b4783a830aeacdfae6, type: 2}
+  - {fileID: 11400000, guid: 4ab5fea55723e1f4e982190d01a09bf9, type: 2}
+  - {fileID: 11400000, guid: 135a6e4dbc9b4314f9812785254f7ff5, type: 2}
+  - {fileID: 11400000, guid: 39d045efc62d36841b7b796cae80d315, type: 2}
+  - {fileID: 11400000, guid: 54777200bb2526342b2bff2b8fe51b8c, type: 2}
+  - {fileID: 11400000, guid: 743679a79cb841a4c9bd3c6e02aaae46, type: 2}
+  - {fileID: 11400000, guid: 2b94403848f526845b17f5aca09d4496, type: 2}
+  possibleEliteLevels:
+  - {fileID: 11400000, guid: bfb9e31e50d96dd47bc97ccf9d637131, type: 2}
+  - {fileID: 11400000, guid: 727a0097d3b9f9442abeacb49d4c7b3a, type: 2}
+  - {fileID: 11400000, guid: e605f73d00d47054799bf5ca06df7028, type: 2}
+  - {fileID: 11400000, guid: 46fe3ab25e0aad345a21cfaca939cfd7, type: 2}
+  - {fileID: 11400000, guid: dd9e39dd468143a4f988e80b0549065b, type: 2}
+  - {fileID: 11400000, guid: 078ecaefb5e3ffc459d8f37d2dcb7d8d, type: 2}
+  possibleEncounters:
+  - {fileID: 1727440949419904987, guid: a9a82e9936c43bb449d3c23bf8fd4903, type: 3}
+  - {fileID: 3295736480921032522, guid: 74e11eec2b679cc4ca2084d1fe90b999, type: 3}
+  possibleDynamicSpawns:
+  - enemyIdentifier:
+      enemyUniqueName: ShieldedBuggyGatling
+      enemyCount: 1
+    firstSpawnTime: 45
+    spawnInterval: 30
+    increaseInNumberInterval: 3
+  - enemyIdentifier:
+      enemyUniqueName: ShieldedBuggyLazer
+      enemyCount: 1
+    firstSpawnTime: 45
+    spawnInterval: 45
+    increaseInNumberInterval: 3
+  - enemyIdentifier:
+      enemyUniqueName: TeleportingBuggyAVC
+      enemyCount: 1
+    firstSpawnTime: 30
+    spawnInterval: 30
+    increaseInNumberInterval: 2
+  segmentCount: 4

@@ -217,6 +217,9 @@ public class PathSelectorController : MonoBehaviour {
 
 	public List<TrackSwitchHex> myTrackSwitchHexes = new List<TrackSwitchHex>();
 	public void RegisterTrackSwitchHex(TrackSwitchHex hex) {
+		if(MissionWinFinisher.s.isWon)
+			return;
+		
 		myTrackSwitchHexes.Add(hex);
 		for (int i = 0; i < myTrackSwitchHexes.Count; i++) {
 			myTrackSwitchHexes[i].isGoingLeft = _levers[currentSegment].currentState;

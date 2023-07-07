@@ -3,13 +3,16 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class RoboRepairModule : ActivateWhenAttachedToTrain, IActiveDuringCombat, IBooster{
-    private float curRepairDelay = 0.5f;
-    public float repairDelay = 2;
-    public float repairAmount = 25;
-    public float steamUsePerRepair = 0.5f;
+public class RoboRepairModule : ActivateWhenAttachedToTrain, IActiveDuringCombat, IBooster {
 
-    public int repairPerCycle = 2;
+    public bool isRepair = true;
+    
+    private float curDelay = 0.5f;
+    public float delay = 2;
+    public float amount = 25;
+    //public float steamUsePerRepair = 0.5f;
+
+    public int countPerCycle = 2;
     
     private Train myTrain;
     private Cart myCart;
@@ -28,12 +31,13 @@ public class RoboRepairModule : ActivateWhenAttachedToTrain, IActiveDuringCombat
         if (myTrain == null || myCart == null)
             this.enabled = false;
         if (PlayStateMaster.s.isCombatInProgress()) {
-            if (curRepairDelay <= 0 && !myCart.isDestroyed) {
-                if(BreadthFirstRepairSearch())
-                    SpeedController.s.UseSteam(steamUsePerRepair);
-                curRepairDelay = repairDelay;
+            if (curDelay <= 0 && !myCart.isDestroyed) {
+                /*if(BreadthFirstRepairSearch())
+                    SpeedController.s.UseSteam(steamUsePerRepair);*/
+                BreadthFirstRepairSearch();
+                curDelay = delay;
             } else {
-                curRepairDelay -= Time.deltaTime;
+                curDelay -= Time.deltaTime;
             }
         }
     }
@@ -42,7 +46,7 @@ public class RoboRepairModule : ActivateWhenAttachedToTrain, IActiveDuringCombat
     bool BreadthFirstRepairSearch() {
         var carts = new List<Cart>();
 
-        var range = Mathf.Min(myTrain.carts.Count, baseRange + rangeBoost);
+        var range = Mathf.Min(myTrain.carts.Count, baseRange + rangeBoost + 1);
         
         for (int i = 0; i < range; i++) {
 
@@ -60,17 +64,17 @@ public class RoboRepairModule : ActivateWhenAttachedToTrain, IActiveDuringCombat
 
         var repairCount = 0;
         for (int i = 0; i < carts.Count; i++) {
-            if (RepairDamageInCart(carts[i], false)) {
+            if (DoThingInCart(carts[i], false)) {
                 repairCount += 1;
-                if (repairCount >= repairPerCycle) {
+                if (repairCount >= countPerCycle) {
                     return true;
                 }
             }
         }
         
         for (int i = 0; i < carts.Count; i++) {
-            if (RepairDamageInCart(carts[i], true)) {
-                if (repairCount >= repairPerCycle) {
+            if (DoThingInCart(carts[i], true)) {
+                if (repairCount >= countPerCycle) {
                     return true;
                 }
             }
@@ -88,17 +92,34 @@ public class RoboRepairModule : ActivateWhenAttachedToTrain, IActiveDuringCombat
         return (index >= 0) && (index < array.Count);
     }
 
-    bool RepairDamageInCart(Cart target, bool repairImperfect) {
-        var healths = target.GetComponentsInChildren<ModuleHealth>();
+    bool DoThingInCart(Cart target, bool doImperfect) {
 
-        if (healths.Length > 0) {
-            for (int i = 0; i < healths.Length; i++) {
-                var canRepair = (healths[i].currentHealth < healths[i].maxHealth && repairImperfect) ||
-                                healths[i].currentHealth <= healths[i].maxHealth - repairAmount;
+        if (isRepair) {
+            var healths = target.GetComponentsInChildren<ModuleHealth>();
 
-                if (canRepair) {
-                    healths[i].Repair(repairAmount);
-                    return true;
+            if (healths.Length > 0) {
+                for (int i = 0; i < healths.Length; i++) {
+                    var canRepair = (healths[i].currentHealth < healths[i].maxHealth && doImperfect) ||
+                                    healths[i].currentHealth <= healths[i].maxHealth - amount;
+
+                    if (canRepair) {
+                        healths[i].Repair(amount);
+                        return true;
+                    }
+                }
+            }
+        } else {
+            var ammos = target.GetComponentsInChildren<ModuleAmmo>();
+
+            if (ammos.Length > 0) {
+                for (int i = 0; i < ammos.Length; i++) {
+                    var canReload = (ammos[i].curAmmo < ammos[i].maxAmmo && doImperfect) ||
+                                    ammos[i].curAmmo <= ammos[i].maxAmmo - amount;
+
+                    if (canReload) {
+                        ammos[i].Reload(amount);
+                        return true;
+                    }
                 }
             }
         }
@@ -137,6 +158,7 @@ public class RoboRepairModule : ActivateWhenAttachedToTrain, IActiveDuringCombat
         //do nothing
     }
     
+    [Space]
     public int baseRange = 1;
     public int rangeBoost = 0;
     public float boostMultiplier = 1;

@@ -33,14 +33,38 @@ public class EnemyHealth : MonoBehaviour, IHealth {
 	public static UnityEvent<bool> winSelfDestruct = new UnityEvent<bool>();
 	
 	[ReadOnly]
-	public MiniGUI_HealthBar healthBar;
+	public MiniGUI_EnemyUIBar enemyUIBar;
 
 	[Tooltip("Will reduce incoming damage by 50% if gun doesn't have armor penetration")]
 	public bool isArmored = false;
 
 	public bool isComponentEnemy = false;
+	
+	
+	public float maxShields = 0;
+	public float currentShields = 0;
+	private float shieldRegenRate = 50;
+	private float shieldRegenDelay = 1;
+	public float curShieldDelay = 0;
 
 	public void DealDamage(float damage) {
+		
+		curShieldDelay = shieldRegenDelay;
+		
+		var shieldsWasMoreThan100 = currentShields > 100;
+		if (currentShields > 0) {
+			currentShields -= damage;
+			damage = 0;
+			if (currentShields <= 0) {
+				if (!shieldsWasMoreThan100) {
+					damage = -currentShields;
+				}
+
+				isShieldActive = false;
+				currentShields = 0;
+			}
+		}
+		
 		currentHealth -= damage;
 
 		if (currentHealth <= 0 && isAlive) {
@@ -86,6 +110,8 @@ public class EnemyHealth : MonoBehaviour, IHealth {
 	public void BurnDamage(float damage) {
 		burnSpeed += damage;
 	}
+
+	private bool isShieldActive = true;
 	private void Update() {
 		var burnDistance = Mathf.Max(burnSpeed / 2f, 1f);
 		if (currentBurn >= burnDistance) {
@@ -107,16 +133,26 @@ public class EnemyHealth : MonoBehaviour, IHealth {
 			SetBuildingShaderBurn(burnSpeed);
 			lastBurn = burnSpeed;
 		}
+		
+		if (curShieldDelay <= 0) {
+			isShieldActive = true;
+			currentShields += shieldRegenRate * Time.deltaTime + (maxShields*0.1f*Time.deltaTime);
+		} else {
+			curShieldDelay -= Time.deltaTime;
+		}
+		currentShields = Mathf.Clamp(currentShields, 0, maxShields);
 	}
 
 	public void SetUp() {
-		healthBar = Instantiate(LevelReferences.s.enemyHealthPrefab, LevelReferences.s.uiDisplayParent).GetComponent<MiniGUI_HealthBar>();
-		healthBar.SetUp(this);
-		enemySpawned += 1;
-
-		maxHealth *= 1 + WorldDifficultyController.s.currentHealthIncrease;
 		maxHealth = baseHealth;
+		maxHealth *= 1 + WorldDifficultyController.s.currentHealthIncrease;
+		maxShields *= 1 + WorldDifficultyController.s.currentHealthIncrease;
 		currentHealth = maxHealth;
+		currentShields = maxShields;
+		
+		enemyUIBar = Instantiate(LevelReferences.s.enemyHealthPrefab, LevelReferences.s.uiDisplayParent).GetComponent<MiniGUI_EnemyUIBar>();
+		enemyUIBar.SetUp(this);
+		enemySpawned += 1;
 	}
 
 	private void OnEnable() {
@@ -170,7 +206,7 @@ public class EnemyHealth : MonoBehaviour, IHealth {
 		var rot = aliveObject.rotation;
 
 		Destroy(aliveObject.gameObject);
-		Destroy(healthBar.gameObject);
+		Destroy(enemyUIBar.gameObject);
 		
 		if(deathPrefab != null)
 			Instantiate(deathPrefab, pos, rot);
@@ -182,9 +218,9 @@ public class EnemyHealth : MonoBehaviour, IHealth {
 	}
 	
 	private void OnDestroy() {
-		if(healthBar != null)
-			if(healthBar.gameObject != null)
-				Destroy(healthBar.gameObject);
+		if(enemyUIBar != null)
+			if(enemyUIBar.gameObject != null)
+				Destroy(enemyUIBar.gameObject);
 
 		if (bonusArtifactUIStar != null) {
 			Destroy(bonusArtifactUIStar.gameObject);
@@ -208,7 +244,15 @@ public class EnemyHealth : MonoBehaviour, IHealth {
 	}
 
 	public float GetHealthPercent() {
-		return currentHealth / maxHealth;
+		return currentHealth /  Mathf.Max(maxHealth,1);
+	}
+	
+	public float GetShieldPercent() {
+		return currentShields / Mathf.Max(maxShields,1);
+	}
+
+	public bool IsShieldActive() {
+		return isShieldActive;
 	}
 
 	public string GetHealthRatioString() {
@@ -273,6 +317,8 @@ public interface IHealth {
 	public Collider GetMainCollider();
 	public bool HasArmor();
 	public float GetHealthPercent();
+	public float GetShieldPercent();
+	public bool IsShieldActive();
 	public string GetHealthRatioString();
 
 	public Transform GetUITransform();

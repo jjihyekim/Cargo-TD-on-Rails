@@ -1,0 +1,31 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b5d10d787ef192242aedf03f5045cbbd, type: 3}
+  m_Name: The Teleporty Boi final act edition
+  m_EditorClassIdentifier: 
+  isBossLevel: 1
+  firstLevels:
+  - {fileID: 11400000, guid: f58728db8b3043541a7394818fefaaae, type: 2}
+  possibleLevels:
+  - {fileID: 11400000, guid: 987a9d99ced3c494f938eca2878fe044, type: 2}
+  - {fileID: 11400000, guid: ccd8b65f544173d42923212e90394154, type: 2}
+  - {fileID: 11400000, guid: 678e45bd9fca7594cb7856419d68d4a7, type: 2}
+  possibleEliteLevels: []
+  possibleEncounters: []
+  possibleDynamicSpawns:
+  - enemyIdentifier:
+      enemyUniqueName: ShieldedBuggyGatling
+      enemyCount: 1
+    firstSpawnTime: 120
+    spawnInterval: 45
+    increaseInNumberInterval: 3
+  segmentCount: 4

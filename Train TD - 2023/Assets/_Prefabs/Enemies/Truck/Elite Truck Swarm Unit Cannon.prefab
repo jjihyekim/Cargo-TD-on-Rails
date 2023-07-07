@@ -906,6 +906,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1a7eab1db79f56c47b0647f898b7c2c9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  baseHealth: 200
   maxHealth: 300
   currentHealth: 300
   scrapReward: 5
@@ -956,8 +957,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   tooltip:
-    text: Has more health than buggy and has more guns. But also moves quite slower...
-  info: A big truck with two whole guns.
+    text: Has more health than buggy and has more guns. But also moves quite slower... 
+      Elite enemies have more health than normal variants.
+  info: Elite big truck with two whole guns.
 --- !u!1 &9165746279452390611
 GameObject:
   m_ObjectHideFlags: 0

@@ -26,7 +26,7 @@ public class MiniGUI_InfoCard_HealthAndWeight : MonoBehaviour, IBuildingInfoCard
         Update();
 
         weight.gameObject.SetActive(true);
-        weight.text = $"Weight: {building.weight}";
+        weight.text = $"Size: {building.cartSize}";
         enemyMode = false;
     }
 

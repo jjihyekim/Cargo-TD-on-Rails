@@ -244,6 +244,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   constantForce: 10
   deathTime: 20
+  isAttachedToFloor: 0
 --- !u!1 &2448942015104617073
 GameObject:
   m_ObjectHideFlags: 0
@@ -581,6 +582,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   constantForce: 10
   deathTime: 20
+  isAttachedToFloor: 0
 --- !u!1 &3473210382194467798
 GameObject:
   m_ObjectHideFlags: 0
@@ -20206,6 +20208,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   constantForce: 10
   deathTime: 20
+  isAttachedToFloor: 0
 --- !u!1 &6421283255939406534
 GameObject:
   m_ObjectHideFlags: 0
@@ -20282,7 +20285,7 @@ MeshRenderer:
   m_RenderingLayerMask: 4294967295
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 540d63647bec1824d8dd93b811ec6ded, type: 2}
+  - {fileID: 2100000, guid: ce43dacfb7192a04bb40e62ab426bbdf, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -20331,6 +20334,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   constantForce: 10
   deathTime: 20
+  isAttachedToFloor: 0
 --- !u!54 &4591875410477886342
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -20776,6 +20780,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   constantForce: 10
   deathTime: 20
+  isAttachedToFloor: 0
 --- !u!1 &9011112643907533296
 GameObject:
   m_ObjectHideFlags: 0

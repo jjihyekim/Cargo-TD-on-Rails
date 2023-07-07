@@ -7,6 +7,7 @@ public class RarityDisplay : MonoBehaviour {
     public Material common;
     public Material rare;
     public Material epic;
+    public Material special;
     
     // Start is called before the first frame update
     void Start() {
@@ -23,6 +24,9 @@ public class RarityDisplay : MonoBehaviour {
                 break;
             case UpgradesController.CartRarity.rare:
                 material = rare;
+                break;
+            case UpgradesController.CartRarity.special :
+                material = special;
                 break;
         }
 

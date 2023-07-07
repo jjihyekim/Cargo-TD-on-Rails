@@ -63899,7 +63899,6 @@ GameObject:
   - component: {fileID: 1249084498607748609}
   - component: {fileID: 6579016706801922906}
   - component: {fileID: 26677003479329346}
-  - component: {fileID: 1373865725759863952}
   m_Layer: 11
   m_Name: BasicNuclearEngine
   m_TagString: Untagged
@@ -63937,7 +63936,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: afb08d649479059448083408d2f118e9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  enginePower: 400
+  speedAdd: 3
+  enginePower: 6
   OnEngineStart:
     m_PersistentCalls:
       m_Calls: []
@@ -63963,25 +63963,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   tooltip:
-    text: 'The Nuclear Engine. Gives you lots of power, and boosts the ammo capacity
-      of every gun on board by 20% with all that extra power. '
+    text: The Nuclear Engine. Lets you carry 6 carts. Base speed of 30.
   info: Nuclear Engine
---- !u!114 &1373865725759863952
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5415555812727877745}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3028a003ef73b1d40aca965f3ad64060, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  attachmentThing: {fileID: 5530443804385562514}
-  attachmentThings: []
-  isAttached: 0
-  ammoBoost: 0.2
 --- !u!1 &5530443804385562514
 GameObject:
   m_ObjectHideFlags: 0
@@ -74081,6 +74064,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bca75e19cb63b044dbf15e58cedde33e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  attachmentThing: {fileID: 0}
+  attachmentThings: []
+  isAttached: 0
+  spawnAttachmentThings: 0
+  engineDamageBoostActive: 0
+  engineDamageReductionActive: 0
 --- !u!1 &7179648480220945589
 GameObject:
   m_ObjectHideFlags: 0
@@ -88925,7 +88914,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1691629272263448227, guid: 86c82cfee32788c49a35e2e0e34bf7b7, type: 3}
       propertyPath: m_RootOrder
-      value: 8
+      value: 10
       objectReference: {fileID: 0}
     - target: {fileID: 2564255422046077385, guid: 86c82cfee32788c49a35e2e0e34bf7b7, type: 3}
       propertyPath: maxHealth
@@ -88943,6 +88932,10 @@ PrefabInstance:
       propertyPath: m_RootOrder
       value: 6
       objectReference: {fileID: 0}
+    - target: {fileID: 3344921567547956732, guid: 86c82cfee32788c49a35e2e0e34bf7b7, type: 3}
+      propertyPath: m_RootOrder
+      value: 8
+      objectReference: {fileID: 0}
     - target: {fileID: 3399934084524781478, guid: 86c82cfee32788c49a35e2e0e34bf7b7, type: 3}
       propertyPath: m_Name
       value: Nuclear Engine
@@ -88951,14 +88944,42 @@ PrefabInstance:
       propertyPath: m_IsActive
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 6969446081533272694, guid: 86c82cfee32788c49a35e2e0e34bf7b7, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 7427781900297684245, guid: 86c82cfee32788c49a35e2e0e34bf7b7, type: 3}
       propertyPath: avoid
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7491730678060570383, guid: 86c82cfee32788c49a35e2e0e34bf7b7, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 0.52814883
+      objectReference: {fileID: 0}
+    - target: {fileID: 7491730678060570383, guid: 86c82cfee32788c49a35e2e0e34bf7b7, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0.135
+      objectReference: {fileID: 0}
+    - target: {fileID: 7778740088140675276, guid: 86c82cfee32788c49a35e2e0e34bf7b7, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 0.52814883
+      objectReference: {fileID: 0}
+    - target: {fileID: 7778740088140675276, guid: 86c82cfee32788c49a35e2e0e34bf7b7, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0.135
+      objectReference: {fileID: 0}
+    - target: {fileID: 7835183593625357749, guid: 86c82cfee32788c49a35e2e0e34bf7b7, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8139748349479078024, guid: 86c82cfee32788c49a35e2e0e34bf7b7, type: 3}
       propertyPath: Icon
       value: 
       objectReference: {fileID: 21300000, guid: 1b0a40f40f4fd704598c98bb8736b492, type: 3}
+    - target: {fileID: 8139748349479078024, guid: 86c82cfee32788c49a35e2e0e34bf7b7, type: 3}
+      propertyPath: level
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 8139748349479078024, guid: 86c82cfee32788c49a35e2e0e34bf7b7, type: 3}
       propertyPath: length
       value: 0.8
@@ -88969,7 +88990,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8139748349479078024, guid: 86c82cfee32788c49a35e2e0e34bf7b7, type: 3}
       propertyPath: myRarity
-      value: 2
+      value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 8139748349479078024, guid: 86c82cfee32788c49a35e2e0e34bf7b7, type: 3}
       propertyPath: uniqueName

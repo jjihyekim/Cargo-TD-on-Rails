@@ -287,6 +287,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1a7eab1db79f56c47b0647f898b7c2c9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  baseHealth: 200
   maxHealth: 200
   currentHealth: 200
   scrapReward: 5
@@ -297,12 +298,17 @@ MonoBehaviour:
   isAlive: 1
   uiTransform: {fileID: 4734297801412349416}
   cartRewardTransform: {fileID: 0}
-  healthBar: {fileID: 0}
+  enemyUIBar: {fileID: 0}
   isArmored: 0
-  rewardPowerUp: 0
   isComponentEnemy: 0
+  maxShields: 0
+  currentShields: 0
+  curShieldDelay: 0
   currentBurn: 0
   burnSpeed: 0
+  rewardArtifactOnDeath: 0
+  artifactRewardUniqueName: 
+  bonusArtifactUIStar: {fileID: 0}
   _outlines: []
 --- !u!114 &3038431739623073049
 MonoBehaviour:
@@ -320,6 +326,7 @@ MonoBehaviour:
   myType: 0
   targetTransform: {fileID: 3774341611181933191}
   avoid: 0
+  flying: 0
   velocity: {x: 0, y: 0, z: 0}
 --- !u!114 &7440264286695437326
 MonoBehaviour:
@@ -334,9 +341,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   tooltip:
-    text: Will steal your resources over time and try to escape with it.
-  info: A shifty enemy that will steal your resources. Kill it to get your resources
-    back!
+    text: An annoying enemy that doesn't deal damage but disables your carts.
+  info: An annoying disabler enemy.
 --- !u!1 &3038431740301894647
 GameObject:
   m_ObjectHideFlags: 0
@@ -597,7 +603,7 @@ MeshRenderer:
   m_RenderingLayerMask: 4294967295
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 49056edc4054a854abded2cb160ef64e, type: 2}
+  - {fileID: 2100000, guid: d81b17749471ced449eaf6df944ef72c, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -1535,9 +1541,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5867842934186241384}
-  - component: {fileID: 1448798849953068890}
+  - component: {fileID: 1737301820711538050}
   m_Layer: 14
-  m_Name: Stealer Harpoon
+  m_Name: Disabler Harpoon
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1560,7 +1566,7 @@ Transform:
   m_Father: {fileID: 3038431740301894644}
   m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1448798849953068890
+--- !u!114 &1737301820711538050
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -1569,25 +1575,21 @@ MonoBehaviour:
   m_GameObject: {fileID: 7004583062816591943}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f07d58fe05bcaef4389bcf99db384153, type: 3}
+  m_Script: {fileID: 11500000, guid: 68089be438ef6484592685f717df1c08, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  range: 2
+  range: 3
   harpoon: {fileID: 3875322537017770223}
   harpoonSpawnLocation: {fileID: 4069804929520431225}
   ropeEndPoint: {fileID: 7789895495042649673}
   harpoonRotatePoint: {fileID: 3877814549107863407}
-  cargoStealInitialDelay: 5
-  cargoStealInterval: 5
-  cargoStealPerInterval: 10
-  stealBeforeLeaving: 50
-  currentlyStolen: 0
-  isLeaving: 0
   target: {fileID: 0}
+  _lineRenderer: {fileID: 0}
+  sparks: {fileID: 0}
   ropeLerpInProgress: 0
   harpoonShootEffect: {fileID: 980176138545819842, guid: 17539b399b107624781864ae9591fa2b, type: 3}
   harpoonDisengageEffect: {fileID: 980176138545819842, guid: c924af16b189e2243a3c5c5775570c0e, type: 3}
-  harpoonStealEffect: {fileID: 980176138545819842, guid: ff435debab36fff4182af8ceb8cb039a, type: 3}
+  harpoonActiveEffect: {fileID: 980176138545819842, guid: 9ee15a837080b764da850c672aaf3dfc, type: 3}
   harpoonLerpInProgress: 0
   harpoonEngaged: 0
   canShoot: 0

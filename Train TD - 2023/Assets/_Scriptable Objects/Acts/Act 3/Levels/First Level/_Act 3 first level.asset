@@ -1,0 +1,37 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b5d10d787ef192242aedf03f5045cbbd, type: 3}
+  m_Name: _Act 3 first level
+  m_EditorClassIdentifier: 
+  isBossLevel: 0
+  firstLevels:
+  - {fileID: 11400000, guid: 9af184ddb90846946b81776950404716, type: 2}
+  possibleLevels:
+  - {fileID: 11400000, guid: 405badc022fef7c448758607339ae086, type: 2}
+  - {fileID: 11400000, guid: 2fc0378ba439f9146a935ee547fb27d0, type: 2}
+  - {fileID: 11400000, guid: b6923c634cc48a9439359fd32cbfc760, type: 2}
+  - {fileID: 11400000, guid: 9af184ddb90846946b81776950404716, type: 2}
+  - {fileID: 11400000, guid: 4954b6637640ded4eb0f96f56f65e24a, type: 2}
+  possibleEliteLevels:
+  - {fileID: 11400000, guid: 4e869768153d54c45980c23e23654573, type: 2}
+  - {fileID: 11400000, guid: 1cc3459b6560e6d44b445f55c543fd65, type: 2}
+  possibleEncounters:
+  - {fileID: 1727440949419904987, guid: a9a82e9936c43bb449d3c23bf8fd4903, type: 3}
+  - {fileID: 3295736480921032522, guid: 74e11eec2b679cc4ca2084d1fe90b999, type: 3}
+  possibleDynamicSpawns:
+  - enemyIdentifier:
+      enemyUniqueName: TeleportingBuggyGatling
+      enemyCount: 1
+    firstSpawnTime: 45
+    spawnInterval: 30
+    increaseInNumberInterval: 3
+  segmentCount: 3

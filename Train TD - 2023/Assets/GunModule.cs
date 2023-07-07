@@ -13,6 +13,13 @@ public class GunModule : MonoBehaviour, IComponentWithTarget, IActiveDuringComba
     public class TransformWithActivation {
         public Transform transform;
     }
+
+
+    public bool isGigaGatling = false;
+
+    public float fireDelayReductionPerGatlingAmount = 2f;
+    public int gatlingAmount;
+    public int maxGatlingAmount;
     
     public TransformWithActivation[] rotateTransforms;
     public TransformWithActivation[] barrelEndTransforms;
@@ -28,7 +35,16 @@ public class GunModule : MonoBehaviour, IComponentWithTarget, IActiveDuringComba
 
     public bool mortarRotation = false;
     public float fireDelay = 2f; // dont use this
-    public float GetFireDelay() { return fireDelay * GetAttackSpeedMultiplier();}
+
+    public float GetFireDelay() {
+        if (isGigaGatling) { 
+            return (fireDelay-(Mathf.Pow(gatlingAmount, 1/2f)*fireDelayReductionPerGatlingAmount)) * GetAttackSpeedMultiplier();
+            
+        } else {
+            return fireDelay * GetAttackSpeedMultiplier();
+        }
+    }
+
     public int fireBarrageCount = 5;
     public float fireBarrageDelay = 0.1f;// dont use this
     public float fireRateMultiplier = 1f;
@@ -36,6 +52,8 @@ public class GunModule : MonoBehaviour, IComponentWithTarget, IActiveDuringComba
     public float projectileDamage = 2f; // dont use this
     public float damageMultiplier = 1f;
     public bool dontGetAffectByMultipliers = false;
+
+    public bool isHeal = false;
 
     public float GetDamage() {
         if (dontGetAffectByMultipliers) {
@@ -218,6 +236,7 @@ public class GunModule : MonoBehaviour, IComponentWithTarget, IActiveDuringComba
                 projectile.myOriginObject = this.transform.root.gameObject;
                 projectile.damage = GetDamage();
                 projectile.target = target;
+                projectile.isHeal = isHeal;
                 //projectile.isTargetSeeking = true;
                 projectile.canPenetrateArmor = canPenetrateArmor;
                 if (beingDirectControlled) {
@@ -241,6 +260,11 @@ public class GunModule : MonoBehaviour, IComponentWithTarget, IActiveDuringComba
                 onBulletFiredEvent?.Invoke();
                 if(gunShakeOnShoot)
                     StartCoroutine(ShakeGun());
+
+                if (isGigaGatling) {
+                    gatlingAmount += 1;
+                    gatlingAmount = Mathf.Clamp(gatlingAmount, 0, maxGatlingAmount);
+                }
             //}
             yield return new WaitForSeconds(GetFireBarrageDelay());
         }

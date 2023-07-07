@@ -37,16 +37,33 @@ public class MissionWinFinisher : MonoBehaviour {
 		gateScript.SetCanGoStatus(false, deliverYourCargoFirstTooltip);
 	}
 
+	public GameObject mysteriousCargoDeliveryArea;
+	public bool needToDeliverMysteriousCargo = false;
+	
 	public GameObject winContinueButton;
 
 	public bool isWon = false;
 	public void MissionWon(bool isShowingPrevRewards = false) {
+		var targetStar = DataSaver.s.GetCurrentSave().currentRun.map.GetStarWithName(DataSaver.s.GetCurrentSave().currentRun.targetStar);
+
+		if (targetStar.isBoss) {
+			needToDeliverMysteriousCargo = true;
+			mysteriousCargoDeliveryArea.SetActive(true);
+		} else {
+			mysteriousCargoDeliveryArea.SetActive(false);
+			needToDeliverMysteriousCargo = false;
+		}
+		
 		SpeedController.s.TravelToMissionEndDistance();
 		isWon = true;
 		PlayStateMaster.s.FinishCombat(!isShowingPrevRewards);
 		EnemyWavesController.s.Cleanup();
 		PlayerWorldInteractionController.s.canSelect = false;
 		//EnemyHealth.winSelfDestruct?.Invoke(false);
+
+		
+		
+		
 
 		for (int i = 0; i < scriptsToDisable.Length; i++) {
 			scriptsToDisable[i].enabled = false;
@@ -113,6 +130,28 @@ public class MissionWinFinisher : MonoBehaviour {
 			EventSystem.current.SetSelectedGameObject(winContinueButton);
 	}
 
+	void OnGameWon() {
+		var allArtifacts = ArtifactsController.s.myArtifacts;
+
+		var eligibleBossArtifacts = new List<Artifact>();
+		for (int i = 1; i < allArtifacts.Count; i++) {
+			if (allArtifacts[i].myRarity == UpgradesController.CartRarity.boss) {
+				eligibleBossArtifacts.Add(allArtifacts[i]);
+			}
+		}
+
+		if (eligibleBossArtifacts.Count > 0) {
+			DataSaver.s.GetCurrentSave().xpProgress.bonusArtifact = eligibleBossArtifacts[Random.Range(0, eligibleBossArtifacts.Count)].uniqueName;
+		}
+
+		for (int i = 0; i < eligibleBossArtifacts.Count; i++) {
+			if (!DataSaver.s.GetCurrentSave().xpProgress.unlockedStarterArtifacts.Contains(eligibleBossArtifacts[i].uniqueName)) {
+				DataSaver.s.GetCurrentSave().xpProgress.unlockedStarterArtifacts.Add(eligibleBossArtifacts[i].uniqueName);
+				break;
+			}
+		}
+	}
+
 	void ChangeRangeShowState(bool state) {
 		var ranges = Train.s.GetComponentsInChildren<RangeVisualizer>();
 
@@ -167,6 +206,8 @@ public class MissionWinFinisher : MonoBehaviour {
 			
 			if (targetStar.isBoss) {
 				ActFinishController.s.OpenActWinUI();
+				if(DataSaver.s.GetCurrentSave().currentRun.currentAct == 3)
+					OnGameWon();
 			} else {
 				PlayStateMaster.s.LeaveMissionRewardArea();
 			}

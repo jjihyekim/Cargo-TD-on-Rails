@@ -8,6 +8,7 @@ public class Artifact_PlayerActionAffector : ActivateWhenOnArtifactRow {
 
     public bool makeCannotRepair;
     public bool makeCannotReload;
+    public bool makeCannotSmith;
     
     protected override void _Arm() {
         PlayerWorldInteractionController.s.repairAmountMultiplier += repairAmountMultiplier -1;
@@ -16,8 +17,25 @@ public class Artifact_PlayerActionAffector : ActivateWhenOnArtifactRow {
         if (makeCannotRepair)
             PlayerWorldInteractionController.s.canRepair = false;
         
-        if (makeCannotReload)
-            PlayerWorldInteractionController.s.canReload = false;
+        if (makeCannotRepair) {
+            if (PlayerWorldInteractionController.s.canRepair) {
+                PlayerWorldInteractionController.s.canRepair = false;
+            } else {
+                PlayerWorldInteractionController.s.autoRepairAtStation = false;
+            }
+        }
+        
+        if (makeCannotReload) {
+            if (PlayerWorldInteractionController.s.canReload) {
+                PlayerWorldInteractionController.s.canReload = false;
+            } else {
+                PlayerWorldInteractionController.s.autoReloadAtStation = false;
+            }
+        }
+
+
+        if (makeCannotSmith)
+            PlayerWorldInteractionController.s.canSmith = false;
     }
 
     protected override void _Disarm() {

@@ -23,7 +23,7 @@ public class ModuleAmmo : MonoBehaviour, IActiveDuringCombat, IActiveDuringShopp
     private bool listenerAdded = false;
 
     float AmmoUseWithMultipliers() {
-        var ammoUse = ammoPerBarrage;
+        var ammoUse = ammoPerBarrage * ammoPerBarrageMultiplier;
 
         /*if (myGunModule.beingDirectControlled)
             ammoUse /= DirectControlMaster.s.directControlAmmoConservationBoost;*/
@@ -73,12 +73,24 @@ public class ModuleAmmo : MonoBehaviour, IActiveDuringCombat, IActiveDuringShopp
         OnReload?.Invoke(showEffect);
     }
 
+    public void SetAmmo(int amount) {
+        curAmmo = amount;
+        curAmmo = Mathf.Clamp(curAmmo, 0, maxAmmo);
+        
+        
+        UpdateModuleState();
+        OnReload?.Invoke(false);
+    }
+    
     public void ChangeMaxAmmo(float multiplierChange) {
         maxAmmoMultiplier += multiplierChange;
         if (PlayStateMaster.s.isCombatInProgress()) {
             curAmmo = Mathf.Clamp(curAmmo, 0, maxAmmo);
         } else {
-            curAmmo = maxAmmo;
+            if(PlayerWorldInteractionController.s.autoReloadAtStation)
+                curAmmo = maxAmmo;
+            else
+                curAmmo = Mathf.Clamp(curAmmo, 0, maxAmmo);
         }
 
         OnUse?.Invoke();
@@ -91,7 +103,7 @@ public class ModuleAmmo : MonoBehaviour, IActiveDuringCombat, IActiveDuringShopp
     [ReadOnly]
     public GameObject myUINoAmmoWarningThing;
     void UpdateModuleState() {
-        var hasAmmo = curAmmo > 0 ;
+        var hasAmmo = curAmmo > AmmoUseWithMultipliers() ;
 
         for (int i = 0; i < myGunModules.Length; i++) {
             myGunModules[i].hasAmmo = hasAmmo;

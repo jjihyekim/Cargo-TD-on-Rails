@@ -903,7 +903,7 @@ MeshRenderer:
   m_RenderingLayerMask: 4294967295
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 540d63647bec1824d8dd93b811ec6ded, type: 2}
+  - {fileID: 2100000, guid: ce43dacfb7192a04bb40e62ab426bbdf, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -1242,9 +1242,12 @@ MonoBehaviour:
   isAlive: 1
   uiTransform: {fileID: 2740932883121660032}
   cartRewardTransform: {fileID: 0}
-  healthBar: {fileID: 0}
+  enemyUIBar: {fileID: 0}
   isArmored: 0
   isComponentEnemy: 0
+  maxShields: 0
+  currentShields: 0
+  curShieldDelay: 0
   currentBurn: 0
   burnSpeed: 0
   rewardArtifactOnDeath: 0

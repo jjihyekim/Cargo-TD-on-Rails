@@ -6,11 +6,7 @@ using UnityEngine;
 public class CargoModule : MonoBehaviour, IActiveDuringCombat, IActiveDuringShopping {
 
     [SerializeField]
-    private string myRewardCart;
-
-    [SerializeField] private string myRewardArtifact;
-
-    public bool isLeftCargo;
+    private DataSaver.TrainState.CartState.CargoState myState;
 
     public SpriteRenderer[] icons;
 
@@ -30,12 +26,8 @@ public class CargoModule : MonoBehaviour, IActiveDuringCombat, IActiveDuringShop
         this.enabled = false;
     }
 
-    public string GetRewardArtifact() {
-        return myRewardArtifact;
-    }
-
-    public string GetRewardCart() {
-        return myRewardCart;
+    public DataSaver.TrainState.CartState.CargoState GetState() {
+        return myState;
     }
 
     public Sprite GetRewardIcon() {
@@ -44,13 +36,11 @@ public class CargoModule : MonoBehaviour, IActiveDuringCombat, IActiveDuringShop
         } else {
             return DataHolder.s.GetPowerUp(myReward).icon;
         }*/
-        return DataHolder.s.GetCart(myRewardCart).Icon;
+        return DataHolder.s.GetCart(myState.cargoReward).Icon;
     }
 
     public void SetCargo(DataSaver.TrainState.CartState.CargoState cargoState) {
-        myRewardCart = cargoState.cargoReward;
-        myRewardArtifact = cargoState.artifactReward;
-        isLeftCargo = cargoState.isLeftCargo;
+        myState = cargoState;
 
         var icon = GetRewardIcon();
         

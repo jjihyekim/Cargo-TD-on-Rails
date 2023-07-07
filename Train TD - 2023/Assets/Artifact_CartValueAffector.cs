@@ -14,6 +14,11 @@ public class Artifact_CartValueAffector : ActivateWhenOnArtifactRow {
     public float healthMultiplier = 1;
     public float ammoMultiplier = 1;
 
+    public bool canHaveNoShields = false;
+
+    public int boosterRangeModification = 0;
+    public float boosterEffectMultiplier = 1;
+
 
     protected override void _Arm() {
         var carts = GetAllCarts();
@@ -28,10 +33,17 @@ public class Artifact_CartValueAffector : ActivateWhenOnArtifactRow {
                 return;
             }
 
+            if (canHaveNoShields) {
+                cart.GetHealthModule().canHaveShields = false;
+                cart.GetHealthModule().maxShields = 0;
+            }
+
             if (cart.GetHealthModule() != null) {
-                cart.GetHealthModule().maxShields += addShieldAsHpPercent * cart.GetHealthModule().maxHealth;
-                cart.GetHealthModule().maxShields += addShieldAmount;
-                
+                if (cart.GetHealthModule().canHaveShields) {
+                    cart.GetHealthModule().maxShields += addShieldAsHpPercent * cart.GetHealthModule().maxHealth;
+                    cart.GetHealthModule().maxShields += addShieldAmount;
+                }
+
                 cart.GetHealthModule().maxHealth *= healthMultiplier;
                 cart.GetHealthModule().currentHealth *= healthMultiplier;
             }
@@ -42,6 +54,10 @@ public class Artifact_CartValueAffector : ActivateWhenOnArtifactRow {
 
             if (cart.GetComponentInChildren<ModuleAmmo>() != null) {
                 cart.GetComponentInChildren<ModuleAmmo>().ChangeMaxAmmo(ammoMultiplier-1);
+            }
+
+            foreach (var booster in cart.GetComponentsInChildren<IBooster>()) {
+                booster.ModifyStats(boosterRangeModification, boosterEffectMultiplier-1f);
             }
         }
     }

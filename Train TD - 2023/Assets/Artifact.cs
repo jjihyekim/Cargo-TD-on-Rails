@@ -23,6 +23,10 @@ public class Artifact : MonoBehaviour
     public Sprite mySprite;
 
 
+    private void Start() {
+        ApplyNameAndSprite();
+    }
+
     [Button]
     private void ApplyNameAndSprite() {
         GetComponentInChildren<Image>(true).sprite = mySprite;
@@ -82,5 +86,8 @@ public class Artifact : MonoBehaviour
         }
         
         UIRect.localPosition = Vector2.zero;
+    }
+    public void OnUIClick() { 
+        CharacterSelector.s.SelectStartingArtifact(this);   
     }
 }

@@ -53,6 +53,24 @@ public class MissionLoseFinisher : MonoBehaviour {
         loseUI.SetActive(true);
         
         
+        var allArtifacts = ArtifactsController.s.myArtifacts;
+
+        var eligibleBossArtifacts = new List<Artifact>();
+        for (int i = 1; i < allArtifacts.Count; i++) {
+            if (allArtifacts[i].myRarity == UpgradesController.CartRarity.boss) {
+                eligibleBossArtifacts.Add(allArtifacts[i]);
+            }
+        }
+
+        if (eligibleBossArtifacts.Count > 0) {
+            DataSaver.s.GetCurrentSave().xpProgress.bonusArtifact = eligibleBossArtifacts[Random.Range(0, eligibleBossArtifacts.Count)].uniqueName;
+        }
+
+        DataSaver.s.GetCurrentSave().isInARun = false;
+        
+        DataSaver.s.SaveActiveGame();
+        
+        
         var myChar = DataSaver.s.GetCurrentSave().currentRun.character;
         AnalyticsResult analyticsResult = Analytics.CustomEvent(
             "LevelLost",

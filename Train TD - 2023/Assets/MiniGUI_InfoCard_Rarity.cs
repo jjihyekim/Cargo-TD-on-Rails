@@ -29,6 +29,10 @@ public class MiniGUI_InfoCard_Rarity : MonoBehaviour, IBuildingInfoCard {
             epic.SetActive(true);
             
             break;
+        
+        default:
+            gameObject.SetActive(false);
+            break;
         }
     }
 

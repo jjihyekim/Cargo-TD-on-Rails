@@ -117,6 +117,8 @@ public class CameraController : MonoBehaviour {
         }
     }
 
+    
+    public  bool cannotSelectButCanMoveOverride = false;
     private bool snappedToTrainLastFrame = false;
 
     public UnityEvent AfterCameraPosUpdate = new UnityEvent();
@@ -126,7 +128,7 @@ public class CameraController : MonoBehaviour {
                 ProcessDirectControl(aimAction.action.ReadValue<Vector2>(), aimGamepadAction.action.ReadValue<Vector2>());
                 ProcessVelocityPredictionAndAimAssist();
             } else {
-                if (PlayerWorldInteractionController.s.canSelect /*|| cannotSelectButCanMoveOverride*/) {
+                if (PlayerWorldInteractionController.s.canSelect || cannotSelectButCanMoveOverride) {
                     var mousePos = Mouse.current.position.ReadValue();
                     if (canEdgeMove)
                         ProcessScreenCorners(mousePos);
@@ -430,7 +432,7 @@ public class CameraController : MonoBehaviour {
         Vector3 bottomLeft = isSnappedToMap ? mapCameraCornerBottomLeft.position : cameraCornerBottomLeft.position;
         
         if (!isSnappedToMap) {
-            var len = ((Train.s.cartCount-3) * DataHolder.s.cartLength)/2;
+            var len = ((Train.s.carts.Count-3) * DataHolder.s.cartLength)/2;
             topRight.z += len;
             bottomLeft.z -= len;
         }

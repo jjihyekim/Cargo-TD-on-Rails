@@ -23,9 +23,12 @@ public static class ExtensionMethods {
     }
 
 
-    public static void DeleteAllChildren(this Transform transform) {
+    public static void DeleteAllChildren(this Transform transform, bool skipLast = false) {
         int childs = transform.childCount;
-        for (int i = childs - 1; i >= 0; i--) {
+        int minus = 1;
+        if (skipLast)
+            minus += 1;
+        for (int i = childs - minus; i >= 0; i--) {
             GameObject.Destroy(transform.GetChild(i).gameObject);
         }
     }
