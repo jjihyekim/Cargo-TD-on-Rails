@@ -3,27 +3,79 @@ using System.Collections.Generic;
 using UnityEngine;
 using FMOD.Studio;
 using FMODUnity;
+using Sirenix.OdinInspector;
+using System.Linq;
+using UnityEngine.Rendering.PostProcessing;
+using Sirenix.Serialization;
 
 public class FMODMusicPlayer : MonoBehaviour
 {
     public static FMODMusicPlayer s;
 
+    #region General
+    [FoldoutGroup("General")]
     [Header("Speaker")]
     public FMODAudioSource speaker;
 
-    [Header("Music Tracks")]
-    public EventReference gameMusicTracks, menuMusicTracks;
+    [HorizontalGroup("General/timeLine")]
+    public bool isPaused;
+
+    [HorizontalGroup("General/timeLine", width:0.75f)]
+    [ShowInInspector]
+    private float timelinePosition { get { return Application.isPlaying ? speaker.TimelinePosotion() / 1000f : 0; } }
+    #endregion
+
+    #region Music Tracks
+    [FoldoutGroup("Music Tracks")]
+    public EventReference menuMusicTracks;
+
+    [FoldoutGroup("Music Tracks")]
+    [AssetList]
+    public FMODDynamicMusic dynamicGameMusic;
 
     private EventReference currentTracks;   // the current track that is loaded
+    #endregion
 
-    [Header("Playing Status")]
-    public bool isPaused;
+    #region Misc
     private float targetVolume = 1;
+    #endregion
 
-    [Header("Dynamic Music")]
+    #region Dynamics
+    [FoldoutGroup("Dynamics")]
     public int numOfEngagingWave;
-    public int numOfBuggy, numOfBiker;
+
+    [HorizontalGroup("Dynamics")]
+    [ShowInInspector]
+    public float bassIndex { get { return speaker.GetParamByName("bassIndex"); } }
+    [HorizontalGroup("Dynamics")]
+    [ShowInInspector]
+    public float drumIndex { get { return speaker.GetParamByName("drumIndex"); } }
+    [HorizontalGroup("Dynamics")]
+    [ShowInInspector]
+    public float melodyIndex { get { return speaker.GetParamByName("melodyIndex"); } }
+    [HorizontalGroup("Dynamics")]
+    [ShowInInspector]
+    public float backingIndex { get { return speaker.GetParamByName("backingIndex"); } }
+
+    private void PreparePhaseChange()
+    {
+        dynamicGameMusic.UpdatePhase(speaker);
+    }
+
+    private void InitPhase()
+    {
+        dynamicGameMusic.UpdatePhase(speaker);
+    }
+    private float phaseT, lastT;
+
     private List<EnemyWave> enemyWaves = new List<EnemyWave>();
+    #endregion
+
+    #region Procedural Music
+
+    public Queue<int> drum1Sheet, drum2Sheet, bassSheet, melody1Sheet, melody2Sheet, backingSheet;
+
+    #endregion
 
     private void Awake()
     {
@@ -49,9 +101,9 @@ public class FMODMusicPlayer : MonoBehaviour
         var changeMade = false;
         if (isGame)
         {
-            if (!currentTracks.Equals(gameMusicTracks))
+            if (!currentTracks.Equals(dynamicGameMusic.track))
             {
-                currentTracks = gameMusicTracks;
+                currentTracks = dynamicGameMusic.track;
                 changeMade = true;
             }
         }
@@ -77,6 +129,8 @@ public class FMODMusicPlayer : MonoBehaviour
 
     public void PlayCombatMusic()
     {
+        InitPhase();
+
         SwapMusicTracksAndPlay(true);
     }
 
@@ -140,30 +194,33 @@ public class FMODMusicPlayer : MonoBehaviour
     {
         #region update battle status
         // count how many waves are engaging
-        int tmp_count, tmp_buggy, tmp_biker;
-        tmp_count = tmp_buggy = tmp_biker = 0;
-        foreach(EnemyWave wave in enemyWaves)
+        int tmpCount;
+        tmpCount = 0;
+
+        int highestCount = 0;
+        List<string> highestType = new List<string>();
+        foreach (EnemyWave wave in enemyWaves)
         {
             // if a wave is close enough and is not leaving combat, count it as "engaging"
             if(wave.distance < 20 && !wave.isLeaving)
             {
-                tmp_count += 1;
-
-                string name = wave.myEnemy.enemyUniqueName;
-                if (name.Contains("Buggy"))
-                    tmp_buggy += 1;
-                else if (name.Contains("Biker"))
-                    tmp_biker += 1;
+                tmpCount += 1;
             }
         }
-        numOfEngagingWave = tmp_count;
-        numOfBuggy = tmp_buggy;
-        numOfBiker = tmp_biker;
 
-        // update with FMOD
-        speaker.SetParamByName("NumOfEngagingWaves", Mathf.Clamp(numOfEngagingWave, 0, 2));
-        speaker.SetParamByName("NumOfBuggy", Mathf.Clamp(numOfBuggy, 0, 2 - Mathf.Clamp01(numOfBiker)));
-        speaker.SetParamByName("NumOfBiker", Mathf.Clamp(numOfBiker, 0, 2 - Mathf.Clamp01(numOfBuggy)));
+        numOfEngagingWave = tmpCount;
+
+        #endregion
+
+        #region PhaseChange
+        if (currentTracks.Equals(dynamicGameMusic.track))
+        {
+            phaseT = (timelinePosition + 0.5f) % dynamicGameMusic.phaseChangePosition;
+            if (phaseT < lastT)
+                PreparePhaseChange();
+            lastT = phaseT;
+        }
+
 
         #endregion
 
@@ -183,3 +240,4 @@ public class FMODMusicPlayer : MonoBehaviour
         speaker.volume = Mathf.Lerp(speaker.volume, isPaused ? 0 : targetVolume, Time.unscaledDeltaTime * 8f);
     }
 }
+

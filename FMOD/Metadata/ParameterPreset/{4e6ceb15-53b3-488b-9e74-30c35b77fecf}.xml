@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<objects serializationModel="Studio.02.02.00">
+	<object class="ParameterPreset" id="{4e6ceb15-53b3-488b-9e74-30c35b77fecf}">
+		<property name="name">
+			<value>DrumIndex</value>
+		</property>
+		<relationship name="folder">
+			<destination>{6646dcc1-62a3-4c3e-aed8-0c2eaae38a1e}</destination>
+		</relationship>
+		<relationship name="parameter">
+			<destination>{3eeb6367-cee7-4cb4-bd2c-fa41e3cfe816}</destination>
+		</relationship>
+	</object>
+	<object class="GameParameter" id="{3eeb6367-cee7-4cb4-bd2c-fa41e3cfe816}">
+		<property name="parameterType">
+			<value>1</value>
+		</property>
+		<property name="maximum">
+			<value>7</value>
+		</property>
+		<property name="initialValue">
+			<value>1</value>
+		</property>
+	</object>
+</objects>
