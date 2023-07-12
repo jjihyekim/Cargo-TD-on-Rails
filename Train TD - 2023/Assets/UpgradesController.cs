@@ -306,10 +306,12 @@ public class UpgradesController : MonoBehaviour {
 
 	public int fleaMarketLocationCount = 3;
 	public bool rewardDestinationArtifact = true;
+	public bool rewardDestinationCart = true;
 
 	public void ResetFleaMarketAndDestCargoValues() {
 		fleaMarketLocationCount = 3;
 		rewardDestinationArtifact = true;
+		rewardDestinationCart = true;
 	}
 	void SpawnShopItems() {
 		transform.DeleteAllChildren();

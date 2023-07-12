@@ -64,8 +64,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   isArmed: 0
-  fleaMarketCountModifier: -2
+  fleaMarketCountModifier: 0
   rewardDestinationArtifact: 0
+  rewardDestinationCart: 1
 --- !u!114 &5605894643576048114
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -82,3 +83,4 @@ MonoBehaviour:
   capacityBoost: 1
   speedMultiplier: 0
   speedAmount: 0
+  delicateMachinery: 0

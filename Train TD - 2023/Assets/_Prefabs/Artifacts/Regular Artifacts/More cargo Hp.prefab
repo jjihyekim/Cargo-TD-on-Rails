@@ -25,11 +25,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3932598021525471259, guid: e5ad635d235b48243b40e94abcf52f46, type: 3}
       propertyPath: uniqueName
-      value: more_engine_hp
+      value: more_cargo_hp
       objectReference: {fileID: 0}
     - target: {fileID: 3932598021525471259, guid: e5ad635d235b48243b40e94abcf52f46, type: 3}
       propertyPath: displayName
-      value: Engine Reinforcements
+      value: Cargo Reinforcements
       objectReference: {fileID: 0}
     - target: {fileID: 3932598021525471259, guid: e5ad635d235b48243b40e94abcf52f46, type: 3}
       propertyPath: isGenericArtifact
@@ -66,3 +66,6 @@ MonoBehaviour:
   damageMultiplier: 1
   healthMultiplier: 1.5
   ammoMultiplier: 1
+  canHaveNoShields: 0
+  boosterRangeModification: 0
+  boosterEffectMultiplier: 1
