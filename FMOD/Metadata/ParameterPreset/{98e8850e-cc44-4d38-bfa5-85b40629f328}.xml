@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<objects serializationModel="Studio.02.02.00">
+	<object class="ParameterPreset" id="{98e8850e-cc44-4d38-bfa5-85b40629f328}">
+		<property name="name">
+			<value>MelodyIndex</value>
+		</property>
+		<relationship name="folder">
+			<destination>{6646dcc1-62a3-4c3e-aed8-0c2eaae38a1e}</destination>
+		</relationship>
+		<relationship name="parameter">
+			<destination>{8f991f93-b300-445c-a750-1a5fc7c518ba}</destination>
+		</relationship>
+	</object>
+	<object class="GameParameter" id="{8f991f93-b300-445c-a750-1a5fc7c518ba}">
+		<property name="parameterType">
+			<value>1</value>
+		</property>
+		<property name="maximum">
+			<value>4</value>
+		</property>
+		<property name="initialValue">
+			<value>0</value>
+		</property>
+	</object>
+</objects>

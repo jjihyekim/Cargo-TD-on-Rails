@@ -44,6 +44,12 @@ public class FMODAudioSource : MonoBehaviour
 
 
     #region Play/Stop/Pause Functions
+    public int TimelinePosotion()
+    {
+        soundInstance.getTimelinePosition(out int position);
+        return position;
+    }
+
     void OnPause(bool isPaused)
     {
         if (isPaused)
@@ -97,6 +103,10 @@ public class FMODAudioSource : MonoBehaviour
     public void SetParamByName(string paramName, float value)
     {
         soundInstance.setParameterByName(paramName, value);
+    }
+    public void SetParamByName(string paramName, string value)
+    {
+        soundInstance.setParameterByNameWithLabel(paramName, value);
     }
 
     public float GetParamByName(string paramName)
