@@ -15,6 +15,15 @@
                     "initialStateCheck": true
                 },
                 {
+                    "name": "MoveGamepad",
+                    "type": "Value",
+                    "id": "0a45d91f-4e46-4dd7-b6cb-db8c67f5d6af",
+                    "expectedControlType": "Vector2",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": true
+                },
+                {
                     "name": "CutsceneSkip",
                     "type": "Button",
                     "id": "2bd60403-0923-469e-a3a4-7338b04f6bbc",
@@ -232,17 +241,6 @@
                 }
             ],
             "bindings": [
-                {
-                    "name": "",
-                    "id": "fe58f6b8-88b0-42a8-86a4-99f59376ac5c",
-                    "path": "<Gamepad>/leftStick",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "Gamepad",
-                    "action": "Move",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
                 {
                     "name": "WASD",
                     "id": "076f1159-4d00-4240-9bb2-d48719a9446e",
@@ -658,6 +656,17 @@
                     "processors": "",
                     "groups": "",
                     "action": "Encounter Ride Past",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "f4d8ee65-a80d-4bc9-9a39-8a523c89cb12",
+                    "path": "<Gamepad>/leftStick",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Gamepad",
+                    "action": "MoveGamepad",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

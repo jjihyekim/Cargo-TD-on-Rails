@@ -14,11 +14,11 @@ public class ClickableCargoRewardInfo : MonoBehaviour, IClickableInfo {
     }
 
     public string GetInfo() {
-        return $"reward: +{myModule.GetReward()}";
+        return $"reward: +{myModule.GetState().cargoReward}";
     }
 
     public Tooltip GetTooltip() {
-        return new Tooltip() { text = $"Bring this cargo safely to the next city to earn {myModule.GetReward()}" };;
+        return new Tooltip() { text = $"Bring this cargo safely to the next city to earn {myModule.GetState().cargoReward} at level {myModule.GetState().cargoLevel}" };;
     }
 
 }

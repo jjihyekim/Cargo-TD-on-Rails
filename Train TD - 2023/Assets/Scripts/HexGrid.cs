@@ -269,7 +269,10 @@ public class HexGrid : MonoBehaviour {
 			//distance -= gridOffset;
 			var lastHex = hexParents[0];
 			hexParents.RemoveAt(0);
-			lastHex.GetComponent<HexChunk>().ClearForeign();
+			foreach (var hexChunk in lastHex.GetComponentsInChildren<HexChunk>()) {
+				hexChunk.ClearForeign();
+			}
+			//lastHex.GetComponent<HexChunk>().ClearForeign();
 			//UpdateGrid(lastHex);
 			
 			lastHex.position = hexParents[hexParents.Count - 1].transform.position + Vector3.forward * gridOffset;

@@ -13,4 +13,8 @@ public class MiniGUI_InfoCard_CriticalComponent : MonoBehaviour, IBuildingInfoCa
             gameObject.SetActive(true);
         }
     }
+
+    public void SetUp(EnemyHealth enemy) {
+        gameObject.SetActive(false);
+    }
 }

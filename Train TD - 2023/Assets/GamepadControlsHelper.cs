@@ -17,7 +17,7 @@ public class GamepadControlsHelper : MonoBehaviour {
     
     public enum PossibleActions {
         move, reload, repair, directControl, openMap, pause, fastForward, showDetails, shoot, exitDirectControl, flipCamera, cutsceneSkip, clickGate, changeTrack, engineBoost,
-        encounterButtons
+        encounterButtons, equipArtifact
     }
 
     public GameObject gamepadSelector;
@@ -31,13 +31,33 @@ public class GamepadControlsHelper : MonoBehaviour {
 
     private void Start() {
         AddActionsAlwaysAvailable();
-        PlayerWorldInteractionController.s.OnSelectBuilding.AddListener(UpdateCartButtonPromptsLocation);
+        PlayerWorldInteractionController.s.OnSelectBuilding.AddListener(UpdateButtonPromptsLocation);
+        PlayerWorldInteractionController.s.OnSelectEnemy.AddListener(UpdateButtonPromptsLocation);
+        PlayerWorldInteractionController.s.OnSelectArtifact.AddListener(UpdateButtonPromptsLocation);
         PlayerWorldInteractionController.s.OnSelectGate.AddListener(UpdateGateSelectPrompt);
     }
 
-    private void UpdateCartButtonPromptsLocation(Cart cart, bool isSelecting) {
+    private void UpdateButtonPromptsLocation(Cart cart, bool isSelecting) {
         if (isSelecting) {
             cartSelectPrompts.SetUp(cart.uiTargetTransform);
+            cartSelectPrompts.gameObject.SetActive(true);
+        } else {
+            cartSelectPrompts.gameObject.SetActive(false);
+        }
+    }
+    
+    private void UpdateButtonPromptsLocation(EnemyHealth enemy, bool isSelecting) {
+        if (isSelecting) {
+            cartSelectPrompts.SetUp(enemy.uiTransform);
+            cartSelectPrompts.gameObject.SetActive(true);
+        } else {
+            cartSelectPrompts.gameObject.SetActive(false);
+        }
+    }
+    
+    private void UpdateButtonPromptsLocation(Artifact artifact, bool isSelecting) {
+        if (isSelecting) {
+            cartSelectPrompts.SetUp(artifact.uiTransform);
             cartSelectPrompts.gameObject.SetActive(true);
         } else {
             cartSelectPrompts.gameObject.SetActive(false);
@@ -115,6 +135,10 @@ public class GamepadControlsHelper : MonoBehaviour {
             gamepadSelector.SetActive(false);
             //cartSelectPrompts.gameObject.SetActive(false);
         }
+        
+        
+        if(cartSelectPrompts.sourceTransform == null)
+            cartSelectPrompts.gameObject.SetActive(false);
     }
 
     public Ray GetRay() {

@@ -1078,7 +1078,6 @@ MonoBehaviour:
   targetMoveSpeed: 0.1
   target: {x: 0, y: 0, z: 0}
   targetTargetPosition: {x: 0, y: 0, z: 0}
-  lookRotationDelta: 10
   centerOfMass: {x: 0, y: -0.1, z: 0}
   forwardForce: 10
   stickToGround: 0
@@ -1138,8 +1137,11 @@ MonoBehaviour:
   aliveObject: {fileID: 2942942886986099026}
   isAlive: 1
   uiTransform: {fileID: 2740932883121660032}
+  cartRewardTransform: {fileID: 2740932883121660032}
   healthBar: {fileID: 0}
   isArmored: 0
+  rewardPowerUp: 0
+  isComponentEnemy: 0
   currentBurn: 0
   burnSpeed: 0
   _outlines: []
@@ -1155,8 +1157,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 457bc320c770c7e419cae2d477ce9623, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  myId: 0
   myType: 0
   targetTransform: {fileID: 3935271781729781793}
+  avoid: 1
+  velocity: {x: 0, y: 0, z: 0}
 --- !u!114 &-5213072349006234106
 MonoBehaviour:
   m_ObjectHideFlags: 0

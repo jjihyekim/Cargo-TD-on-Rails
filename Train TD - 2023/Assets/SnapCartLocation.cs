@@ -8,7 +8,9 @@ public class SnapCartLocation : MonoBehaviour {
 
     public UpgradesController.CartLocation myLocation;
 
+    public bool snapNothing = false;
     public bool onlySnapCargo = false;
+    public bool onlySnapMysteriousCargo = false;
 
     public GameObject emptyShowObject;
 

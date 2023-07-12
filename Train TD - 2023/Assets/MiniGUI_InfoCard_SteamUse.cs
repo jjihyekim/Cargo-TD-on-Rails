@@ -23,4 +23,8 @@ public class MiniGUI_InfoCard_SteamUse : MonoBehaviour, IBuildingInfoCard {
             gameObject.SetActive(true);
         }
     }
+    
+    public void SetUp(EnemyHealth enemy) {
+        gameObject.SetActive(false);
+    }
 }

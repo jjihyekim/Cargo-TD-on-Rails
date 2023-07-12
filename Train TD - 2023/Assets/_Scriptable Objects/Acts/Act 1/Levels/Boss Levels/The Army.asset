@@ -13,22 +13,22 @@ MonoBehaviour:
   m_Name: The Army
   m_EditorClassIdentifier: 
   isBossLevel: 1
-  firstLevel: {fileID: 11400000, guid: 36cabfc8b0859ed4aa24e1fc1ca1574b, type: 2}
-  possibleLevels:
-  - {fileID: 11400000, guid: 1cecbdbf1dae52e46897a0611f5f2579, type: 2}
+  firstLevels:
   - {fileID: 11400000, guid: 36cabfc8b0859ed4aa24e1fc1ca1574b, type: 2}
+  possibleLevels:
+  - {fileID: 11400000, guid: 93fa15b7e0d326d42ab07ab5b3a2da92, type: 2}
+  - {fileID: 11400000, guid: 1cecbdbf1dae52e46897a0611f5f2579, type: 2}
+  - {fileID: 11400000, guid: 604cccdfd62dac04b8abd061c9841d09, type: 2}
   - {fileID: 11400000, guid: 88440591d13923f46ad24fd357da5eaf, type: 2}
-  - {fileID: 11400000, guid: faa0664b69b98bd438c02de835848c95, type: 2}
+  - {fileID: 11400000, guid: 99b0109e3f6c5bf4887e69c46eedd82e, type: 2}
+  - {fileID: 11400000, guid: 36cabfc8b0859ed4aa24e1fc1ca1574b, type: 2}
+  possibleEliteLevels: []
   possibleEncounters: []
   possibleDynamicSpawns:
   - enemyIdentifier:
       enemyUniqueName: Army
       enemyCount: 1
-    distanceFromTrain: 30
-    firstSpawnTime: 120
+    firstSpawnTime: 60
     spawnInterval: 45
     increaseInNumberInterval: 3
   segmentCount: 3
-  firstEnemyInSegmentDistance: 75
-  lastEnemyAndSegmentEndDistance: 75
-  powerUpEnemyDistanceFromLastEnemy: 75

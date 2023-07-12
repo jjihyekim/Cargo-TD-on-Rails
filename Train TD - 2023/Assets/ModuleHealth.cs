@@ -12,6 +12,15 @@ public class ModuleHealth : MonoBehaviour, IHealth, IActiveDuringCombat, IActive
 
     public static bool isImmune = false;
 
+    public bool canHaveShields = true;
+    public float maxShields = 0;
+    public float currentShields = 0;
+    private float shieldRegenRate = 50;
+    private float shieldRegenDelay = 1;
+    public float curShieldDelay = 0;
+
+    public float baseHealth = 50;
+    [ReadOnly]
     public float maxHealth = 50;
     public float currentHealth = 50;
 
@@ -24,16 +33,14 @@ public class ModuleHealth : MonoBehaviour, IHealth, IActiveDuringCombat, IActive
     public GameObject explodePrefab;
     public bool isDead = false;
 
-    public static int buildingsBuild;
-    public static int buildingsDestroyed;
-
     public bool damageNearCartsOnDeath = false;
     public bool selfDamage = false;
     [ShowIf("selfDamage")] 
     private float selfDamageTimer;
     public int[] selfDamageAmounts = new[] { 20, 10 };
 
-    private Cart myCart;
+    [NonSerialized]
+    public Cart myCart;
 
     private GameObject activeHPCriticalIndicatorEffects;
     private enum HPLowStates {
@@ -42,17 +49,41 @@ public class ModuleHealth : MonoBehaviour, IHealth, IActiveDuringCombat, IActive
 
     private HPLowStates hpState;
 
-    public bool invincibleTutorial = false;
-
+    public bool unDying = false;
+    public bool invincible = false;
+    
     public PhysicalHealthBar myBar;
 
     [HideInInspector] public List<Action<float>> damageDefenders = new List<Action<float>>();
 
+    public float boostHealthOnUpgrade = 0.5f;
+    
+    public void ResetState(int level) {
+        damageDefenders.Clear();
+        maxHealth = baseHealth * (1+(boostHealthOnUpgrade*level));
+        if (PlayStateMaster.s.isCombatInProgress()) {
+            currentHealth = Mathf.Clamp(currentHealth, 0, maxHealth);
+        } else {
+            if (PlayerWorldInteractionController.s.autoRepairAtStation)
+                currentHealth = maxHealth;
+            else
+                currentHealth = Mathf.Clamp(currentHealth, 0, maxHealth);
+                
+        }
+        
+        maxShields = 0;
+        canHaveShields = true;
+        
+        UpdateHpState();
+    }
+
     [Button]
     public void DealDamage(float damage) {
         Assert.IsTrue(damage > 0);
-        if(isImmune)
+        if(isImmune || invincible)
             return;
+
+        curShieldDelay = shieldRegenDelay;
 
         myCart = GetComponent<Cart>();
         if (!isDead && (myCart == null || !myCart.isDestroyed)) {
@@ -63,23 +94,36 @@ public class ModuleHealth : MonoBehaviour, IHealth, IActiveDuringCombat, IActive
             
 
             damage *= damageReductionMultiplier;
+            var shieldsWasMoreThan100 = currentShields > 100;
+            if (currentShields > 0) {
+                currentShields -= damage;
+                damage = 0;
+                if (currentShields <= 0) {
+                    if (!shieldsWasMoreThan100) {
+                        damage = -currentShields;
+                    }
+
+                    isShieldActive = false;
+                    currentShields = 0;
+                }
+            }
+            
             currentHealth -= damage;
 
             var hpPercent = currentHealth / maxHealth;
-            SetBuildingShaderHealth(hpPercent);
             
             if(currentHealth <= 0) {
                 if (myCart.isRepairable) {
                     GetDestroyed();
                 } else {
-                    if(!invincibleTutorial)
+                    if(!unDying)
                         Die();
                     else 
                         currentHealth = 1;
                 }
             }
 
-            UpdateHPCriticalIndicators();
+            UpdateHpState();
 
             if (currentHealth < 0) {
                 currentHealth = 0;
@@ -89,6 +133,11 @@ public class ModuleHealth : MonoBehaviour, IHealth, IActiveDuringCombat, IActive
         }
     }
 
+    public void UpdateHpState() {
+        UpdateHPCriticalIndicators();
+        SetBuildingShaderHealth();
+    }
+    
     void UpdateHPCriticalIndicators() {
         var hpPercent = currentHealth / maxHealth;
         if(isDead)
@@ -148,15 +197,12 @@ public class ModuleHealth : MonoBehaviour, IHealth, IActiveDuringCombat, IActive
             }
 
 
-            UpdateHPCriticalIndicators();
-
-            SetBuildingShaderHealth(currentHealth / maxHealth);
+            UpdateHpState();
         }
     }
 
     public void SetHealth(float health) {
         currentHealth = Mathf.Clamp(health, 0, maxHealth);
-        SetBuildingShaderHealth(currentHealth / maxHealth);
         
         if(currentHealth <= 0) {
             if (true) {
@@ -172,14 +218,14 @@ public class ModuleHealth : MonoBehaviour, IHealth, IActiveDuringCombat, IActive
         }
         
         
-        UpdateHPCriticalIndicators();
+        UpdateHpState();
     }
 
     [ShowIf("damageNearCartsOnDeath")]
     public int[] explosionDamages = new[] { 100, 50, 25 };
     void DamageNearCartsOnDeath() {
         return;
-        var myModule = GetComponent<Cart>();
+        /*var myModule = GetComponent<Cart>();
 
         var forwardWave = myModule;
         for (int i = 0; i < 3; i++) {
@@ -253,7 +299,7 @@ public class ModuleHealth : MonoBehaviour, IHealth, IActiveDuringCombat, IActive
                 enemy.DealDamage(damage);
 
             }
-        }
+        }*/
     }
 
 
@@ -269,7 +315,7 @@ public class ModuleHealth : MonoBehaviour, IHealth, IActiveDuringCombat, IActive
     }
 
     public bool burnResistant = false;
-    float burnReduction = 0.5f;
+    float burnReduction = 0.6f;
     public float currentBurn = 0;
     public float burnSpeed = 0;
     private float lastBurn;
@@ -287,6 +333,8 @@ public class ModuleHealth : MonoBehaviour, IHealth, IActiveDuringCombat, IActive
         
         burnSpeed += damage;
     }
+
+    private bool isShieldActive;
     private void Update() {
         var burnDistance = Mathf.Max(burnSpeed / 2f, 1f);
         if (currentBurn >= burnDistance) {
@@ -320,6 +368,14 @@ public class ModuleHealth : MonoBehaviour, IHealth, IActiveDuringCombat, IActive
             SetBuildingShaderBurn(burnSpeed);
             lastBurn = burnSpeed;
         }
+
+        if (curShieldDelay <= 0) {
+            isShieldActive = true;
+            currentShields += shieldRegenRate * Time.deltaTime;
+        } else {
+            curShieldDelay -= Time.deltaTime;
+        }
+        currentShields = Mathf.Clamp(currentShields, 0, maxShields);
     }
 
     void SelfDamage() {
@@ -330,8 +386,8 @@ public class ModuleHealth : MonoBehaviour, IHealth, IActiveDuringCombat, IActive
         var prefab = LevelReferences.s.smallDamagePrefab;
         Instantiate(prefab, transform.position, Quaternion.identity);
         
-        DealDamageToBuilding(Train.s.GetNextBuilding(true, myModule), prefab, selfDamageAmounts[1] * multiplier);
-        DealDamageToBuilding(Train.s.GetNextBuilding(false, myModule), prefab, selfDamageAmounts[1] * multiplier);
+        DealDamageToBuilding(Train.s.GetNextBuilding(1, myModule), prefab, selfDamageAmounts[1] * multiplier);
+        DealDamageToBuilding(Train.s.GetNextBuilding(-1, myModule), prefab, selfDamageAmounts[1] * multiplier);
     }
     
     private void Start() {
@@ -339,17 +395,27 @@ public class ModuleHealth : MonoBehaviour, IHealth, IActiveDuringCombat, IActive
         myBar.UpdateHealth(currentHealth/maxHealth);
     }
 
-    public void InitializeUIBar() {
-        if (GetComponentInParent<Train>() != null) {
-            myUIBar = Instantiate(LevelReferences.s.cartHealthPrefab, LevelReferences.s.cartHealthParent).GetComponent<MiniGUI_CartUIBar>();
+    public void InitializeUIBar(bool activate) {
+        myCart = GetComponent<Cart>();
+        if (GetComponentInParent<Train>() != null && activate) {
+            if (myUIBar == null) {
+                myUIBar = Instantiate(LevelReferences.s.cartHealthPrefab, LevelReferences.s.cartHealthParent).GetComponent<MiniGUI_CartUIBar>();
+            } else {
+                myUIBar.gameObject.SetActive(true);
+            }
             myUIBar.SetUp(myCart, this, GetComponentInChildren<ModuleAmmo>());
-            buildingsBuild += 1;
+        } else {
+            myUIBar.gameObject.SetActive(false);
         }
     }
 
     [NonSerialized]
     public UnityEvent dieEvent = new UnityEvent();
-    
+
+    private static readonly int Health = Shader.PropertyToID("_Health");
+    private static readonly int Burn = Shader.PropertyToID("_Burn");
+    private static readonly int Alive = Shader.PropertyToID("_Alive");
+
     [Button]
     public void Die() {
         /*if (damageNearCartsOnDeath) {
@@ -359,10 +425,6 @@ public class ModuleHealth : MonoBehaviour, IHealth, IActiveDuringCombat, IActive
         isDead = true;
         Instantiate(explodePrefab, transform.position, transform.rotation);
         SoundscapeController.s.PlayModuleExplode();
-
-        if (GetComponentInParent<Train>() != null) {
-            buildingsDestroyed += 1;
-        }
 
         /*// in case of death give some of the cost back
         var trainBuilding = GetComponent<Cart>();
@@ -382,32 +444,8 @@ public class ModuleHealth : MonoBehaviour, IHealth, IActiveDuringCombat, IActive
     [Button]
     public void GetDestroyed() {
         myCart.isDestroyed = true;
-        GetComponent<PossibleTarget>().enabled = false;
-
-        var engineModule = GetComponentInChildren<EngineModule>();
-        if (engineModule) {
-            engineModule.enabled = false;
-            GetComponentInChildren<EngineFireController>().StopEngineFire();
-        }
-
-        var gunModules = GetComponentsInChildren<GunModule>();
-        for (int i = 0; i < gunModules.Length; i++) {
-            gunModules[i].DeactivateGun();
-            
-            if (gunModules[i].beingDirectControlled) {
-                DirectControlMaster.s.DisableDirectControl();
-            } 
-            
-            if(GetComponentInChildren<TargetPicker>()){
-                GetComponentInChildren<TargetPicker>().enabled = false;
-            }
-        }
-
-
-        /*var colliders = GetComponentsInChildren<Collider>();
-        for (int i = 0; i < colliders.Length; i++) {
-            colliders[i].enabled = false;
-        }*/
+        myCart.SetDisabledState();
+        
 
         SetBuildingShaderAlive(false);
 
@@ -418,89 +456,47 @@ public class ModuleHealth : MonoBehaviour, IHealth, IActiveDuringCombat, IActive
             DamageNearCartsOnDeath();
         }
 
-
-        var attachedToTrain = GetComponentsInChildren<ActivateWhenAttachedToTrain>();
-
-        for (int i = 0; i < attachedToTrain.Length; i++) {
-            attachedToTrain[i].DetachedFromTrain();
-        }
-        
-        var duringCombat = GetComponentsInChildren<IActiveDuringCombat>();
-        
-        for (int i = 0; i < duringCombat.Length; i++) { duringCombat[i].Disable(); }
+        burnSpeed = 0;
     }
 
     [Button]
     public void GetUnDestroyed() {
         myCart.isDestroyed = false;
-        GetComponent<PossibleTarget>().enabled = true;
-        
-        var engineModule = GetComponentInChildren<EngineModule>();
-        if (engineModule) {
-            engineModule.enabled = true;
-            GetComponentInChildren<EngineFireController>().ActivateEngineFire();
-        }
-
-        var gunModules = GetComponentsInChildren<GunModule>();
-        for (int i = 0; i < gunModules.Length; i++) {
-            gunModules[i].ActivateGun();
-            
-            if(GetComponentInChildren<TargetPicker>()){
-                GetComponentInChildren<TargetPicker>().enabled = true;
-            }
-        }
-
-        /*var colliders = GetComponentsInChildren<Collider>();
-        for (int i = 0; i < colliders.Length; i++) {
-            colliders[i].enabled = true;
-        }*/
+        myCart.SetDisabledState();
 
         SetBuildingShaderAlive(true);
-        
-        var attachedToTrain = GetComponentsInChildren<ActivateWhenAttachedToTrain>();
-
-        for (int i = 0; i < attachedToTrain.Length; i++) {
-            attachedToTrain[i].AttachedToTrain();
-        }
-        
-        var duringCombat = GetComponentsInChildren<IActiveDuringCombat>();
-
-        if (PlayStateMaster.s.isCombatStarted()) {
-            for (int i = 0; i < duringCombat.Length; i++) {
-                duringCombat[i].ActivateForCombat();
-            }
-        }
     }
     
-    void SetBuildingShaderHealth(float value) {
-        var _renderers = GetComponentsInChildren<MeshRenderer>();
+    void SetBuildingShaderHealth() {
+        var hpPercent = currentHealth / maxHealth;
+        var _renderers = myCart._meshes;
         for (int j = 0; j < _renderers.Length; j++) {
             var rend = _renderers[j];
             if (rend != null) {
-                rend.material.SetFloat("_Health", value);
+                rend.sharedMaterials[1].SetFloat(Health, hpPercent);
             }
         }
     }
     
     void SetBuildingShaderBurn(float value) {
-        var _renderers = GetComponentsInChildren<MeshRenderer>();
+        var _renderers = myCart._meshes;
         value = value.Remap(0, 10, 0, 0.5f);
         value = Mathf.Clamp(value, 0, 2f);
         for (int j = 0; j < _renderers.Length; j++) {
             var rend = _renderers[j];
             if (rend != null) {
-                rend.material.SetFloat("_Burn", value);
+                rend.sharedMaterials[1].SetFloat(Burn, value);
             }
         }
     }
 
     void SetBuildingShaderAlive(bool isAlive) {
-        var _renderers = GetComponentsInChildren<MeshRenderer>();
+        var _renderers = myCart._meshes;
         var value = isAlive ? 1f : 0.172f;
         for (int j = 0; j < _renderers.Length; j++) {
             var rend = _renderers[j];
             if (rend != null) {
-                rend.material.SetFloat("_Alive", value);
+                rend.sharedMaterials[1].SetFloat(Alive, value);
             }
         }
     }
@@ -526,9 +522,15 @@ public class ModuleHealth : MonoBehaviour, IHealth, IActiveDuringCombat, IActive
     public bool HasArmor() {
         return false;
     }
-
+    public float GetShieldPercent() {
+        return currentShields / Mathf.Max(maxShields,1);
+    }
+    
+    public bool IsShieldActive() {
+        return isShieldActive;
+    }
     public float GetHealthPercent() {
-        return currentHealth / maxHealth;
+        return currentHealth /  Mathf.Max(maxHealth,1);
     }
     public string GetHealthRatioString() {
         return $"{currentHealth}/{maxHealth}";

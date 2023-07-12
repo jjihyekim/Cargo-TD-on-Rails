@@ -55,6 +55,27 @@ public class LevelReferences : MonoBehaviour {
     public float speed = 1f;
 
     public static List<PossibleTarget> allTargets = new List<PossibleTarget>();
+    public static TargetValues[] allTargetValues = new TargetValues[0];
+    public static bool targetsDirty;
+
+
+    public Material[] cartLevelMats;
+
+    
+    public struct TargetValues {
+        public PossibleTarget.Type type;
+        //public float health;
+        public Vector3 position;
+        public bool avoid;
+        public bool flying;
+        public TargetValues(PossibleTarget target) {
+            type = target.myType;
+            //health = target.GetHealth();
+            position = target.targetTransform.position;
+            avoid = target.avoid;
+            flying = target.flying;
+        }
+    }
 
     public GameObject scrapPile;
     public GameObject fuelPile;
@@ -73,6 +94,7 @@ public class LevelReferences : MonoBehaviour {
     public LayerMask buildingLayer;
     public LayerMask cartSnapLocationsLayer;
     public LayerMask gateMask;
+    public LayerMask artifactLayer;
 
     public SingleUnityLayer playerBulletLayer;
     public SingleUnityLayer enemyBulletLayer;
@@ -81,8 +103,10 @@ public class LevelReferences : MonoBehaviour {
     public Color rightColor = Color.white;
 
     public Sprite encounterIcon;
+    public Color encounterColor = Color.cyan;
     public Sprite smallEnemyIcon;
     public Sprite eliteEnemyIcon;
+    public Color eliteColor = Color.red;
     public Sprite bossEnemyIcon;
 
     public GameObject resourceParticleScraps;
@@ -90,6 +114,7 @@ public class LevelReferences : MonoBehaviour {
     public GameObject resourceParticleFuel;
 
     public GameObject enemyCartReward;
+    public GameObject enemyHasArtifactStar;
     
     
     public GameObject resourceLostParticleScraps;
@@ -99,6 +124,9 @@ public class LevelReferences : MonoBehaviour {
     public GameObject emptyCart;
 
     public GameObject noAmmoWarning;
+
+    public LevelSegmentScriptable debugBuggyLevel;
+
 
     public GameObject GetResourceParticle(ResourceTypes types) {
         switch (types) {
@@ -190,5 +218,18 @@ public class LevelReferences : MonoBehaviour {
         } else {
             pile.GetComponent<ScrapPile>().CollectPileWithTarget(customCollectTargetTransform);
         }
+    }
+
+    private void Update() {
+        if (allTargetValues.Length != allTargets.Count || targetsDirty) {
+            allTargetValues = new TargetValues[allTargets.Count];
+        }
+
+        for (int i = 0; i < allTargetValues.Length; i++) {
+            allTargetValues[i] = new TargetValues(allTargets[i]);
+            allTargets[i].myId = i;
+        }
+
+        targetsDirty = false;
     }
 }

@@ -19,7 +19,25 @@ public class MiniGUI_BuildingInfoCard : MonoBehaviour
 
     public Transform sourceTransform;
 
+    public bool isSetUp = false;
+    public Transform lerpTarget;
+    
+    public UIElementFollowWorldTarget worldTarget;
+
+    public bool isLerping = false;
+    private void Start() {
+        if (!isSetUp) {
+            worldTarget =  GetComponentInParent<UIElementFollowWorldTarget>(true);
+            lerpTarget = new GameObject("lerp target").transform;
+            lerpTarget.transform.SetParent(transform.parent);
+            lerpTarget.transform.position = transform.position;
+            lerpTarget.transform.rotation = transform.rotation;
+            isSetUp = true;
+        }
+    }
+
     public void SetUp(Cart building) {
+        Start();
         Show();
 
         var gunModule = building.GetComponentInChildren<GunModule>();
@@ -45,10 +63,14 @@ public class MiniGUI_BuildingInfoCard : MonoBehaviour
                 infoCards[i].SetUp(building);
             }
         }
-        GetComponentInParent<UIElementFollowWorldTarget>().SetUp(sourceTransform);
+        worldTarget.SetUp(sourceTransform);
+        transform.SetParent(lerpTarget);
+        transform.localPosition = Vector3.zero;
+        isLerping = false;
     }
 
     public void SetUp(PowerUpScriptable powerUp) {
+        Start();
         Show();
         armorPenetrationIcon.gameObject.SetActive(false);
 
@@ -60,10 +82,14 @@ public class MiniGUI_BuildingInfoCard : MonoBehaviour
         moduleDescription.text = powerUp.description;
         
         infoCardsParent.gameObject.SetActive(false);
-        GetComponentInParent<UIElementFollowWorldTarget>().SetUp(sourceTransform);
+        worldTarget.SetUp(sourceTransform);
+        transform.SetParent(lerpTarget);
+        transform.localPosition = Vector3.zero;
+        isLerping = false;
     }
     
     public void SetUp(EnemyHealth enemy) {
+        Start();
         Show();
         armorPenetrationIcon.gameObject.SetActive(false);
 
@@ -72,20 +98,47 @@ public class MiniGUI_BuildingInfoCard : MonoBehaviour
         var myInfo = enemy.GetComponentsInChildren<IClickableInfo>();
         moduleDescription.text =myInfo[0].GetInfo();
         
+        infoCardsParent.gameObject.SetActive(true);
+        var infoCards = infoCardsParent.GetComponentsInChildren<IBuildingInfoCard>(true);
+        for (int i = 0; i < infoCards.Length; i++) {
+            infoCards[i].SetUp(enemy);
+        }
+
+        sourceTransform = enemy.uiTransform;
+        worldTarget.SetUp(sourceTransform);
+        transform.SetParent(worldTarget.transform.parent);
+        transform.position = lerpTarget.position;
+        isLerping = true;
+    }
+    
+    
+    public void SetUp(Artifact artifact) {
+        Start();
+        Show();
+        armorPenetrationIcon.gameObject.SetActive(false);
+
+        icon.sprite = artifact.uiPart.GetComponentInChildren<Image>().sprite;
+        moduleName.text = artifact.displayName;
+        moduleDescription.text = artifact.GetComponent<UITooltipDisplayer>().myTooltip.text;
         
         infoCardsParent.gameObject.SetActive(false);
-        
-        
-        sourceTransform = enemy.uiTransform;
-        GetComponentInParent<UIElementFollowWorldTarget>().SetUp(sourceTransform);
+
+        sourceTransform = artifact.uiTransform;
+        worldTarget.SetUp(sourceTransform);
+        transform.SetParent(lerpTarget);
+        transform.localPosition = Vector3.zero;
+        isLerping = false;
     }
 
     public void Show() {
-        transform.parent.gameObject.SetActive(true);
+        gameObject.SetActive(true);
+        worldTarget.gameObject.SetActive(true);
     }
 
     public void Hide() {
-        transform.parent.gameObject.SetActive(false);
+        Start();
+        gameObject.SetActive(false);
+        worldTarget.gameObject.SetActive(false);
     }
     
     
@@ -109,15 +162,15 @@ public class MiniGUI_BuildingInfoCard : MonoBehaviour
 
         return isOverRect;
     }
-    
-    /*private void Update() {
-        if (sourceTransform == null) {
-            PlayerModuleSelector.s.HideModuleActionSelector();
-            return;
+
+    private void Update() {
+        if (isLerping) {
+            transform.position = Vector3.Lerp(transform.position, lerpTarget.position, 2 * Time.deltaTime);
         }
-    }*/
+    }
 }
 
 public interface IBuildingInfoCard {
     public void SetUp(Cart building);
+    public void SetUp(EnemyHealth enemy);
 }

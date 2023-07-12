@@ -26,6 +26,7 @@ Transform:
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0.203, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 8819363384712800840}
   m_RootOrder: 2
@@ -57,6 +58,7 @@ Transform:
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 5731040006451539022}
   - {fileID: 1168976553104137635}
@@ -109,6 +111,7 @@ Transform:
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0.004, z: 0.023}
   m_LocalScale: {x: 0.38460228, y: 0.24902682, z: 0.49016}
+  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 8819363384712800840}
   m_RootOrder: 1
@@ -132,6 +135,7 @@ MeshRenderer:
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
+  m_StaticShadowCaster: 0
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
@@ -204,6 +208,7 @@ Transform:
   m_LocalRotation: {x: 0, y: 1, z: 0, w: 0}
   m_LocalPosition: {x: 0.582, y: 0.342, z: 2.6980057}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 8819363384712800840}
   - {fileID: 3390471728746172740}
@@ -222,6 +227,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 77a00eae84002064bb32ca6cc299f785, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  gunSprite: {fileID: 0}
   rotateTransforms:
   - transform: {fileID: 2686971587843929317}
   barrelEndTransforms:
@@ -234,16 +240,33 @@ MonoBehaviour:
   fireDelay: 1
   fireBarrageCount: 1
   fireBarrageDelay: 0.1
+  fireRateMultiplier: 1
   projectileDamage: 20
+  damageMultiplier: 1
+  dontGetAffectByMultipliers: 0
   rotateSpeed: 10
   gunActive: 1
-  CanShoot: 0
+  IsBarrelPointingCorrectly: 0
+  hasAmmo: 1
   isPlayer: 1
   rangeOrigin: {fileID: 9162806397398684172}
   barrageShot:
     m_PersistentCalls:
       m_Calls: []
   canPenetrateArmor: 0
+  steamUsePerShot: 0
+  needWarmUp: 0
+  startWarmUpEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  onBulletFiredEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  stopShootingEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  gunShakeOnShoot: 1
+  beingDirectControlled: 0
 --- !u!114 &9072939496877726287
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -258,10 +281,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   rotationSpan: 90
   range: 6
-  myOverride:
-    isOverride: 0
-    rotations: 
-    rotationSpanOverride: 120
   myPossibleTargets: 00000000
 --- !u!54 &6814819914858957422
 Rigidbody:
@@ -307,6 +326,7 @@ Transform:
   m_LocalRotation: {x: 0.7071068, y: 0, z: 0, w: 0.7071068}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 3390471728746172740}
   m_RootOrder: 0
@@ -322,6 +342,7 @@ LineRenderer:
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
+  m_StaticShadowCaster: 0
   m_MotionVectors: 0
   m_LightProbeUsage: 0
   m_ReflectionProbeUsage: 0
@@ -453,6 +474,7 @@ Transform:
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 8864748025769704714}
   - {fileID: 8692402695789997494}
@@ -488,6 +510,7 @@ Transform:
   m_LocalRotation: {x: 0.7071068, y: 0, z: 0, w: 0.7071068}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 3390471728746172740}
   m_RootOrder: 1
@@ -503,6 +526,7 @@ LineRenderer:
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
+  m_StaticShadowCaster: 0
   m_MotionVectors: 0
   m_LightProbeUsage: 0
   m_ReflectionProbeUsage: 0
@@ -721,11 +745,6 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 1d1d11020ea56d146843b720ba5c90bb, type: 3}
---- !u!4 &8864748025769704714 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 1d1d11020ea56d146843b720ba5c90bb, type: 3}
-  m_PrefabInstance: {fileID: 8975480688625343201}
-  m_PrefabAsset: {fileID: 0}
 --- !u!4 &2686971587843929317 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 6468675729011076612, guid: 1d1d11020ea56d146843b720ba5c90bb, type: 3}
@@ -734,5 +753,10 @@ Transform:
 --- !u!4 &8139450319550624077 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 899157318495988652, guid: 1d1d11020ea56d146843b720ba5c90bb, type: 3}
+  m_PrefabInstance: {fileID: 8975480688625343201}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &8864748025769704714 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 1d1d11020ea56d146843b720ba5c90bb, type: 3}
   m_PrefabInstance: {fileID: 8975480688625343201}
   m_PrefabAsset: {fileID: 0}

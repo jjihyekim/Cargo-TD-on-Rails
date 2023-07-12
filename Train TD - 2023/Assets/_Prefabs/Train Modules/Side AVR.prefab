@@ -390,11 +390,11 @@ MonoBehaviour:
   muzzleFlashPrefab: {fileID: 980176138545819842, guid: 3a4d3fe2abd806c46964330e5993cfa2, type: 3}
   target: {fileID: 0}
   mortarRotation: 0
-  fireDelay: 1
+  fireDelay: 2
   fireBarrageCount: 2
   fireBarrageDelay: 0.1
   fireRateMultiplier: 1
-  projectileDamage: 2
+  projectileDamage: 2.2
   damageMultiplier: 1
   dontGetAffectByMultipliers: 0
   rotateSpeed: 10
@@ -420,6 +420,7 @@ MonoBehaviour:
       m_Calls: []
   gunShakeOnShoot: 1
   beingDirectControlled: 0
+  waitTimer: 0
 --- !u!114 &5993221132841959538
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -435,6 +436,7 @@ MonoBehaviour:
   rotationSpan: 60
   range: 5
   myPossibleTargets: 00000000
+  canHitFlying: 0
 --- !u!1 &748108092723461709
 GameObject:
   m_ObjectHideFlags: 0
@@ -492,11 +494,11 @@ MonoBehaviour:
   muzzleFlashPrefab: {fileID: 980176138545819842, guid: 3a4d3fe2abd806c46964330e5993cfa2, type: 3}
   target: {fileID: 0}
   mortarRotation: 0
-  fireDelay: 1
+  fireDelay: 2
   fireBarrageCount: 2
   fireBarrageDelay: 0.1
   fireRateMultiplier: 1
-  projectileDamage: 2
+  projectileDamage: 2.2
   damageMultiplier: 1
   dontGetAffectByMultipliers: 0
   rotateSpeed: 10
@@ -522,6 +524,7 @@ MonoBehaviour:
       m_Calls: []
   gunShakeOnShoot: 1
   beingDirectControlled: 0
+  waitTimer: 0
 --- !u!114 &4010832878868196016
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -537,6 +540,7 @@ MonoBehaviour:
   rotationSpan: 60
   range: 5
   myPossibleTargets: 00000000
+  canHitFlying: 0
 --- !u!1 &925174664117116651
 GameObject:
   m_ObjectHideFlags: 0
@@ -2078,6 +2082,7 @@ MonoBehaviour:
   _maxAmmo: 15
   maxAmmoMultiplier: 1
   ammoPerBarrage: 1
+  ammoPerBarrageMultiplier: 1
   myGunModules: []
   OnUse:
     m_PersistentCalls:
@@ -2746,6 +2751,10 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2564255422046077385, guid: 86c82cfee32788c49a35e2e0e34bf7b7, type: 3}
       propertyPath: maxHealth
+      value: 400
+      objectReference: {fileID: 0}
+    - target: {fileID: 2564255422046077385, guid: 86c82cfee32788c49a35e2e0e34bf7b7, type: 3}
+      propertyPath: baseHealth
       value: 400
       objectReference: {fileID: 0}
     - target: {fileID: 2564255422046077385, guid: 86c82cfee32788c49a35e2e0e34bf7b7, type: 3}

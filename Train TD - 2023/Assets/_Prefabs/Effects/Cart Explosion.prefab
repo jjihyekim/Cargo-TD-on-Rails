@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 1046195756885079350}
   - component: {fileID: 6378122716270451896}
   - component: {fileID: 8390361461870831541}
+  - component: {fileID: 632265301084824955}
   m_Layer: 0
   m_Name: Cart Explosion
   m_TagString: Untagged
@@ -64,6 +65,20 @@ MonoBehaviour:
   shakeAtStart: 1
   shakeMagnitude: 1
   shakeTime: 0.8
+--- !u!114 &632265301084824955
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1046195756885079355}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8cf7fc7d3b010d147b53c1bf9f58a6a4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  timeout: 4
+  onlyDisable: 0
 --- !u!1 &5943011520292208098
 GameObject:
   m_ObjectHideFlags: 0

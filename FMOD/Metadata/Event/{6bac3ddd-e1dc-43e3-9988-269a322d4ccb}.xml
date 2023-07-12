@@ -5,7 +5,7 @@
 			<value>LocomotiveFX</value>
 		</property>
 		<property name="outputFormat">
-			<value>2</value>
+			<value>0</value>
 		</property>
 		<relationship name="folder">
 			<destination>{33af0ef5-71af-43dc-8256-0eba36272185}</destination>
@@ -156,7 +156,6 @@
 	<object class="MixerBusEffectChain" id="{9e1245fb-e25c-419a-8453-58e6a9cbf655}">
 		<relationship name="effects">
 			<destination>{012451df-a593-4217-bbe1-8305fdd824d1}</destination>
-			<destination>{32a85507-3acb-478c-9282-45ce1719de3e}</destination>
 		</relationship>
 	</object>
 	<object class="MixerBusPanner" id="{d908b1ed-2cce-408e-a4b6-0683dce1b95b}" />
@@ -181,11 +180,6 @@
 	</object>
 	<object class="MixerBusPanner" id="{e254548f-6a26-437f-a47c-a1f32cbafc87}" />
 	<object class="MixerBusFader" id="{012451df-a593-4217-bbe1-8305fdd824d1}" />
-	<object class="SpatialiserEffect" id="{32a85507-3acb-478c-9282-45ce1719de3e}">
-		<property name="distanceRolloffType">
-			<value>4</value>
-		</property>
-	</object>
 	<object class="AutomationCurve" id="{f950176e-715b-4115-bd09-be80eab2b6ac}">
 		<relationship name="parameter">
 			<destination>{206bfe17-9e9e-4da4-8efd-0f0a959a2542}</destination>

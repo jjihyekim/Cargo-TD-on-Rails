@@ -13,6 +13,8 @@ public class UITooltipDisplayer : MonoBehaviour {
     public bool showingTooltip = false;
 
     public bool doubleTimer = false;
+
+    public GameObject enableOnHover;
     private void Update() {
         if (myTooltip != null && myTooltip.text.Length > 0) {
             Vector2 mousePos = Mouse.current.position.ReadValue();
@@ -22,8 +24,14 @@ public class UITooltipDisplayer : MonoBehaviour {
                     curTimer = 100000;
                 }
                 
+                if(enableOnHover)
+                    enableOnHover.SetActive(true);
+                
             } else {
                 curTimer = 0;
+                
+                if(enableOnHover)
+                    enableOnHover.SetActive(false);
             }
 
             if (curTimer > (doubleTimer ? TooltipsMaster.tooltipShowTime * 2 : TooltipsMaster.tooltipShowTime)) {

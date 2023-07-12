@@ -15,6 +15,8 @@ public class Projectile : MonoBehaviour {
     public float damage = 20f;
     public float mortarRange = 2f;
 
+    public bool isHeal = false;
+    
     public float hitForceMultiplier = 20f;
 
     public float lifetime = 20f;
@@ -34,6 +36,7 @@ public class Projectile : MonoBehaviour {
 
     public GenericCallback onHitCallback;
 
+    public bool ballistaHitEffect = false;
     
     public enum HitType {
         Bullet, Rocket, Mortar, Laser
@@ -54,6 +57,10 @@ public class Projectile : MonoBehaviour {
     private void Start() {
         Invoke("DestroySelf", lifetime);
 
+        if (Artifact_HomingBullets.isHomingBullets) {
+            seekStrength *= 5;
+        }
+        
         switch (myHitType) {
             case HitType.Bullet:
                 curSpeed = speed;
@@ -107,6 +114,9 @@ public class Projectile : MonoBehaviour {
     }
 
     public void SetIsPlayer(bool isPlayer) {
+        if (isHeal)
+            isPlayer = !isPlayer;
+        
         isPlayerBullet = isPlayer;
 
         var layer = gameObject.layer;
@@ -274,43 +284,34 @@ public class Projectile : MonoBehaviour {
 
     private void OnCollisionEnter(Collision other) {
         if (!isDead) {
-            if (other.transform.root.gameObject != myOriginObject) {
-                var otherProjectile = other.transform.root.GetComponent<Projectile>();
-                if (otherProjectile != null) {
-                    if (otherProjectile.isPlayerBullet == isPlayerBullet) {
-                        // we don't want projectiles from the same faction collide with each other
-                        return;
-                    }
-                }
 
-                var train = other.transform.root.GetComponent<Train>();
+            var train = other.transform.GetComponentInParent<ModuleHealth>();
 
-                if (train != null && isPlayerBullet) {
-                    // make player bullets dont hit the player
-                    return;
-                }
-
-                var enemy = other.transform.root.GetComponent<EnemyTypeData>();
-                
-                if (enemy != null && !isPlayerBullet) {
-                    // make enemy projectiles not hit the player projectiles
-                    return;
-                }
-                
-                switch (myHitType) {
-                    case HitType.Bullet:
-                        ContactDamage(other);
-                        break;
-                    case HitType.Rocket:
-                        ExplosiveDamage(other);
-                        break;
-                    case HitType.Mortar:
-                        MortarDamage();
-                        break;
-                }
-
-                SmartDestroySelf();
+            if (train != null && isPlayerBullet) {
+                // make player bullets dont hit the player
+                return;
             }
+
+            var enemy = other.transform.GetComponentInParent<EnemyHealth>();
+            
+            if (enemy != null && !isPlayerBullet) {
+                // make enemy projectiles not hit other enemies
+                return;
+            }
+            
+            switch (myHitType) {
+                case HitType.Bullet:
+                    ContactDamage(other);
+                    break;
+                case HitType.Rocket:
+                    ExplosiveDamage(other);
+                    break;
+                case HitType.Mortar:
+                    MortarDamage();
+                    break;
+            }
+
+            SmartDestroySelf();
         }
     }
 
@@ -405,7 +406,7 @@ public class Projectile : MonoBehaviour {
     }
 
     private void ContactDamage(Collision other) {
-        var health = other.gameObject.GetComponentInParent<IHealth>();
+        var health = other.collider.gameObject.GetComponentInParent<IHealth>();
         
         DealDamage(health);
         
@@ -421,8 +422,11 @@ public class Projectile : MonoBehaviour {
             
         }else{
             if (health is ModuleHealth) {
-                hitPrefab = LevelReferences.s.metalBulletHitEffectPrefab;
-
+                if (ballistaHitEffect) {
+                    hitPrefab = LevelReferences.s.rocketExplosionEffectPrefab;
+                } else {
+                    hitPrefab = LevelReferences.s.metalBulletHitEffectPrefab;
+                }
             } else {
                 ApplyHitForceToObject(health);
 
@@ -452,8 +456,10 @@ public class Projectile : MonoBehaviour {
         if(rigidbody == null)
             return;
 
-        var force = collider.transform.position - transform.position;
-        force = force.normalized * damage * hitForceMultiplier;
+        //var force = collider.transform.position - transform.position;
+        var force = transform.forward;
+        //var force = GetComponent<Rigidbody>().velocity;
+        force = (damage * hitForceMultiplier/2f)*force.normalized;
         
         rigidbody.AddForceAtPosition(force, closestPoint);
     }
@@ -474,9 +480,9 @@ public class Projectile : MonoBehaviour {
                 } else {
                     target.GetGameObject().GetComponentInParent<EnemyWave>().AddSlow(damage);
                 }
-            } else 
-
-            if (isBurnDamage) {
+            } else if (isHeal) {
+                target.Repair(dmg);
+            }else if (isBurnDamage) {
                 target.BurnDamage(dmg);
             } else {
                 target.DealDamage(dmg);

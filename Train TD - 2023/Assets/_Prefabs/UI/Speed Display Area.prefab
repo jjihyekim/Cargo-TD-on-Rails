@@ -94,7 +94,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &7950200375362965524
 RectTransform:
   m_ObjectHideFlags: 0
@@ -230,6 +230,7 @@ MonoBehaviour:
   curTimer: 0
   showingTooltip: 0
   doubleTimer: 0
+  enableOnHover: {fileID: 0}
 --- !u!1 &7950200375404948219
 GameObject:
   m_ObjectHideFlags: 0
@@ -343,7 +344,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 1}
   m_AnchorMax: {x: 0.5, y: 1}
-  m_AnchoredPosition: {x: 54.899994, y: -111.69025}
+  m_AnchoredPosition: {x: 48.1, y: -115.2}
   m_SizeDelta: {x: 72.768005, y: 27.2872}
   m_Pivot: {x: 0.50000006, y: 0.5}
 --- !u!222 &7950200375490399886
@@ -460,6 +461,7 @@ MonoBehaviour:
   curTimer: 0
   showingTooltip: 0
   doubleTimer: 0
+  enableOnHover: {fileID: 0}
 --- !u!1 &7950200375664727601
 GameObject:
   m_ObjectHideFlags: 0
@@ -822,7 +824,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &7950200376090212159
 RectTransform:
   m_ObjectHideFlags: 0
@@ -958,6 +960,7 @@ MonoBehaviour:
   curTimer: 0
   showingTooltip: 0
   doubleTimer: 0
+  enableOnHover: {fileID: 0}
 --- !u!1 &7950200376268271947
 GameObject:
   m_ObjectHideFlags: 0
@@ -1470,6 +1473,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   mySpeedometer: {fileID: 7950200375716411094}
   myEngineSpeedometer: {fileID: 7950200375664727603}
-  enginePowerText: {fileID: 7950200376090212158}
-  trainWeightText: {fileID: 7950200375362965527}
   trainSpeedText: {fileID: 7950200375490399887}

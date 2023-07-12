@@ -18,6 +18,9 @@ public class PlayerWorldInteractionController : MonoBehaviour {
     private void OnDestroy() {
         s = null;
     }
+
+    public EnemyHealth selectedEnemy;
+    public Artifact selectedArtifact;
     
     public Cart selectedCart;
     public Vector3 cartBasePos;
@@ -36,7 +39,35 @@ public class PlayerWorldInteractionController : MonoBehaviour {
     public InputActionReference engineBoost;
 
 
-    public bool canSelect = true;
+    [SerializeField]
+    private bool _canSelect;
+    public bool canSelect {
+        get {
+            return _canSelect;
+        }
+        set {
+            _canSelect = value;
+        }
+}
+
+    public bool canRepair = true;
+    public bool autoRepairAtStation = true;
+    public bool canReload = true;
+    public bool autoReloadAtStation = true;
+    public bool canSmith = true;
+
+    public bool engineBoostDamageInstead = false;
+    
+    public void ResetValues() {
+        repairAmountMultiplier = 1;
+        reloadAmountMultiplier = 1;
+        canRepair = true;
+        canReload = true;
+        canSmith = true;
+        autoRepairAtStation = true;
+        autoReloadAtStation = true;
+        engineBoostDamageInstead = false;
+    }
     
     protected void OnEnable()
     {
@@ -78,21 +109,28 @@ public class PlayerWorldInteractionController : MonoBehaviour {
     public Color engineBoostColor = Color.red;
 
     private void Update() {
-        if (!canSelect) {
-            if (selectedCart != null)
-                SelectBuilding(selectedCart, false);
-
+        if (!canSelect || Pauser.s.isPaused || PlayStateMaster.s.isLoading) {
+            Deselect();
             return;
         }
 
         if (DirectControlMaster.s.directControlInProgress) {
-            if (selectedCart != null)
-                SelectBuilding(selectedCart, false);
+            Deselect();
             return;
         }
+        
+        if (infoCardActive) {
+            if (showDetailClick.action.WasPerformedThisFrame() || clickCart.action.WasPerformedThisFrame()) {
+                HideInfo();
+            }
+        }
 
-        if (!isDragStarted && !infoCard.isActiveAndEnabled) {
+        if (!isDragStarted && !infoCardActive) {
             CastRayToOutlineCart();
+            if(PlayStateMaster.s.isCombatInProgress())
+                CastRayToOutlineEnemy();
+            else
+                CastRayToOutlineArtifact();
         }
 
         if (PlayStateMaster.s.isCombatInProgress()) {
@@ -108,8 +146,12 @@ public class PlayerWorldInteractionController : MonoBehaviour {
         GamepadControlsHelper.s.RemovePossibleAction(GamepadControlsHelper.PossibleActions.clickGate);
     }
 
+    public void OnFinishCombat() {
+        Deselect();
+    }
+
     public void OnEnterShopScreen() {
-        SelectBuilding(null, false);
+        Deselect();
     }
 
 
@@ -133,7 +175,7 @@ public class PlayerWorldInteractionController : MonoBehaviour {
             }
 
             if (clickCart.action.WasPressedThisFrame() || clickGate.action.WasPressedThisFrame()) {
-                HideBuildingInfo();
+                HideInfo();
                 clickedOnGate = true;
             }
 
@@ -166,7 +208,7 @@ public class PlayerWorldInteractionController : MonoBehaviour {
     void CheckAndDoDrag() {
         if (selectedCart != null) {
             if (clickCart.action.WasPressedThisFrame() || moveCart.action.WasPressedThisFrame()) {
-                HideBuildingInfo();
+                HideInfo();
                 if (CanDragCart(selectedCart)) {
                     currentSnapLoc = null;
                     isSnapping = false;
@@ -215,17 +257,37 @@ public class PlayerWorldInteractionController : MonoBehaviour {
 
                     if (PlayStateMaster.s.isShop()) {
                         UpgradesController.s.SnapDestinationCargos(selectedCart);
+                    }
+
+                    if (selectedCart.isMysteriousCart && 
+                        !(selectedCart.myLocation == UpgradesController.CartLocation.train || selectedCart.myLocation == UpgradesController.CartLocation.cargoDelivery)) {
+                        UpgradesController.s.RemoveCartFromShop(selectedCart);
+                        Train.s.AddCartAtIndex(1, selectedCart);
+                        selectedCart.GetComponent<Rigidbody>().isKinematic = true;
+                        selectedCart.GetComponent<Rigidbody>().useGravity = false;
+                    }
+
+                    if (PlayStateMaster.s.isShop()) {
                         UpgradesController.s.UpdateCartShopHighlights();
                     } else {
                         UpgradesController.s.UpdateCargoHighlights();
                     }
+                    
 
-
-                    UpgradesController.s.SaveCartStateWithDelay();
-                    Train.s.SaveTrainState();
+                    if (PlayStateMaster.s.isShop()) {
+                        UpgradesController.s.SaveCartStateWithDelay();
+                        Train.s.SaveTrainState();
+                    }
                 }
             }
-            
+        }
+
+
+        if (selectedArtifact != null) {
+            if (clickCart.action.WasPerformedThisFrame()) {
+                selectedArtifact.EquipArtifact();
+                Deselect();
+            }
         }
         
         UpdateTrainCartPositionsSlowly();
@@ -264,9 +326,9 @@ public class PlayerWorldInteractionController : MonoBehaviour {
                     var snapLocation = hit.collider.gameObject.GetComponentInParent<SnapCartLocation>();
 
                     var snapLocationValidAndNew = snapLocation != null && snapLocation != currentSnapLoc;
-                    var snapLocationCanAcceptCart = !snapLocation.onlySnapCargo || selectedCart.isCargo;
+                    var snapLocationCanAcceptCart = (!snapLocation.onlySnapCargo || selectedCart.isCargo) && (!snapLocation.onlySnapMysteriousCargo || selectedCart.isMysteriousCart);
                     var snapLocationEmpty = snapLocation.snapTransform.childCount == 0;
-                    var canSnap = snapLocationValidAndNew && snapLocationCanAcceptCart && snapLocationEmpty;
+                    var canSnap = snapLocationValidAndNew && snapLocationCanAcceptCart && snapLocationEmpty && !snapLocation.snapNothing;
 
                     if (canSnap) {
                         isSnapping = true;
@@ -308,11 +370,14 @@ public class PlayerWorldInteractionController : MonoBehaviour {
 
         bool inserted = false;
         float distance = 0;
+
+        var sourceSnapIsMarket = sourceSnapLocation != null && sourceSnapLocation.myLocation == UpgradesController.CartLocation.market;
+        
         for (int i = 0; i < carts.Count; i++) {
             var cart = carts[i];
             currentSpot += -Vector3.forward * cart.length;
 
-            if (i != 0) {
+            if (i != 0 || sourceSnapIsMarket) {
                 distance = Mathf.Abs((currentSpot.z + (cart.length / 2f)) - zPos);
                 if (currentSpot.z + (cart.length / 2f) < zPos && distance < cart.length*4) {
                     if (cart != selectedCart) {
@@ -322,6 +387,7 @@ public class PlayerWorldInteractionController : MonoBehaviour {
                             UpgradesController.s.RemoveCartFromShop(selectedCart);
                         }
 
+                        var canBeSwapped = true;
                         if (sourceSnapLocation != null && UpgradesController.s.WorldCartCount() <= 0) {
                             if (sourceSnapLocation.snapTransform.childCount > 0) {
                                 var prevCart = sourceSnapLocation.GetComponentInChildren<Cart>();
@@ -331,20 +397,30 @@ public class PlayerWorldInteractionController : MonoBehaviour {
                                 }
                             }
 
-                            if (sourceSnapLocation.myLocation == UpgradesController.CartLocation.market) {
+                            if (sourceSnapIsMarket) {
                                 var swapCart = Train.s.carts[i];
-                                Train.s.RemoveCart(swapCart);
-                                UpgradesController.s.AddCartToShop(swapCart, sourceSnapLocation.myLocation);
-                                swapCart.transform.SetParent(sourceSnapLocation.snapTransform);
-                                prevCartTrainSnapIndex = i;
+                                canBeSwapped = !swapCart.isMysteriousCart && !swapCart.isCargo && !swapCart.isMainEngine;
+                                if (canBeSwapped) {
+                                    Train.s.RemoveCart(swapCart);
+                                    UpgradesController.s.AddCartToShop(swapCart, sourceSnapLocation.myLocation);
+                                    swapCart.transform.SetParent(sourceSnapLocation.snapTransform);
+                                    prevCartTrainSnapIndex = i;
+                                } else {
+                                    i += 1;
+                                }
                             }
                         }
 
-                        Train.s.AddCartAtIndex(i, selectedCart);
+                        //if (canBeSwapped) {
+                            inserted = true;
+                            Train.s.AddCartAtIndex(i, selectedCart);
+                        //}
+                    } else {
+                        inserted = true;
                     }
 
-                    inserted = true;
-                    return true;
+                    if(inserted)
+                        return true;
                 }
             }
         }
@@ -402,18 +478,22 @@ public class PlayerWorldInteractionController : MonoBehaviour {
     }
 
     public float repairAmountPerClick = 50f;
+    public float repairAmountMultiplier = 1;
     public float reloadAmountPerClick = 2;
+    public float reloadAmountMultiplier = 1;
+
+    
 
     void CheckAndDoClick() {
         if (selectedCart != null) {
             if (clickCart.action.WasPerformedThisFrame()) {
-                HideBuildingInfo();
+                HideInfo();
                 switch (currentSelectMode) {
                     case SelectMode.cart:
-                        selectedCart.GetHealthModule().Repair(repairAmountPerClick);
+                        selectedCart.GetHealthModule().Repair(repairAmountPerClick*repairAmountMultiplier);
                         break;
                     case SelectMode.reload:
-                        selectedCart.GetComponentInChildren<ModuleAmmo>().Reload(reloadAmountPerClick);
+                        selectedCart.GetComponentInChildren<ModuleAmmo>().Reload(reloadAmountPerClick*reloadAmountMultiplier);
                         break;
                     case SelectMode.directControl:
                         DirectControlMaster.s.AssumeDirectControl(selectedCart.GetComponentInChildren<DirectControllable>());
@@ -424,24 +504,24 @@ public class PlayerWorldInteractionController : MonoBehaviour {
                 }
             }
             
-            if (repairCart.action.WasPerformedThisFrame()) {
-                HideBuildingInfo();
+            if (repairCart.action.WasPerformedThisFrame() && canRepair) {
+                HideInfo();
                 var health = selectedCart.GetHealthModule();
                 if (health != null) {
-                    health.Repair(repairAmountPerClick);
+                    health.Repair(repairAmountPerClick*repairAmountMultiplier);
                 }
             }
 
-            if (reloadCart.action.WasPerformedThisFrame()) {
-                HideBuildingInfo();
+            if (reloadCart.action.WasPerformedThisFrame() && canReload) {
+                HideInfo();
                 var ammo = selectedCart.GetComponentInChildren<ModuleAmmo>();
                 if (ammo != null) {
-                    ammo.Reload(reloadAmountPerClick);
+                    ammo.Reload(reloadAmountPerClick*reloadAmountMultiplier);
                 }
             }
             
             if (directControlCart.action.WasPerformedThisFrame()) {
-                HideBuildingInfo();
+                HideInfo();
                 var directControllable = selectedCart.GetComponentInChildren<DirectControllable>();
                 if (directControllable != null) {
                     DirectControlMaster.s.AssumeDirectControl(directControllable);
@@ -449,11 +529,15 @@ public class PlayerWorldInteractionController : MonoBehaviour {
             }
             
             if (engineBoost.action.WasPerformedThisFrame()) {
-                HideBuildingInfo();
+                HideInfo();
                 var engineBoostable = selectedCart.GetComponentInChildren<EngineBoostable>();
                 if (engineBoostable != null) {
                     SpeedController.s.ActivateBoost();
                 }
+            }
+        }else if (selectedEnemy != null) {
+            if (clickCart.action.WasPerformedThisFrame()) {
+                HideInfo();
             }
         }
     }
@@ -507,20 +591,29 @@ public class PlayerWorldInteractionController : MonoBehaviour {
             var lastSelectMode = currentSelectMode;
             currentSelectMode = SelectMode.emptyCart;
             
-            if(hit.collider.GetComponentInParent<ModuleHealth>())
+            if(hit.collider.GetComponentInParent<ModuleHealth>() && canRepair)
                 currentSelectMode = SelectMode.cart;
             
             var directControllable = hit.collider.GetComponentInParent<DirectControllable>();
+            if (SettingsController.GamepadMode() && directControllable == null) {
+                directControllable = hit.rigidbody.gameObject.GetComponentInChildren<DirectControllable>();
+            }
             if (directControllable != null) {
                 currentSelectMode = SelectMode.directControl;
             }
             
             var reloadable = hit.collider.GetComponentInParent<Reloadable>();
-            if (reloadable != null) {
+            if (SettingsController.GamepadMode() && reloadable == null) {
+                reloadable = hit.rigidbody.gameObject.GetComponentInChildren<Reloadable>();
+            }
+            if (reloadable != null && canReload) {
                 currentSelectMode = SelectMode.reload;
             }
             
             var engineBoostable = hit.collider.GetComponentInParent<EngineBoostable>();
+            if (SettingsController.GamepadMode() && engineBoostable == null) {
+                engineBoostable = hit.rigidbody.gameObject.GetComponentInChildren<EngineBoostable>();
+            }
             if (engineBoostable != null) {
                 currentSelectMode = SelectMode.engineBoost;
             }
@@ -532,55 +625,164 @@ public class PlayerWorldInteractionController : MonoBehaviour {
             }
             
             if (cart != selectedCart || lastSelectMode != currentSelectMode) {
-                if (selectedCart != null)
-                    SelectBuilding(selectedCart, false);
-                
-                selectedCart = cart;
-
-                SelectBuilding(selectedCart, true);
+                SelectBuilding(cart, true);
 
             } else {
-                if (showDetailClick.action.WasPerformedThisFrame() /*|| (holdOverTimer > infoShowTime && !SettingsController.GamepadMode())*/) {
-                    ShowSelectedBuildingInfo();
+                if (PlayStateMaster.s.isShopOrEndGame() && showDetailClick.action.WasPerformedThisFrame() /*|| (holdOverTimer > infoShowTime && !SettingsController.GamepadMode())*/) {
+                    ShowSelectedThingInfo();
                 }
             }
 
         } else {
-            if (selectedCart != null) {
-                SelectBuilding(selectedCart, false);
-                selectedCart = null;
+            if(selectedCart != null)
+                Deselect();
+        }
+    }
+    
+    void CastRayToOutlineEnemy() {
+        RaycastHit hit;
+        Ray ray = GetRay();
+
+        if (Physics.SphereCast(ray, GetSphereCastRadius(), out hit, 100f, LevelReferences.s.enemyLayer)) {
+            var enemy = hit.collider.GetComponentInParent<EnemyHealth>();
+            if (enemy != selectedEnemy) {
+                SelectEnemy(enemy, true);
+            } else {
+                if (showDetailClick.action.WasPerformedThisFrame() /*|| (holdOverTimer > infoShowTime && !SettingsController.GamepadMode())*/) {
+                    ShowSelectedThingInfo();
+                }
             }
+
+        } else {
+            if(selectedEnemy != null)
+                Deselect();
         }
     }
     
     
+    void CastRayToOutlineArtifact() {
+        RaycastHit hit;
+        Ray ray = GetRay();
 
-    void ShowSelectedBuildingInfo() {
-        if (!infoCard.isActiveAndEnabled) {
-            infoCard.SetUp(selectedCart);
+        if (Physics.SphereCast(ray, GetSphereCastRadius(), out hit, 100f, LevelReferences.s.artifactLayer)) {
+            var artifact = hit.collider.GetComponentInParent<Artifact>();
+            if (artifact != selectedArtifact) {
+                SelectArtifact(artifact, true);
+            } else {
+                if (showDetailClick.action.WasPerformedThisFrame() /*|| (holdOverTimer > infoShowTime && !SettingsController.GamepadMode())*/) {
+                    ShowSelectedThingInfo();
+                }
+            }
+        } else {
+            if(selectedArtifact != null)
+                Deselect();
         }
     }
 
-    void HideBuildingInfo() {
+
+    private bool infoCardActive = false;
+    void ShowSelectedThingInfo() {
+        if (!infoCardActive) {
+            infoCardActive = true;
+            if(selectedCart != null)
+                infoCard.SetUp(selectedCart);
+            else if (selectedEnemy != null)
+                infoCard.SetUp(selectedEnemy);
+            else if (selectedArtifact != null)
+                infoCard.SetUp(selectedArtifact);
+            else
+                infoCardActive = false;
+        } 
+    }
+
+    void HideInfo() {
+        infoCardActive = false;
         infoCard.Hide();
+    }
+
+    public void Deselect() {
+        if (selectedCart != null) {
+            var cart = selectedCart;
+            selectedCart = null;
+            SelectBuilding(cart, false);
+        }
+
+        if (selectedEnemy != null) {
+            var enemy = selectedEnemy;
+            selectedEnemy = null;
+            SelectEnemy(enemy, false);
+        }
+        
+        if (selectedArtifact != null) {
+            var artifact = selectedArtifact;
+            selectedArtifact = null;
+            SelectArtifact(artifact, false);
+        }
+        
+        HideInfo();
+    }
+
+    void SelectEnemy(EnemyHealth enemy, bool isSelecting) {
+        Deselect();
+
+        Outline outline = null;
+        if(enemy != null)
+            outline = enemy.GetComponentInChildren<Outline>();
+        
+        if (isSelecting) {
+            GamepadControlsHelper.s.AddPossibleActions(GamepadControlsHelper.PossibleActions.showDetails);
+            selectedEnemy = enemy;
+        } else {
+            GamepadControlsHelper.s.RemovePossibleAction(GamepadControlsHelper.PossibleActions.showDetails);
+        }
+
+        if (enemy != null) {
+            outline.enabled = isSelecting;
+        }
+
+        OnSelectEnemy?.Invoke(enemy, isSelecting);
+    }
+    
+    void SelectArtifact(Artifact artifact, bool isSelecting) {
+        Deselect();
+
+        Outline outline = null;
+        if(artifact != null)
+            outline = artifact.GetComponentInChildren<Outline>();
+        
+        if (isSelecting) {
+            GamepadControlsHelper.s.AddPossibleActions(GamepadControlsHelper.PossibleActions.equipArtifact);
+            GamepadControlsHelper.s.AddPossibleActions(GamepadControlsHelper.PossibleActions.showDetails);
+            selectedArtifact = artifact;
+        } else {
+            GamepadControlsHelper.s.AddPossibleActions(GamepadControlsHelper.PossibleActions.equipArtifact);
+            GamepadControlsHelper.s.RemovePossibleAction(GamepadControlsHelper.PossibleActions.showDetails);
+        }
+
+        if (outline != null) {
+            outline.enabled = isSelecting;
+        }
+
+        OnSelectArtifact?.Invoke(artifact, isSelecting);
     }
 
 
     [HideInInspector]
     public UnityEvent<Cart, bool> OnSelectBuilding = new UnityEvent<Cart, bool>();
+    public UnityEvent<EnemyHealth, bool> OnSelectEnemy = new UnityEvent<EnemyHealth, bool>();
+    public UnityEvent<Artifact, bool> OnSelectArtifact = new UnityEvent<Artifact, bool>();
     public UnityEvent<GateScript, bool> OnSelectGate = new UnityEvent<GateScript, bool>();
     void SelectBuilding(Cart building, bool isSelecting) {
-        HideBuildingInfo();
+        Deselect();
         Outline outline = null;
         if(building != null)
             outline = building.GetComponentInChildren<Outline>();
 
         if (isSelecting) {
             Color myColor = moveColor;
-            
-            GamepadControlsHelper.s.AddPossibleActions(GamepadControlsHelper.PossibleActions.showDetails);
-            
+
             if (PlayStateMaster.s.isShopOrEndGame()) {
+                GamepadControlsHelper.s.AddPossibleActions(GamepadControlsHelper.PossibleActions.showDetails);
                 GamepadControlsHelper.s.AddPossibleActions(GamepadControlsHelper.PossibleActions.move);
                 if (!CanDragCart(building)) {
                     myColor = cantActColor;
@@ -616,6 +818,7 @@ public class PlayerWorldInteractionController : MonoBehaviour {
             }
 
             outline.OutlineColor = myColor;
+            selectedCart = building;
         } else {
             GamepadControlsHelper.s.RemovePossibleAction(GamepadControlsHelper.PossibleActions.move);
             GamepadControlsHelper.s.RemovePossibleAction(GamepadControlsHelper.PossibleActions.repair);
@@ -632,6 +835,7 @@ public class PlayerWorldInteractionController : MonoBehaviour {
             for (int i = 0; i < ranges.Length; i++) {
                 ranges[i].ChangeVisualizerEdgeShowState(isSelecting);
             }
+
         }
 
         OnSelectBuilding?.Invoke(building, isSelecting);

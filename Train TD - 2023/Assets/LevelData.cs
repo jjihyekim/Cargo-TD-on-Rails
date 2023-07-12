@@ -45,7 +45,7 @@ public class EnemyOnPathData {
 public class EnemyDynamicSpawnData {
 	public EnemyIdentifier enemyIdentifier = new EnemyIdentifier();
 
-	public int distanceFromTrain = 30;
+	public const int distanceFromTrain = 30;
 	public float firstSpawnTime = 45;
 	public float spawnInterval = 45;
 

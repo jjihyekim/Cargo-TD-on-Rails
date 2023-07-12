@@ -23,6 +23,7 @@ public class LaserTurretAnimator : MonoBehaviour
     }
     // Start is called before the first frame update
     void Start() {
+        myBeam.gameObject.SetActive(true);
         _gunModule = GetComponentInParent<GunModule>();
         
         if (_gunModule == null) {

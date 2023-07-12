@@ -14,6 +14,7 @@ public class DataHolder : MonoBehaviour {
     }
 
 
+    public Artifact[] artifacts;
     public Cart[] buildings;
     public EnemyHolder[] enemies;
     public CharacterDataScriptable[] characters;
@@ -83,6 +84,22 @@ public class DataHolder : MonoBehaviour {
         return null;
     }
 
+    public Artifact GetArtifact(string artifactName) {
+        for (int i = 0; i < artifacts.Length; i++) {
+            if (PreProcess(artifacts[i].uniqueName) == PreProcess(artifactName)) {
+                return artifacts[i];
+            }
+        }
+
+        for (int i = 0; i < artifacts.Length; i++) {
+            Debug.LogError(PreProcess(artifacts[i].uniqueName));
+        }
+        Debug.LogError($"Can't find artifact <{artifactName}>");
+        PlayStateMaster.s.OpenMainMenu(); // bail
+        
+        return null;
+    }
+    
     public Cart GetCart(string buildingName) {
         for (int i = 0; i < buildings.Length; i++) {
             if (PreProcess(buildings[i].uniqueName) == PreProcess(buildingName)) {
@@ -91,6 +108,11 @@ public class DataHolder : MonoBehaviour {
         }
 
         Debug.LogError($"Can't find building <{buildingName}>");
+        for (int i = 0; i < buildings.Length; i++) {
+			Debug.LogError(PreProcess(buildings[i].uniqueName));
+		}
+        PlayStateMaster.s.OpenMainMenu(); // bail
+        
         return null;
     }
     

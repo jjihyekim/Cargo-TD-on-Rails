@@ -258,10 +258,13 @@ MonoBehaviour:
   muzzleFlashPrefab: {fileID: 980176138545819842, guid: 17ff4d209c61ec84393b77e5756c40af, type: 3}
   target: {fileID: 0}
   mortarRotation: 0
-  fireDelay: 0.1
+  fireDelay: 0.2
   fireBarrageCount: 1
-  fireBarrageDelay: 0.1
-  projectileDamage: 4
+  fireBarrageDelay: 0.2
+  fireRateMultiplier: 1
+  projectileDamage: 8
+  damageMultiplier: 1
+  dontGetAffectByMultipliers: 0
   rotateSpeed: 10
   gunActive: 1
   IsBarrelPointingCorrectly: 0
@@ -680,6 +683,10 @@ PrefabInstance:
     - target: {fileID: 100006, guid: 18e6997b0cea7f249bf0e687ba9da449, type: 3}
       propertyPath: m_Name
       value: GeroBeam
+      objectReference: {fileID: 0}
+    - target: {fileID: 100006, guid: 18e6997b0cea7f249bf0e687ba9da449, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 400006, guid: 18e6997b0cea7f249bf0e687ba9da449, type: 3}
       propertyPath: m_RootOrder

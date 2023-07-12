@@ -1009,6 +1009,7 @@ GameObject:
   - component: {fileID: 2942942886986099026}
   - component: {fileID: 2942942886986099036}
   - component: {fileID: 2942942886986099027}
+  - component: {fileID: 1755253121562870469}
   m_Layer: 14
   m_Name: car gfx
   m_TagString: Untagged
@@ -1083,6 +1084,24 @@ MonoBehaviour:
   centerOfMass: {x: 0, y: -0.1, z: 0}
   forwardForce: 10
   stickToGround: 0
+--- !u!114 &1755253121562870469
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2942942886986099025}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5fea29bb7c508c244a1f805a5fd3fc4d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  outlineMode: 0
+  outlineColor: {r: 1, g: 1, b: 1, a: 1}
+  outlineWidth: 2
+  precomputeOutline: 0
+  bakeKeys: []
+  bakeValues: []
 --- !u!1 &2942942888468131762
 GameObject:
   m_ObjectHideFlags: 0
@@ -1130,8 +1149,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1a7eab1db79f56c47b0647f898b7c2c9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxHealth: 60
-  currentHealth: 60
+  baseHealth: 40
+  maxHealth: 40
+  currentHealth: 40
   scrapReward: 3
   ammoReward: 0
   fuelReward: 0
@@ -1139,11 +1159,15 @@ MonoBehaviour:
   aliveObject: {fileID: 2942942886986099026}
   isAlive: 1
   uiTransform: {fileID: 2740932883121660032}
+  cartRewardTransform: {fileID: 0}
   healthBar: {fileID: 0}
   isArmored: 0
-  rewardPowerUp: 0
+  isComponentEnemy: 0
   currentBurn: 0
   burnSpeed: 0
+  rewardArtifactOnDeath: 0
+  artifactRewardUniqueName: 
+  bonusArtifactUIStar: {fileID: 0}
   _outlines: []
 --- !u!114 &2942942888468131775
 MonoBehaviour:
@@ -1157,8 +1181,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 457bc320c770c7e419cae2d477ce9623, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  myId: 0
   myType: 0
   targetTransform: {fileID: 3935271781729781793}
+  avoid: 0
+  flying: 0
+  velocity: {x: 0, y: 0, z: 0}
 --- !u!114 &-5213072349006234106
 MonoBehaviour:
   m_ObjectHideFlags: 0

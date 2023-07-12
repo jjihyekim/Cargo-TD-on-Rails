@@ -13,16 +13,27 @@ MonoBehaviour:
   m_Name: _Act 1 rest of the levels
   m_EditorClassIdentifier: 
   isBossLevel: 0
-  firstLevel: {fileID: 0}
+  firstLevels:
+  - {fileID: 11400000, guid: 47fd339a81f7f55428d8ee9c5fa9cc1a, type: 2}
+  - {fileID: 11400000, guid: 6865d9449c3d6504ca8a9448a346ddef, type: 2}
+  - {fileID: 11400000, guid: 641b53a108c8d3f40b16930ee30eaa4d, type: 2}
   possibleLevels:
-  - {fileID: 11400000, guid: 35c020389996ae741a6a17d19d582ca4, type: 2}
-  - {fileID: 11400000, guid: 32ba59f0e626e8a438a85df40785b61c, type: 2}
-  - {fileID: 11400000, guid: db5fde552def7654fb6a9e645089596b, type: 2}
-  - {fileID: 11400000, guid: 4b30ca6075105a743ac74943c4a36f04, type: 2}
-  - {fileID: 11400000, guid: 1ff9e15b0cfc41e4d9604c7a90fed6e2, type: 2}
-  - {fileID: 11400000, guid: 965b72fe9b3df7b4a8e921a4363b8e76, type: 2}
-  - {fileID: 11400000, guid: ff9e930bbddf0c6428a7ed31176ca207, type: 2}
+  - {fileID: 11400000, guid: a2215446e843e00479f8ae7c595be33a, type: 2}
+  - {fileID: 11400000, guid: 7a04d66d26e2575479e6132350426806, type: 2}
+  - {fileID: 11400000, guid: 29575e3712edf4a45b6a64ee430daa4e, type: 2}
+  - {fileID: 11400000, guid: 38280c5fa1ea64243989641795801493, type: 2}
+  - {fileID: 11400000, guid: c4fc202e542275d46a629f1269e267ed, type: 2}
+  - {fileID: 11400000, guid: 47fd339a81f7f55428d8ee9c5fa9cc1a, type: 2}
+  - {fileID: 11400000, guid: 6865d9449c3d6504ca8a9448a346ddef, type: 2}
+  - {fileID: 11400000, guid: 641b53a108c8d3f40b16930ee30eaa4d, type: 2}
   - {fileID: 11400000, guid: aff526d5cc3181644925731359678221, type: 2}
+  - {fileID: 11400000, guid: ff9e930bbddf0c6428a7ed31176ca207, type: 2}
+  - {fileID: 11400000, guid: 4b9c1c380a00c0046bd7cf174a4949ce, type: 2}
+  possibleEliteLevels:
+  - {fileID: 11400000, guid: 94fc98672231df74fb0ffcc10cf552f0, type: 2}
+  - {fileID: 11400000, guid: 25be83e59b1014b43a8d2238b09ea02a, type: 2}
+  - {fileID: 11400000, guid: 7d63b24919108ca4b80bc11dafa33f0c, type: 2}
+  - {fileID: 11400000, guid: 5c1670fe8a72cee4a8b56bbbcb3c3396, type: 2}
   possibleEncounters:
   - {fileID: 3295736480921032522, guid: e5b4698d874016b4886952250af6da6e, type: 3}
   - {fileID: 3295736480921032522, guid: 380f2f2ffc7ba96488db14e67d456a22, type: 3}
@@ -35,32 +46,25 @@ MonoBehaviour:
   - enemyIdentifier:
       enemyUniqueName: BuggyAVC
       enemyCount: 1
-    distanceFromTrain: 30
-    firstSpawnTime: 45
+    firstSpawnTime: 30
     spawnInterval: 45
-    increaseInNumberInterval: 3
+    increaseInNumberInterval: 1
   - enemyIdentifier:
       enemyUniqueName: BuggyCannon
       enemyCount: 1
-    distanceFromTrain: 30
-    firstSpawnTime: 120
-    spawnInterval: 60
+    firstSpawnTime: 60
+    spawnInterval: 45
     increaseInNumberInterval: 2
   - enemyIdentifier:
       enemyUniqueName: BuggyPneumatic
       enemyCount: 1
-    distanceFromTrain: 30
-    firstSpawnTime: 60
+    firstSpawnTime: 30
     spawnInterval: 30
-    increaseInNumberInterval: 3
+    increaseInNumberInterval: 1
   - enemyIdentifier:
       enemyUniqueName: Biker
       enemyCount: 2
-    distanceFromTrain: 30
-    firstSpawnTime: 60
+    firstSpawnTime: 30
     spawnInterval: 30
-    increaseInNumberInterval: 2
+    increaseInNumberInterval: 1
   segmentCount: 3
-  firstEnemyInSegmentDistance: 75
-  lastEnemyAndSegmentEndDistance: 75
-  powerUpEnemyDistanceFromLastEnemy: 75

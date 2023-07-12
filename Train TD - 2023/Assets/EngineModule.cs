@@ -5,6 +5,7 @@ using UnityEngine;
 using UnityEngine.Events;
 
 public class EngineModule : MonoBehaviour, IActiveDuringCombat, IActiveDuringShopping {
+   public float speedAdd = 6;
    public int enginePower = 100;
 
    public UnityEvent OnEngineStart = new UnityEvent();

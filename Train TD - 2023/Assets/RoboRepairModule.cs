@@ -3,14 +3,16 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class RoboRepairModule : ActivateWhenAttachedToTrain, IActiveDuringCombat{
-    private float curRepairDelay = 0.5f;
-    public float repairDelay = 2;
-    public float repairAmount = 25;
-    public float steamUsePerRepair = 0.5f;
+public class RoboRepairModule : ActivateWhenAttachedToTrain, IActiveDuringCombat, IBooster {
 
-    public int repairRange = 1;
-    public int repairPerCycle = 2;
+    public bool isRepair = true;
+    
+    private float curDelay = 0.5f;
+    public float delay = 2;
+    public float amount = 25;
+    //public float steamUsePerRepair = 0.5f;
+
+    public int countPerCycle = 2;
     
     private Train myTrain;
     private Cart myCart;
@@ -24,27 +26,27 @@ public class RoboRepairModule : ActivateWhenAttachedToTrain, IActiveDuringCombat
 
     void Update() {
         myTrain = GetComponentInParent<Train>();
+        myCart = GetComponentInParent<Cart>();
         
-        if (myTrain == null)
+        if (myTrain == null || myCart == null)
             this.enabled = false;
         if (PlayStateMaster.s.isCombatInProgress()) {
-            if (curRepairDelay <= 0 && !myCart.isDestroyed) {
-                if(BreadthFirstRepairSearch())
-                    SpeedController.s.UseSteam(steamUsePerRepair);
-                curRepairDelay = repairDelay;
+            if (curDelay <= 0 && !myCart.isDestroyed) {
+                /*if(BreadthFirstRepairSearch())
+                    SpeedController.s.UseSteam(steamUsePerRepair);*/
+                BreadthFirstRepairSearch();
+                curDelay = delay;
             } else {
-                curRepairDelay -= Time.deltaTime;
+                curDelay -= Time.deltaTime;
             }
         }
     }
 
 
     bool BreadthFirstRepairSearch() {
-        if(myTrain == null)
-            myTrain = GetComponentInParent<Train>();
         var carts = new List<Cart>();
 
-        var range = Mathf.Min(myTrain.carts.Count, repairRange);
+        var range = Mathf.Min(myTrain.carts.Count, baseRange + rangeBoost + 1);
         
         for (int i = 0; i < range; i++) {
 
@@ -62,17 +64,17 @@ public class RoboRepairModule : ActivateWhenAttachedToTrain, IActiveDuringCombat
 
         var repairCount = 0;
         for (int i = 0; i < carts.Count; i++) {
-            if (RepairDamageInCart(carts[i], false)) {
+            if (DoThingInCart(carts[i], false)) {
                 repairCount += 1;
-                if (repairCount >= repairPerCycle) {
+                if (repairCount >= countPerCycle) {
                     return true;
                 }
             }
         }
         
         for (int i = 0; i < carts.Count; i++) {
-            if (RepairDamageInCart(carts[i], true)) {
-                if (repairCount >= repairPerCycle) {
+            if (DoThingInCart(carts[i], true)) {
+                if (repairCount >= countPerCycle) {
                     return true;
                 }
             }
@@ -90,17 +92,34 @@ public class RoboRepairModule : ActivateWhenAttachedToTrain, IActiveDuringCombat
         return (index >= 0) && (index < array.Count);
     }
 
-    bool RepairDamageInCart(Cart target, bool repairImperfect) {
-        var healths = target.GetComponentsInChildren<ModuleHealth>();
+    bool DoThingInCart(Cart target, bool doImperfect) {
 
-        if (healths.Length > 0) {
-            for (int i = 0; i < healths.Length; i++) {
-                var canRepair = (healths[i].currentHealth < healths[i].maxHealth && repairImperfect) ||
-                                healths[i].currentHealth <= healths[i].maxHealth - repairAmount;
+        if (isRepair) {
+            var healths = target.GetComponentsInChildren<ModuleHealth>();
 
-                if (canRepair) {
-                    healths[i].Repair(repairAmount);
-                    return true;
+            if (healths.Length > 0) {
+                for (int i = 0; i < healths.Length; i++) {
+                    var canRepair = (healths[i].currentHealth < healths[i].maxHealth && doImperfect) ||
+                                    healths[i].currentHealth <= healths[i].maxHealth - amount;
+
+                    if (canRepair) {
+                        healths[i].Repair(amount);
+                        return true;
+                    }
+                }
+            }
+        } else {
+            var ammos = target.GetComponentsInChildren<ModuleAmmo>();
+
+            if (ammos.Length > 0) {
+                for (int i = 0; i < ammos.Length; i++) {
+                    var canReload = (ammos[i].curAmmo < ammos[i].maxAmmo && doImperfect) ||
+                                    ammos[i].curAmmo <= ammos[i].maxAmmo - amount;
+
+                    if (canReload) {
+                        ammos[i].Reload(amount);
+                        return true;
+                    }
                 }
             }
         }
@@ -120,8 +139,10 @@ public class RoboRepairModule : ActivateWhenAttachedToTrain, IActiveDuringCombat
     
     
     protected override void _AttachedToTrain() {
-        ApplyBoost(Train.s.GetNextBuilding(true, GetComponentInParent<Cart>()), true);
-        ApplyBoost(Train.s.GetNextBuilding(false, GetComponentInParent<Cart>()), true);
+        for (int i = 1; i < (baseRange+rangeBoost)+1; i++) {
+            ApplyBoost(Train.s.GetNextBuilding(i, GetComponentInParent<Cart>()), true);
+            ApplyBoost(Train.s.GetNextBuilding(-i, GetComponentInParent<Cart>()), true);
+        }
     }
 
     protected override bool CanApply(Cart target) {
@@ -134,7 +155,21 @@ public class RoboRepairModule : ActivateWhenAttachedToTrain, IActiveDuringCombat
     }
 
     protected override void _DetachedFromTrain() {
-        ApplyBoost(Train.s.GetNextBuilding(true, GetComponentInParent<Cart>()), false);
-        ApplyBoost(Train.s.GetNextBuilding(false, GetComponentInParent<Cart>()), false);
+        //do nothing
+    }
+    
+    [Space]
+    public int baseRange = 1;
+    public int rangeBoost = 0;
+    public float boostMultiplier = 1;
+
+    public void ResetState(int level) {
+        rangeBoost = level;
+        boostMultiplier = 1;
+    }
+
+    public void ModifyStats(int range, float value) {
+        rangeBoost += range;
+        boostMultiplier += value;
     }
 }

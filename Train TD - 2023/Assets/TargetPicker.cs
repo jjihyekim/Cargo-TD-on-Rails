@@ -12,17 +12,22 @@ public class TargetPicker : MonoBehaviour, IActiveDuringCombat {
     private Transform origin;
 
     public List<PossibleTarget.Type> myPossibleTargets;
+
+    private PossibleTarget mySelfTarget;
+
+    public bool canHitFlying = false;
     
     private void Start() {
         targeter = GetComponent<IComponentWithTarget>();
         origin = targeter.GetRangeOrigin();
+        mySelfTarget = GetComponentInParent<PossibleTarget>();
     }
 
     private void Update() {
-        var closestTargetWithEnoughHealth = ClosestTarget(true);
+        var closestTargetNotAvoided = ClosestTarget(true);
 
-        if (closestTargetWithEnoughHealth != null) {
-            targeter.SetTarget(closestTargetWithEnoughHealth);
+        if (closestTargetNotAvoided!=null)  {
+            targeter.SetTarget(closestTargetNotAvoided);
         } else {
             var closestTarget = ClosestTarget(false);
 
@@ -34,24 +39,44 @@ public class TargetPicker : MonoBehaviour, IActiveDuringCombat {
         }
     }
 
-    private Transform ClosestTarget(bool doHealthCheck) {
+    private Transform ClosestTarget(bool doAvoidCheck) {
+        if (LevelReferences.targetsDirty) {
+            return null;
+        }
+        
         var closestTargetDistance = range + 1;
-        Transform closestTargetWithEnoughHealth = null;
-        var allTargets = LevelReferences.allTargets;
-        for (int i = 0; i < allTargets.Count; i++) {
-            var canTarget = allTargets[i].enabled && (myPossibleTargets.Contains(allTargets[i].myType)) && (allTargets[i] != GetComponentInParent<PossibleTarget>());
-            var targetHasEnoughHealth = (allTargets[i].GetHealth() >= targeter.GetDamage()) || !doHealthCheck;
-            if (canTarget && targetHasEnoughHealth) {
-                if (IsPointInsideCone(allTargets[i].targetTransform.position, origin.position, origin.forward, rotationSpan, range, out float distance)) {
-                    if (distance < closestTargetDistance) {
-                        closestTargetWithEnoughHealth = allTargets[i].targetTransform;
-                        closestTargetDistance = distance;
+        Transform closestTarget = null;
+        var allTargets = LevelReferences.allTargetValues;
+        var allTargetsReal = LevelReferences.allTargets;
+        var myId = -1;
+        if (mySelfTarget != null) {
+            myId = mySelfTarget.myId;
+        }
+
+        //var myDamage = targeter.GetDamage();
+        var myPosition = origin.position;
+        var myForward = origin.forward;
+
+        for (int i = 0; i < allTargets.Length; i++) {
+            if (i != myId) {
+                var target = allTargets[i];
+                var canTarget = myPossibleTargets.Contains(target.type);
+                //var targetHasEnoughHealth = !doHealthCheck || (allTargets[i].health >= myDamage);
+                var targetNotAvoided = !target.avoid || !doAvoidCheck;
+                var canHitBecauseFlying = canHitFlying || !target.flying;
+
+                if (canTarget && targetNotAvoided && canHitBecauseFlying) {
+                    if (IsPointInsideCone(allTargets[i].position, myPosition, myForward, rotationSpan, range, out float distance)) {
+                        if (distance < closestTargetDistance) {
+                            closestTarget = allTargetsReal[i].targetTransform;
+                            closestTargetDistance = distance;
+                        }
                     }
                 }
             }
         }
 
-        return closestTargetWithEnoughHealth;
+        return closestTarget;
     }
 
 

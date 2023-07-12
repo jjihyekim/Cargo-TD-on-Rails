@@ -1,7 +1,9 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
+using Random = UnityEngine.Random;
 
 public class CargoDeliveryAreaScript : MonoBehaviour {
 
@@ -10,33 +12,61 @@ public class CargoDeliveryAreaScript : MonoBehaviour {
 
     public Transform rotatingPlatform;
 
-    
+    public Transform artifactLocation1;
+    public Transform artifactLocation2;
+
+    public Transform extraArtifactEffect;
+
+    public void Start() {
+        PlayStateMaster.s.OnShopEntered.AddListener(ResetArea);
+    }
+
+    void ResetArea() {
+        rotatingPlatform.transform.rotation = Quaternion.identity;
+        extraArtifactEffect.gameObject.SetActive(false);
+    }
+
     void Update()
     {
         if (!isEngaged && !PlayerWorldInteractionController.s.isDragStarted) {
-            if (location1.snapTransform.childCount > 0) {
+            if (location1.snapTransform.childCount > 0) 
                 StartCoroutine(EngagePlatform(location1, location2));
-            } else if (location2.snapTransform.childCount > 0) {
-                StartCoroutine(EngagePlatform(location2, location1));
-            }
         }
     }
 
-    public float rotateSpeed = 20;
-    public float rotateAcceleration = 20;
+    public float rotateSpeed = 120;
+    public float rotateAcceleration = 60;
 
     private bool isEngaged = false;
+
     IEnumerator EngagePlatform(SnapCartLocation fullPlatform, SnapCartLocation emptyPlatform) {
         isEngaged = true;
-        SetColliderStatus(fullPlatform.gameObject, false);
+        PlayerWorldInteractionController.s.Deselect();
+        SetColliderStatus(rotatingPlatform.gameObject, false);
 
         //yield return null; //wait a frame for good luck
 
         var cargoModule = fullPlatform.GetComponentInChildren<CargoModule>();
-        var reward = DataHolder.s.GetCart(cargoModule.GetReward());
-        var rewardCart = Instantiate(reward.gameObject, emptyPlatform.snapTransform);
-        
-        SetColliderStatus(fullPlatform.gameObject, false);
+        GameObject rewardCart = null;
+        if (UpgradesController.s.rewardDestinationCart) {
+            rewardCart = Instantiate(DataHolder.s.GetCart(cargoModule.GetState().cargoReward).gameObject, emptyPlatform.snapTransform);
+        }
+
+        GameObject rewardArtifact = null;
+        if (UpgradesController.s.rewardDestinationArtifact) {
+            rewardArtifact = Instantiate(DataHolder.s.GetArtifact(cargoModule.GetState().artifactReward).gameObject, artifactLocation1);
+            rewardArtifact.transform.position += Vector3.up * 0.2f;
+        }
+
+        GameObject bonusRewardArtifact = null;
+        var gotBonusArtifact = ArtifactsController.s.gotBonusArtifact;
+        if (gotBonusArtifact) {
+            bonusRewardArtifact = Instantiate(DataHolder.s.GetArtifact(ArtifactsController.s.bonusArtifactUniqueName).gameObject, artifactLocation2);
+            bonusRewardArtifact.transform.position += Vector3.up*0.2f;
+            ArtifactsController.s.BonusArtifactRewarded(artifactLocation2);
+        }
+
+        SetColliderStatus(rotatingPlatform.gameObject, false);
 
         var rotateTarget = (rotatingPlatform.rotation.eulerAngles.y > 25) ? Quaternion.Euler(0, 0, 0) : Quaternion.Euler(0, 180, 0);
         var totalDelta = Quaternion.Angle(rotatingPlatform.rotation, rotateTarget);
@@ -54,19 +84,33 @@ public class CargoDeliveryAreaScript : MonoBehaviour {
 
         rotatingPlatform.rotation = rotateTarget;
         
-        SetColliderStatus(fullPlatform.gameObject, true);
+        SetColliderStatus(rotatingPlatform.gameObject, true);
         Destroy(fullPlatform.snapTransform.GetChild(0).gameObject);
-        
-        UpgradesController.s.AddCartToShop(rewardCart.GetComponent<Cart>(), UpgradesController.CartLocation.world);
+
+        if (UpgradesController.s.rewardDestinationCart) {
+            UpgradesController.s.AddCartToShop(rewardCart.GetComponent<Cart>(), UpgradesController.CartLocation.world);
+        }
+
         UpgradesController.s.RemoveCartFromShop(fullPlatform.snapTransform.GetChild(0).GetComponent<Cart>());
+
+
+        FirstTimeTutorialController.s.CargoHintShown();
         
-        rewardCart.transform.SetParent(null);
-        rewardCart.GetComponent<Rigidbody>().isKinematic = false;
-        rewardCart.GetComponent<Rigidbody>().useGravity = true;
+        yield return new WaitForSeconds(0.5f);
+
+        if (gotBonusArtifact) {
+            extraArtifactEffect.gameObject.SetActive(true);
+        }
 
         isEngaged = false;
+    }
+    
+    Vector3 AddNoiseOnDirection (Vector3 direction, float max)  {
+        // Generate a random rotation
+        Quaternion randomRotation = Quaternion.Euler(Random.Range(-max, max), Random.Range(-max, max), 0);
         
-        FirstTimeTutorialController.s.CargoHintShown();
+        // Apply the random rotation to the current direction
+        return randomRotation * direction;
     }
 
     void SetColliderStatus(GameObject target, bool status) {

@@ -36,14 +36,10 @@ public class MapController : MonoBehaviour {
 	    public CityDataScriptable[] firstCities;
 	    public CityDataScriptable[] remainingCities;
 	    public CityDataScriptable[] bossCities;
-
-	    [Space] 
-	    public EncounterTitle[] encounters;
     }
 
     public MenuToggle mapUI;
 
-    public float encounterChance = 0.5f;
 
     //public static bool ApplyStarMap = true;
 

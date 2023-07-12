@@ -3,21 +3,79 @@ using System.Collections.Generic;
 using UnityEngine;
 using FMOD.Studio;
 using FMODUnity;
+using Sirenix.OdinInspector;
+using System.Linq;
+using UnityEngine.Rendering.PostProcessing;
+using Sirenix.Serialization;
 
 public class FMODMusicPlayer : MonoBehaviour
 {
     public static FMODMusicPlayer s;
 
+    #region General
+    [FoldoutGroup("General")]
     [Header("Speaker")]
     public FMODAudioSource speaker;
 
-    [Header("Music Tracks")]
-    public EventReference gameMusicTracks, menuMusicTracks;
+    [HorizontalGroup("General/timeLine")]
+    public bool isPaused;
+
+    [HorizontalGroup("General/timeLine", width:0.75f)]
+    [ShowInInspector]
+    private float timelinePosition { get { return Application.isPlaying ? speaker.TimelinePosotion() / 1000f : 0; } }
+    #endregion
+
+    #region Music Tracks
+    [FoldoutGroup("Music Tracks")]
+    public EventReference menuMusicTracks;
+
+    [FoldoutGroup("Music Tracks")]
+    [AssetList]
+    public FMODDynamicMusic dynamicGameMusic;
 
     private EventReference currentTracks;   // the current track that is loaded
+    #endregion
 
-    [field: Header("Playing Status")]
-    public bool isPaused;
+    #region Misc
+    private float targetVolume = 1;
+    #endregion
+
+    #region Dynamics
+    [FoldoutGroup("Dynamics")]
+    public int numOfEngagingWave;
+
+    [HorizontalGroup("Dynamics")]
+    [ShowInInspector]
+    public float bassIndex { get { return speaker.GetParamByName("bassIndex"); } }
+    [HorizontalGroup("Dynamics")]
+    [ShowInInspector]
+    public float drumIndex { get { return speaker.GetParamByName("drumIndex"); } }
+    [HorizontalGroup("Dynamics")]
+    [ShowInInspector]
+    public float melodyIndex { get { return speaker.GetParamByName("melodyIndex"); } }
+    [HorizontalGroup("Dynamics")]
+    [ShowInInspector]
+    public float backingIndex { get { return speaker.GetParamByName("backingIndex"); } }
+
+    private void PreparePhaseChange()
+    {
+        dynamicGameMusic.UpdatePhase(speaker);
+    }
+
+    private void InitPhase()
+    {
+        dynamicGameMusic.UpdatePhase(speaker);
+    }
+    private float phaseT, lastT;
+
+    private List<EnemyWave> enemyWaves = new List<EnemyWave>();
+    #endregion
+
+    #region Procedural Music
+
+    public Queue<int> drum1Sheet, drum2Sheet, bassSheet, melody1Sheet, melody2Sheet, backingSheet;
+
+    #endregion
 
     private void Awake()
     {
@@ -30,8 +88,10 @@ public class FMODMusicPlayer : MonoBehaviour
     private void Start()
     {
         SwapMusicTracksAndPlay(false);
+        enemyWaves = EnemyWavesController.s.waves;
     }
 
+    #region Track Handling
     /// <summary>
     /// Based on "isGame" parameter, load game/menu tracks, and play them automatically
     /// </summary>
@@ -41,9 +101,9 @@ public class FMODMusicPlayer : MonoBehaviour
         var changeMade = false;
         if (isGame)
         {
-            if (!currentTracks.Equals(gameMusicTracks))
+            if (!currentTracks.Equals(dynamicGameMusic.track))
             {
-                currentTracks = gameMusicTracks;
+                currentTracks = dynamicGameMusic.track;
                 changeMade = true;
             }
         }
@@ -61,6 +121,7 @@ public class FMODMusicPlayer : MonoBehaviour
             PlayTracks();
         }
     }
+
     public void PlayMenuMusic()
     {
         SwapMusicTracksAndPlay(false);
@@ -68,9 +129,10 @@ public class FMODMusicPlayer : MonoBehaviour
 
     public void PlayCombatMusic()
     {
+        InitPhase();
+
         SwapMusicTracksAndPlay(true);
     }
-
 
     /// <summary>
     /// Stop the currently-playing track. Start playing the tracks loaded in the "currentTracks" variable.
@@ -79,22 +141,90 @@ public class FMODMusicPlayer : MonoBehaviour
     {
         speaker.LoadClip(currentTracks, true);
     }
-    void PauseUnPauseOnGamePause(bool paused)
+
+    #endregion
+
+    #region Pause/Unpause Handling
+    public void PauseMusic()
     {
-        if (!paused)
-        {
-            speaker.UnPause();
-            isPaused = false;
-        }
-        else
+        if (!isPaused)
         {
             speaker.Pause();
             isPaused = true;
         }
     }
 
+    public void UnpauseMusic()
+    {
+        if (isPaused)
+        {
+            speaker.UnPause();
+            isPaused = false;
+        }
+    }
+
+    void PauseUnPauseOnGamePause(bool paused)
+    {
+        if (!paused)
+        {
+            UnpauseMusic();
+        }
+        else
+        {
+            PauseMusic();
+        }
+    }
+    #endregion
+
+    #region Temporary Volume Reduce
+    public void TemporaryVolumeReduce(float time)
+    {
+        CancelInvoke();
+        targetVolume = 0.7f;
+        Invoke("ResetVolume", time);
+    }
+
+    private void ResetVolume() 
+    {
+        targetVolume = 1;
+    }
+    #endregion
+
     private void Update()
     {
+        #region update battle status
+        // count how many waves are engaging
+        int tmpCount;
+        tmpCount = 0;
+
+        int highestCount = 0;
+        List<string> highestType = new List<string>();
+        foreach (EnemyWave wave in enemyWaves)
+        {
+            // if a wave is close enough and is not leaving combat, count it as "engaging"
+            if(wave.distance < 20 && !wave.isLeaving)
+            {
+                tmpCount += 1;
+            }
+        }
+
+        numOfEngagingWave = tmpCount;
+
+        #endregion
+
+        #region PhaseChange
+        if (currentTracks.Equals(dynamicGameMusic.track))
+        {
+            phaseT = (timelinePosition + 0.5f) % dynamicGameMusic.phaseChangePosition;
+            if (phaseT < lastT)
+                PreparePhaseChange();
+            lastT = phaseT;
+        }
+
+
+        #endregion
+
+        // pause/unpause control
         if (TimeController.s != null && PlayStateMaster.s.isCombatInProgress())
         {
             if (TimeController.s.isPaused && !isPaused)
@@ -106,5 +236,8 @@ public class FMODMusicPlayer : MonoBehaviour
                 PauseUnPauseOnGamePause(TimeController.s.isPaused);
             }
         }
+
+        speaker.volume = Mathf.Lerp(speaker.volume, isPaused ? 0 : targetVolume, Time.unscaledDeltaTime * 8f);
     }
 }
+

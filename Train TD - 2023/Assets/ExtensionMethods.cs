@@ -23,9 +23,12 @@ public static class ExtensionMethods {
     }
 
 
-    public static void DeleteAllChildren(this Transform transform) {
+    public static void DeleteAllChildren(this Transform transform, bool skipLast = false) {
         int childs = transform.childCount;
-        for (int i = childs - 1; i >= 0; i--) {
+        int minus = 1;
+        if (skipLast)
+            minus += 1;
+        for (int i = childs - minus; i >= 0; i--) {
             GameObject.Destroy(transform.GetChild(i).gameObject);
         }
     }
@@ -72,6 +75,18 @@ public static class ExtensionMethods {
     public static void SetBottom(this RectTransform rt, float bottom)
     {
         rt.offsetMin = new Vector2(rt.offsetMin.x, bottom);
+    }
+    
+    
+    public static string GetGameObjectPath(this GameObject obj)
+    {
+        string path = "/" + obj.name;
+        while (obj.transform.parent != null)
+        {
+            obj = obj.transform.parent.gameObject;
+            path = "/" + obj.name + path;
+        }
+        return path;
     }
 
 }

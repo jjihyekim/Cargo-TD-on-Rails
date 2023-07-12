@@ -12,7 +12,11 @@ public class MiniGUI_CartUIBar : MonoBehaviour {
     
     public RectTransform ammoBar;
     public RectTransform healthBar;
-
+    public Image healthFill;
+    
+    public RectTransform shieldBar;
+    public Image shieldFill;
+    
     public RectTransform directControl;
     public RectTransform engineBoost;
 
@@ -41,10 +45,17 @@ public class MiniGUI_CartUIBar : MonoBehaviour {
     public bool showWarning = false;
 
     public bool isBoost = false;
+    private static readonly int Tiling = Shader.PropertyToID("_Tiling");
 
+    //private Material _material;
+
+    private bool showAnyHealth = false;
+    
     public void SetUp(Cart cart, ModuleHealth moduleHealth, ModuleAmmo moduleAmmo) {
         myCart = cart;
         myHealth = moduleHealth;
+        
+        
         myAmmo = moduleAmmo;
         isAmmo = myAmmo != null;
         var boostable = cart.GetComponentInChildren<EngineBoostable>();
@@ -61,7 +72,18 @@ public class MiniGUI_CartUIBar : MonoBehaviour {
         
         warning.SetActive(false);
 
-        showWarning = myCart.isCriticalComponent || myCart.isMainEngine;
+        showWarning = myCart.isMysteriousCart || myCart.isMainEngine;
+
+        healthFill.material = new Material(healthFill.material);
+        shieldFill.material = new Material(shieldFill.material);
+        
+        if (myHealth.invincible) {
+            healthBar.gameObject.SetActive(false);
+            shieldBar.gameObject.SetActive(false);
+            showAnyHealth = false;
+        } else {
+            showAnyHealth = true;
+        }
     }
 
     void UpdateAllSiblingPositions() {
@@ -73,13 +95,34 @@ public class MiniGUI_CartUIBar : MonoBehaviour {
     }
 
     private void Update() {
-        SetHealthBarValue();
+        if (showAnyHealth) {
+            SetHealthBarValue();
+            SetShieldBarValue();
+        }
+
         if (isAmmo)
             SetAmmoBarValue();
         if (isBoost)
             SetBoostBarValue();
     }
 
+    void SetShieldBarValue() {
+        if (myHealth.maxShields <= 0) {
+            shieldBar.gameObject.SetActive(false);
+            return;
+        } else {
+            shieldBar.gameObject.SetActive(true);
+        }
+        
+        var percent = myHealth.GetShieldPercent();
+        percent = Mathf.Clamp(percent, 0, 1f);
+
+        var totalLength = mainRect.sizeDelta.x;
+        
+        shieldBar.SetRight(totalLength*(1-percent));
+        shieldFill.material.SetFloat(Tiling, myHealth.currentShields/100f);
+    }
+    
     void SetHealthBarValue() {
         var percent = myHealth.GetHealthPercent();
         percent = Mathf.Clamp(percent, 0, 1f);
@@ -87,7 +130,8 @@ public class MiniGUI_CartUIBar : MonoBehaviour {
         var totalLength = mainRect.sizeDelta.x;
         
         healthBar.SetRight(totalLength*(1-percent));
-        healthBar.GetComponent<Image>().color = GetHealthColor(percent);
+        healthFill.color = GetHealthColor(percent);
+        healthFill.material.SetFloat(Tiling, myHealth.currentHealth/100f);
 
         if (showWarning) {
             warning.SetActive(percent < 0.5f);
@@ -122,9 +166,17 @@ public class MiniGUI_CartUIBar : MonoBehaviour {
     public void DebugSetHP(float hp) {
         var percent = hp;
         var totalLength = mainRect.sizeDelta.x;
+        print(totalLength);
         
         healthBar.SetRight(totalLength*(1-percent));
         healthBar.GetComponent<Image>().color = GetHealthColor(percent);
+    }
+    
+    [Button]
+    public void DebugSetMaxHP(float maxHp) {
+        var totalLength = mainRect.sizeDelta.x;
+
+        healthFill.pixelsPerUnitMultiplier = maxHp.Remap(0, 100, 0, 4.61f) * (1/(totalLength / 55.53f));
     }
     
     [Button]

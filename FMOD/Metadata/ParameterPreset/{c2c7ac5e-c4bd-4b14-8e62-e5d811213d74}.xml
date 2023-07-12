@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<objects serializationModel="Studio.02.02.00">
+	<object class="ParameterPreset" id="{c2c7ac5e-c4bd-4b14-8e62-e5d811213d74}">
+		<property name="name">
+			<value>BackingIndex</value>
+		</property>
+		<relationship name="folder">
+			<destination>{6646dcc1-62a3-4c3e-aed8-0c2eaae38a1e}</destination>
+		</relationship>
+		<relationship name="parameter">
+			<destination>{d4108599-c0df-4bc1-88a9-7d72c5f597d5}</destination>
+		</relationship>
+	</object>
+	<object class="GameParameter" id="{d4108599-c0df-4bc1-88a9-7d72c5f597d5}">
+		<property name="parameterType">
+			<value>1</value>
+		</property>
+		<property name="maximum">
+			<value>4</value>
+		</property>
+		<property name="initialValue">
+			<value>0</value>
+		</property>
+	</object>
+</objects>

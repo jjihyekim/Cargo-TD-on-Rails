@@ -107,6 +107,8 @@ public class DistanceAndEnemyRadarController : MonoBehaviour {
         
         myUnits.Clear();
         unitDisplays.Clear();
+        
+        SpeedController.s.RegisterRadar();
     }
 }
 

@@ -35,17 +35,40 @@ public class MissionLoseFinisher : MonoBehaviour {
 
 
         isMissionLost = true;
-        PlayStateMaster.s.FinishCombat();
+        PlayStateMaster.s.FinishCombat(true);
+
+        Time.timeScale = 0;
+        Pauser.s.isPaused = true;
         
         for (int i = 0; i < scriptsToDisable.Length; i++) {
             scriptsToDisable[i].enabled = false;
         }
+
+        PlayerWorldInteractionController.s.canSelect = false;
 		
         for (int i = 0; i < gameObjectsToDisable.Length; i++) {
             gameObjectsToDisable[i].SetActive(false);
         }
         
         loseUI.SetActive(true);
+        
+        
+        var allArtifacts = ArtifactsController.s.myArtifacts;
+
+        var eligibleBossArtifacts = new List<Artifact>();
+        for (int i = 1; i < allArtifacts.Count; i++) {
+            if (allArtifacts[i].myRarity == UpgradesController.CartRarity.boss) {
+                eligibleBossArtifacts.Add(allArtifacts[i]);
+            }
+        }
+
+        if (eligibleBossArtifacts.Count > 0) {
+            DataSaver.s.GetCurrentSave().xpProgress.bonusArtifact = eligibleBossArtifacts[Random.Range(0, eligibleBossArtifacts.Count)].uniqueName;
+        }
+
+        DataSaver.s.GetCurrentSave().isInARun = false;
+        
+        DataSaver.s.SaveActiveGame();
         
         
         var myChar = DataSaver.s.GetCurrentSave().currentRun.character;
@@ -66,11 +89,10 @@ public class MissionLoseFinisher : MonoBehaviour {
         
         
         Debug.Log("Mission Lost Analytics: " + analyticsResult);
-        
-        MusicPlayer.s.Stop();
+
+        FMODMusicPlayer.s.PauseMusic();
         DirectControlMaster.s.DisableDirectControl();
-        
-        
+
         if(SettingsController.GamepadMode())
             EventSystem.current.SetSelectedGameObject(loseContinueButton);
     }
@@ -85,13 +107,13 @@ public class MissionLoseFinisher : MonoBehaviour {
     public void BackToMenu() {
         isMissionLost = false;
         loseUI.SetActive(false);
-        MissionWinFinisher.s.ContinueToClearOutOfCombat();
+        //MissionWinFinisher.s.ContinueToClearOutOfCombat();
         DataSaver.s.GetCurrentSave().currentRun = null;
         DataSaver.s.GetCurrentSave().isInARun = false;
         DataSaver.s.SaveActiveGame();
 
         // MusicPlayer.s.SwapMusicTracksAndPlay(false);
-        FMODMusicPlayer.s.SwapMusicTracksAndPlay(false);
+        //FMODMusicPlayer.s.SwapMusicTracksAndPlay(false);
 
         SceneLoader.s.ForceReloadScene();
     }

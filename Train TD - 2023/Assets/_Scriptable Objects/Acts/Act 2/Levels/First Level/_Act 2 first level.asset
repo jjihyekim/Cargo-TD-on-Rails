@@ -13,12 +13,15 @@ MonoBehaviour:
   m_Name: _Act 2 first level
   m_EditorClassIdentifier: 
   isBossLevel: 0
-  firstLevel: {fileID: 11400000, guid: 269ea708f544d894e8c3f26d788e664c, type: 2}
+  firstLevels: []
   possibleLevels:
-  - {fileID: 11400000, guid: f8b0501ce547b3f4ca5f340f264f4719, type: 2}
   - {fileID: 11400000, guid: 3c7e6b75cadc93a46bda4692ec6be9b9, type: 2}
-  - {fileID: 11400000, guid: 59c73dd33f16219458746facc3952b9b, type: 2}
+  - {fileID: 11400000, guid: 95135143ee6cde74a88c76b0d666ef3b, type: 2}
+  - {fileID: 11400000, guid: eadeefa8e6a3e484f89b989ecff1d626, type: 2}
   - {fileID: 11400000, guid: 269ea708f544d894e8c3f26d788e664c, type: 2}
+  possibleEliteLevels:
+  - {fileID: 11400000, guid: 1a2a20f40fcb0da4cac50dfc710e546a, type: 2}
+  - {fileID: 11400000, guid: f8b0501ce547b3f4ca5f340f264f4719, type: 2}
   possibleEncounters:
   - {fileID: 1727440949419904987, guid: a9a82e9936c43bb449d3c23bf8fd4903, type: 3}
   - {fileID: 3295736480921032522, guid: 74e11eec2b679cc4ca2084d1fe90b999, type: 3}
@@ -26,11 +29,7 @@ MonoBehaviour:
   - enemyIdentifier:
       enemyUniqueName: TeleportingBuggyGatling
       enemyCount: 1
-    distanceFromTrain: 35
     firstSpawnTime: 45
     spawnInterval: 30
     increaseInNumberInterval: 3
   segmentCount: 3
-  firstEnemyInSegmentDistance: 75
-  lastEnemyAndSegmentEndDistance: 75
-  powerUpEnemyDistanceFromLastEnemy: 75

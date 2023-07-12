@@ -7,8 +7,24 @@ public class UIElementFollowWorldTarget : MonoBehaviour {
 
     public bool autoSetUp = false;
     public bool avoidOverlaps = true;
-    public void SetUp(Transform target) {
+
+     bool transformMode = true;
+    public Transform SetUp(Transform target) {
+        transformMode = true;
         sourceTransform = target;
+        
+        CanvasRect = transform.root.GetComponent<RectTransform>();
+        UIRect = GetComponent<RectTransform>();
+        ParentRect = transform.parent.GetComponent<RectTransform>();
+        mainCam = LevelReferences.s.mainCam;
+
+        this.enabled = true;
+        return transform;
+    }
+    
+    public void UpdateTarget(Vector3 location) {
+        transformMode = false;
+        sourceLocation = location;
         
         CanvasRect = transform.root.GetComponent<RectTransform>();
         UIRect = GetComponent<RectTransform>();
@@ -20,6 +36,7 @@ public class UIElementFollowWorldTarget : MonoBehaviour {
     
     
     public Transform sourceTransform;
+    public Vector3 sourceLocation;
     private RectTransform CanvasRect;
     private RectTransform ParentRect;
     [HideInInspector]
@@ -32,9 +49,11 @@ public class UIElementFollowWorldTarget : MonoBehaviour {
     
     
     private void _LateUpdate() {
-        if (sourceTransform == null) {
-            this.enabled = false;
-            return;
+        if (transformMode) {
+            if (sourceTransform == null) {
+                this.enabled = false;
+                return;
+            }
         }
 
         SetPosition();
@@ -45,7 +64,10 @@ public class UIElementFollowWorldTarget : MonoBehaviour {
         //0,0 for the canvas is at the center of the screen, whereas WorldToViewPortPoint
         //treats the lower left corner as 0,0. Because of this, you need to subtract the height / width of the canvas * 0.5 to get the correct position.
         //SetOffset(); // for debugging
-        Vector3 ViewportPosition = mainCam.WorldToViewportPoint(sourceTransform.position);
+        if (transformMode)
+            sourceLocation = sourceTransform.position;
+        
+        Vector3 ViewportPosition = mainCam.WorldToViewportPoint(sourceLocation);
 
         if (ViewportPosition.z > 0) {
             // if the object is within our view

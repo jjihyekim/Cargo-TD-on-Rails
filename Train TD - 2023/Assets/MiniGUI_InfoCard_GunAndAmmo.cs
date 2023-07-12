@@ -11,14 +11,26 @@ public class MiniGUI_InfoCard_GunAndAmmo : MonoBehaviour, IBuildingInfoCard {
     public Toggle armorPenet;
     public Toggle usesAmmo;
     public TMP_Text ammoUse;
-    
+
 
     [ReadOnly] public ModuleAmmo ammoModule;
     [ReadOnly] public bool doesUseAmmo;
-    
+
     public void SetUp(Cart building) {
-        var gunModule = building.GetComponentInChildren<GunModule>();
-        
+
+        SetUp(building.GetComponentInChildren<GunModule>(), building.GetComponentInChildren<ModuleAmmo>());
+
+    }
+
+    public void SetUp(EnemyHealth enemy) {
+
+        SetUp(enemy.GetComponentInChildren<GunModule>(), null);
+    }
+
+
+    void SetUp(GunModule gun, ModuleAmmo ammo) {
+        var gunModule = gun;
+
         if (gunModule == null) {
             gameObject.SetActive(false);
             return;
@@ -30,15 +42,13 @@ public class MiniGUI_InfoCard_GunAndAmmo : MonoBehaviour, IBuildingInfoCard {
                                  $"Firerate: {1f / gunModule.GetFireDelay():0:0.##}/s";
 
         armorPenet.isOn = gunModule.canPenetrateArmor;
-        
-        ammoModule = building.GetComponentInChildren<ModuleAmmo>();
+
+        ammoModule = ammo;
         doesUseAmmo = ammoModule != null;
         usesAmmo.isOn = doesUseAmmo;
         ammoUse.gameObject.SetActive(doesUseAmmo);
-        
-        Update();
 
-        
+        Update();
     }
 
     private void Update() {

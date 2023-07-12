@@ -19,6 +19,7 @@ public class MiniGUI_CharSelectPanel : MonoBehaviour {
 		charDescText.text = myData.description;
 		
 		lockedOverlay.SetActive(isLocked);
+		GetComponentInChildren<Button>().interactable = !isLocked;
 
 		if (autoSelect) {
 			if (SettingsController.GamepadMode()) {

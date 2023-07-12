@@ -4,6 +4,8 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class PossibleTarget : MonoBehaviour, IActiveDuringCombat {
+    [HideInInspector]
+    public int myId;
     
     public enum Type {
         enemy, player
@@ -12,6 +14,9 @@ public class PossibleTarget : MonoBehaviour, IActiveDuringCombat {
     public Type myType;
 
     public Transform targetTransform;
+
+    public bool avoid = false;
+    public bool flying = false;
     private void OnEnable() {
         if (targetTransform == null) {
             var building = GetComponent<Cart>();
@@ -23,10 +28,12 @@ public class PossibleTarget : MonoBehaviour, IActiveDuringCombat {
             }
         }
         LevelReferences.allTargets.Add(this);
+        LevelReferences.targetsDirty = true;
     }
 
     private void OnDisable() {
 	    LevelReferences.allTargets.Remove(this);
+        LevelReferences.targetsDirty = true;
     }
 
     public float GetHealth() {
@@ -46,11 +53,13 @@ public class PossibleTarget : MonoBehaviour, IActiveDuringCombat {
     }
     
     Vector3 previous;
-    public Vector3 velocity;
-     
-    void Update()
-    {
-        velocity = ((transform.position - previous)) / Time.deltaTime;
-        previous = transform.position;
+    public Vector3 velocity = Vector3.zero;
+
+    void Update() {
+        if (Time.deltaTime > 0) {
+            var newVelocity = ((transform.position - previous)) / Time.deltaTime;
+            velocity = Vector3.Lerp(velocity, newVelocity, 1 * Time.deltaTime);
+            previous = transform.position;
+        }
     }
 }

@@ -16,11 +16,11 @@ public class MiniGUI_DisableTutorial : MonoBehaviour, IInitRequired
     }
 
     public void OnToggleUpdated() {
-        PlayerPrefs.SetInt(exposedName, myToggle.isOn ? 1 : 0);
         SetVal(myToggle.isOn);
     }
 
-    void SetVal(bool val) {
+    public static void SetVal(bool val) {
+        PlayerPrefs.SetInt(exposedName, val ? 1 : 0);
         DataSaver.s.GetCurrentSave().tutorialProgress.firstCityTutorialDone = !val;
     }
 

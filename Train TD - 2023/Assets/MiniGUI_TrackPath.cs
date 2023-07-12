@@ -70,7 +70,7 @@ public class MiniGUI_TrackPath : MonoBehaviour {
             if (segment.isEncounter)
                 icon = LevelReferences.s.encounterIcon;
             
-            unit.GetComponent<MiniGUI_RadarUnit>().SetUp(icon, percentage);
+            unit.GetComponent<MiniGUI_RadarUnit>().SetUp(icon, percentage, segment.eliteEnemy, segment.isEncounter);
             
         /*} else {
             var percentage = 0.5f;

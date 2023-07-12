@@ -16,13 +16,14 @@ public class ModuleAmmo : MonoBehaviour, IActiveDuringCombat, IActiveDuringShopp
     }
     
     public float ammoPerBarrage = 1;
+    public float ammoPerBarrageMultiplier = 1;
 
     public GunModule[] myGunModules;
 
     private bool listenerAdded = false;
 
     float AmmoUseWithMultipliers() {
-        var ammoUse = ammoPerBarrage;
+        var ammoUse = ammoPerBarrage * ammoPerBarrageMultiplier;
 
         /*if (myGunModule.beingDirectControlled)
             ammoUse /= DirectControlMaster.s.directControlAmmoConservationBoost;*/
@@ -30,6 +31,12 @@ public class ModuleAmmo : MonoBehaviour, IActiveDuringCombat, IActiveDuringShopp
         ammoUse /= TweakablesMaster.s.myTweakables.magazineSizeMultiplier;
 
         return ammoUse;
+    }
+
+    public void ResetState() {
+        ammoPerBarrageMultiplier = 1;
+        maxAmmoMultiplier = 1;
+        ChangeMaxAmmo(0);
     }
     
     public void UseAmmo() {
@@ -66,9 +73,26 @@ public class ModuleAmmo : MonoBehaviour, IActiveDuringCombat, IActiveDuringShopp
         OnReload?.Invoke(showEffect);
     }
 
+    public void SetAmmo(int amount) {
+        curAmmo = amount;
+        curAmmo = Mathf.Clamp(curAmmo, 0, maxAmmo);
+        
+        
+        UpdateModuleState();
+        OnReload?.Invoke(false);
+    }
+    
     public void ChangeMaxAmmo(float multiplierChange) {
         maxAmmoMultiplier += multiplierChange;
-        curAmmo = maxAmmo;
+        if (PlayStateMaster.s.isCombatInProgress()) {
+            curAmmo = Mathf.Clamp(curAmmo, 0, maxAmmo);
+        } else {
+            if(PlayerWorldInteractionController.s.autoReloadAtStation)
+                curAmmo = maxAmmo;
+            else
+                curAmmo = Mathf.Clamp(curAmmo, 0, maxAmmo);
+        }
+
         OnUse?.Invoke();
         OnReload?.Invoke(false);
     }
@@ -79,7 +103,7 @@ public class ModuleAmmo : MonoBehaviour, IActiveDuringCombat, IActiveDuringShopp
     [ReadOnly]
     public GameObject myUINoAmmoWarningThing;
     void UpdateModuleState() {
-        var hasAmmo = curAmmo > 0 ;
+        var hasAmmo = curAmmo > AmmoUseWithMultipliers() ;
 
         for (int i = 0; i < myGunModules.Length; i++) {
             myGunModules[i].hasAmmo = hasAmmo;

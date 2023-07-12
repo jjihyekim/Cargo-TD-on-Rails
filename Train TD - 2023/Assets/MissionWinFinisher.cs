@@ -21,6 +21,8 @@ public class MissionWinFinisher : MonoBehaviour {
 	public GameObject[] gameObjectsToDisable;
 
 	public GameObject winUI;
+	public GameObject winInitialUI;
+	public GameObject winCheckoutUI;
 
 	public CameraSwitcher cameraSwitcher;
 	
@@ -35,16 +37,33 @@ public class MissionWinFinisher : MonoBehaviour {
 		gateScript.SetCanGoStatus(false, deliverYourCargoFirstTooltip);
 	}
 
+	public GameObject mysteriousCargoDeliveryArea;
+	public bool needToDeliverMysteriousCargo = false;
+	
 	public GameObject winContinueButton;
 
 	public bool isWon = false;
 	public void MissionWon(bool isShowingPrevRewards = false) {
+		var targetStar = DataSaver.s.GetCurrentSave().currentRun.map.GetStarWithName(DataSaver.s.GetCurrentSave().currentRun.targetStar);
+
+		if (targetStar.isBoss) {
+			needToDeliverMysteriousCargo = true;
+			mysteriousCargoDeliveryArea.SetActive(true);
+		} else {
+			mysteriousCargoDeliveryArea.SetActive(false);
+			needToDeliverMysteriousCargo = false;
+		}
+		
 		SpeedController.s.TravelToMissionEndDistance();
 		isWon = true;
-		PlayStateMaster.s.FinishCombat();
+		PlayStateMaster.s.FinishCombat(!isShowingPrevRewards);
 		EnemyWavesController.s.Cleanup();
 		PlayerWorldInteractionController.s.canSelect = false;
 		//EnemyHealth.winSelfDestruct?.Invoke(false);
+
+		
+		
+		
 
 		for (int i = 0; i < scriptsToDisable.Length; i++) {
 			scriptsToDisable[i].enabled = false;
@@ -69,13 +88,15 @@ public class MissionWinFinisher : MonoBehaviour {
 		
 		// save our resources
 		mySave.currentRun.myResources.scraps = Mathf.FloorToInt(MoneyController.s.scraps);
-		mySave.currentRun.myTrain = Train.s.GetTrainState();
+		Train.s.SaveTrainState(true);
 		mySave.currentRun.isInEndRunArea = true;
 		
 		DataSaver.s.SaveActiveGame();
 		
 		cameraSwitcher.Engage();
 		winUI.SetActive(true);
+		winInitialUI.SetActive(true);
+		winCheckoutUI.SetActive(false);
 
 
 		if (PlayStateMaster.s.currentLevel != null)  { // if level is null that means we are getting unclaimed rewards. hence no need to send data again.
@@ -87,9 +108,6 @@ public class MissionWinFinisher : MonoBehaviour {
 					{ "Level", PlayStateMaster.s.currentLevel.levelName },
 
 					{ "character", DataSaver.s.GetCurrentSave().currentRun.character.uniqueName },
-
-					{ "buildingsBuild", ModuleHealth.buildingsBuild },
-					{ "buildingsDestroyed", ModuleHealth.buildingsDestroyed },
 
 					{ "enemiesLeftAlive", EnemyHealth.enemySpawned - EnemyHealth.enemyKilled },
 					{ "winTime", SpeedController.s.currentTime },
@@ -110,6 +128,28 @@ public class MissionWinFinisher : MonoBehaviour {
 		
 		if(SettingsController.GamepadMode())
 			EventSystem.current.SetSelectedGameObject(winContinueButton);
+	}
+
+	void OnGameWon() {
+		var allArtifacts = ArtifactsController.s.myArtifacts;
+
+		var eligibleBossArtifacts = new List<Artifact>();
+		for (int i = 1; i < allArtifacts.Count; i++) {
+			if (allArtifacts[i].myRarity == UpgradesController.CartRarity.boss) {
+				eligibleBossArtifacts.Add(allArtifacts[i]);
+			}
+		}
+
+		if (eligibleBossArtifacts.Count > 0) {
+			DataSaver.s.GetCurrentSave().xpProgress.bonusArtifact = eligibleBossArtifacts[Random.Range(0, eligibleBossArtifacts.Count)].uniqueName;
+		}
+
+		for (int i = 0; i < eligibleBossArtifacts.Count; i++) {
+			if (!DataSaver.s.GetCurrentSave().xpProgress.unlockedStarterArtifacts.Contains(eligibleBossArtifacts[i].uniqueName)) {
+				DataSaver.s.GetCurrentSave().xpProgress.unlockedStarterArtifacts.Add(eligibleBossArtifacts[i].uniqueName);
+				break;
+			}
+		}
 	}
 
 	void ChangeRangeShowState(bool state) {
@@ -141,17 +181,23 @@ public class MissionWinFinisher : MonoBehaviour {
 		}
 		
 		cameraSwitcher.Disengage();
-		winUI.SetActive(false);
+		winInitialUI.SetActive(false);
+		winCheckoutUI.SetActive(true);
 		
 		for (int i = 0; i < scriptsToDisable.Length; i++) {
 			scriptsToDisable[i].enabled = true;
 		}
 
-		PlayerWorldInteractionController.s.canSelect = true;
 		
 		UpgradesController.s.UpdateCargoHighlights();
 		
 		PlayStateMaster.s.EnterMissionRewardArea();
+
+		Invoke(nameof(SplitSecondLater), 0.05f);
+	}
+
+	void SplitSecondLater() {
+		PlayerWorldInteractionController.s.canSelect = true;
 	}
 
 	public void ContinueToNextCity() {
@@ -160,18 +206,21 @@ public class MissionWinFinisher : MonoBehaviour {
 			
 			if (targetStar.isBoss) {
 				ActFinishController.s.OpenActWinUI();
+				if(DataSaver.s.GetCurrentSave().currentRun.currentAct == 3)
+					OnGameWon();
 			} else {
 				PlayStateMaster.s.LeaveMissionRewardArea();
 			}
 		}
 
 		isWon = false;
+		winUI.SetActive(false);
 	}
 
 	public void CleanupWhenLeavingMissionRewardArea() {
 		DataSaver.s.GetCurrentSave().currentRun.shopInitialized = false;
 		DataSaver.s.GetCurrentSave().currentRun.isInEndRunArea = false;
-		Train.s.SaveTrainState();
+		Train.s.SaveTrainState(true);
 		DataSaver.s.SaveActiveGame();
 	}
 	

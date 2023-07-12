@@ -49,6 +49,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   gunSprite: {fileID: 21300000, guid: bec3762d1db84584099e1e504d2ab9e9, type: 3}
+  isGigaGatling: 0
+  fireDelayReductionPerGatlingAmount: 2
+  gatlingAmount: 0
+  maxGatlingAmount: 0
   rotateTransforms:
   - transform: {fileID: 7765424429026798987}
   barrelEndTransforms:
@@ -59,13 +63,16 @@ MonoBehaviour:
   muzzleFlashPrefab: {fileID: 980176138545819842, guid: 3a4d3fe2abd806c46964330e5993cfa2, type: 3}
   target: {fileID: 0}
   mortarRotation: 0
-  fireDelay: 2
+  fireDelay: 4
   fireBarrageCount: 2
   fireBarrageDelay: 0.2
-  projectileDamage: 7
+  fireRateMultiplier: 1
+  projectileDamage: 25
+  damageMultiplier: 1
+  dontGetAffectByMultipliers: 0
   rotateSpeed: 10
   gunActive: 1
-  CanShoot: 0
+  IsBarrelPointingCorrectly: 0
   hasAmmo: 1
   isPlayer: 0
   rangeOrigin: {fileID: 0}
@@ -86,6 +93,8 @@ MonoBehaviour:
       m_Calls: []
   gunShakeOnShoot: 0
   beingDirectControlled: 0
+  boostDamageOnUpgrade: 0.5
+  waitTimer: 0
 --- !u!114 &7919185260005158776
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -100,11 +109,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   rotationSpan: 360
   range: 5
-  myOverride:
-    isOverride: 0
-    rotations: 
-    rotationSpanOverride: 0
   myPossibleTargets: 01000000
+  canHitFlying: 0
 --- !u!114 &3266030194221328009
 MonoBehaviour:
   m_ObjectHideFlags: 0

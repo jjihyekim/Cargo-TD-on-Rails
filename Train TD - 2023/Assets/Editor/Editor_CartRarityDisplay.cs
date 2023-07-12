@@ -35,15 +35,27 @@ public class Editor_CartRarityDisplay {
         }
         
         
-        // If we're don't have a Cart script, ignore it.
+        GUIContent icon;
         var cart = go.GetComponent<Cart>();
-        if (cart == null) {
+        var artifact = go.GetComponent<Artifact>();
+        UpgradesController.CartRarity myRarity = UpgradesController.CartRarity.common;
+        if (cart != null) {
+            myRarity = cart.myRarity;
+        }else if (artifact != null) {
+            myRarity = artifact.myRarity;
+        } else {
             return;
         }
-
-        GUIContent icon;
-
-        switch (cart.myRarity) {
+        
+        switch (myRarity) {
+            case UpgradesController.CartRarity.special:
+                icon = EditorGUIUtility.IconContent("sv_icon_dot3_pix16_gizmo");
+                    
+                break;
+            case UpgradesController.CartRarity.boss:
+                icon = EditorGUIUtility.IconContent("sv_icon_dot6_pix16_gizmo");
+                    
+                break;
             case UpgradesController.CartRarity.epic:
                 icon = EditorGUIUtility.IconContent("sv_icon_dot5_pix16_gizmo");
                 
@@ -58,6 +70,9 @@ public class Editor_CartRarityDisplay {
                 icon = EditorGUIUtility.IconContent("sv_icon_dot0_pix16_gizmo");
                 break;
         }
+
+
+        
 
         Vector2 selectionPosition = selectionRect.position;
         Vector2 selectionSize = selectionRect.size;

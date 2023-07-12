@@ -1,22 +1,29 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using Sirenix.OdinInspector;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
 public class Cart : MonoBehaviour {
 
+    public int level;
+
     public UpgradesController.CartRarity myRarity;
     
     public bool isMainEngine = false;
-    public bool isCriticalComponent = false;
+    public bool isMysteriousCart = false;
     public bool isCargo = false;
 
+    public bool isBeingDisabled = false;
+    
     public int trainIndex;
 
-    public bool isRepairable => !isMainEngine && !isCargo && !isCriticalComponent;
-    public bool loseGameIfYouLoseThis => isMainEngine || isCriticalComponent;
+    public int cartSize = 1;
+
+    public bool isRepairable => !isMainEngine && !isCargo && !isMysteriousCart;
+    public bool loseGameIfYouLoseThis => isMainEngine || isMysteriousCart;
     //public bool isRepairable => !isCargo;
 
     public UpgradesController.CartLocation myLocation = UpgradesController.CartLocation.train;
@@ -32,8 +39,6 @@ public class Cart : MonoBehaviour {
 
     public AudioClip[] moduleBuiltSound;
 
-    public int weight = 50;
-
     [Space] 
     public bool isDestroyed = false;
 
@@ -46,7 +51,106 @@ public class Cart : MonoBehaviour {
         SetComponentCombatShopMode();
         PlayStateMaster.s.OnCombatEntered.AddListener(SetComponentCombatShopMode);
         PlayStateMaster.s.OnShopEntered.AddListener(SetComponentCombatShopMode);
+        SetUpOverlays();
         SetUpOutlines();
+    }
+
+
+    public Material cartOverlayMaterial;
+
+    public MeshRenderer cartMaterial;
+
+    public Transform genericParticlesParent;
+
+    public void ResetState() {
+        genericParticlesParent.DeleteAllChildren();
+        GetHealthModule().ResetState(level);
+
+        cartMaterial.material = LevelReferences.s.cartLevelMats[level];
+
+        var gunModules = GetComponentsInChildren<GunModule>();
+        for (int i = 0; i < gunModules.Length; i++) {
+            gunModules[i].ResetState(level);
+        }
+
+        var ammoModules = GetComponentsInChildren<ModuleAmmo>();
+        for (int i = 0; i < ammoModules.Length; i++) {
+            ammoModules[i].ResetState();
+        }
+
+        var boosterModules = GetComponentsInChildren<IBooster>();
+        for (int i = 0; i < boosterModules.Length; i++) {
+            boosterModules[i].ResetState(level);
+        }
+    }
+
+    public void SetDisabledState() {
+        var isDisabled = isDestroyed || isBeingDisabled;
+
+        if (isDisabled) {
+            GetComponent<PossibleTarget>().enabled = false;
+
+            var engineModule = GetComponentInChildren<EngineModule>();
+            if (engineModule) {
+                engineModule.enabled = false;
+                GetComponentInChildren<EngineFireController>().StopEngineFire();
+            }
+
+            var gunModules = GetComponentsInChildren<GunModule>();
+            for (int i = 0; i < gunModules.Length; i++) {
+                gunModules[i].DeactivateGun();
+            
+                if (gunModules[i].beingDirectControlled) {
+                    DirectControlMaster.s.DisableDirectControl();
+                } 
+            
+                if(GetComponentInChildren<TargetPicker>()){
+                    GetComponentInChildren<TargetPicker>().enabled = false;
+                }
+            }
+        
+            var attachedToTrain = GetComponentsInChildren<ActivateWhenAttachedToTrain>();
+
+            for (int i = 0; i < attachedToTrain.Length; i++) {
+                attachedToTrain[i].DetachedFromTrain();
+            }
+        
+            var duringCombat = GetComponentsInChildren<IActiveDuringCombat>();
+        
+            for (int i = 0; i < duringCombat.Length; i++) { duringCombat[i].Disable(); }
+        } else {
+            GetComponent<PossibleTarget>().enabled = true;
+        
+            var engineModule = GetComponentInChildren<EngineModule>();
+            if (engineModule) {
+                engineModule.enabled = true;
+                GetComponentInChildren<EngineFireController>().ActivateEngineFire();
+            }
+
+            var gunModules = GetComponentsInChildren<GunModule>();
+            for (int i = 0; i < gunModules.Length; i++) {
+                gunModules[i].ActivateGun();
+            
+                if(GetComponentInChildren<TargetPicker>()){
+                    GetComponentInChildren<TargetPicker>().enabled = true;
+                }
+            }
+        
+            var attachedToTrain = GetComponentsInChildren<ActivateWhenAttachedToTrain>();
+
+            for (int i = 0; i < attachedToTrain.Length; i++) {
+                attachedToTrain[i].AttachedToTrain();
+            }
+        
+            var duringCombat = GetComponentsInChildren<IActiveDuringCombat>();
+
+            if (PlayStateMaster.s.isCombatStarted()) {
+                for (int i = 0; i < duringCombat.Length; i++) {
+                    duringCombat[i].ActivateForCombat();
+                }
+            }
+        }
+
     }
 
     private void Update() {
@@ -85,6 +189,11 @@ public class Cart : MonoBehaviour {
 
     
     private void OnDestroy() {
+        // Destroy material instances
+        if (_meshes != null && _meshes.Length > 0) {
+            Destroy(cartOverlayMaterial);
+        }
+
         if(GetComponentInParent<Train>() != null)
             Train.s.CartDestroyed(this);
         
@@ -97,24 +206,45 @@ public class Cart : MonoBehaviour {
 
 
     [ReadOnly]
-    public List<Outline> _outlines = new List<Outline>();
+    public Outline[] _outlines;
+    [ReadOnly]
+    public MeshRenderer[] _meshes;
+
+    private static readonly int BoostAmount = Shader.PropertyToID("_Boost_Amount");
 
     void SetUpOutlines() {
-        if (_outlines.Count == 0) {
-
-            var outlines = GetComponentsInChildren<Outline>(true);
-            for (int i = 0; i < outlines.Length; i++) {
-                if(outlines[i] != null)
-                    _outlines.Add(outlines[i]);
-            }
+        if (_outlines == null || _outlines.Length ==0) {
+            _outlines = GetComponentsInChildren<Outline>(true);
         }
     }
 
-    public void SetHighlightState(bool isHighlighted) {
-        if (_outlines.Count == 0) {
-            SetUpOutlines();
+    public void SetUpOverlays() {
+        if (_meshes == null || _meshes.Length == 0) {
+            cartOverlayMaterial = Instantiate(cartOverlayMaterial);
+            
+            _meshes = GetComponentsInChildren<MeshRenderer>(true);
+
+            for (int i = 0; i < _meshes.Length; i++) {
+                var materials = _meshes[i].sharedMaterials.ToList();
+                materials.Add(cartOverlayMaterial);
+                _meshes[i].materials = materials.ToArray();
+            }
+
+            GetHealthModule().myCart = this;
         }
-        
+    }
+    
+    public void SetBuildingBoostState (float value) {
+        var _renderers = _meshes;
+        for (int j = 0; j < _renderers.Length; j++) {
+            var rend = _renderers[j];
+            if (rend != null) {
+                rend.sharedMaterials[1].SetFloat(BoostAmount, value);
+            }
+        }
+    }
+    
+    public void SetHighlightState(bool isHighlighted) {
         foreach (var outline in _outlines) {
             if (outline != null) {
                 outline.enabled = isHighlighted;

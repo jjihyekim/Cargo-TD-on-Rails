@@ -21,19 +21,17 @@ public class SteamEngineTrainBoost : ActivateWhenAttachedToTrain, IExtraInfo
         var guns = target.GetComponentsInChildren<GunModule>();
         if (doApply) {
             for (int j = 0; j < guns.Length; j++) {
-                guns[j].projectileDamage *= 1.2f;
+                guns[j].damageMultiplier += 0.25f;
             }
         } else {
             for (int j = 0; j < guns.Length; j++) {
-                guns[j].projectileDamage /= 1.2f;
+                guns[j].damageMultiplier -= 0.25f;
             }
         }
     }
 
     protected override void _DetachedFromTrain() {
-        for (int i = 0; i < Train.s.carts.Count; i++) {
-            ApplyBoost(Train.s.carts[i], false);
-        }
+        //do nothing
     }
     
     public string GetInfoText() {

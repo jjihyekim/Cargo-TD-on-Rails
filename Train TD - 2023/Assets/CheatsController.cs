@@ -14,12 +14,15 @@ public class CheatsController : MonoBehaviour
     public PowerUpScriptable debugPowerUp;
     public CharacterDataScriptable autoRestartCharacter;
 
+
+
     
     // whenever you add a new cheat make sure to add it to the auto disable are below!
     public bool infiniteLevel = false;
     public bool debugNoRegularSpawns = false;
     public bool instantEnterPlayMode = false;
     public bool playerIsImmune;
+    public bool playerDealMaxDamage;
     public bool restartOnStart = false;
     public bool autoRestartWithSelectedCharacter = false;
     public bool dontDrawMap = false;
@@ -37,6 +40,7 @@ public class CheatsController : MonoBehaviour
             autoRestartWithSelectedCharacter = false;
             dontDrawMap = false;
             everyPathIsEncounter = false;
+            playerDealMaxDamage = false;
         }
     }
 
@@ -58,7 +62,7 @@ public class CheatsController : MonoBehaviour
             if (dontDrawMap)
                 WorldMapCreator.s.QuickStartNoWorldMap();
 
-            if (autoRestartCharacter && autoRestartWithSelectedCharacter) {
+            if (autoRestartCharacter || autoRestartWithSelectedCharacter || instantEnterPlayMode) {
                 PlayerPrefs.SetInt(MiniGUI_DisableTutorial.exposedName, 0);
             }
 
@@ -66,6 +70,11 @@ public class CheatsController : MonoBehaviour
                 Invoke(nameof(QuickRestartWithCheaterCharacter), 0.01f);
             } else if (instantEnterPlayMode) {
                 Invoke(nameof(QuickStart), 0.01f);
+            }
+
+            if (playerDealMaxDamage) {
+                TweakablesMaster.s.myTweakables.playerDamageMultiplier = 10000;
+                TweakablesMaster.s.ApplyTweakableChange();
             }
         }
     }
@@ -167,4 +176,5 @@ public class CheatsController : MonoBehaviour
         } 
 
     }
+
 }
