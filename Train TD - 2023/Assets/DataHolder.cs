@@ -108,6 +108,9 @@ public class DataHolder : MonoBehaviour {
         }
 
         Debug.LogError($"Can't find building <{buildingName}>");
+        for (int i = 0; i < buildings.Length; i++) {
+			Debug.LogError(PreProcess(buildings[i].uniqueName));
+		}
         PlayStateMaster.s.OpenMainMenu(); // bail
         
         return null;
