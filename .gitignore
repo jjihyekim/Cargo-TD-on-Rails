@@ -73,3 +73,10 @@ Desktop.ini
 # Log files can be ignored.
 fmod_editor.log
 
+[merge]
+tool = unityyamlmerge
+
+[mergetool "unityyamlmerge"]
+trustExitCode = false
+cmd = 'D:\Program Files\UnityEditors\2022.3.4f1\Editor\Data\Tools\UnityYAMLMerge.exe' merge -p "$BASE" "$REMOTE" "$LOCAL" "$MERGED"
+
