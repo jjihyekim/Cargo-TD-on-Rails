@@ -103,7 +103,7 @@ public class ModuleAmmo : MonoBehaviour, IActiveDuringCombat, IActiveDuringShopp
     [ReadOnly]
     public GameObject myUINoAmmoWarningThing;
     void UpdateModuleState() {
-        var hasAmmo = curAmmo > AmmoUseWithMultipliers() ;
+        var hasAmmo = curAmmo >= AmmoUseWithMultipliers() ;
 
         for (int i = 0; i < myGunModules.Length; i++) {
             myGunModules[i].hasAmmo = hasAmmo;

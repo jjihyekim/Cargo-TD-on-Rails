@@ -46,7 +46,7 @@ public class PlayerWorldInteractionController : MonoBehaviour {
             return _canSelect;
         }
         set {
-            _canSelect = value;
+            SetCannotSelect(value);
         }
 }
 
@@ -109,16 +109,10 @@ public class PlayerWorldInteractionController : MonoBehaviour {
     public Color engineBoostColor = Color.red;
 
     private void Update() {
-        if (!canSelect || Pauser.s.isPaused || PlayStateMaster.s.isLoading) {
-            Deselect();
+        if (!canSelect || Pauser.s.isPaused || PlayStateMaster.s.isLoading || DirectControlMaster.s.directControlInProgress) {
             return;
         }
 
-        if (DirectControlMaster.s.directControlInProgress) {
-            Deselect();
-            return;
-        }
-        
         if (infoCardActive) {
             if (showDetailClick.action.WasPerformedThisFrame() || clickCart.action.WasPerformedThisFrame()) {
                 HideInfo();
@@ -139,7 +133,13 @@ public class PlayerWorldInteractionController : MonoBehaviour {
             CheckAndDoDrag();
             CheckGate();
         }
-        
+    }
+
+    public void SetCannotSelect(bool __canSelect) {
+        _canSelect = __canSelect;
+        if (!_canSelect) {
+            Deselect();
+        }
     }
 
     public void OnEnterCombat() {
@@ -722,7 +722,10 @@ public class PlayerWorldInteractionController : MonoBehaviour {
         HideInfo();
     }
 
-    void SelectEnemy(EnemyHealth enemy, bool isSelecting) {
+    public void SelectEnemy(EnemyHealth enemy, bool isSelecting, bool showShowDetails = true) {
+        if(isSelecting && enemy == selectedEnemy)
+            return;
+        //Debug.Log("selecting enemy");
         Deselect();
 
         Outline outline = null;
@@ -730,7 +733,8 @@ public class PlayerWorldInteractionController : MonoBehaviour {
             outline = enemy.GetComponentInChildren<Outline>();
         
         if (isSelecting) {
-            GamepadControlsHelper.s.AddPossibleActions(GamepadControlsHelper.PossibleActions.showDetails);
+            if(showShowDetails)
+                GamepadControlsHelper.s.AddPossibleActions(GamepadControlsHelper.PossibleActions.showDetails);
             selectedEnemy = enemy;
         } else {
             GamepadControlsHelper.s.RemovePossibleAction(GamepadControlsHelper.PossibleActions.showDetails);

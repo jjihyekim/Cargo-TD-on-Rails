@@ -13,6 +13,14 @@ public class GunModule : MonoBehaviour, IComponentWithTarget, IActiveDuringComba
     public class TransformWithActivation {
         public Transform transform;
     }
+    
+    [System.Serializable]
+    public class SingleAxisRotation {
+        public Transform anchor;
+        public Transform xAxis;
+        public Transform yAxis;
+        public Transform centerBarrelEnd;
+    }
 
 
     public bool isGigaGatling = false;
@@ -22,6 +30,7 @@ public class GunModule : MonoBehaviour, IComponentWithTarget, IActiveDuringComba
     public int maxGatlingAmount;
     
     public TransformWithActivation[] rotateTransforms;
+    public SingleAxisRotation rotateTransform;
     public TransformWithActivation[] barrelEndTransforms;
     public float projectileSpawnOffset = 0.2f;
     
@@ -92,7 +101,6 @@ public class GunModule : MonoBehaviour, IComponentWithTarget, IActiveDuringComba
 
     public bool gunShakeOnShoot = true;
     private float gunShakeMagnitude = 0.04f;
-    private Vector3 gunShakeRotation = new Vector3(-2,0,0);
 
     public bool beingDirectControlled = false;
 
@@ -108,14 +116,16 @@ public class GunModule : MonoBehaviour, IComponentWithTarget, IActiveDuringComba
         if (gunActive) {
             if (target != null) {
                 // Look at target
-                if (rotateTransforms.Length == 0) {
+                if (rotateTransform.anchor == null) {
                     IsBarrelPointingCorrectly = true;
                 } else {
                     LookAtLocation(target.position);
                 }
             } else {
                 // look at center of targeting area
-                LookAtLocation(GetRangeOrigin().position + GetRangeOrigin().forward * 5);
+                if (rotateTransform.anchor != null) {
+                    SetRotation(Quaternion.LookRotation(GetRangeOrigin().forward, Vector3.up));
+                }
 
                 IsBarrelPointingCorrectly = false;
             }
@@ -129,33 +139,60 @@ public class GunModule : MonoBehaviour, IComponentWithTarget, IActiveDuringComba
         }
     }
 
+    private Quaternion realRotation;
     public void LookAtLocation(Vector3 location) {
-        //if (!stopUpdateRotation) {
-            for (int i = 0; i < rotateTransforms.Length; i++) {
-                var rotateTransform = rotateTransforms[i].transform;
-                var lookAxis = location - rotateTransform.position;
-                if (mortarRotation)
-                    lookAxis.y = 0;
-                var lookRotation = Quaternion.LookRotation(lookAxis, Vector3.up);
-                //print(lookRotation);
-                rotateTransform.rotation = Quaternion.Lerp(rotateTransform.rotation, lookRotation, rotateSpeed * Time.deltaTime);
-                if (Quaternion.Angle(rotateTransform.rotation, lookRotation) < 5) {
-                    IsBarrelPointingCorrectly = true;
-                }else {
-                    IsBarrelPointingCorrectly = false;
-                }
-            }
-        //}
+        if (rotateTransform.anchor != null) {
+            var lookAxis = location - rotateTransform.centerBarrelEnd.position;
+            if (mortarRotation)
+                lookAxis.y = 0;
+            var lookRotation = Quaternion.LookRotation(lookAxis, Vector3.up);
+
+            Debug.DrawLine(rotateTransform.centerBarrelEnd.position, rotateTransform.centerBarrelEnd.position + lookAxis * 3);
+
+            SetRotation(lookRotation);
+        }
+    }
+
+
+    public void SetRotation(Quaternion rotation) {
+        realRotation = Quaternion.Lerp(realRotation, rotation, rotateSpeed * Time.deltaTime);
+        
+        if (Quaternion.Angle(realRotation, rotation) < 5) {
+            IsBarrelPointingCorrectly = true;
+        }else {
+            IsBarrelPointingCorrectly = false;
+        }
+
+        rotateTransform.yAxis.rotation = Quaternion.Euler(0, realRotation.eulerAngles.y, 0);
+        rotateTransform.xAxis.rotation = Quaternion.Euler(realRotation.eulerAngles.x, realRotation.eulerAngles.y, 0);
+        rotateTransform.centerBarrelEnd.rotation = realRotation;
     }
 
 
     private void Start() {
-        for (int i = 0; i < rotateTransforms.Length; i++) {
+        /*for (int i = 0; i < rotateTransforms.Length; i++) {
             var curRotate = rotateTransforms[i].transform;
             var anchor = new GameObject("Turret Rotate Anchor");
             anchor.transform.SetParent(curRotate.parent);
             anchor.transform.position = curRotate.position;
             curRotate.SetParent(anchor.transform);
+
+
+        }*/
+
+        if ((rotateTransform == null || rotateTransform.anchor == null) && rotateTransforms != null) {
+            rotateTransform.anchor = rotateTransforms[0].transform;
+            rotateTransform.xAxis = rotateTransforms[0].transform;
+            rotateTransform.yAxis = rotateTransforms[0].transform;
+            rotateTransform.centerBarrelEnd = barrelEndTransforms[0].transform;
+        }
+
+        if (rotateTransform.anchor != null) {
+            var preAnchor = rotateTransform.anchor;
+            var realAnchor = new GameObject("Turret RotateAnchor");
+            realAnchor.transform.SetParent(preAnchor.parent);
+            realAnchor.transform.position = preAnchor.position;
+            preAnchor.SetParent(realAnchor.transform);
         }
     }
 
@@ -285,20 +322,13 @@ public class GunModule : MonoBehaviour, IComponentWithTarget, IActiveDuringComba
             realMagnitude *= CameraShakeController.s.overallShakeAmount;
         }
         
-        //stopUpdateRotation = true;
-        for (int i = 0; i < rotateTransforms.Length; i++) {
-            var rotateTransform = rotateTransforms[i].transform;
-            defaultPositions.Add(rotateTransform.localPosition);
-            rotateTransform.localPosition = Random.insideUnitSphere * realMagnitude * range + (-rotateTransform.forward * realMagnitude * range * 2);
-            rotateTransform.Rotate(gunShakeRotation);
-        }
+        
+        rotateTransform.anchor.localPosition =Random.insideUnitSphere * realMagnitude * range + (-rotateTransform.centerBarrelEnd.forward * realMagnitude * range * 2);
+        rotateTransform.xAxis.Rotate(-2,0,0);
 
         yield return null;
-        //stopUpdateRotation = false;
-        for (int i = 0; i < rotateTransforms.Length; i++) {
-            var rotateTransform = rotateTransforms[i].transform;
-            rotateTransform.localPosition= defaultPositions[i];
-        }
+
+        rotateTransform.anchor.localPosition = Vector3.zero;
     }
 
     [Button]
@@ -393,7 +423,9 @@ public class GunModule : MonoBehaviour, IComponentWithTarget, IActiveDuringComba
     public Transform GetRangeOrigin() {
         if (rangeOrigin != null) {
             return rangeOrigin;
-        } else {
+        } else if (rotateTransform.anchor != null) {
+            return rotateTransform.anchor;
+        } else{
             return transform;
         }
     }

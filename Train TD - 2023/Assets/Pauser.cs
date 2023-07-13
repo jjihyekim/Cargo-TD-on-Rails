@@ -83,6 +83,8 @@ public class Pauser : MonoBehaviour {
         TimeController.s.Pause();
         isPaused = true;
         
+        Debug.Break();
+        
         
         if (CameraController.s.directControlActive) {
             Cursor.lockState = CursorLockMode.None;

@@ -228,8 +228,16 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   gunSprite: {fileID: 0}
+  isGigaGatling: 0
+  fireDelayReductionPerGatlingAmount: 2
+  gatlingAmount: 0
+  maxGatlingAmount: 0
   rotateTransforms:
   - transform: {fileID: 2686971587843929317}
+  rotateTransform:
+    anchor: {fileID: 0}
+    xAxis: {fileID: 0}
+    yAxis: {fileID: 0}
   barrelEndTransforms:
   - transform: {fileID: 8139450319550624077}
   projectileSpawnOffset: 0.2
@@ -244,6 +252,7 @@ MonoBehaviour:
   projectileDamage: 20
   damageMultiplier: 1
   dontGetAffectByMultipliers: 0
+  isHeal: 0
   rotateSpeed: 10
   gunActive: 1
   IsBarrelPointingCorrectly: 0
@@ -267,6 +276,8 @@ MonoBehaviour:
       m_Calls: []
   gunShakeOnShoot: 1
   beingDirectControlled: 0
+  boostDamageOnUpgrade: 0.5
+  waitTimer: 0
 --- !u!114 &9072939496877726287
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -282,6 +293,7 @@ MonoBehaviour:
   rotationSpan: 90
   range: 6
   myPossibleTargets: 00000000
+  canHitFlying: 0
 --- !u!54 &6814819914858957422
 Rigidbody:
   m_ObjectHideFlags: 0

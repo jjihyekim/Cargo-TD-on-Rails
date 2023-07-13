@@ -208,6 +208,12 @@ public class DirectControlMaster : MonoBehaviour {
 								reticleFlashed = true;
 							}
 						}
+
+						var enemy = possibleTarget.GetComponentInParent<EnemyHealth>();
+						if (enemy != null) {
+							PlayerWorldInteractionController.s.SelectEnemy(enemy, true, false);
+						}
+
 					} else {
 						curRocketLockInTime = 0;
 						myGun.UnsetTarget();
@@ -222,6 +228,8 @@ public class DirectControlMaster : MonoBehaviour {
 							rocketCrosshairMain.color = Color.white;
 
 						reticleFlashed = false;
+						
+						PlayerWorldInteractionController.s.Deselect();
 					}
 				} else {
 					curRocketLockInTime = 0;
@@ -237,6 +245,8 @@ public class DirectControlMaster : MonoBehaviour {
 						rocketCrosshairMain.color = Color.white;
 					
 					reticleFlashed = false;
+					
+					PlayerWorldInteractionController.s.Deselect();
 				}
 			}
 
