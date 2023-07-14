@@ -3,15 +3,30 @@ using System.Collections.Generic;
 using UnityEngine;
 using FMODUnity;
 using FMOD.Studio;
+using Sirenix.OdinInspector;
+using UnityEngine.Audio;
 
 public class AudioManager : MonoBehaviour
 {
     // singleton class
     public static AudioManager instance { get; private set; }
 
-    [Header("Music Mixer")]
+    #region Unity Mixer
+    [FoldoutGroup("Unity Mixer")]
+    public AudioMixer unityMixer;
+
+    private void UpdateUnityMixer()
+    {
+        unityMixer.GetFloat("EnemyEngineVol", out float enemyEngineVol);
+        unityMixer.SetFloat("EnemyEngineVol", Mathf.Lerp(enemyEngineVol, TimeController.s.isPaused ? -80 : 0, Time.unscaledDeltaTime * 20f));
+    }
+    #endregion
+
+    [FoldoutGroup("FMOD Mixer")]
     public Bus musicBus;
-    [Range(-80f, 10f)] public float musicBusVolume;
+
+    [FoldoutGroup("FMOD Mixer")]
+    [PropertyRange(-80f, 10f)] public float musicBusVolume;
 
     private void Awake()
     {
@@ -41,6 +56,8 @@ public class AudioManager : MonoBehaviour
     private void Update()
     {
         UpdateBus();
+
+        UpdateUnityMixer();
     }
 
     private void UpdateBus()
