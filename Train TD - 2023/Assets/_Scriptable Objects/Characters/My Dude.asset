@@ -13,28 +13,47 @@ MonoBehaviour:
   m_Name: My Dude
   m_EditorClassIdentifier: 
   myCharacter:
-    uniqueName: My Dude
-    description: Just your average dude. Starts with a basic gun and a great potential.
+    uniqueName: Jason Thatcher
+    description: After spending his entire life training to be a Nuclear Train pilot,
+      his dreams shattered when a anti-nuclear activist infltrated and destroyed
+      the research facility. As the sole survivor he took the train and decided to
+      seek answers within <color=#AE2FBA>The Meteor</color>
     starterTrain:
       myCarts:
       - uniqueName: engine_nuclear
+        health: -1
+        ammo: -1
+        level: 0
         cargoState:
           cargoReward: 
+          cargoLevel: 0
           artifactReward: 
           isLeftCargo: 0
       - uniqueName: cargo_mystery_0
+        health: -1
+        ammo: -1
+        level: 0
         cargoState:
           cargoReward: 
+          cargoLevel: 0
           artifactReward: 
           isLeftCargo: 0
       - uniqueName: top_avr
+        health: -1
+        ammo: -1
+        level: 0
         cargoState:
           cargoReward: 
+          cargoLevel: 0
           artifactReward: 
           isLeftCargo: 0
       - uniqueName: empty
+        health: -1
+        ammo: -1
+        level: 0
         cargoState:
           cargoReward: 
+          cargoLevel: 0
           artifactReward: 
           isLeftCargo: 0
     starterResources:

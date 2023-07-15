@@ -48,7 +48,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   enemyPrefab: {fileID: 2942942888468131762, guid: e08ee4f593ab5354dbf0dac3babca12d, type: 3}
   enemyIcon: {fileID: 21300000, guid: ca54af69101e9e64a9e6ae122e60a997, type: 3}
-  speed: 5
+  speed: 4.5
   spreadAndCounts:
   - count: 3
     spread: 0.5
@@ -66,6 +66,9 @@ MonoBehaviour:
   isTeleporting: 0
   teleportTiming: {x: 10, y: 30}
   isStealing: 0
+  neverLeave: 0
+  isNuker: 0
+  nukingTime: 20
   currentXSpread: 0
   xSpreadAdd: 0
 --- !u!114 &7435827003666740786

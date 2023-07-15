@@ -17,5 +17,7 @@ public class EncounterTitle : MonoBehaviour {
     [NonSerialized]
     public float autoRidePastTimer = 10f;
 
+    public float ambushChance = 0.3f;
+
     //public LevelSegmentScriptable ridePastAmbush;
 }

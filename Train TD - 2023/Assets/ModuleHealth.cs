@@ -472,7 +472,7 @@ public class ModuleHealth : MonoBehaviour, IHealth, IActiveDuringCombat, IActive
         var _renderers = myCart._meshes;
         for (int j = 0; j < _renderers.Length; j++) {
             var rend = _renderers[j];
-            if (rend != null) {
+            if (rend != null && rend.sharedMaterials.Length > 1) {
                 rend.sharedMaterials[1].SetFloat(Health, hpPercent);
             }
         }
@@ -484,7 +484,7 @@ public class ModuleHealth : MonoBehaviour, IHealth, IActiveDuringCombat, IActive
         value = Mathf.Clamp(value, 0, 2f);
         for (int j = 0; j < _renderers.Length; j++) {
             var rend = _renderers[j];
-            if (rend != null) {
+            if (rend != null && rend.sharedMaterials.Length > 1) {
                 rend.sharedMaterials[1].SetFloat(Burn, value);
             }
         }
@@ -495,7 +495,7 @@ public class ModuleHealth : MonoBehaviour, IHealth, IActiveDuringCombat, IActive
         var value = isAlive ? 1f : 0.172f;
         for (int j = 0; j < _renderers.Length; j++) {
             var rend = _renderers[j];
-            if (rend != null) {
+            if (rend != null && rend.sharedMaterials.Length > 1) {
                 rend.sharedMaterials[1].SetFloat(Alive, value);
             }
         }

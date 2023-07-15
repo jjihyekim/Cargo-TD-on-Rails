@@ -6,6 +6,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
+using Random = UnityEngine.Random;
 
 public class EncounterController : MonoBehaviour {
     public static EncounterController s;
@@ -103,6 +104,9 @@ public class EncounterController : MonoBehaviour {
         currentNode = currentEncounter.initialNode;
 
         EnemyWavesController.s.encounterMode = true;
+
+        doAmbush = false;
+        encounterSkipped = false;
         
         SpeedController.s.DisableLowPower();
         Invoke(nameof(ReallyEngageEncounter), 3f);
@@ -125,7 +129,23 @@ public class EncounterController : MonoBehaviour {
         }
     }
 
-    public void RidePast() {
+    public void RidePastBeforeEncounter() {
+        if (currentEncounter != null) {
+            // do stuff like secret ambush
+            if (Random.value < currentEncounter.ambushChance) {
+                doAmbush = true;
+            } else {
+                encounterSkipped = true;
+            }
+            
+            encounterStopByUI.gameObject.SetActive(false);
+            encounterTextUI.SetActive(false);
+
+            StartCoroutine(RidePastAnimation());
+        }
+    }
+    
+    public void RidePastAfterEncounterOver() {
         if (currentEncounter != null) {
             // do stuff like secret ambush
             
@@ -138,6 +158,9 @@ public class EncounterController : MonoBehaviour {
 
     public LevelSegmentScriptable ridePastAmbush;
 
+    public bool doAmbush = false;
+    public bool encounterSkipped = false;
+
     IEnumerator RidePastAnimation() {
         fadeUI.SetActive(true);
         var ridePastFade = 1f;
@@ -146,12 +169,18 @@ public class EncounterController : MonoBehaviour {
         yield return new WaitForSeconds(ridePastFade );
         
         yield return new WaitForSeconds(0.5f);
-        EnemyWavesController.s.SpawnAmbush(ridePastAmbush.GetData());
+        if (doAmbush) {
+            EnemyWavesController.s.SpawnAmbush(ridePastAmbush.GetData());
+        }
+
         yield return new WaitForSeconds(0.5f);
         
         StartCoroutine(FadeOverlay(1, 0, ridePastFade));
-        enemyAmbush.SetActive(true);
-        //youRodePast.SetActive(true);
+        if (doAmbush) {
+            enemyAmbush.SetActive(true);
+        }else if (encounterSkipped) {
+            youRodePast.SetActive(true);
+        }
         Invoke(nameof(EncounterComplete), 2f);
     }
 

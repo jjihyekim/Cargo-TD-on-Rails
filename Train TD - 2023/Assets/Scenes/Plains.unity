@@ -16388,7 +16388,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: '-90% max speed
+  m_text: '-75% max speed
 
     Delicate Machinery: Must exactly match cart count'
   m_isRightToLeft: 0
@@ -16514,7 +16514,7 @@ MonoBehaviour:
   myTweakables:
     scrapEnemyRewardMultiplier: 1
     enemyDamageMutliplier: 1
-    playerDamageMultiplier: 1
+    playerDamageMultiplier: 0.9
     enemyFirerateBoost: 1
     playerFirerateBoost: 1
     magazineSizeMultiplier: 1
@@ -22947,7 +22947,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 0}
   m_AnchorMax: {x: 1, y: 0}
-  m_AnchoredPosition: {x: -169.88004, y: -28.160032}
+  m_AnchoredPosition: {x: -169.88004, y: 116.4}
   m_SizeDelta: {x: 573.1, y: 36.48}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &382472237
@@ -23287,6 +23287,8 @@ MonoBehaviour:
   youRodePast: {fileID: 975231266}
   enemyAmbush: {fileID: 952091548}
   ridePastAmbush: {fileID: 11400000, guid: 774c0f13379a50340bb7232b9cda29d1, type: 2}
+  doAmbush: 0
+  encounterSkipped: 0
   fadeUI: {fileID: 481766313}
   fadeOverlay: {fileID: 111918419}
   fadeDurations: 0.25
@@ -31700,7 +31702,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &636455595
 RectTransform:
   m_ObjectHideFlags: 0
@@ -48986,6 +48988,7 @@ MonoBehaviour:
   precomputeOutline: 0
   bakeKeys: []
   bakeValues: []
+  isInitialized: 0
 --- !u!114 &853601519
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -68817,7 +68820,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &1139671678
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -77482,7 +77485,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: d1bcb2374d03a044588c958fbb9a55a2, type: 3}
+  m_Sprite: {fileID: 21300000, guid: eaf84f12ae7e6d948968bb37dce205e3, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -112293,7 +112296,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: '-90% max speed
+  m_text: '-75% max speed
 
     Delicate Machinery: Must exactly match cart count'
   m_isRightToLeft: 0
@@ -135621,6 +135624,7 @@ MonoBehaviour:
   precomputeOutline: 0
   bakeKeys: []
   bakeValues: []
+  isInitialized: 0
 --- !u!1 &7442015029307069443
 GameObject:
   m_ObjectHideFlags: 0

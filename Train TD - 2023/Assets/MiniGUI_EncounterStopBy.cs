@@ -43,7 +43,7 @@ public class MiniGUI_EncounterStopBy : MonoBehaviour {
     public void RidePast() {
         if (!optionChoosen) {
             ChooseOption();
-            StartCoroutine(FlashButton(ridePastButton, () => EncounterController.s.RidePast()));
+            StartCoroutine(FlashButton(ridePastButton, () => EncounterController.s.RidePastBeforeEncounter()));
         }
     }
 

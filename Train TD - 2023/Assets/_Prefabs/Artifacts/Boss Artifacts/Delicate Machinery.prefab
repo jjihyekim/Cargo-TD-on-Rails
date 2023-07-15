@@ -41,7 +41,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6382012039353133210, guid: e5ad635d235b48243b40e94abcf52f46, type: 3}
       propertyPath: myTooltip.text
-      value: Carry 1 more cart.  -90% speed if has more than or less than max carts.
+      value: Carry 1 more cart.  -75% speed if has more than or less than max carts.
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: e5ad635d235b48243b40e94abcf52f46, type: 3}
@@ -66,3 +66,4 @@ MonoBehaviour:
   capacityBoost: 1
   speedMultiplier: 0
   speedAmount: 0
+  delicateMachinery: 1
