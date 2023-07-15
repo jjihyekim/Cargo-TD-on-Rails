@@ -69,6 +69,8 @@ public class MenuToggle : MonoBehaviour {
         } else {
             ShowMenu();
         }
+
+        AudioManager.PlayOneShot(SfxTypes.ButtonClick1);
     }
 
     private GameObject previouslySelected;

@@ -235,6 +235,9 @@ public class PlayerWorldInteractionController : MonoBehaviour {
                     } else {
                         UpgradesController.s.UpdateCargoHighlights();
                     }
+
+                    // SFX
+                    AudioManager.PlayOneShot(SfxTypes.OnCargoPickUp);
                 }
             }
 
@@ -278,6 +281,9 @@ public class PlayerWorldInteractionController : MonoBehaviour {
                         UpgradesController.s.SaveCartStateWithDelay();
                         Train.s.SaveTrainState();
                     }
+
+                    // SFX
+                    AudioManager.PlayOneShot(SfxTypes.OnCargoDrop);
                 }
             }
         }
@@ -627,7 +633,10 @@ public class PlayerWorldInteractionController : MonoBehaviour {
             if (cart != selectedCart || lastSelectMode != currentSelectMode) {
                 SelectBuilding(cart, true);
 
-            } else {
+                // SFX
+                AudioManager.PlayOneShot(SfxTypes.OnCargoHover);
+            }
+            else {
                 if (PlayStateMaster.s.isShopOrEndGame() && showDetailClick.action.WasPerformedThisFrame() /*|| (holdOverTimer > infoShowTime && !SettingsController.GamepadMode())*/) {
                     ShowSelectedThingInfo();
                 }

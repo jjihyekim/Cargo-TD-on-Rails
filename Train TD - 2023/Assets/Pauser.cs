@@ -79,11 +79,13 @@ public class Pauser : MonoBehaviour {
 
 
     public void Pause() {
+        AudioManager.PlayOneShot(SfxTypes.ButtonClick1);
+
         pauseMenu.SetActive(true);
         TimeController.s.Pause();
         isPaused = true;
         
-        Debug.Break();
+       // Debug.Break();
         
         
         if (CameraController.s.directControlActive) {
@@ -96,6 +98,7 @@ public class Pauser : MonoBehaviour {
     }
 
     public void Unpause() {
+        AudioManager.PlayOneShot(SfxTypes.ButtonClick2);
         pauseMenu.SetActive(false);
         TimeController.s.UnPause();
         isPaused = false;
