@@ -83,7 +83,7 @@ public class Pauser : MonoBehaviour {
         TimeController.s.Pause();
         isPaused = true;
         
-        Debug.Break();
+        //Debug.Break();
         
         
         if (CameraController.s.directControlActive) {
