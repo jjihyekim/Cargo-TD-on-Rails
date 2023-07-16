@@ -83,7 +83,14 @@ public class SettingsController : MonoBehaviour {
     public static bool ShowButtonPrompts() {
         return MiniGUI_ShowButtonHints.ShowButtonHints();
     }
-    
+
+    public void StartAutoRunFast() {
+        AutoPlaytester.s.StartAutoPlayer(true);
+    }
+
+    public void StartAutoRun() {
+        AutoPlaytester.s.StartAutoPlayer(false);
+    }
 }
 
 public interface IInitRequired {

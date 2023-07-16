@@ -370,7 +370,8 @@ public class ModuleHealth : MonoBehaviour, IHealth, IActiveDuringCombat, IActive
         }
 
         if (curShieldDelay <= 0) {
-            isShieldActive = true;
+            if(maxShields > 0)
+                isShieldActive = true;
             currentShields += shieldRegenRate * Time.deltaTime;
         } else {
             curShieldDelay -= Time.deltaTime;

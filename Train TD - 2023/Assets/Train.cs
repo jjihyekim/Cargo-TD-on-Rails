@@ -182,6 +182,10 @@ public class Train : MonoBehaviour {
         cart.ResetState();
     }
 
+    public void OnLeaveCombat() {
+        StopShake();
+    }
+    
     public void RightBeforeLeaveMissionRewardArea() {
         StopShake();
         StopCoroutine(nameof(LerpTrain));
@@ -336,6 +340,10 @@ public class Train : MonoBehaviour {
         }
     }
 
+    /*void _HpBarsCleanup() {
+        HpBarsCleanup(true);
+    }*/
+
     
     public void UpdateThingsAffectingOtherThings(bool isActivating) {
         if (isActivating) {
@@ -344,6 +352,9 @@ public class Train : MonoBehaviour {
                 carts[i].SetAttachedToTrainModulesMode(true);
             }
             HpBarsCleanup(true);
+            
+            /*CancelInvoke(nameof(_HpBarsCleanup));
+            Invoke(nameof(_HpBarsCleanup),0.1f);*/
             
             SpeedController.s.CalculateSpeedBasedOnCartCapacity();
 
@@ -410,8 +421,6 @@ public class Train : MonoBehaviour {
         if (wasShaking) {
             RestartShake();
         }
-        
-        
     }
 
     public void ArtifactsChanged() {
@@ -427,10 +436,13 @@ public class Train : MonoBehaviour {
     public void StopShake() {
         if (doShake) {
             StopCoroutine(nameof(_RestartShake));
+            StopCoroutine(nameof(ShakeWave));
+            StopCoroutine(nameof(RestoreWave));
             for (int i = 0; i < carts.Count; i++) {
                 carts[i].transform.localPosition = cartDefPositions[i];
             }
             doShake = false;
+            //print("stop shake");
         }
     }
 

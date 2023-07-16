@@ -139,7 +139,7 @@ public class GunModule : MonoBehaviour, IComponentWithTarget, IActiveDuringComba
         }
     }
 
-    private Quaternion realRotation;
+    private Quaternion realRotation = Quaternion.identity;
     public void LookAtLocation(Vector3 location) {
         if (rotateTransform.anchor != null) {
             var lookAxis = location - rotateTransform.centerBarrelEnd.position;
@@ -147,7 +147,7 @@ public class GunModule : MonoBehaviour, IComponentWithTarget, IActiveDuringComba
                 lookAxis.y = 0;
             var lookRotation = Quaternion.LookRotation(lookAxis, Vector3.up);
 
-            Debug.DrawLine(rotateTransform.centerBarrelEnd.position, rotateTransform.centerBarrelEnd.position + lookAxis * 3);
+            //Debug.DrawLine(rotateTransform.centerBarrelEnd.position, rotateTransform.centerBarrelEnd.position + lookAxis * 3);
 
             SetRotation(lookRotation);
         }
@@ -156,7 +156,7 @@ public class GunModule : MonoBehaviour, IComponentWithTarget, IActiveDuringComba
 
     public void SetRotation(Quaternion rotation) {
         realRotation = Quaternion.Lerp(realRotation, rotation, rotateSpeed * Time.deltaTime);
-        
+
         if (Quaternion.Angle(realRotation, rotation) < 5) {
             IsBarrelPointingCorrectly = true;
         }else {
@@ -180,7 +180,7 @@ public class GunModule : MonoBehaviour, IComponentWithTarget, IActiveDuringComba
 
         }*/
 
-        if ((rotateTransform == null || rotateTransform.anchor == null) && rotateTransforms != null) {
+        if ((rotateTransform == null || rotateTransform.anchor == null) && rotateTransforms != null && rotateTransforms.Length > 0) {
             rotateTransform.anchor = rotateTransforms[0].transform;
             rotateTransform.xAxis = rotateTransforms[0].transform;
             rotateTransform.yAxis = rotateTransforms[0].transform;
@@ -192,7 +192,9 @@ public class GunModule : MonoBehaviour, IComponentWithTarget, IActiveDuringComba
             var realAnchor = new GameObject("Turret RotateAnchor");
             realAnchor.transform.SetParent(preAnchor.parent);
             realAnchor.transform.position = preAnchor.position;
+            realAnchor.transform.rotation = preAnchor.rotation;
             preAnchor.SetParent(realAnchor.transform);
+            rangeOrigin = realAnchor.transform;
         }
     }
 
