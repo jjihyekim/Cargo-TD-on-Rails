@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Ballista with some drones
   m_EditorClassIdentifier: 
   myData:
-    levelName: Truck with buggies
+    levelName: Ballista with some drones
     isEncounter: 0
     enemiesOnPath:
     - enemyIdentifier:
@@ -21,7 +21,7 @@ MonoBehaviour:
         enemyCount: 1
       distanceOnPath: 0
       isLeft: 0
-      hasReward: 1
+      hasReward: 0
     - enemyIdentifier:
         enemyUniqueName: DroneAVC
         enemyCount: 3

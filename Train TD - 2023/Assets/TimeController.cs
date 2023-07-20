@@ -11,6 +11,7 @@ public class TimeController : MonoBehaviour {
     private void Awake() {
         s = this;
         PausedEvent = new UnityEvent<bool>();
+        debugAlwaysFastForward = false;
     }
 
 
@@ -44,8 +45,10 @@ public class TimeController : MonoBehaviour {
         fastForwardKey.action.Disable();
     }
 
+    public bool debugAlwaysFastForward = false;
     private void Update() {
-        ProcessFastForward();
+        if(!debugAlwaysFastForward)
+            ProcessFastForward();
     }
 
     private bool canFastForward = false;

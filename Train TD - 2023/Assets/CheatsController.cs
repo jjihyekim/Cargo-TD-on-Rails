@@ -27,21 +27,29 @@ public class CheatsController : MonoBehaviour
     public bool autoRestartWithSelectedCharacter = false;
     public bool dontDrawMap = false;
     public bool everyPathIsEncounter = false;
+
+    public bool autoPlayTest = false;
     
     public EnemyIdentifier debugEnemy;
 
     private void Awake() {
         if (!Application.isEditor) {
-            infiniteLevel = false;
-            debugNoRegularSpawns = false;
-            instantEnterPlayMode = false;
-            playerIsImmune= false;
-            restartOnStart = false;
-            autoRestartWithSelectedCharacter = false;
-            dontDrawMap = false;
-            everyPathIsEncounter = false;
-            playerDealMaxDamage = false;
+            ResetDebugOptions();
         }
+    }
+
+    public void ResetDebugOptions() {
+        Debug.LogError("Debug Options Reset!");
+        infiniteLevel = false;
+        debugNoRegularSpawns = false;
+        instantEnterPlayMode = false;
+        playerIsImmune= false;
+        restartOnStart = false;
+        autoRestartWithSelectedCharacter = false;
+        dontDrawMap = false;
+        everyPathIsEncounter = false;
+        playerDealMaxDamage = false;
+        autoPlayTest = false;
     }
 
     private void Start() {
@@ -62,7 +70,7 @@ public class CheatsController : MonoBehaviour
             if (dontDrawMap)
                 WorldMapCreator.s.QuickStartNoWorldMap();
 
-            if (autoRestartCharacter || autoRestartWithSelectedCharacter || instantEnterPlayMode) {
+            if (autoRestartWithSelectedCharacter || instantEnterPlayMode) {
                 PlayerPrefs.SetInt(MiniGUI_DisableTutorial.exposedName, 0);
             }
 
@@ -75,6 +83,10 @@ public class CheatsController : MonoBehaviour
             if (playerDealMaxDamage) {
                 TweakablesMaster.s.myTweakables.playerDamageMultiplier = 10000;
                 TweakablesMaster.s.ApplyTweakableChange();
+            }
+
+            if (autoPlayTest) {
+                AutoPlaytester.s.StartAutoPlayer(true);
             }
         }
     }

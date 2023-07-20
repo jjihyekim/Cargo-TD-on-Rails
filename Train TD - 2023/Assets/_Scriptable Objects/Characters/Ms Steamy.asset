@@ -13,28 +13,48 @@ MonoBehaviour:
   m_Name: Ms Steamy
   m_EditorClassIdentifier: 
   myCharacter:
-    uniqueName: Ms Steamy
-    description: Loves everything steam. Start with pneumatic guns.
+    uniqueName: Asha Desai
+    description: Mostly unaffected by the loss of technology, Asha was a steam train
+      enthusiast before <color=#AE2FBA>The Cataclysm</color>. Before, they called
+      her eccentric, but with people back to steam age her value grew. As she liked
+      the attention, she found it irresistible when <color=#f694ff>The Collective</color>
+      asked her to carry out an important mission.
     starterTrain:
       myCarts:
       - uniqueName: engine_steam
+        health: -1
+        ammo: -1
+        level: 0
         cargoState:
           cargoReward: 
+          cargoLevel: 0
           artifactReward: 
           isLeftCargo: 0
       - uniqueName: cargo_mystery_0
+        health: -1
+        ammo: -1
+        level: 0
         cargoState:
           cargoReward: 
+          cargoLevel: 0
           artifactReward: 
           isLeftCargo: 0
       - uniqueName: top_pneumatic
+        health: -1
+        ammo: -1
+        level: 0
         cargoState:
           cargoReward: 
+          cargoLevel: 0
           artifactReward: 
           isLeftCargo: 0
       - uniqueName: side_pneumatic
+        health: -1
+        ammo: -1
+        level: 0
         cargoState:
           cargoReward: 
+          cargoLevel: 0
           artifactReward: 
           isLeftCargo: 0
     starterResources:

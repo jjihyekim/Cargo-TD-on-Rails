@@ -15,6 +15,7 @@ public class MiniGUI_DisableTutorial : MonoBehaviour, IInitRequired
         SetVal(val);
     }
 
+
     public void OnToggleUpdated() {
         SetVal(myToggle.isOn);
     }

@@ -13,7 +13,7 @@ public class CharacterDataScriptable : ScriptableObject {
 [Serializable]
 public class CharacterData {
     public string uniqueName = "unset";
-    [TextArea]
+    [Multiline(20)]
     public string description;
 
     public DataSaver.TrainState starterTrain;

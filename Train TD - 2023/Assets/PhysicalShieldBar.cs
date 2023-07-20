@@ -28,14 +28,9 @@ public class PhysicalShieldBar : MonoBehaviour {
     }
 
     private void Update() {
-        var newShield = myHp.GetShieldPercent();
-        if (newShield != lastShield) {
-            UpdateShield(newShield);
-            lastShield = newShield;
-        }
+        UpdateShield(myHp.GetShieldPercent());
     }
 
-    private float lastShield;
     private static readonly int BaseColor = Shader.PropertyToID("_BaseColor");
     private static readonly int Emission = Shader.PropertyToID("_Emission");
 

@@ -128,7 +128,7 @@ public class SpeedController : MonoBehaviour, IShowOnDistanceRadar {
             }
         } else {
             if (excessCarts != 0)
-                targetSpeed *= 0.1f;
+                targetSpeed *= 0.25f;
         }
 
         if (excessCarts <= 0) {
@@ -306,9 +306,11 @@ public class SpeedController : MonoBehaviour, IShowOnDistanceRadar {
             if (!PlayerWorldInteractionController.s.engineBoostDamageInstead) {
                 currentBoostMultiplier = boostMultiplier;
             } else {
-                var boostable = Train.s.GetComponentInChildren<EngineBoostable>();
-                boostable.engineDamageBoostActive = true;
-                boostable.engineDamageReductionActive = false;
+                var boostable = Train.s.GetComponentInChildren<EngineBoostable>(true);
+                if (boostable != null) {
+                    boostable.engineDamageBoostActive = true;
+                    boostable.engineDamageReductionActive = false;
+                }
                 Train.s.ArtifactsChanged();
             }
 
@@ -326,9 +328,12 @@ public class SpeedController : MonoBehaviour, IShowOnDistanceRadar {
         if (!PlayerWorldInteractionController.s.engineBoostDamageInstead) {
             currentBoostMultiplier = lowPowerMultiplier;
         } else {
-            var boostable = Train.s.GetComponentInChildren<EngineBoostable>();
-            boostable.engineDamageBoostActive = false;
-            boostable.engineDamageReductionActive = true;
+            var boostable = Train.s.GetComponentInChildren<EngineBoostable>(true);
+            if (boostable != null) {
+                boostable.engineDamageBoostActive = false;
+                boostable.engineDamageReductionActive = true;
+            }
+
             Train.s.ArtifactsChanged();
         }
         CameraController.s.SlowFOV();
@@ -355,9 +360,12 @@ public class SpeedController : MonoBehaviour, IShowOnDistanceRadar {
         if (!PlayerWorldInteractionController.s.engineBoostDamageInstead) {
             currentBoostMultiplier = 1;
         } else {
-            var boostable = Train.s.GetComponentInChildren<EngineBoostable>();
-            boostable.engineDamageBoostActive = false;
-            boostable.engineDamageReductionActive = false;
+            var boostable = Train.s.GetComponentInChildren<EngineBoostable>(true);
+            if (boostable != null) {
+                boostable.engineDamageBoostActive = false;
+                boostable.engineDamageReductionActive = false;
+            }
+
             Train.s.ArtifactsChanged();
         }
         

@@ -154,7 +154,7 @@ public class EnemyWave : MonoBehaviour, IShowOnDistanceRadar, ISpeedForEngineSou
                 SetTargetPosition();
             }
             
-            if (isTeleporting) {
+            if (isTeleporting && !isLeaving) {
                 teleportTimer -= Time.deltaTime;
                 if (teleportTimer <= 0 && distance < 10) {
                     teleportTimer = Random.Range(teleportTiming.x, teleportTiming.y);

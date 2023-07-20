@@ -78,6 +78,8 @@ public class Outline : MonoBehaviour {
 
   private bool needsUpdate;
 
+  public bool isInitialized = false;
+
   void Awake() {
     // Cache renderers
     renderers = GetComponentsInChildren<MeshRenderer>();
@@ -94,6 +96,7 @@ public class Outline : MonoBehaviour {
 
     // Apply material properties immediately
     needsUpdate = true;
+    isInitialized = true;
   }
 
   void OnEnable() {
@@ -243,6 +246,9 @@ public class Outline : MonoBehaviour {
   }
 
   void UpdateMaterialProperties() {
+    if (!isInitialized) {
+      return;
+    }
 
     // Apply properties according to mode
     outlineFillMaterial.SetColor("_OutlineColor", outlineColor);

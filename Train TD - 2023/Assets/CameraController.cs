@@ -190,7 +190,7 @@ public class CameraController : MonoBehaviour {
                 targetLocation += targets[i].velocity * targetDistance * 0.05f;
             }
             
-            Debug.DrawLine( targets[i].targetTransform.position, targetLocation);
+            //Debug.DrawLine( targets[i].targetTransform.position, targetLocation);
             var vectorToEnemy = targetLocation - myPosition;
 
             var distance = vectorToEnemy.magnitude;

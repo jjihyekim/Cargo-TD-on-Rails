@@ -63,15 +63,17 @@ public class MiniGUI_EncounterRequirementOrRewardDisplay : MonoBehaviour {
 			return;
 		}
 		
-		amount.text = reward.amount.ToString();
+		//amount.text = reward.amount.ToString();
 
-		if (reward.building == null) {
+		/*if (reward.building == null) {
 			image.sprite = reward.icon;
 			_uiITooltipDisplayer.myTooltip.text = $"Get {reward.amount} {reward.myType}";
-		} else {
-			image.sprite = reward.building.Icon;
-			_uiITooltipDisplayer.myTooltip.text = $"Get {reward.amount} {reward.building.displayName}";
-		}
+		} else {*/
+		image.sprite = reward.building.Icon;
+		_uiITooltipDisplayer.myTooltip.text = $"Get {reward.building.displayName}";
+		//}
+
+		amount.text = "";
 
 
 		image.color = rewardColor;
