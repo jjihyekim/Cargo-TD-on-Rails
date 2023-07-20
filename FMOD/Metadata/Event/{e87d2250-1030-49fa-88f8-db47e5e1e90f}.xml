@@ -2,7 +2,7 @@
 <objects serializationModel="Studio.02.02.00">
 	<object class="Event" id="{e87d2250-1030-49fa-88f8-db47e5e1e90f}">
 		<property name="name">
-			<value>OnCargoDeploy</value>
+			<value>OnCargoDrop</value>
 		</property>
 		<property name="outputFormat">
 			<value>1</value>
@@ -87,7 +87,7 @@
 	</object>
 	<object class="MultiSound" id="{bcb7203b-148b-4387-8f88-6a88fc47ba80}">
 		<relationship name="sounds">
-			<destination>{4c53170b-455c-4740-bdd8-4ad799b83529}</destination>
+			<destination>{82ff854a-2afa-4161-91fd-f1841220c877}</destination>
 		</relationship>
 	</object>
 	<object class="MixerBusEffectChain" id="{6956a68d-8b10-43e4-9969-1bbb4f17b75d}">
@@ -102,12 +102,12 @@
 		</relationship>
 	</object>
 	<object class="MixerBusPanner" id="{1be44bc4-6435-48d0-99c8-1bd98b142639}" />
-	<object class="SingleSound" id="{4c53170b-455c-4740-bdd8-4ad799b83529}">
+	<object class="SingleSound" id="{82ff854a-2afa-4161-91fd-f1841220c877}">
 		<property name="pitch">
-			<value>-2.79999995</value>
+			<value>-8</value>
 		</property>
 		<relationship name="audioFile">
-			<destination>{fecb7c54-0c7f-462e-9893-d5bb2fab57aa}</destination>
+			<destination>{4acaf94e-6346-4107-ade9-2745cd634b6c}</destination>
 		</relationship>
 	</object>
 	<object class="MixerBusFader" id="{e4e2ef09-1e6d-4dde-a2ee-d678446d0d55}" />

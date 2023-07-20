@@ -283,7 +283,10 @@ public class PlayerWorldInteractionController : MonoBehaviour {
                     }
 
                     // SFX
-                    AudioManager.PlayOneShot(SfxTypes.OnCargoDrop);
+                    if (isSnapping)
+                        AudioManager.PlayOneShot(SfxTypes.OnCargoDrop);
+                    else
+                        AudioManager.PlayOneShot(SfxTypes.OnCargoDrop2);
                 }
             }
         }
@@ -701,6 +704,9 @@ public class PlayerWorldInteractionController : MonoBehaviour {
                 infoCard.SetUp(selectedArtifact);
             else
                 infoCardActive = false;
+
+            //SFX
+            AudioManager.PlayOneShot(SfxTypes.OnInfoSelected);
         } 
     }
 

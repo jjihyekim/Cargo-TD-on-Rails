@@ -61,6 +61,9 @@ public class MenuToggle : MonoBehaviour {
 
     public static void HideAllToggleMenus () {
         hideAllToggleMenus?.Invoke();
+
+        //SFX
+        AudioManager.PlayOneShot(SfxTypes.ButtonClick2);
     }
 
     public void ToggleMenu() {

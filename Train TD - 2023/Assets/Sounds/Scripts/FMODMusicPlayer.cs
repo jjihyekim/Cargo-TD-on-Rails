@@ -77,6 +77,25 @@ public class FMODMusicPlayer : MonoBehaviour
 
     #endregion
 
+    #region Enemy Engine SFX
+    private Dictionary<string, int> enemyCount = new Dictionary<string, int>
+    {
+        {"Army", 0 },
+        {"Ballista", 0 },
+        {"Biker", 0 },
+        {"Teleporter", 0 },
+        {"Buggy", 0 },
+        {"Disabler", 0 },
+        {"Drone", 0 },
+        {"Gatling", 0 },
+        {"Healer", 0 },
+        {"Nuker", 0 },
+        {"Slower", 0 },
+        {"Supplier", 0 },
+        {"Truck", 0 }
+    };
+    #endregion
+
     private void Awake()
     {
         if (s != null)

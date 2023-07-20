@@ -6,7 +6,9 @@ using FMODUnity;
 public enum SfxTypes
 {
     ButtonClick1, ButtonClick2,
-    OnCargoHover, OnCargoPickUp, OnCargoDrop
+    OnCargoHover, OnCargoPickUp, OnCargoDrop, OnCargoDrop2,
+    OnInfoSelected,
+    OpenMap, CloseMap
 }
 
 
