@@ -35,7 +35,7 @@ public class GatlingAnimator : MonoBehaviour {
         }
         
         _gunModule.startWarmUpEvent.AddListener(OnWarmUp);
-        _gunModule.stopShootingEvent.AddListener(OnStopShooting);
+        _gunModule.gatlingCountZeroEvent.AddListener(OnGatlingCountZero);
     }
 
     public bool isRotating = false;
@@ -47,7 +47,7 @@ public class GatlingAnimator : MonoBehaviour {
         PlayGunShoot();
     }
 
-    void OnStopShooting() {
+    void OnGatlingCountZero() {
         isRotating = false;
         introAudioSource.Stop();
         loopAudioSource.Stop();
@@ -56,7 +56,7 @@ public class GatlingAnimator : MonoBehaviour {
 
     private void Update() {
         if (isRotating) {
-            curSpeed = Mathf.MoveTowards(curSpeed, rotationSpeed, angleDelta * Time.deltaTime);
+            curSpeed = Mathf.MoveTowards(curSpeed, rotationSpeed * (1f / (_gunModule.GetFireDelay() * 10)), angleDelta * Time.deltaTime);
         } else {
             curSpeed = Mathf.MoveTowards(curSpeed, 0, slowDownDelta * Time.deltaTime);
         }

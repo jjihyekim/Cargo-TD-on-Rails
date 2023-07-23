@@ -8,6 +8,7 @@ using Random = UnityEngine.Random;
 public class PhysicalAmmoBar : MonoBehaviour {
 
 
+    [ReadOnly]
     public GameObject ammoChunk;
     public float ammoChunkHeight;
 
@@ -23,6 +24,8 @@ public class PhysicalAmmoBar : MonoBehaviour {
         moduleAmmo = GetComponentInParent<ModuleAmmo>();
         moduleAmmo.OnReload.AddListener(OnReload);
         moduleAmmo.OnUse.AddListener(OnUse);
+        moduleAmmo.OnAmmoTypeChange.AddListener(OnAmmoTypeChange);
+        OnAmmoTypeChange();
         OnReload(false);
         OnUse();
     }
@@ -36,6 +39,29 @@ public class PhysicalAmmoBar : MonoBehaviour {
             Destroy(firstOne);
         }
     }
+
+
+    void OnAmmoTypeChange() {
+        ammoChunk = LevelReferences.s.bullet_regular;
+        if (moduleAmmo.isFire && moduleAmmo.isSticky) {
+            ammoChunk = LevelReferences.s.bullet_fire_sticky;
+        }else if (moduleAmmo.isFire) {
+            ammoChunk = LevelReferences.s.bullet_fire;
+        }else if (moduleAmmo.isSticky) {
+            ammoChunk = LevelReferences.s.bullet_sticky;
+        }
+
+        var oldAmmo = new List<GameObject>(allAmmoChunks);
+        allAmmoChunks.Clear();
+        
+        for (int i = oldAmmo.Count-1; i >= 0; i--) {
+            allAmmoChunks.Add(Instantiate(ammoChunk, oldAmmo[i].transform.position, oldAmmo[i].transform.rotation));
+            Destroy(oldAmmo[i].gameObject);
+        }
+        
+        allAmmoChunks.Reverse();
+    }
+
     void OnReload(bool showEffect) {
         var delta = Vector3.zero;
         while ( allAmmoChunks.Count < moduleAmmo.curAmmo) {

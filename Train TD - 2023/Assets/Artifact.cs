@@ -17,8 +17,8 @@ public class Artifact : MonoBehaviour
 
     public Transform uiTransform;
 
-    public GameObject uiPart;
     public GameObject worldPart;
+    public GameObject attachedToCartPart;
 
     public Sprite mySprite;
 
@@ -29,12 +29,48 @@ public class Artifact : MonoBehaviour
 
     [Button]
     private void ApplyNameAndSprite() {
-        GetComponentInChildren<Image>(true).sprite = mySprite;
-        GetComponentInChildren<SpriteRenderer>(true).sprite = mySprite;
-        GetComponentInChildren<TMP_Text>(true).text = displayName;
+        foreach (var spriteRenderer in GetComponentsInChildren<SpriteRenderer>(true)) {
+            spriteRenderer.sprite = mySprite;
+        }
     }
 
-    public void InstantEquipArtifact() {
+    public void AttachToCart(Cart cart, bool doSave = true) {
+        UpgradesController.s.RemoveArtifactFromShop(this, doSave);
+        var oldCart = GetComponentInParent<Cart>();
+        if (oldCart != null) {
+            if(oldCart.myAttachedArtifact == this)
+                oldCart.myAttachedArtifact = null;
+        }
+        
+        cart.myAttachedArtifact = this;
+        transform.SetParent(cart.artifactParent);
+        //transform.ResetTransformation();
+
+        GetComponent<Rigidbody>().isKinematic = true;
+        GetComponent<Rigidbody>().useGravity = false;
+        
+        attachedToCartPart.SetActive(true);
+        worldPart.SetActive(false);
+    }
+
+    public void DetachFromCart( bool doSave = true) {
+        UpgradesController.s.AddArtifactToShop(this, doSave);
+        var oldCart = GetComponentInParent<Cart>();
+        if (oldCart != null) {
+            if(oldCart.myAttachedArtifact == this)
+                oldCart.myAttachedArtifact = null;
+        }
+        
+        attachedToCartPart.SetActive(false);
+        worldPart.SetActive(true);
+        
+        transform.SetParent(null);
+        
+        GetComponent<Rigidbody>().isKinematic = false;
+        GetComponent<Rigidbody>().useGravity = true;
+    }
+
+    /*public void InstantEquipArtifact() {
         worldPart.SetActive(false);
         uiPart.SetActive(true);
         gameObject.AddComponent<RectTransform>();
@@ -89,5 +125,5 @@ public class Artifact : MonoBehaviour
     }
     public void OnUIClick() { 
         CharacterSelector.s.SelectStartingArtifact(this);   
-    }
+    }*/
 }

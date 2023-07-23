@@ -15,7 +15,7 @@ public class TooltipsMaster : MonoBehaviour {
     public TMP_Text tooltipText;
 
     public Vector3 offset = new Vector3(0.1f, -0.1f, 0);
-    public float edgeGive = 0.1f;
+    public float edgeGive = 10f;
 
     public int splitCharCount = 50;
     

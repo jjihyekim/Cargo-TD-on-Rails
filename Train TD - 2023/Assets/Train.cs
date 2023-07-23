@@ -14,6 +14,7 @@ public class Train : MonoBehaviour {
     public Transform trainBack;
     public Vector3 trainFrontOffset;
 
+
     public List<Cart> carts = new List<Cart>();
     public List<Vector3> cartDefPositions = new List<Vector3>();
 
@@ -46,7 +47,7 @@ public class Train : MonoBehaviour {
 
     public void DrawTrainBasedOnSaveData() {
         DrawTrain(DataSaver.s.GetCurrentSave().currentRun.myTrain);
-        ArtifactsController.s.CreateArtifactsBasedOnSaveData();
+        //ArtifactsController.s.CreateArtifactsBasedOnSaveData();
     }
 
     public void DrawTrain(DataSaver.TrainState trainState) {
@@ -106,7 +107,6 @@ public class Train : MonoBehaviour {
     void OneFrameLater() {
         // because sometimes train doesnt get updated fast enough
         DataSaver.s.GetCurrentSave().currentRun.myTrain = GetTrainState();
-        ArtifactsController.s.SaveArtifacts();
         DataSaver.s.SaveActiveGame();
     }
 
@@ -138,9 +138,16 @@ public class Train : MonoBehaviour {
             
             if (ammo != null) {
                 buildingState.ammo = (int)ammo.curAmmo;
+                buildingState.isFire = ammo.isFire;
+                buildingState.isSticky = ammo.isSticky;
             } else {
                 buildingState.ammo = -1;
             }
+            
+            if (cart.myAttachedArtifact != null) {
+                buildingState.attachedArtifact = cart.myAttachedArtifact.uniqueName;
+            }
+            
         } else {
             buildingState.EmptyState();
         }
@@ -161,8 +168,9 @@ public class Train : MonoBehaviour {
 
         if (cartState.ammo >= 0) {
             var ammo = cart.GetComponentInChildren<ModuleAmmo>();
-            if(ammo != null)
-                ammo.SetAmmo(cartState.ammo);
+            if (ammo != null) 
+                ammo.SetAmmo(cartState.ammo, cartState.isFire, cartState.isSticky);
+            
         }/*else if (cartState.ammo == -2) {
             var ammo = cart.GetComponentInChildren<ModuleAmmo>();
             if (ammo != null) {
@@ -177,6 +185,11 @@ public class Train : MonoBehaviour {
         var cargoModule = cart.GetComponentInChildren<CargoModule>();
         if (cargoModule != null) {
             cargoModule.SetCargo(cartState.cargoState);
+        }
+
+        if (cartState.attachedArtifact != null && cartState.attachedArtifact.Length > 0) {
+            var artifact = Instantiate( DataHolder.s.GetArtifact(cartState.attachedArtifact).gameObject);
+            artifact.GetComponent<Artifact>().AttachToCart(cart);
         }
         
         cart.ResetState();
@@ -249,6 +262,10 @@ public class Train : MonoBehaviour {
             cart.name = $"Cart {index }";
             cart.trainIndex = index;
             cartDefPositions[i] = cart.transform.localPosition;
+
+            if (cart.artifactParent.childCount > 0) {
+                cart.artifactParent.GetChild(0).ResetTransformation();
+            }
         }
         
         trainFront.transform.localPosition = carts[carts.Count-1].transform.localPosition + trainFrontOffset;
@@ -340,10 +357,9 @@ public class Train : MonoBehaviour {
         }
     }
 
-    /*void _HpBarsCleanup() {
-        HpBarsCleanup(true);
-    }*/
-
+    public void TrainCleanupAfterCartMoveStopped() {
+        UpdateCartPositions();
+    }
     
     public void UpdateThingsAffectingOtherThings(bool isActivating) {
         if (isActivating) {
@@ -381,8 +397,7 @@ public class Train : MonoBehaviour {
             SpeedController.s.CalculateSpeedBasedOnCartCapacity();
         }
     }
-    
-    
+
     public void RemoveCart(Cart cart) {
         UpdateThingsAffectingOtherThings(false);
         

@@ -599,7 +599,16 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   gunSprite: {fileID: 0}
+  isGigaGatling: 0
+  fireDelayReductionPerGatlingAmount: 2
+  gatlingAmount: 0
+  maxGatlingAmount: 0
   rotateTransforms: []
+  rotateTransform:
+    anchor: {fileID: 0}
+    xAxis: {fileID: 0}
+    yAxis: {fileID: 0}
+    centerBarrelEnd: {fileID: 0}
   barrelEndTransforms:
   - transform: {fileID: 6655693099286801952}
   - transform: {fileID: 5065581461628978176}
@@ -608,6 +617,8 @@ MonoBehaviour:
   - transform: {fileID: 265239296001426397}
   - transform: {fileID: 6218788800557491715}
   projectileSpawnOffset: 0.2
+  useProviderBullet: 1
+  myType: 2
   bulletPrefab: {fileID: 7110668419382630654, guid: 38d2797b60af6b3449dea991dc05d6f3, type: 3}
   muzzleFlashPrefab: {fileID: 9155879028066676231, guid: 20718e1ecbf4a0a48851a1815d4ceeaa, type: 3}
   target: {fileID: 0}
@@ -617,8 +628,12 @@ MonoBehaviour:
   fireBarrageDelay: 0.5
   fireRateMultiplier: 1
   projectileDamage: 120
+  burnDamage: 0
+  bonusBurnDamage: 0
   damageMultiplier: 1
+  burnDamageMultiplier: 1
   dontGetAffectByMultipliers: 0
+  isHeal: 0
   rotateSpeed: 10
   gunActive: 1
   IsBarrelPointingCorrectly: 0
@@ -642,6 +657,10 @@ MonoBehaviour:
       m_Calls: []
   gunShakeOnShoot: 0
   beingDirectControlled: 0
+  boostDamageOnUpgrade: 0.5
+  waitTimer: 0
+  isFire: 0
+  isSticky: 0
 --- !u!114 &7641972898590985362
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -657,6 +676,7 @@ MonoBehaviour:
   rotationSpan: 80
   range: 7
   myPossibleTargets: 00000000
+  canHitFlying: 0
 --- !u!1 &2983896549083203264
 GameObject:
   m_ObjectHideFlags: 0
@@ -807,6 +827,7 @@ MonoBehaviour:
   precomputeOutline: 0
   bakeKeys: []
   bakeValues: []
+  isInitialized: 0
 --- !u!1 &3009909600201856604
 GameObject:
   m_ObjectHideFlags: 0
@@ -1155,6 +1176,7 @@ MonoBehaviour:
   precomputeOutline: 0
   bakeKeys: []
   bakeValues: []
+  isInitialized: 0
 --- !u!1 &6318042156658392029
 GameObject:
   m_ObjectHideFlags: 0

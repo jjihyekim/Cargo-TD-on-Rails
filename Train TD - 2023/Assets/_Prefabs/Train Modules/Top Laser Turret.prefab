@@ -328,11 +328,22 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   gunSprite: {fileID: 0}
+  isGigaGatling: 0
+  fireDelayReductionPerGatlingAmount: 2
+  gatlingAmount: 0
+  maxGatlingAmount: 0
   rotateTransforms:
   - transform: {fileID: 4648339397067763608}
+  rotateTransform:
+    anchor: {fileID: 0}
+    xAxis: {fileID: 0}
+    yAxis: {fileID: 0}
+    centerBarrelEnd: {fileID: 0}
   barrelEndTransforms:
   - transform: {fileID: 1530397663758740016}
   projectileSpawnOffset: 0.2
+  useProviderBullet: 1
+  myType: 3
   bulletPrefab: {fileID: 4908573584345181807, guid: 61167735f7ac02441ac2e3172dc63524, type: 3}
   muzzleFlashPrefab: {fileID: 980176138545819842, guid: 17ff4d209c61ec84393b77e5756c40af, type: 3}
   target: {fileID: 0}
@@ -341,9 +352,13 @@ MonoBehaviour:
   fireBarrageCount: 1
   fireBarrageDelay: 0.1
   fireRateMultiplier: 1
-  projectileDamage: 16
+  projectileDamage: 8
+  burnDamage: 16
+  bonusBurnDamage: 0
   damageMultiplier: 1
+  burnDamageMultiplier: 1
   dontGetAffectByMultipliers: 0
+  isHeal: 0
   rotateSpeed: 2
   gunActive: 1
   IsBarrelPointingCorrectly: 0
@@ -367,7 +382,10 @@ MonoBehaviour:
       m_Calls: []
   gunShakeOnShoot: 0
   beingDirectControlled: 0
+  boostDamageOnUpgrade: 0.5
   waitTimer: 0
+  isFire: 0
+  isSticky: 0
 --- !u!114 &3530306806417391473
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -381,10 +399,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   tooltip:
-    text: 'A gun made using meteor crystals. Has perfect accuracy and deals more
-      damage over time.
-
-'
+    text: A gun made using meteor crystals. Has perfect accuracy and deals both regular
+      and burn damage.
   info: 'Laser Turret
 
 '

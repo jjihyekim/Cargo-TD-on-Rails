@@ -2,11 +2,12 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using Sirenix.OdinInspector;
 using UnityEngine;
 using UnityEngine.Analytics;
 using UnityEngine.Events;
 using UnityEngine.InputSystem;
-
+using UnityEngine.UI;
 
 
 public class PlayerWorldInteractionController : MonoBehaviour { 
@@ -23,7 +24,7 @@ public class PlayerWorldInteractionController : MonoBehaviour {
     public Artifact selectedArtifact;
     
     public Cart selectedCart;
-    public Vector3 cartBasePos;
+    public Vector3 dragBasePos;
 
     //public InputActionProperty dragCart;
     public InputActionReference showDetailClick;
@@ -32,11 +33,10 @@ public class PlayerWorldInteractionController : MonoBehaviour {
     
     
     public InputActionReference clickGate;
-    public InputActionReference moveCart;
-    public InputActionReference repairCart;
-    public InputActionReference reloadCart;
-    public InputActionReference directControlCart;
-    public InputActionReference engineBoost;
+
+    public enum CursorState {
+        empty, repair, shieldUp, reload_basic, reload_fire, reload_sticky 
+    }
 
 
     [SerializeField]
@@ -61,6 +61,7 @@ public class PlayerWorldInteractionController : MonoBehaviour {
     public void ResetValues() {
         repairAmountMultiplier = 1;
         reloadAmountMultiplier = 1;
+        shieldUpAmountMultiplier = 1;
         canRepair = true;
         canReload = true;
         canSmith = true;
@@ -75,11 +76,6 @@ public class PlayerWorldInteractionController : MonoBehaviour {
         clickCart.action.Enable();
 
         clickGate.action.Enable();
-        moveCart.action.Enable();
-        repairCart.action.Enable();
-        reloadCart.action.Enable();
-        directControlCart.action.Enable();
-        engineBoost.action.Enable();
         
         showDetailClick.action.Enable();
     }
@@ -92,11 +88,7 @@ public class PlayerWorldInteractionController : MonoBehaviour {
         clickCart.action.Disable();
         
         clickGate.action.Disable();
-        moveCart.action.Disable();
-        repairCart.action.Disable();
-        reloadCart.action.Disable();
-        directControlCart.action.Disable();
-        engineBoost.action.Disable();
+        
         
         showDetailClick.action.Disable();
     }
@@ -139,15 +131,22 @@ public class PlayerWorldInteractionController : MonoBehaviour {
         _canSelect = __canSelect;
         if (!_canSelect) {
             Deselect();
+            cursorStateObject.gameObject.SetActive(false);
+        } else {
+            SetCursorState(currentCursorState, activeCursorStateColor);
         }
+        
+        
     }
 
     public void OnEnterCombat() {
         GamepadControlsHelper.s.RemovePossibleAction(GamepadControlsHelper.PossibleActions.clickGate);
+        SetCursorState(CursorState.repair, repairColor);
     }
 
-    public void OnFinishCombat() {
+    public void OnLeaveCombat() {
         Deselect();
+        SetCursorState(CursorState.empty, cantActColor);
     }
 
     public void OnEnterShopScreen() {
@@ -196,6 +195,9 @@ public class PlayerWorldInteractionController : MonoBehaviour {
         }
     }
 
+    bool CanDragArtifact(Artifact artifact) {
+        return true; //we might have artifacts later that are permanently glued to a cart.
+    }
     bool CanDragCart(Cart cart) {
         return !cart.isMainEngine && cart.canPlayerDrag;
     }
@@ -207,94 +209,253 @@ public class PlayerWorldInteractionController : MonoBehaviour {
     public SnapCartLocation sourceSnapLocation;
     void CheckAndDoDrag() {
         if (selectedCart != null) {
-            if (clickCart.action.WasPressedThisFrame() || moveCart.action.WasPressedThisFrame()) {
-                HideInfo();
-                if (CanDragCart(selectedCart)) {
-                    currentSnapLoc = null;
-                    isSnapping = false;
-                    sourceSnapLocation = selectedCart.GetComponentInParent<SnapCartLocation>();
-                    prevCartTrainSnapIndex = -1;
-                    selectedCart.transform.SetParent(null);
-                    selectedCart.GetComponent<Rigidbody>().isKinematic = true;
-                    selectedCart.GetComponent<Rigidbody>().useGravity = false;
-
-                    dragStartPos = GetMousePos();
-                    cartBasePos = selectedCart.transform.position;
-                    offset = cartBasePos - GetMousePositionOnPlane();
-                    isDragStarted = true;
-
-                    if (Train.s.carts.Contains(selectedCart)) {
-                        Train.s.RemoveCart(selectedCart);
-                        UpgradesController.s.AddCartToShop(selectedCart, UpgradesController.CartLocation.world);
-                    } else {
-                        UpgradesController.s.ChangeCartLocation(selectedCart, UpgradesController.CartLocation.world);
-                    }
-                    
-                    if (PlayStateMaster.s.isShop()) {
-                        UpgradesController.s.UpdateCartShopHighlights();
-                    } else {
-                        UpgradesController.s.UpdateCargoHighlights();
-                    }
-                }
-            }
-
-            if (isDragStarted) {
-                if (clickCart.action.IsPressed() || moveCart.action.IsPressed()) {
-
-                    CheckIfSnapping();
-                    if (!isSnapping) {
-                        selectedCart.transform.position = GetMousePositionOnPlane() + offset;
-                        selectedCart.transform.rotation = Quaternion.Slerp(selectedCart.transform.rotation, Quaternion.identity, slerpSpeed * Time.deltaTime);
-                        offset = Vector3.Lerp(offset, Vector3.zero, lerpSpeed * Time.deltaTime);
-                    } 
-
-                } else {
-                    isDragStarted = false;
-                    if (!isSnapping) {
-                        selectedCart.GetComponent<Rigidbody>().isKinematic = false;
-                        selectedCart.GetComponent<Rigidbody>().useGravity = true;
-                    }
-
-                    if (PlayStateMaster.s.isShop()) {
-                        UpgradesController.s.SnapDestinationCargos(selectedCart);
-                    }
-
-                    if (selectedCart.isMysteriousCart && 
-                        !(selectedCart.myLocation == UpgradesController.CartLocation.train || selectedCart.myLocation == UpgradesController.CartLocation.cargoDelivery)) {
-                        UpgradesController.s.RemoveCartFromShop(selectedCart);
-                        Train.s.AddCartAtIndex(1, selectedCart);
-                        selectedCart.GetComponent<Rigidbody>().isKinematic = true;
-                        selectedCart.GetComponent<Rigidbody>().useGravity = false;
-                    }
-
-                    if (PlayStateMaster.s.isShop()) {
-                        UpgradesController.s.UpdateCartShopHighlights();
-                    } else {
-                        UpgradesController.s.UpdateCargoHighlights();
-                    }
-                    
-
-                    if (PlayStateMaster.s.isShop()) {
-                        UpgradesController.s.SaveCartStateWithDelay();
-                        Train.s.SaveTrainState();
-                    }
-                }
-            }
-        }
-
-
-        if (selectedArtifact != null) {
-            if (clickCart.action.WasPerformedThisFrame()) {
-                selectedArtifact.EquipArtifact();
-                Deselect();
-            }
+            DoCartDrag();
+        }else if (selectedArtifact != null) {
+            DoArtifactDrag();
         }
         
         UpdateTrainCartPositionsSlowly();
     }
 
+    private void DoArtifactDrag() {
+        if (clickCart.action.WasPressedThisFrame()) {
+            HideInfo();
+            if (CanDragArtifact(selectedArtifact)) {
+                BeginArtifactDrag();
+            }
+        }
+
+        if (isDragStarted) {
+            if (clickCart.action.IsPressed()) {
+                CheckIfArtifactSnapping();
+                if (!isSnapping) {
+                    selectedArtifact.transform.position = GetMousePositionOnPlane() + offset;
+                    selectedArtifact.transform.rotation = Quaternion.Slerp(selectedArtifact.transform.rotation, Quaternion.identity, slerpSpeed * Time.deltaTime);
+                    offset = Vector3.Lerp(offset, Vector3.up/2f, lerpSpeed * Time.deltaTime);
+                }
+            } else {
+                EndArtifactDrag();
+            }
+        }
+    }
+
+    public Cart sourceSnapCart;
+    private void BeginArtifactDrag() {
+        isSnapping = false;
+        sourceSnapCart = selectedArtifact.GetComponentInParent<Cart>();
+        selectedArtifact.DetachFromCart();
+        selectedArtifact.GetComponent<Rigidbody>().isKinematic = true;
+        selectedArtifact.GetComponent<Rigidbody>().useGravity = false;
+
+        dragStartPos = GetMousePos();
+        dragBasePos = selectedArtifact.transform.position;
+        offset = dragBasePos - GetMousePositionOnPlane();
+        isDragStarted = true;
+
+        swapArtifact = null;
+        swapCart = null;
+        
+        if (ArtifactsController.s.myArtifacts.Contains(selectedArtifact)) {
+            ArtifactsController.s.ArtifactsChanged();
+        } 
+
+        /*if (PlayStateMaster.s.isShop()) {
+            UpgradesController.s.UpdateCartShopHighlights();
+        } else {
+            UpgradesController.s.UpdateCargoHighlights();
+        }*/
+    }
+
+
+    public Artifact swapArtifact;
+    public Cart swapCart;
+    void CheckIfArtifactSnapping() {
+        var carts = Train.s.carts;
+        if (Mathf.Abs(GetMousePositionOnPlane().x) < 0.3f) {
+            isSnapping = false;
+
+            var zPos = GetMousePositionOnPlane().z;
+
+            var totalLength = 0f;
+            for (int i = 0; i < carts.Count; i++) {
+                totalLength += carts[i].length;
+            }
+
+            var currentSpot = transform.localPosition - Vector3.back * (totalLength / 2f);
+
+            for (int i = 0; i < carts.Count; i++) {
+                var cart = carts[i];
+                currentSpot += -Vector3.forward * cart.length;
+
+                var distance = Mathf.Abs((currentSpot.z + (cart.length / 2f)) - zPos);
+                if (currentSpot.z + (cart.length / 2f) < zPos && distance < cart.length * 4) {
+                    if (cart.myAttachedArtifact != selectedArtifact) {
+                        if (swapArtifact != null) {
+                            swapArtifact.AttachToCart(swapCart);
+                            swapCart = null;
+                            swapArtifact = null;
+                        }
+                        
+                        if (cart.myAttachedArtifact == null) {
+                            selectedArtifact.AttachToCart(cart);
+
+                        } else {
+                            var canBeSwapped = CanDragArtifact(cart.myAttachedArtifact);
+
+                            if (canBeSwapped) {
+                                if (sourceSnapCart != null) {
+                                    swapArtifact = cart.myAttachedArtifact;
+                                    if (swapArtifact != null) {
+                                        swapCart = cart;
+                                        swapArtifact.AttachToCart(sourceSnapCart);
+                                    }
+                                } else {
+                                    swapArtifact = cart.myAttachedArtifact;
+                                    if (swapArtifact != null) {
+                                        swapCart = cart;
+                                        swapArtifact.DetachFromCart();
+                                        swapArtifact.transform.position += Vector3.up/2f;
+                                        //swapArtifact.transform.position = dragBasePos;
+                                    }
+                                }
+
+                                selectedArtifact.AttachToCart(cart);
+                            }
+                        }
+                    }
+
+                    isSnapping = true;
+                    return;
+                }
+            }
+        }
+
+        isSnapping = false;
+        selectedArtifact.DetachFromCart();
+        selectedArtifact.GetComponent<Rigidbody>().isKinematic = true;
+        selectedArtifact.GetComponent<Rigidbody>().useGravity = false;
+
+        
+        if (swapArtifact != null) {
+            swapArtifact.AttachToCart(swapCart);
+            swapCart = null;
+            swapArtifact = null;
+        }
+        
+        /*if (PlayStateMaster.s.isShop()) {
+            UpgradesController.s.UpdateCartShopHighlights();
+        } else {
+            UpgradesController.s.UpdateCargoHighlights();
+        }*/
+    }
+
+    
+    
+    private void EndArtifactDrag() {
+        isDragStarted = false;
+        if (!isSnapping) {
+            selectedArtifact.GetComponent<Rigidbody>().isKinematic = false;
+            selectedArtifact.GetComponent<Rigidbody>().useGravity = true;
+        }
+        
+
+        /*if (PlayStateMaster.s.isShop()) {
+            UpgradesController.s.UpdateCartShopHighlights();
+        } else {
+            UpgradesController.s.UpdateCargoHighlights();
+        }*/
+
+
+        if (PlayStateMaster.s.isShop()) {
+            UpgradesController.s.SaveCartStateWithDelay();
+            Train.s.SaveTrainState();
+        }
+    }
+
+    private void DoCartDrag() {
+        if (clickCart.action.WasPressedThisFrame()) {
+            HideInfo();
+            if (CanDragCart(selectedCart)) {
+                BeginCartDrag();
+            }
+        }
+
+        if (isDragStarted) {
+            if (clickCart.action.IsPressed()) {
+                CheckIfCartSnapping();
+                if (!isSnapping) {
+                    selectedCart.transform.position = GetMousePositionOnPlane() + offset;
+                    selectedCart.transform.rotation = Quaternion.Slerp(selectedCart.transform.rotation, Quaternion.identity, slerpSpeed * Time.deltaTime);
+                    offset = Vector3.Lerp(offset, Vector3.zero, lerpSpeed * Time.deltaTime);
+                }
+            } else {
+                EndCartDrag();
+            }
+        }
+    }
+
+    private void EndCartDrag() {
+        isDragStarted = false;
+        if (!isSnapping) {
+            selectedCart.GetComponent<Rigidbody>().isKinematic = false;
+            selectedCart.GetComponent<Rigidbody>().useGravity = true;
+        }
+
+        if (PlayStateMaster.s.isShop()) {
+            UpgradesController.s.SnapDestinationCargos(selectedCart);
+        }
+
+        if (selectedCart.isMysteriousCart &&
+            !(selectedCart.myLocation == UpgradesController.CartLocation.train || selectedCart.myLocation == UpgradesController.CartLocation.cargoDelivery)) {
+            UpgradesController.s.RemoveCartFromShop(selectedCart);
+            Train.s.AddCartAtIndex(1, selectedCart);
+            selectedCart.GetComponent<Rigidbody>().isKinematic = true;
+            selectedCart.GetComponent<Rigidbody>().useGravity = false;
+        }
+
+        if (PlayStateMaster.s.isShop()) {
+            UpgradesController.s.UpdateCartShopHighlights();
+        } else {
+            UpgradesController.s.UpdateCargoHighlights();
+        }
+
+
+        if (PlayStateMaster.s.isShop()) {
+            UpgradesController.s.SaveCartStateWithDelay();
+            Train.s.SaveTrainState();
+        }
+    }
+
+    private void BeginCartDrag() {
+        currentSnapLoc = null;
+        isSnapping = false;
+        sourceSnapLocation = selectedCart.GetComponentInParent<SnapCartLocation>();
+        prevCartTrainSnapIndex = -1;
+        selectedCart.transform.SetParent(null);
+        selectedCart.GetComponent<Rigidbody>().isKinematic = true;
+        selectedCart.GetComponent<Rigidbody>().useGravity = false;
+
+        dragStartPos = GetMousePos();
+        dragBasePos = selectedCart.transform.position;
+        offset = dragBasePos - GetMousePositionOnPlane();
+        isDragStarted = true;
+
+        if (Train.s.carts.Contains(selectedCart)) {
+            Train.s.RemoveCart(selectedCart);
+            UpgradesController.s.AddCartToShop(selectedCart, UpgradesController.CartLocation.world);
+        } else {
+            UpgradesController.s.ChangeCartLocation(selectedCart, UpgradesController.CartLocation.world);
+        }
+
+        if (PlayStateMaster.s.isShop()) {
+            UpgradesController.s.UpdateCartShopHighlights();
+        } else {
+            UpgradesController.s.UpdateCargoHighlights();
+        }
+    }
+
     public SnapCartLocation currentSnapLoc;
-    void CheckIfSnapping() {
+    void CheckIfCartSnapping() {
         var carts = Train.s.carts;
         if (Mathf.Abs(GetMousePositionOnPlane().x) < 0.3f) {
             isSnapping = SnapToTrain();
@@ -466,6 +627,12 @@ public class PlayerWorldInteractionController : MonoBehaviour {
 
             cart.transform.localPosition = Vector3.Lerp(cart.transform.localPosition, currentSpot, lerpSpeed * Time.deltaTime);
             cart.transform.localRotation = Quaternion.Slerp(cart.transform.localRotation, Quaternion.identity, slerpSpeed * Time.deltaTime);
+            
+            if (cart.artifactParent.childCount > 0) {
+                var artifact = cart.artifactParent.GetChild(0);
+                artifact.transform.localPosition = Vector3.Lerp(artifact.transform.localPosition, Vector3.zero, 5*lerpSpeed * Time.deltaTime);
+                artifact.transform.localRotation = Quaternion.Slerp(artifact.transform.localRotation, Quaternion.identity, 5*slerpSpeed * Time.deltaTime);
+            }
 
             if (cart == selectedCart && !cart.isMainEngine)
                 currentSpot -= Vector3.up * (isDragStarted ? 0.4f : 0.05f);
@@ -477,10 +644,24 @@ public class PlayerWorldInteractionController : MonoBehaviour {
         }
     }
 
-    public float repairAmountPerClick = 50f;
-    public float repairAmountMultiplier = 1;
-    public float reloadAmountPerClick = 2;
+    public float repairAmountPerClick = 50f; // dont use this
+    public float repairAmountMultiplier = 1; 
+    public float reloadAmountPerClick = 2; // dont use this
     public float reloadAmountMultiplier = 1;
+    public float shieldUpAmountPerClick = 100f; // dont use this
+    public float shieldUpAmountMultiplier = 1; 
+
+    public float GetReloadAmount() {
+        return reloadAmountPerClick * reloadAmountMultiplier;
+    }
+
+    public float GetRepairAmount() {
+        return repairAmountPerClick * repairAmountMultiplier;
+    }
+    
+    public float GetShieldUpAmount() {
+        return shieldUpAmountPerClick * shieldUpAmountMultiplier;
+    }
 
     
 
@@ -490,49 +671,40 @@ public class PlayerWorldInteractionController : MonoBehaviour {
                 HideInfo();
                 switch (currentSelectMode) {
                     case SelectMode.cart:
-                        selectedCart.GetHealthModule().Repair(repairAmountPerClick*repairAmountMultiplier);
+                        switch (currentCursorState) {
+                            case CursorState.empty:
+                                // do nothing
+                                break;
+                            case CursorState.repair:
+                                selectedCart.GetHealthModule().Repair(GetRepairAmount());
+                                break;
+                            case CursorState.shieldUp:
+                                selectedCart.GetHealthModule().ShieldUp(GetShieldUpAmount());
+                                break;
+                            case CursorState.reload_basic:
+                                selectedCart.GetComponentInChildren<ModuleAmmo>()?.Reload(GetReloadAmount());
+                                break;
+                            case CursorState.reload_fire:
+                            case CursorState.reload_sticky:
+                                selectedCart.GetComponentInChildren<ModuleAmmo>()?.ApplyBulletEffect(currentCursorState);
+                                break;
+                            default:
+                                throw new ArgumentOutOfRangeException();
+                        }
                         break;
-                    case SelectMode.reload:
-                        selectedCart.GetComponentInChildren<ModuleAmmo>().Reload(reloadAmountPerClick*reloadAmountMultiplier);
-                        break;
-                    case SelectMode.directControl:
-                        DirectControlMaster.s.AssumeDirectControl(selectedCart.GetComponentInChildren<DirectControllable>());
+                    case SelectMode.topButton:
+                        var stateChanger = selectedCart.GetComponentInChildren<CursorStateChanger>();
+                        var directControllable = selectedCart.GetComponentInChildren<DirectControllable>();
+
+                        if (directControllable) {
+                            DirectControlMaster.s.AssumeDirectControl(selectedCart.GetComponentInChildren<DirectControllable>());
+                        }else if (stateChanger) {
+                            SetCursorState(stateChanger.targetState, stateChanger.color);
+                        }
                         break;
                     case SelectMode.engineBoost:
                         SpeedController.s.ActivateBoost();
                         break;
-                }
-            }
-            
-            if (repairCart.action.WasPerformedThisFrame() && canRepair) {
-                HideInfo();
-                var health = selectedCart.GetHealthModule();
-                if (health != null) {
-                    health.Repair(repairAmountPerClick*repairAmountMultiplier);
-                }
-            }
-
-            if (reloadCart.action.WasPerformedThisFrame() && canReload) {
-                HideInfo();
-                var ammo = selectedCart.GetComponentInChildren<ModuleAmmo>();
-                if (ammo != null) {
-                    ammo.Reload(reloadAmountPerClick*reloadAmountMultiplier);
-                }
-            }
-            
-            if (directControlCart.action.WasPerformedThisFrame()) {
-                HideInfo();
-                var directControllable = selectedCart.GetComponentInChildren<DirectControllable>();
-                if (directControllable != null) {
-                    DirectControlMaster.s.AssumeDirectControl(directControllable);
-                }
-            }
-            
-            if (engineBoost.action.WasPerformedThisFrame()) {
-                HideInfo();
-                var engineBoostable = selectedCart.GetComponentInChildren<EngineBoostable>();
-                if (engineBoostable != null) {
-                    SpeedController.s.ActivateBoost();
                 }
             }
         }else if (selectedEnemy != null) {
@@ -543,17 +715,100 @@ public class PlayerWorldInteractionController : MonoBehaviour {
     }
 
     public void UIRepair(Cart cart) {
-        cart.GetHealthModule()?.Repair(repairAmountPerClick);
+        switch (currentCursorState) {
+            case CursorState.repair:
+                cart.GetHealthModule()?.Repair(GetRepairAmount());
+                break;
+            case CursorState.shieldUp:
+                cart.GetHealthModule()?.ShieldUp(GetShieldUpAmount());
+                break;
+        }
+        
+        var moduleAmmo = cart.GetComponentInChildren<ModuleAmmo>();
+        if (moduleAmmo != null) {
+            switch (currentCursorState) {
+                case CursorState.reload_basic:
+                    moduleAmmo.Reload(GetReloadAmount());
+                    break;
+                case CursorState.reload_fire:
+                case CursorState.reload_sticky:
+                    moduleAmmo.ApplyBulletEffect(currentCursorState);
+                    break;
+            }
+        }
     }
 
-    public void UIReloadOrDirectControlOrBoost(Cart cart) {
-        cart.GetComponentInChildren<ModuleAmmo>()?.Reload(reloadAmountPerClick);
-        if (cart.GetComponentInChildren<DirectControllable>()) {
-            DirectControlMaster.s.AssumeDirectControl(cart.GetComponentInChildren<DirectControllable>());
-        }
+    public void CartHPUIButton(Cart cart) {
+        if (PlayStateMaster.s.isCombatInProgress()) {
+            var moduleAmmo = cart.GetComponentInChildren<ModuleAmmo>();
+            if (moduleAmmo != null) {
+                switch (currentCursorState) {
+                    case CursorState.reload_basic:
+                        moduleAmmo.Reload(GetReloadAmount());
+                        break;
+                    case CursorState.reload_fire:
+                    case CursorState.reload_sticky:
+                        moduleAmmo.ApplyBulletEffect(currentCursorState);
+                        break;
+                }
+            }
 
-        if (cart.GetComponentInChildren<EngineBoostable>()) {
-            SpeedController.s.ActivateBoost();
+            if (cart.GetComponentInChildren<DirectControllable>()) {
+                DirectControlMaster.s.AssumeDirectControl(cart.GetComponentInChildren<DirectControllable>());
+            }
+
+            if (cart.GetComponentInChildren<EngineBoostable>()) {
+                SpeedController.s.ActivateBoost();
+            }
+
+            var state = cart.GetComponentInChildren<CursorStateChanger>();
+            if (state != null) {
+                SetCursorState(state.targetState, state.GetColor());
+            }
+        }
+    }
+
+
+    public CursorState currentCursorState = CursorState.repair;
+    public GameObject cursorStateObject;
+    public Sprite cursorState_Repair;
+    public Sprite cursorState_ShieldUp;
+    public Sprite cursorState_Reload_Basic;
+    public Sprite cursorState_Reload_Fire;
+    public Sprite cursorState_Reload_Sticky;
+    
+    void SetCursorState(CursorState targetState, Color stateColor) {
+        if (currentCursorState != targetState) {
+            var targetSprite = cursorState_Repair;
+            cursorStateObject.gameObject.SetActive(true);
+            switch (targetState) {
+                case CursorState.empty:
+                    cursorStateObject.gameObject.SetActive(false);
+                    break;
+                case CursorState.repair:
+                    targetSprite = cursorState_Repair;
+                    break;
+                case CursorState.shieldUp:
+                    targetSprite = cursorState_ShieldUp;
+                    break;
+                case CursorState.reload_basic:
+                    targetSprite = cursorState_Reload_Basic;
+                    break;
+                case CursorState.reload_fire:
+                    targetSprite = cursorState_Reload_Fire;
+                    break;
+                case CursorState.reload_sticky:
+                    targetSprite = cursorState_Reload_Sticky;
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(targetState), targetState, null);
+            }
+
+            activeCursorStateColor = stateColor;
+            cursorStateObject.GetComponentInChildren<Image>().sprite = targetSprite;
+            currentCursorState = targetState;
+            
+            GamepadControlsHelper.s.SetClickActionIcon(targetSprite);
         }
     }
 
@@ -566,7 +821,7 @@ public class PlayerWorldInteractionController : MonoBehaviour {
     }
 
     public enum SelectMode {
-        cart, reload, directControl, engineBoost, emptyCart
+        cart, topButton, engineBoost, emptyCart
     }
 
     public SelectMode currentSelectMode = SelectMode.cart;
@@ -583,6 +838,11 @@ public class PlayerWorldInteractionController : MonoBehaviour {
     }
 
     public MiniGUI_BuildingInfoCard infoCard;
+    [ReadOnly]
+    public Color selectingTopButtonColor;
+
+    [ReadOnly]
+    public Color activeCursorStateColor;
     void CastRayToOutlineCart() {
         RaycastHit hit;
         Ray ray = GetRay();
@@ -594,21 +854,22 @@ public class PlayerWorldInteractionController : MonoBehaviour {
             if(hit.collider.GetComponentInParent<ModuleHealth>() && canRepair)
                 currentSelectMode = SelectMode.cart;
             
-            var directControllable = hit.collider.GetComponentInParent<DirectControllable>();
-            if (SettingsController.GamepadMode() && directControllable == null) {
-                directControllable = hit.rigidbody.gameObject.GetComponentInChildren<DirectControllable>();
+            var topButton = hit.collider.GetComponentInParent<IShowButtonOnCartUIDisplay>();
+            if (SettingsController.GamepadMode() && topButton == null) {
+                topButton = hit.rigidbody.gameObject.GetComponentInChildren<IShowButtonOnCartUIDisplay>();
             }
-            if (directControllable != null) {
-                currentSelectMode = SelectMode.directControl;
+            if (topButton != null) {
+                currentSelectMode = SelectMode.topButton;
+                selectingTopButtonColor = topButton.GetColor();
             }
             
-            var reloadable = hit.collider.GetComponentInParent<Reloadable>();
+            /*var reloadable = hit.collider.GetComponentInParent<Reloadable>();
             if (SettingsController.GamepadMode() && reloadable == null) {
                 reloadable = hit.rigidbody.gameObject.GetComponentInChildren<Reloadable>();
             }
             if (reloadable != null && canReload) {
                 currentSelectMode = SelectMode.reload;
-            }
+            }*/
             
             var engineBoostable = hit.collider.GetComponentInParent<EngineBoostable>();
             if (SettingsController.GamepadMode() && engineBoostable == null) {
@@ -755,11 +1016,23 @@ public class PlayerWorldInteractionController : MonoBehaviour {
             outline = artifact.GetComponentInChildren<Outline>();
         
         if (isSelecting) {
-            GamepadControlsHelper.s.AddPossibleActions(GamepadControlsHelper.PossibleActions.equipArtifact);
-            GamepadControlsHelper.s.AddPossibleActions(GamepadControlsHelper.PossibleActions.showDetails);
+            Color myColor = moveColor;
+            if (PlayStateMaster.s.isShopOrEndGame()) {
+                GamepadControlsHelper.s.AddPossibleActions(GamepadControlsHelper.PossibleActions.showDetails);
+                GamepadControlsHelper.s.AddPossibleActions(GamepadControlsHelper.PossibleActions.moveArtifact);
+                if (!CanDragArtifact(artifact)) {
+                    myColor = cantActColor;
+                    GamepadControlsHelper.s.RemovePossibleAction(GamepadControlsHelper.PossibleActions.moveArtifact);
+                }
+            } else {
+                myColor = cantActColor;
+                GamepadControlsHelper.s.AddPossibleActions(GamepadControlsHelper.PossibleActions.showDetails);
+            }
             selectedArtifact = artifact;
+            
+            outline.OutlineColor = myColor;
         } else {
-            GamepadControlsHelper.s.AddPossibleActions(GamepadControlsHelper.PossibleActions.equipArtifact);
+            GamepadControlsHelper.s.RemovePossibleAction(GamepadControlsHelper.PossibleActions.moveArtifact);
             GamepadControlsHelper.s.RemovePossibleAction(GamepadControlsHelper.PossibleActions.showDetails);
         }
 
@@ -795,21 +1068,19 @@ public class PlayerWorldInteractionController : MonoBehaviour {
             }
 
             if (PlayStateMaster.s.isCombatInProgress()) {
-                if(SettingsController.GamepadMode())
-                    GamepadControlsHelper.s.AddPossibleActions(GamepadControlsHelper.PossibleActions.repair);
-                
                 switch (currentSelectMode) {
                     case SelectMode.cart:
-                        myColor = repairColor;
-                        GamepadControlsHelper.s.AddPossibleActions(GamepadControlsHelper.PossibleActions.repair);
+                        if (CanCurrentStateAct(building)) {
+                            myColor = activeCursorStateColor;
+                            GamepadControlsHelper.s.AddPossibleActions(GamepadControlsHelper.PossibleActions.click);
+                        } else {
+                            myColor = cantActColor;
+                        }
+
                         break;
-                    case SelectMode.reload:
-                        myColor = reloadColor;
-                        GamepadControlsHelper.s.AddPossibleActions(GamepadControlsHelper.PossibleActions.reload);
-                        break;
-                    case SelectMode.directControl:
-                        myColor = directControlColor;
-                        GamepadControlsHelper.s.AddPossibleActions(GamepadControlsHelper.PossibleActions.directControl);
+                    case SelectMode.topButton:
+                        myColor = selectingTopButtonColor;
+                        GamepadControlsHelper.s.AddPossibleActions(GamepadControlsHelper.PossibleActions.selectTopButton);
                         break;
                     case SelectMode.engineBoost:
                         myColor = engineBoostColor;
@@ -830,6 +1101,8 @@ public class PlayerWorldInteractionController : MonoBehaviour {
             GamepadControlsHelper.s.RemovePossibleAction(GamepadControlsHelper.PossibleActions.directControl);
             GamepadControlsHelper.s.RemovePossibleAction(GamepadControlsHelper.PossibleActions.showDetails);
             GamepadControlsHelper.s.RemovePossibleAction(GamepadControlsHelper.PossibleActions.engineBoost);
+            GamepadControlsHelper.s.RemovePossibleAction(GamepadControlsHelper.PossibleActions.selectTopButton);
+            GamepadControlsHelper.s.RemovePossibleAction(GamepadControlsHelper.PossibleActions.click);
         }
         
 
@@ -844,7 +1117,24 @@ public class PlayerWorldInteractionController : MonoBehaviour {
 
         OnSelectBuilding?.Invoke(building, isSelecting);
     }
-    
+
+
+    public bool CanCurrentStateAct(Cart cart) {
+        switch (currentCursorState) {
+            case CursorState.empty:
+                return false;
+            case CursorState.repair:
+                return true;
+            case CursorState.shieldUp:
+                return cart.GetHealthModule().maxShields > 0;
+            case CursorState.reload_basic:
+            case CursorState.reload_fire:
+            case CursorState.reload_sticky:
+                return cart.GetComponentInChildren<ModuleAmmo>() != null;
+            default:
+                throw new ArgumentOutOfRangeException();
+        }
+    }
     
     
     

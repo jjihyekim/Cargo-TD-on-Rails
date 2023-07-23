@@ -10,14 +10,15 @@ public class PhysicalShieldBar : MonoBehaviour {
     public Color fullShieldEmissionColor;
     
     
-    public Color noShieldMainColor;
+    /*public Color noShieldMainColor;
     [ColorUsageAttribute(true, true)] 
-    public Color noShieldEmissionColor;
+    public Color noShieldEmissionColor;*/
     
     
     public GameObject[] bars;
-    
 
+    public GameObject shieldBreakEffect;
+    
     private IHealth myHp;
     private void Start() {
         myHp = GetComponentInParent<IHealth>();
@@ -40,7 +41,11 @@ public class PhysicalShieldBar : MonoBehaviour {
     public void UpdateShield(float percentage) {
         for (int i = 0; i < bars.Length; i++) {
             if (!myHp.IsShieldActive()) {
-                bars[i].SetActive(false);
+                if (bars[i].activeSelf) {
+                    bars[i].SetActive(false);
+                    Instantiate(shieldBreakEffect, bars[i].transform.position, bars[i].transform.rotation);
+                }
+
                 continue;
             } else {
                 bars[i].SetActive(true);

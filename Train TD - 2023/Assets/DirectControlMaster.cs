@@ -68,12 +68,12 @@ public class DirectControlMaster : MonoBehaviour {
 			myGun = directControllable.GetComponentInParent<GunModule>();
 			//myAmmo = myGun.GetComponent<ModuleAmmo>();
 			//ammoSlider.gameObject.SetActive(myAmmo != null);
-			ammoSlider.gameObject.SetActive(false);
+			ammoSlider.gameObject.SetActive(myGun.isGigaGatling);
 			/*if (myAmmo != null) {
 				hasAmmo = myAmmo.curAmmo > 0;
 			} else {*/
 				exitToReload.SetActive(false);
-				ammoSlider.value = 0;
+				ammoSlider.value = myGun.gatlingAmount;
 				hasAmmo = true;
 			//}
 
@@ -81,7 +81,7 @@ public class DirectControlMaster : MonoBehaviour {
 			doShake = myGun.gunShakeOnShoot;
 			myGun.beingDirectControlled = true;
 
-			curCooldown = 0.1f; // so that we don't immediately shoot
+			curCooldown = myGun.GetFireDelay() - 0.1f; // so that we don't immediately shoot
 
 			DirectControlGameObject.SetActive(true);
 			directControlInProgress = true;
@@ -122,6 +122,7 @@ public class DirectControlMaster : MonoBehaviour {
 
 			if (myGun != null) {
 				myGun.beingDirectControlled = false;
+				myGun.gatlingAmount = 0;
 			}
 
 			DirectControlGameObject.SetActive(false);
@@ -136,6 +137,7 @@ public class DirectControlMaster : MonoBehaviour {
 			GamepadControlsHelper.s.RemovePossibleAction(GamepadControlsHelper.PossibleActions.exitDirectControl);
 
 			directControlLock = 0.2f;
+
 		}
 	}
 
@@ -187,7 +189,7 @@ public class DirectControlMaster : MonoBehaviour {
 			}
 
 			if (currentMode == DirectControllable.DirectControlMode.LockOn) {
-				if (didHit && curCooldown < 1f) {
+				if (didHit && curCooldown > 1f) {
 					var possibleTarget = hit.collider.GetComponentInParent<PossibleTarget>();
 					if (possibleTarget == null) {
 						possibleTarget = hit.collider.GetComponent<PossibleTarget>();
@@ -218,7 +220,7 @@ public class DirectControlMaster : MonoBehaviour {
 						curRocketLockInTime = 0;
 						myGun.UnsetTarget();
 						hasTarget = true;
-						if (curCooldown < 1f) {
+						if (curCooldown > 1f) {
 							rocketLockStatus.text = "No Targets";
 						} else {
 							rocketLockStatus.text = "Waiting";
@@ -235,7 +237,7 @@ public class DirectControlMaster : MonoBehaviour {
 					curRocketLockInTime = 0;
 					myGun.UnsetTarget();
 					hasTarget = true;
-					if (curCooldown < 1f) {
+					if (curCooldown > 1f) {
 						rocketLockStatus.text = "No Targets";
 					} else {
 						rocketLockStatus.text = "Waiting";
@@ -261,9 +263,9 @@ public class DirectControlMaster : MonoBehaviour {
 				if (directControlShootAction.action.IsPressed() && 
 				    (currentMode != DirectControllable.DirectControlMode.LockOn || (curRocketLockInTime >= rocketLockOnTime && hasTarget))
 				    ) {
-					if (curCooldown <= 0) {
+					if (curCooldown >= myGun.GetFireDelay()) {
 						myGun.ShootBarrage(false, OnShoot, OnHit);
-						curCooldown = myGun.GetFireDelay();
+						curCooldown = 0;
 
 						/*if (currentMode == DirectControlAction.DirectControlMode.LockOn) {
 							StopCoroutine(flashCoroutine);
@@ -272,6 +274,15 @@ public class DirectControlMaster : MonoBehaviour {
 						}*/
 					}
 				}
+
+				if (directControlShootAction.action.IsPressed()) {
+					myGun.gatlingAmount += Time.deltaTime;
+					myGun.gatlingAmount = Mathf.Clamp(myGun.gatlingAmount, 0, myGun.maxGatlingAmount);
+				}else{
+					myGun.gatlingAmount -= Time.deltaTime*2f;
+					myGun.gatlingAmount = Mathf.Clamp(myGun.gatlingAmount, 0, myGun.maxGatlingAmount);
+				}
+				ammoSlider.value = Mathf.Clamp01(myGun.gatlingAmount/myGun.maxGatlingAmount);
 			/*} else {
 				if (directControlShootAction.action.triggered) {
 					/*var managedToReload = myAmmo.GetComponent<ReloadAction>().EngageAction();
@@ -284,8 +295,8 @@ public class DirectControlMaster : MonoBehaviour {
 			}*/
 			
 
-			curCooldown -= Time.deltaTime;
-			cooldownSlider.value = Mathf.Clamp01(curCooldown / myGun.GetFireDelay());
+			curCooldown += Time.deltaTime;
+			cooldownSlider.value = Mathf.Clamp01(1-(curCooldown / myGun.GetFireDelay()));
 
 			/*if (myAmmo != null) {
 				ammoSlider.value = myAmmo.curAmmo / myAmmo.maxAmmo;

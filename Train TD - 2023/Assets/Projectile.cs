@@ -12,7 +12,9 @@ public class Projectile : MonoBehaviour {
     public float acceleration = 5f;
     public float seekAcceleration = 200f;
     public float speed = 5f;
-    public float damage = 20f;
+    public float projectileDamage = 20f;
+    public float burnDamage = 0;
+    //public float damage = 20f;
     public float mortarRange = 2f;
 
     public bool isHeal = false;
@@ -52,7 +54,7 @@ public class Projectile : MonoBehaviour {
     public LineRenderer myLine;
 
     public bool isPhaseThrough = false;
-    public bool isBurnDamage = false;
+    //public bool isBurnDamage = false;
     public bool isSlowDamage = false;
     private void Start() {
         Invoke("DestroySelf", lifetime);
@@ -459,7 +461,7 @@ public class Projectile : MonoBehaviour {
         //var force = collider.transform.position - transform.position;
         var force = transform.forward;
         //var force = GetComponent<Rigidbody>().velocity;
-        force = (damage * hitForceMultiplier/2f)*force.normalized;
+        force = (projectileDamage * hitForceMultiplier/2f)*force.normalized;
         
         rigidbody.AddForceAtPosition(force, closestPoint);
     }
@@ -467,28 +469,31 @@ public class Projectile : MonoBehaviour {
 
     void DealDamage(IHealth target) {
         if (target != null) {
-            var dmg = damage;
+            var dmg = projectileDamage;
             var armorProtected = false;
             if (target.HasArmor() && !canPenetrateArmor) {
-                dmg = damage/ 2;
+                dmg = projectileDamage/ 2;
                 armorProtected = true;
             }
 
             if (isSlowDamage) {
                 if (target.IsPlayer()) {
-                    SpeedController.s.AddSlow(damage);
+                    SpeedController.s.AddSlow(projectileDamage);
                 } else {
-                    target.GetGameObject().GetComponentInParent<EnemyWave>().AddSlow(damage);
+                    target.GetGameObject().GetComponentInParent<EnemyWave>().AddSlow(projectileDamage);
                 }
             } else if (isHeal) {
                 target.Repair(dmg);
-            }else if (isBurnDamage) {
-                target.BurnDamage(dmg);
             } else {
+                target.BurnDamage(burnDamage);
                 target.DealDamage(dmg);
                 Instantiate(LevelReferences.s.damageNumbersPrefab, LevelReferences.s.uiDisplayParent)
                     .GetComponent<MiniGUI_DamageNumber>()
-                    .SetUp(target.GetUITransform(), (int)dmg, isPlayerBullet, armorProtected, isBurnDamage);
+                    .SetUp(target.GetUITransform(), (int)dmg, isPlayerBullet, armorProtected, false);
+                
+                Instantiate(LevelReferences.s.damageNumbersPrefab, LevelReferences.s.uiDisplayParent)
+                    .GetComponent<MiniGUI_DamageNumber>()
+                    .SetUp(target.GetUITransform(), (int)burnDamage, isPlayerBullet, armorProtected, true);
             }
 
             onHitCallback?.Invoke();

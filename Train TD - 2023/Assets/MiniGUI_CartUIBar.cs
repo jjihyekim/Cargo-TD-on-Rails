@@ -11,13 +11,15 @@ public class MiniGUI_CartUIBar : MonoBehaviour {
     public RectTransform mainRect;
     
     public RectTransform ammoBar;
+    public GameObject fireAmmo;
+    public GameObject stickyAmmo;
     public RectTransform healthBar;
     public Image healthFill;
     
     public RectTransform shieldBar;
     public Image shieldFill;
     
-    public RectTransform directControl;
+    public Image coloredButton;
     public RectTransform engineBoost;
 
 
@@ -61,7 +63,14 @@ public class MiniGUI_CartUIBar : MonoBehaviour {
         var boostable = cart.GetComponentInChildren<EngineBoostable>();
         isBoost = boostable != null;
         ammoBar.gameObject.SetActive(isAmmo);
-        directControl.gameObject.SetActive(cart.GetComponentInChildren<DirectControllable>() != null);
+        var coloredButtonComponent = cart.GetComponentInChildren<IShowButtonOnCartUIDisplay>();
+        if (coloredButtonComponent != null) {
+            coloredButton.gameObject.SetActive(true);
+            coloredButton.color = coloredButtonComponent.GetColor();
+        } else {
+            coloredButton.gameObject.SetActive(false);
+        }
+
         engineBoost.gameObject.SetActive(isBoost);
         
         mainRect.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, cartLengthToWidth*myCart.length);
@@ -144,6 +153,9 @@ public class MiniGUI_CartUIBar : MonoBehaviour {
         percent = Mathf.Clamp(percent, 0, 1f);
         
         ammoBar.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, Mathf.Lerp(ammoMinHeight, ammoMaxHeight, percent));
+        
+        fireAmmo.gameObject.SetActive(myAmmo.isFire);
+        stickyAmmo.gameObject.SetActive(myAmmo.isSticky);
     }
     
     void SetBoostBarValue() {
@@ -190,7 +202,7 @@ public class MiniGUI_CartUIBar : MonoBehaviour {
         PlayerWorldInteractionController.s.UIRepair(myCart);
     }
 
-    public void ClickReloadOrDirectControl() {
-        PlayerWorldInteractionController.s.UIReloadOrDirectControlOrBoost(myCart);
+    public void ClickButton() {
+        PlayerWorldInteractionController.s.CartHPUIButton(myCart);
     }
 }

@@ -88,5 +88,21 @@ public static class ExtensionMethods {
         }
         return path;
     }
+    
+    public static Bounds GetCombinedBoundingBoxOfChildren(this Transform root)
+    {
+        var colliders = root.GetComponentsInChildren<Collider>();
+        if (colliders.Length == 0)
+        {
+            throw new ArgumentException("The supplied transform " + root.name + " does not have any children with colliders");
+        }
+ 
+        Bounds totalBBox = colliders[0].bounds;
+        foreach (var collider in colliders)
+        {
+            totalBBox.Encapsulate(collider.bounds);
+        }
+        return totalBBox;
+    }
 
 }

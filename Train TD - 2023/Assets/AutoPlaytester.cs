@@ -218,7 +218,7 @@ public class AutoPlaytester : MonoBehaviour {
 
         yield return new WaitForSeconds(4f);
         
-        for (int i = 0; i < DataHolder.s.artifacts.Length; i++) {
+        /*for (int i = 0; i < DataHolder.s.artifacts.Length; i++) {
             print($"Adding Artifact: {DataHolder.s.artifacts[i].uniqueName}");
             var artifact = Instantiate(DataHolder.s.artifacts[i]);
             yield return new WaitForSeconds(0.5f);
@@ -226,7 +226,7 @@ public class AutoPlaytester : MonoBehaviour {
             yield return new WaitForSeconds(0.5f);
         }
         
-        print("Finished adding every possible artifact");
+        print("Finished adding every possible artifact");*/
         
         yield return new WaitForSeconds(4f);
         
@@ -379,14 +379,14 @@ public class AutoPlaytester : MonoBehaviour {
                 var healthModule = cart.GetHealthModule();
                 var ammoModule = cart.GetComponentInChildren<ModuleAmmo>();
                 while (healthModule.GetHealthPercent() < 0.75f) {
-                    cart.GetHealthModule()?.Repair(PlayerWorldInteractionController.s.repairAmountPerClick * PlayerWorldInteractionController.s.repairAmountMultiplier);
+                    cart.GetHealthModule()?.Repair(PlayerWorldInteractionController.s.GetRepairAmount());
                     repairCount += 1;
                     yield return new WaitForSeconds(0.1f);
                 }
 
                 if (ammoModule != null) {
-                    while (ammoModule.AmmoPercent() < 0.25f) {
-                        ammoModule.Reload(PlayerWorldInteractionController.s.reloadAmountPerClick * PlayerWorldInteractionController.s.reloadAmountMultiplier);
+                    while (ammoModule.curAmmo < 0.25f) {
+                        ammoModule.Reload(PlayerWorldInteractionController.s.GetReloadAmount());
                         reloadCount += 1;
                         yield return new WaitForSeconds(0.1f);
                     }

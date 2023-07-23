@@ -79,6 +79,37 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 474387e8cec6162448faecb56fe928ca, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!1 &1710431823226426704
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1724777744574298011}
+  m_Layer: 11
+  m_Name: Artifact Transform
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1724777744574298011
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1710431823226426704}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0.125, y: 0.828, z: 0.18}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1063128118414717790}
+  m_RootOrder: 10
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &3399934084524781478
 GameObject:
   m_ObjectHideFlags: 0
@@ -124,6 +155,7 @@ Transform:
   - {fileID: 1691629272263448227}
   - {fileID: 2849140471503338825}
   - {fileID: 317267816422079952}
+  - {fileID: 1724777744574298011}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -144,6 +176,9 @@ MonoBehaviour:
   isMainEngine: 0
   isMysteriousCart: 0
   isCargo: 0
+  myAttachedArtifact: {fileID: 0}
+  artifactParent: {fileID: 1724777744574298011}
+  isBeingDisabled: 0
   trainIndex: 0
   cartSize: 1
   myLocation: 0
@@ -174,6 +209,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b09e23bb0990b1b4e9262ab25f3b6442, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  canHaveShields: 1
   maxShields: 0
   currentShields: 0
   curShieldDelay: 0
@@ -191,6 +227,8 @@ MonoBehaviour:
   invincible: 0
   myBar: {fileID: 638180950173769427}
   boostHealthOnUpgrade: 0.5
+  repairEfficiency: 1
+  shieldUpEfficiency: 1
   explosionDamages: 640000003200000019000000
   burnResistant: 0
   currentBurn: 0
@@ -271,6 +309,7 @@ MonoBehaviour:
   precomputeOutline: 0
   bakeKeys: []
   bakeValues: []
+  isInitialized: 0
 --- !u!1 &3591906271589902553
 GameObject:
   m_ObjectHideFlags: 0
@@ -789,7 +828,7 @@ Transform:
   m_GameObject: {fileID: 5985142096922309770}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0.1953, y: 0.507, z: -0.2445}
-  m_LocalScale: {x: 0.031958546, y: 0.07461362, z: 0.031958546}
+  m_LocalScale: {x: 0.035, y: 0.09, z: 0.04}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1691629272263448227}
@@ -1162,7 +1201,7 @@ Transform:
   m_GameObject: {fileID: 7509925284636736929}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: -0.1953, y: 0.507, z: 0.2445}
-  m_LocalScale: {x: 0.031958546, y: 0.07461362, z: 0.031958546}
+  m_LocalScale: {x: 0.035, y: 0.09, z: 0.04}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1691629272263448227}
@@ -1245,7 +1284,7 @@ Transform:
   m_GameObject: {fileID: 8081026097118201160}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0.1953, y: 0.507, z: 0.2445}
-  m_LocalScale: {x: 0.031958546, y: 0.07461362, z: 0.031958546}
+  m_LocalScale: {x: 0.035, y: 0.09, z: 0.04}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1691629272263448227}
@@ -1349,11 +1388,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   fullShieldMainColor: {r: 0, g: 0.9764706, b: 1, a: 1}
   fullShieldEmissionColor: {r: 0, g: 5.215937, b: 7.9066987, a: 1}
-  noShieldMainColor: {r: 0, g: 0, b: 0, a: 0}
-  noShieldEmissionColor: {r: 0, g: 0, b: 0, a: 0}
   bars:
   - {fileID: 6969446081533272694}
   - {fileID: 7835183593625357749}
+  shieldBreakEffect: {fileID: 8973257810519519465, guid: d159590aa39f3b54092e834356eb9809, type: 3}
 --- !u!1 &8380301722333623595
 GameObject:
   m_ObjectHideFlags: 0
@@ -1381,7 +1419,7 @@ Transform:
   m_GameObject: {fileID: 8380301722333623595}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: -0.1953, y: 0.507, z: -0.2445}
-  m_LocalScale: {x: 0.031958546, y: 0.07461362, z: 0.031958546}
+  m_LocalScale: {x: 0.035, y: 0.09, z: 0.04}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1691629272263448227}

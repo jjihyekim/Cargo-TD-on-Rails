@@ -5,6 +5,7 @@ using Sirenix.OdinInspector;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
+using UnityEngine.UI;
 
 public class GamepadControlsHelper : MonoBehaviour {
     public static GamepadControlsHelper s;
@@ -17,7 +18,7 @@ public class GamepadControlsHelper : MonoBehaviour {
     
     public enum PossibleActions {
         move, reload, repair, directControl, openMap, pause, fastForward, showDetails, shoot, exitDirectControl, flipCamera, cutsceneSkip, clickGate, changeTrack, engineBoost,
-        encounterButtons, equipArtifact
+        encounterButtons, moveArtifact, selectTopButton, click
     }
 
     public GameObject gamepadSelector;
@@ -35,6 +36,12 @@ public class GamepadControlsHelper : MonoBehaviour {
         PlayerWorldInteractionController.s.OnSelectEnemy.AddListener(UpdateButtonPromptsLocation);
         PlayerWorldInteractionController.s.OnSelectArtifact.AddListener(UpdateButtonPromptsLocation);
         PlayerWorldInteractionController.s.OnSelectGate.AddListener(UpdateGateSelectPrompt);
+    }
+
+
+    public Image clickActionIcon;
+    public void SetClickActionIcon( Sprite toSet) {
+        clickActionIcon.sprite = toSet;
     }
 
     private void UpdateButtonPromptsLocation(Cart cart, bool isSelecting) {

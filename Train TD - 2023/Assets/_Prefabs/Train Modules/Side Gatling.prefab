@@ -141,7 +141,7 @@ GameObject:
   - component: {fileID: 2645679663010677097}
   - component: {fileID: 3316194403589672847}
   m_Layer: 11
-  m_Name: physical ammo
+  m_Name: Regular ammo
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -408,9 +408,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _maxAmmo: 15
   maxAmmoMultiplier: 1
+  isFire: 0
+  isSticky: 0
   ammoPerBarrage: 1
   ammoPerBarrageMultiplier: 1
   myGunModules: []
+  reloadEfficiency: 1
   OnUse:
     m_PersistentCalls:
       m_Calls: []

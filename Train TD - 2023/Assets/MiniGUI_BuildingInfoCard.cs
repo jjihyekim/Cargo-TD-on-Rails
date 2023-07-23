@@ -117,7 +117,7 @@ public class MiniGUI_BuildingInfoCard : MonoBehaviour
         Show();
         armorPenetrationIcon.gameObject.SetActive(false);
 
-        icon.sprite = artifact.uiPart.GetComponentInChildren<Image>().sprite;
+        icon.sprite = artifact.mySprite;
         moduleName.text = artifact.displayName;
         moduleDescription.text = artifact.GetComponent<UITooltipDisplayer>().myTooltip.text;
         

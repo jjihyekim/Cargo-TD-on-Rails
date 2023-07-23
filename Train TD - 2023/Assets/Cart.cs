@@ -16,8 +16,12 @@ public class Cart : MonoBehaviour {
     public bool isMysteriousCart = false;
     public bool isCargo = false;
 
-    public bool isBeingDisabled = false;
+    public Artifact myAttachedArtifact;
+
+    public Transform artifactParent;
     
+    public bool isBeingDisabled = false;
+
     public int trainIndex;
 
     public int cartSize = 1;
@@ -62,6 +66,7 @@ public class Cart : MonoBehaviour {
 
     public Transform genericParticlesParent;
 
+
     public void ResetState() {
         genericParticlesParent.DeleteAllChildren();
         GetHealthModule().ResetState(level);
@@ -82,6 +87,7 @@ public class Cart : MonoBehaviour {
         for (int i = 0; i < boosterModules.Length; i++) {
             boosterModules[i].ResetState(level);
         }
+
     }
 
     public void SetDisabledState() {

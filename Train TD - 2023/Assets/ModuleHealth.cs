@@ -15,7 +15,7 @@ public class ModuleHealth : MonoBehaviour, IHealth, IActiveDuringCombat, IActive
     public bool canHaveShields = true;
     public float maxShields = 0;
     public float currentShields = 0;
-    private float shieldRegenRate = 50;
+    private float shieldDecayRatePer100Shields = 1f;
     private float shieldRegenDelay = 1;
     public float curShieldDelay = 0;
 
@@ -58,7 +58,13 @@ public class ModuleHealth : MonoBehaviour, IHealth, IActiveDuringCombat, IActive
 
     public float boostHealthOnUpgrade = 0.5f;
     
+    public float repairEfficiency = 1;
+    public float shieldUpEfficiency = 1;
+
     public void ResetState(int level) {
+        repairEfficiency = 1;
+        shieldUpEfficiency = 1;
+        
         damageDefenders.Clear();
         maxHealth = baseHealth * (1+(boostHealthOnUpgrade*level));
         if (PlayStateMaster.s.isCombatInProgress()) {
@@ -103,7 +109,6 @@ public class ModuleHealth : MonoBehaviour, IHealth, IActiveDuringCombat, IActive
                         damage = -currentShields;
                     }
 
-                    isShieldActive = false;
                     currentShields = 0;
                 }
             }
@@ -182,6 +187,7 @@ public class ModuleHealth : MonoBehaviour, IHealth, IActiveDuringCombat, IActive
 
     public void Repair(float heal) {
         Assert.IsTrue(heal > 0);
+        heal *= repairEfficiency;
 
         if (currentHealth < maxHealth) {
             currentHealth += heal;
@@ -199,6 +205,25 @@ public class ModuleHealth : MonoBehaviour, IHealth, IActiveDuringCombat, IActive
 
             UpdateHpState();
         }
+    }
+    
+    
+    public void ShieldUp(float shieldUp) {
+        Assert.IsTrue(shieldUp > 0);
+        shieldUp *= shieldUpEfficiency;
+
+        if (currentShields < maxShields) {
+            currentShields += shieldUp;
+
+            Instantiate(LevelReferences.s.shieldUpEffectPrefab, GetUITransform());
+            
+
+            if (currentShields > maxShields) {
+                currentShields = maxShields;
+            }
+        }
+
+        curShieldDelay = shieldRegenDelay;
     }
 
     public void SetHealth(float health) {
@@ -369,13 +394,16 @@ public class ModuleHealth : MonoBehaviour, IHealth, IActiveDuringCombat, IActive
             lastBurn = burnSpeed;
         }
 
+        isShieldActive = currentShields > 0;
+        
         if (curShieldDelay <= 0) {
-            if(maxShields > 0)
-                isShieldActive = true;
-            currentShields += shieldRegenRate * Time.deltaTime;
+            currentShields -= shieldDecayRatePer100Shields * Mathf.CeilToInt(currentShields/100) * Time.deltaTime;
         } else {
-            curShieldDelay -= Time.deltaTime;
+            if (PlayStateMaster.s.isCombatInProgress()) {
+                curShieldDelay -= Time.deltaTime;
+            }
         }
+        
         currentShields = Mathf.Clamp(currentShields, 0, maxShields);
     }
 
