@@ -324,6 +324,13 @@ public class PlayerWorldInteractionController : MonoBehaviour {
                         }
                     }
 
+
+                    // SFX
+                    if (isSnapping)
+                        AudioManager.PlayOneShot(SfxTypes.OnCargoDrop);
+                    else
+                        AudioManager.PlayOneShot(SfxTypes.OnCargoDrop2);
+
                     isSnapping = true;
                     return;
                 }
@@ -452,6 +459,9 @@ public class PlayerWorldInteractionController : MonoBehaviour {
         } else {
             UpgradesController.s.UpdateCargoHighlights();
         }
+      
+        // SFX
+        AudioManager.PlayOneShot(SfxTypes.OnCargoPickUp);
     }
 
     public SnapCartLocation currentSnapLoc;
@@ -888,7 +898,10 @@ public class PlayerWorldInteractionController : MonoBehaviour {
             if (cart != selectedCart || lastSelectMode != currentSelectMode) {
                 SelectBuilding(cart, true);
 
-            } else {
+                // SFX
+                AudioManager.PlayOneShot(SfxTypes.OnCargoHover);
+            }
+            else {
                 if (PlayStateMaster.s.isShopOrEndGame() && showDetailClick.action.WasPerformedThisFrame() /*|| (holdOverTimer > infoShowTime && !SettingsController.GamepadMode())*/) {
                     ShowSelectedThingInfo();
                 }
@@ -953,6 +966,9 @@ public class PlayerWorldInteractionController : MonoBehaviour {
                 infoCard.SetUp(selectedArtifact);
             else
                 infoCardActive = false;
+
+            //SFX
+            AudioManager.PlayOneShot(SfxTypes.OnInfoSelected);
         } 
     }
 

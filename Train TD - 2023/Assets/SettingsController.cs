@@ -43,7 +43,7 @@ public class SettingsController : MonoBehaviour {
         DataSaver.s.SaveActiveGame();
         
         SceneLoader.s.ForceReloadScene();
-        
+
         /*MenuToggle.HideAllToggleMenus();
         
         if (FirstTimeTutorialController.s.tutorialEngaged) {
@@ -53,6 +53,9 @@ public class SettingsController : MonoBehaviour {
         }
         
         Pauser.s.Unpause();*/
+
+        //SFX
+        AudioManager.PlayOneShot(SfxTypes.ButtonClick1);
     }
     
     public void ResetRunAndReplayTutorial() {
@@ -61,6 +64,9 @@ public class SettingsController : MonoBehaviour {
         
         FirstTimeTutorialController.s.ReDoTutorial();
         //ResetRun();
+
+        //SFX
+        AudioManager.PlayOneShot(SfxTypes.ButtonClick1);
     }
 
     public void ClearCurrentSaveAndPlayerPrefs() {
@@ -70,6 +76,9 @@ public class SettingsController : MonoBehaviour {
 
     public void ReloadScene() {
         SceneLoader.s.ForceReloadScene();
+
+        //SFX
+        AudioManager.PlayOneShot(SfxTypes.ButtonClick1);
     }
 
 

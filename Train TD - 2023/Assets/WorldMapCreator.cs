@@ -153,6 +153,9 @@ public class WorldMapCreator : MonoBehaviour {
 			CameraController.s.cannotSelectButCanMoveOverride = true;
 			
 			CameraController.s.EnterMapMode();
+
+			//SFX
+			AudioManager.PlayOneShot(SfxTypes.OpenMap);
 		}
 	}
 
@@ -179,7 +182,9 @@ public class WorldMapCreator : MonoBehaviour {
 			CameraController.s.cannotSelectButCanMoveOverride = true;
 			
 			CameraController.s.ExitMapMode();
-			
+
+			//SFX
+			AudioManager.PlayOneShot(SfxTypes.CloseMap);
 		}
 	}
 
