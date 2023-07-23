@@ -25,17 +25,23 @@ public class GunModule : MonoBehaviour, IComponentWithTarget, IActiveDuringComba
 
     public bool isGigaGatling = false;
 
-    public float fireDelayReductionPerGatlingAmount = 2f;
-    public int gatlingAmount;
+    public float maxFireRateReduction = 2f;
+    public float gatlingAmount;
     public int maxGatlingAmount;
     
     public TransformWithActivation[] rotateTransforms;
     public SingleAxisRotation rotateTransform;
     public TransformWithActivation[] barrelEndTransforms;
     public float projectileSpawnOffset = 0.2f;
-    
 
+
+    public bool useProviderBullet = false;
+    [ShowIf("useProviderBullet")]
+    public ProjectileProvider.ProjectileTypes myType;
+
+    [HideIf("useProviderBullet")]
     public GameObject bulletPrefab;
+    [HideIf("useProviderBullet")]
     public GameObject muzzleFlashPrefab;
 
 
@@ -47,8 +53,12 @@ public class GunModule : MonoBehaviour, IComponentWithTarget, IActiveDuringComba
 
     public float GetFireDelay() {
         if (isGigaGatling) { 
-            return (fireDelay-(Mathf.Pow(gatlingAmount, 1/2f)*fireDelayReductionPerGatlingAmount)) * GetAttackSpeedMultiplier();
-            
+            //print((fireDelay-(Mathf.Pow(((float)Mathf.FloorToInt(gatlingAmount))/(float)maxGatlingAmount, 1/2f)*maxFireRateReduction)) * GetAttackSpeedMultiplier());
+            /*if (isPlayer) {
+                return (fireDelay - (((float)Mathf.FloorToInt(gatlingAmount)) / (float)maxGatlingAmount) * maxFireRateReduction) * GetAttackSpeedMultiplier();
+            } else {*/
+                return (fireDelay - (Mathf.Pow(gatlingAmount / maxGatlingAmount, 1 / 3f) * maxFireRateReduction)) * GetAttackSpeedMultiplier();
+            //}
         } else {
             return fireDelay * GetAttackSpeedMultiplier();
         }
@@ -59,7 +69,10 @@ public class GunModule : MonoBehaviour, IComponentWithTarget, IActiveDuringComba
     public float fireRateMultiplier = 1f;
     public float GetFireBarrageDelay() { return fireBarrageDelay * GetAttackSpeedMultiplier();}
     public float projectileDamage = 2f; // dont use this
+    public float burnDamage = 0; // dont use this
+    public float bonusBurnDamage = 0;
     public float damageMultiplier = 1f;
+    public float burnDamageMultiplier = 1f;
     public bool dontGetAffectByMultipliers = false;
 
     public bool isHeal = false;
@@ -69,6 +82,23 @@ public class GunModule : MonoBehaviour, IComponentWithTarget, IActiveDuringComba
             return projectileDamage;
         } else {
             return projectileDamage * GetDamageMultiplier();
+        }
+    }
+    
+    public float GetBurnDamage() {
+        var burnBulletAddonDamage = 0f;
+        if (isFire) {
+            if (projectileDamage > 0) {
+                burnBulletAddonDamage += projectileDamage / 2f;
+            } else {
+                burnBulletAddonDamage = burnDamage;
+            }
+        }
+        
+        if (dontGetAffectByMultipliers) {
+            return burnDamage + burnBulletAddonDamage;
+        } else {
+            return (burnDamage + bonusBurnDamage + burnBulletAddonDamage) * GetBurnDamageMultiplier();
         }
     }
 
@@ -98,6 +128,8 @@ public class GunModule : MonoBehaviour, IComponentWithTarget, IActiveDuringComba
     public UnityEvent onBulletFiredEvent = new UnityEvent();
     [HideInInspector]
     public UnityEvent stopShootingEvent = new UnityEvent();
+    [HideInInspector]
+    public UnityEvent gatlingCountZeroEvent = new UnityEvent();
 
     public bool gunShakeOnShoot = true;
     private float gunShakeMagnitude = 0.04f;
@@ -110,8 +142,11 @@ public class GunModule : MonoBehaviour, IComponentWithTarget, IActiveDuringComba
     public void ResetState(int level) {
         damageMultiplier = 1 + (boostDamageOnUpgrade*level);
         fireRateMultiplier = 1;
+        burnDamageMultiplier = 1;
+        bonusBurnDamage = 0;
     }
-    
+
+    private bool triggeredGatlingZero = true;
     private void Update() {
         if (gunActive) {
             if (target != null) {
@@ -121,6 +156,13 @@ public class GunModule : MonoBehaviour, IComponentWithTarget, IActiveDuringComba
                 } else {
                     LookAtLocation(target.position);
                 }
+
+
+                if (!beingDirectControlled) {
+                    gatlingAmount += Time.deltaTime;
+                    gatlingAmount = Mathf.Clamp(gatlingAmount, 0, maxGatlingAmount);
+                }
+
             } else {
                 // look at center of targeting area
                 if (rotateTransform.anchor != null) {
@@ -128,6 +170,11 @@ public class GunModule : MonoBehaviour, IComponentWithTarget, IActiveDuringComba
                 }
 
                 IsBarrelPointingCorrectly = false;
+
+                if (!beingDirectControlled) {
+                    gatlingAmount -= Time.deltaTime*2;
+                    gatlingAmount = Mathf.Clamp(gatlingAmount, 0, maxGatlingAmount);
+                }
             }
         }
 
@@ -137,6 +184,16 @@ public class GunModule : MonoBehaviour, IComponentWithTarget, IActiveDuringComba
                 StopShootingFindingHelperThingy();
             }
         }
+
+        if (gatlingAmount <= 0) {
+            if (!triggeredGatlingZero) {
+                gatlingCountZeroEvent?.Invoke();
+                triggeredGatlingZero = true;
+            }
+        } else {
+            triggeredGatlingZero = false;
+        }
+
     }
 
     private Quaternion realRotation = Quaternion.identity;
@@ -221,6 +278,19 @@ public class GunModule : MonoBehaviour, IComponentWithTarget, IActiveDuringComba
 
         return dmgMul;
     }
+    
+    float GetBurnDamageMultiplier() {
+        var dmgMul = burnDamageMultiplier;
+        
+        if (isPlayer) {
+            dmgMul *= TweakablesMaster.s.myTweakables.playerDamageMultiplier;
+        } else {
+            dmgMul *= TweakablesMaster.s.myTweakables.enemyDamageMutliplier + WorldDifficultyController.s.currentDamageIncrease;
+        }
+        
+
+        return dmgMul;
+    }
 
 
     private IEnumerator ActiveShootCycle;
@@ -248,6 +318,9 @@ public class GunModule : MonoBehaviour, IComponentWithTarget, IActiveDuringComba
         stopShootingEvent?.Invoke();
         isWarmedUp = false;
     }
+
+    public bool isFire;
+    public bool isSticky;
     
     IEnumerator _ShootBarrage(bool isFree = false, GenericCallback shotCallback = null, GenericCallback onHitCallback = null) {
         stopShootingTimer = GetFireDelay()+0.05f;
@@ -266,46 +339,62 @@ public class GunModule : MonoBehaviour, IComponentWithTarget, IActiveDuringComba
 
         for (int i = 0; i < fireBarrageCount; i++) {
             //if (!isPlayer || AreThereEnoughMaterialsToShoot() || isFree) {
-                var barrelEnd = GetShootTransform().transform;
-                var position = barrelEnd.position;
-                var rotation = barrelEnd.rotation;
-                var bullet = Instantiate(bulletPrefab, position + barrelEnd.forward * projectileSpawnOffset, rotation);
-                var muzzleFlash = Instantiate(muzzleFlashPrefab, position, rotation);
-                var projectile = bullet.GetComponent<Projectile>();
-                projectile.myOriginObject = this.transform.root.gameObject;
-                projectile.damage = GetDamage();
-                projectile.target = target;
-                projectile.isHeal = isHeal;
-                //projectile.isTargetSeeking = true;
-                projectile.canPenetrateArmor = canPenetrateArmor;
-                if (beingDirectControlled) {
-                    projectile.speed *= 2;
-                    projectile.acceleration *= 2;
-                }
+            if (useProviderBullet) {
+                bulletPrefab = ProjectileProvider.s.GetProjectile(myType, isFire, isSticky);
+                muzzleFlashPrefab = ProjectileProvider.s.GetMuzzleFlash(myType, isGigaGatling, isFire, isSticky);
+            }
 
-                projectile.SetIsPlayer(isPlayer);
-                projectile.source = this;
 
-                projectile.onHitCallback = onHitCallback;
+            var barrelEnd = GetShootTransform().transform;
+            var position = barrelEnd.position;
+            var rotation = barrelEnd.rotation;
+            var bullet = Instantiate(bulletPrefab, position + barrelEnd.forward * projectileSpawnOffset, rotation);
+            var muzzleFlash = Instantiate(muzzleFlashPrefab, position, rotation);
+            var projectile = bullet.GetComponent<Projectile>();
+            projectile.myOriginObject = this.transform.root.gameObject;
+            projectile.projectileDamage = GetDamage();
+            projectile.burnDamage = GetBurnDamage();
+            projectile.target = target;
+            projectile.isHeal = isHeal;
+            //projectile.isTargetSeeking = true;
+            projectile.canPenetrateArmor = canPenetrateArmor;
+            if (beingDirectControlled) {
+                projectile.speed *= 2;
+                projectile.acceleration *= 2;
+            }
 
-                //if(myCart != null)
-                if (isPlayer)
-                    LogShotData(GetDamage());
-                if (isPlayer && !isFree) {
-                    SpeedController.s.UseSteam(steamUsePerShot*TweakablesMaster.s.myTweakables.gunSteamUseMultiplier);
-                }
-                
-                shotCallback?.Invoke();
-                onBulletFiredEvent?.Invoke();
-                if(gunShakeOnShoot)
-                    StartCoroutine(ShakeGun());
+            projectile.SetIsPlayer(isPlayer);
+            projectile.source = this;
 
-                if (isGigaGatling) {
-                    gatlingAmount += 1;
-                    gatlingAmount = Mathf.Clamp(gatlingAmount, 0, maxGatlingAmount);
-                }
+            projectile.onHitCallback = onHitCallback;
+
+            //if(myCart != null)
+            if (isPlayer)
+                LogShotData(GetDamage());
+            if (isPlayer && !isFree) {
+                SpeedController.s.UseSteam(steamUsePerShot * TweakablesMaster.s.myTweakables.gunSteamUseMultiplier);
+            }
+
+            shotCallback?.Invoke();
+            onBulletFiredEvent?.Invoke();
+            if (gunShakeOnShoot)
+                StartCoroutine(ShakeGun());
+
+            /*if (isGigaGatling) {
+                gatlingAmount += 1;
+                gatlingAmount = Mathf.Clamp(gatlingAmount, 0, maxGatlingAmount);
+            }*/
+
             //}
-            yield return new WaitForSeconds(GetFireBarrageDelay());
+
+            var waitTimer = 0f;
+
+            while (waitTimer < GetFireBarrageDelay()) {
+                print(GetFireBarrageDelay());
+                waitTimer += Time.deltaTime;
+                yield return null;
+            }
+            //yield return new WaitForSeconds(GetFireBarrageDelay());
         }
     }
 

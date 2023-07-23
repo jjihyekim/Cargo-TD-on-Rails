@@ -37,6 +37,7 @@ public class UpgradesController : MonoBehaviour {
 	public Transform leftRewardPos;
 	public Transform rightRewardPos;
 
+	public List<Artifact> shopArtifacts;
 	public List<Cart> shopCarts;
 	public Cart leftCargo;
 	public Cart rightCargo;
@@ -57,13 +58,14 @@ public class UpgradesController : MonoBehaviour {
 		regularArtifacts.Clear();
 		
 		var allArtifacts = DataHolder.s.artifacts;
+		var myArtifacts = new List<Artifact>(ArtifactsController.s.myArtifacts);
 		for (int i = 0; i < allArtifacts.Length; i++) {
 			if (allArtifacts[i].myRarity == CartRarity.boss) {
-				if (ArtifactsController.s.myArtifacts.FindIndex(a => a.uniqueName == allArtifacts[i].uniqueName) == -1) { // only add the artifact if we dont already have it
+				if (myArtifacts.FindIndex(a => a.uniqueName == allArtifacts[i].uniqueName) == -1) { // only add the artifact if we dont already have it
 					bossArtifacts.Add(allArtifacts[i].uniqueName);
 				}
 			} else if (allArtifacts[i].myRarity != CartRarity.special) {
-				if (allArtifacts[i].isGenericArtifact || ArtifactsController.s.myArtifacts.FindIndex(a => a.uniqueName == allArtifacts[i].uniqueName) == -1) {
+				if (allArtifacts[i].isGenericArtifact || myArtifacts.FindIndex(a => a.uniqueName == allArtifacts[i].uniqueName) == -1) {
 					regularArtifacts.Add(allArtifacts[i].uniqueName);
 				}
 			}
@@ -80,24 +82,41 @@ public class UpgradesController : MonoBehaviour {
 
 	public void RemoveCartFromShop(Cart cart) {
 		shopCarts.Remove(cart);
-		SaveShopCartState();
+		SaveShopState();
 	}
 
 	public void AddCartToShop(Cart cart, CartLocation location, bool doSave = true) {
 		cart.myLocation = location;
 		shopCarts.Add(cart);
 		if(doSave)
-			SaveShopCartState();
+			SaveShopState();
 	}
 
 	public void ChangeCartLocation(Cart cart, CartLocation location) {
 		cart.myLocation = location;
-		SaveShopCartState();
+		SaveShopState();
+	}
+	
+	
+	public void RemoveArtifactFromShop(Artifact artifact, bool doSave = true) {
+		if (shopArtifacts.Contains(artifact)) {
+			shopArtifacts.Remove(artifact);
+			if(doSave)
+				SaveShopState();
+		}
+	}
+
+	public void AddArtifactToShop(Artifact artifact, bool doSave = true) {
+		if (!shopArtifacts.Contains(artifact)) {
+			shopArtifacts.Add(artifact);
+			if(doSave)
+				SaveShopState();
+		}
 	}
 
 	public void SaveCartStateWithDelay() {
-		CancelInvoke(nameof(SaveShopCartState));
-		Invoke(nameof(SaveShopCartState), 2f);
+		CancelInvoke(nameof(SaveShopState));
+		Invoke(nameof(SaveShopState), 2f);
 	}
 
 	public SnapCartLocation[] cargoSwapLocations;
@@ -181,7 +200,7 @@ public class UpgradesController : MonoBehaviour {
 		cart.GetComponent<Rigidbody>().isKinematic = true;
 		cart.GetComponent<Rigidbody>().useGravity = false;
 
-		SaveShopCartState();
+		SaveShopState();
 		Train.s.SaveTrainState();
 	}
 
@@ -205,7 +224,7 @@ public class UpgradesController : MonoBehaviour {
 	}
 
 	
-	public void SaveShopCartState() {
+	public void SaveShopState() {
 		var shopState = new ShopState();
 		for (int i = 0; i < shopCarts.Count; i++) {
 			var cart = shopCarts[i];
@@ -226,6 +245,18 @@ public class UpgradesController : MonoBehaviour {
 			}
 		}
 
+		for (int i = 0; i < shopArtifacts.Count; i++) {
+			var myArtifact = shopArtifacts[i];
+
+			if (myArtifact != null) {
+				shopState.artifactStates.Add(new WorldArtifactState() {
+					artifactUniqueName = myArtifact.uniqueName,
+					pos = myArtifact.transform.position,
+					rot = myArtifact.transform.rotation,
+				});
+			}
+		}
+
 		DataSaver.s.GetCurrentSave().currentRun.shopState = shopState;
 		DataSaver.s.SaveActiveGame();
 	}
@@ -233,9 +264,17 @@ public class UpgradesController : MonoBehaviour {
 
 	[System.Serializable]
 	public class ShopState {
+		public List<WorldArtifactState> artifactStates = new List<WorldArtifactState>();
 		public List<WorldCartState> cartStates = new List<WorldCartState>();
 		public DataSaver.TrainState.CartState.CargoState leftCargo;
 		public DataSaver.TrainState.CartState.CargoState rightCargo;
+	}
+	
+	[Serializable]
+	public class WorldArtifactState {
+		public Vector3 pos;
+		public Quaternion rot;
+		public string artifactUniqueName;
 	}
 	
 	[Serializable]
@@ -299,6 +338,13 @@ public class UpgradesController : MonoBehaviour {
 		}
 		shopCarts.Clear();
 		
+		
+		for (int i = shopArtifacts.Count-1; i >= 0; i--) {
+			if(shopArtifacts[i] != null && shopArtifacts[i].gameObject != null)
+				Destroy(shopArtifacts[i].gameObject);
+		}
+		shopArtifacts.Clear();
+		
 		var currentRun = DataSaver.s.GetCurrentSave().currentRun;
 		currentRun.shopState = new ShopState();
 		DataSaver.s.SaveActiveGame();
@@ -320,6 +366,13 @@ public class UpgradesController : MonoBehaviour {
 				Destroy(shopCarts[i].gameObject);
 		}
 		shopCarts.Clear();
+		
+		for (int i = shopArtifacts.Count-1; i >= 0; i--) {
+			if(shopArtifacts[i] != null && shopArtifacts[i].gameObject != null)
+				Destroy(shopArtifacts[i].gameObject);
+		}
+		shopArtifacts.Clear();
+		
 		
 		var currentRun = DataSaver.s.GetCurrentSave().currentRun;
 		
@@ -413,7 +466,14 @@ public class UpgradesController : MonoBehaviour {
 			CheckIfCanGo();
 		}
 
-		SaveShopCartState();
+
+		for (int i = 0; i < currentRun.shopState.artifactStates.Count; i++) {
+			var myArtifactState = currentRun.shopState.artifactStates[i];
+			var artifact = Instantiate(DataHolder.s.GetArtifact(myArtifactState.artifactUniqueName).gameObject, myArtifactState.pos, myArtifactState.rot).GetComponent<Artifact>();
+			artifact.DetachFromCart(false);
+		}
+
+		SaveShopState();
 	}
 
 	[ColorUsage(true, true)] 

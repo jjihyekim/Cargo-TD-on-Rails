@@ -5,6 +5,7 @@ using Sirenix.OdinInspector;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.Serialization;
+using Random = UnityEngine.Random;
 
 public class EnemyHealth : MonoBehaviour, IHealth {
 
@@ -100,6 +101,44 @@ public class EnemyHealth : MonoBehaviour, IHealth {
 			var rend = _renderers[j];
 			rend.material.SetFloat("_Burn", value);
 		}
+		SetBurnEffects();
+	}
+
+	public List<GameObject> activeBurnEffects = new List<GameObject>();
+	void SetBurnEffects() {
+		var targetBurnEffectCount = (int)burnSpeed/2f;
+
+		if (activeBurnEffects.Count > targetBurnEffectCount) {
+			
+			while (activeBurnEffects.Count > targetBurnEffectCount) {
+				var decommissioned = activeBurnEffects[0];
+				activeBurnEffects.RemoveAt(0);
+				decommissioned.GetComponent<SmartDestroy>().Engage();
+			}
+			
+		}else if (activeBurnEffects.Count < targetBurnEffectCount) {
+
+			var n = 5;
+			while (activeBurnEffects.Count < targetBurnEffectCount && n > 0) {
+				var randomOnCircle = Random.insideUnitCircle * totalSize;
+				var rayOrigin = transform.position + Vector3.up * 2 + new Vector3(randomOnCircle.x, 0, randomOnCircle.y);
+				var ray = new Ray(rayOrigin, Vector3.down);
+				RaycastHit hit;
+				if (Physics.Raycast(ray, out hit, 5, LevelReferences.s.enemyLayer)) {
+					var hitEnemy = hit.collider.GetComponentInParent<EnemyHealth>();
+					if (hitEnemy == this) {
+						var burnEffect = Instantiate(LevelReferences.s.burningEffect, hit.point, Quaternion.identity);
+						burnEffect.transform.SetParent(transform.GetChild(0));
+						activeBurnEffects.Add(burnEffect);
+					}
+				}
+				n -= 1;
+			}
+		}
+
+		if (activeBurnEffects.Count < targetBurnEffectCount) {
+			Invoke(nameof(SetBurnEffects),0.01f);
+		}
 	}
 
 
@@ -155,8 +194,12 @@ public class EnemyHealth : MonoBehaviour, IHealth {
 		enemySpawned += 1;
 	}
 
+	private Bounds myBounds;
+	private float totalSize;
 	private void OnEnable() {
 		winSelfDestruct.AddListener(Die);
+		myBounds = transform.GetCombinedBoundingBoxOfChildren();
+		totalSize = myBounds.size.magnitude;
 	}
 
 	private void OnDisable() {

@@ -8,11 +8,11 @@ public class SmartDestroy : MonoBehaviour
         var particles = GetComponentsInChildren<ParticleSystem>();
 
         foreach (var particle in particles) {
-            particle.transform.SetParent(null);
+            //particle.transform.SetParent(null);
             particle.Stop();
-            Destroy(particle.gameObject, 1f);
+            //Destroy(particle.gameObject, 5f);
         }
         
-        Destroy(gameObject);
+        Destroy(gameObject,5f);
     }
 }

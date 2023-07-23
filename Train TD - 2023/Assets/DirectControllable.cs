@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class DirectControllable : MonoBehaviour {
+public class DirectControllable : MonoBehaviour, IShowButtonOnCartUIDisplay {
 
 	public Transform cameraParent;
 	
@@ -15,5 +15,9 @@ public class DirectControllable : MonoBehaviour {
 
 	public Transform GetDirectControlTransform() {
 		return cameraParent;
+	}
+
+	public Color GetColor() {
+		return new Color(1f, 0, 0.9137254901960784f);
 	}
 }

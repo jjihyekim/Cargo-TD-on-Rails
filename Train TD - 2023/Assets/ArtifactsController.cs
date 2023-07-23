@@ -15,43 +15,16 @@ public class ArtifactsController : MonoBehaviour {
 	}
 
 
-	public Transform artifactsParent;
-	public List<Artifact> myArtifacts = new List<Artifact>();
+	public Artifact[] myArtifacts = new Artifact[0];
 
 	public bool gotBonusArtifact = false;
 	public string bonusArtifactUniqueName;
 
 	public Transform bonusArtifactStarLocation;
-
-
-	public void CreateArtifactsBasedOnSaveData() {
-		artifactsParent.DeleteAllChildren();
-		myArtifacts.Clear();
-
-		var artifactNames = DataSaver.s.GetCurrentSave().currentRun.artifacts;
-		for (int i = 0; i < artifactNames.Length; i++) {
-			var artifact = Instantiate(DataHolder.s.GetArtifact(artifactNames[i]).gameObject, artifactsParent).GetComponent<Artifact>();
-			artifact.InstantEquipArtifact();
-			myArtifacts.Add(artifact);
-		}
-		
-		LayoutRebuilder.ForceRebuildLayoutImmediate(artifactsParent as RectTransform);
-		
-		Train.s.ArtifactsChanged();
-	}
-
-	public void SaveArtifacts() {
-		string[] artifactNames = new string[myArtifacts.Count];
-		for (int i = 0; i < myArtifacts.Count; i++) {
-			artifactNames[i] = myArtifacts[i].uniqueName;
-		}
-
-		DataSaver.s.GetCurrentSave().currentRun.artifacts = artifactNames;
-	}
 	
 
 	public void OnDisarmArtifacts() {
-		for (int i = 0; i < myArtifacts.Count; i++) {
+		for (int i = 0; i < myArtifacts.Length; i++) {
 			var effects = myArtifacts[i].GetComponentsInChildren<ActivateWhenOnArtifactRow>();
 			for (int j = 0; j < effects.Length; j++) {
 				effects[j].Disarm();
@@ -61,7 +34,7 @@ public class ArtifactsController : MonoBehaviour {
 
 
 	public void OnArmArtifacts() {
-		for (int i = 0; i < myArtifacts.Count; i++) {
+		for (int i = 0; i < myArtifacts.Length; i++) {
 			var effects = myArtifacts[i].GetComponentsInChildren<ActivateWhenOnArtifactRow>();
 			for (int j = 0; j < effects.Length; j++) {
 				effects[j].Arm();
@@ -149,18 +122,16 @@ public class ArtifactsController : MonoBehaviour {
 		}
 		Destroy(star.gameObject);
 	}
-
-
-	public void EquipArtifact(Artifact artifact) {
-		myArtifacts.Add(artifact);
-		artifact.GetComponentInChildren<EventTrigger>().enabled = false;
-		Train.s.ArtifactsChanged();
-	}
-
+	
 	public void ModifyEnemy(EnemyHealth enemyHealth) {
-		for (int i = 0; i < myArtifacts.Count; i++) {
+		for (int i = 0; i < myArtifacts.Length; i++) {
 			myArtifacts[i].GetComponent<ActivateWhenEnemySpawns>()?.ModifyEnemy(enemyHealth);
 		}
+	}
+
+
+	public void ArtifactsChanged() {
+		myArtifacts = Train.s.GetComponentsInChildren<Artifact>();
 	}
 }
 

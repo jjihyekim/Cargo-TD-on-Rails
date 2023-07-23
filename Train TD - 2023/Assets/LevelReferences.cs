@@ -21,6 +21,10 @@ public class LevelReferences : MonoBehaviour {
         }
     }
 
+    public GameObject burningEffect;
+    
+    [Space]
+
     public GameObject metalBulletHitEffectPrefab;
     public GameObject dirtBulletHitEffectPrefab;
     public GameObject enemyRegularHitEffectPrefab;
@@ -33,24 +37,43 @@ public class LevelReferences : MonoBehaviour {
     public GameObject enemyHealthPrefab;
     public GameObject cartHealthPrefab;
     public Transform cartHealthParent;
-    public GameObject repairEffectPrefab;
-    public GameObject reloadEffectPrefab;
     public GameObject damageNumbersPrefab;
     public Transform uiDisplayParent;
+    
+    [Space]
+    
+    public GameObject repairEffectPrefab;
+    public GameObject shieldUpEffectPrefab;
+    
+    [Space]
+    
+    public GameObject reloadEffect_regular;
+    public GameObject reloadEffect_fire;
+    public GameObject reloadEffect_sticky;
+    
+    [Space]
 
     public GameObject smallDamagePrefab;
     public GameObject mediumDamagePrefab;
     public GameObject bigDamagePrefab;
+    
+    [Space]
 
     public GameObject buildingHPLowParticles;
     public GameObject buildingHPCriticalParticles;
     public GameObject buildingDestroyedParticles;
+    
+    [Space]
 
     public GameObject teleportStartEffect;
     public float teleportTime = 1f;
     public GameObject teleportCompleteEffect;
+    
+    [Space]
 
     public GameObject currentlySlowedEffect;
+    
+    [Space]
 
     public float speed = 1f;
 
@@ -59,6 +82,7 @@ public class LevelReferences : MonoBehaviour {
     public static bool targetsDirty;
 
 
+    [Space]
     public Material[] cartLevelMats;
 
     
@@ -77,18 +101,22 @@ public class LevelReferences : MonoBehaviour {
         }
     }
 
+    [Space]
     public GameObject scrapPile;
     public GameObject fuelPile;
     public GameObject ammoPile;
 
+    [Space]
     public static List<ScrapPile> allScraps = new List<ScrapPile>();
     public Train train;
 
     
+    [Space]
     public Material hologramBuildable;
     public Material hologramCantBuild;
     
     
+    [Space]
     public LayerMask groundLayer;
     public LayerMask enemyLayer;
     public LayerMask buildingLayer;
@@ -96,12 +124,15 @@ public class LevelReferences : MonoBehaviour {
     public LayerMask gateMask;
     public LayerMask artifactLayer;
 
+    [Space]
     public SingleUnityLayer playerBulletLayer;
     public SingleUnityLayer enemyBulletLayer;
     
+    [Space]
     public Color leftColor = Color.white;
     public Color rightColor = Color.white;
 
+    [Space]
     public Sprite encounterIcon;
     public Color encounterColor = Color.cyan;
     public Sprite smallEnemyIcon;
@@ -109,24 +140,35 @@ public class LevelReferences : MonoBehaviour {
     public Color eliteColor = Color.red;
     public Sprite bossEnemyIcon;
 
+    [Space]
     public GameObject resourceParticleScraps;
     public GameObject resourceParticleAmmo;
     public GameObject resourceParticleFuel;
 
+    [Space]
     public GameObject enemyCartReward;
     public GameObject enemyHasArtifactStar;
     
     
+    [Space]
     public GameObject resourceLostParticleScraps;
     public GameObject resourceLostParticleAmmo;
     public GameObject resourceLostParticleFuel;
 
+    [Space]
     public GameObject emptyCart;
 
+    [Space]
     public GameObject noAmmoWarning;
 
+    [Space]
     public LevelSegmentScriptable debugBuggyLevel;
 
+    [Space] 
+    public GameObject bullet_regular;
+    public GameObject bullet_fire;
+    public GameObject bullet_sticky;
+    public GameObject bullet_fire_sticky;
 
     public GameObject GetResourceParticle(ResourceTypes types) {
         switch (types) {
@@ -190,6 +232,7 @@ public class LevelReferences : MonoBehaviour {
     }
     
     
+    [Space]
     public float throwHorizontalSpeed = 0.1f;
     public float throwVerticalSpeed = 0.2f;
     public float throwGravity = 9.81f;

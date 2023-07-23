@@ -1128,6 +1128,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1a7eab1db79f56c47b0647f898b7c2c9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  baseHealth: 2000000
   maxHealth: 2000000
   currentHealth: 2000000
   scrapReward: 5
@@ -1138,12 +1139,18 @@ MonoBehaviour:
   isAlive: 1
   uiTransform: {fileID: 2740932883121660032}
   cartRewardTransform: {fileID: 2740932883121660032}
-  healthBar: {fileID: 0}
+  enemyUIBar: {fileID: 0}
   isArmored: 0
-  rewardPowerUp: 0
   isComponentEnemy: 0
+  maxShields: 0
+  currentShields: 0
+  curShieldDelay: 0
+  activeBurnEffects: []
   currentBurn: 0
   burnSpeed: 0
+  rewardArtifactOnDeath: 0
+  artifactRewardUniqueName: 
+  bonusArtifactUIStar: {fileID: 0}
   _outlines: []
 --- !u!114 &2942942888468131775
 MonoBehaviour:
@@ -1161,6 +1168,7 @@ MonoBehaviour:
   myType: 0
   targetTransform: {fileID: 3935271781729781793}
   avoid: 1
+  flying: 0
   velocity: {x: 0, y: 0, z: 0}
 --- !u!114 &-5213072349006234106
 MonoBehaviour:

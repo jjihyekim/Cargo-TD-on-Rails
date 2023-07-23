@@ -40,7 +40,7 @@ public class CharacterSelector : MonoBehaviour {
         }
 
         var progress = DataSaver.s.GetCurrentSave().xpProgress;
-        if (progress.unlockedStarterArtifacts.Count == 0) {
+        /*if (progress.unlockedStarterArtifacts.Count == 0) {
             progress.unlockedStarterArtifacts.Add("starter_artifact");
         }
         
@@ -71,7 +71,7 @@ public class CharacterSelector : MonoBehaviour {
             bonusArtifactEmpty.transform.SetParent(bonusArtifactParent);
             bonusArtifactToggle.isOn = false;
             bonusArtifactToggle.interactable = false;
-        }
+        }*/
     }
 
     public void SelectCharacter(CharacterData _data) {
@@ -80,13 +80,13 @@ public class CharacterSelector : MonoBehaviour {
         DataSaver.s.GetCurrentSave().currentRun.SetCharacter(_data);
         DataSaver.s.GetCurrentSave().isInARun = true;
 
-        var saveArtifacts = new List<string>();
+        /*var saveArtifacts = new List<string>();
         saveArtifacts.Add(selectedArtifact.uniqueName);
         if (bonusArtifactToggle.isOn) {
             saveArtifacts.Add(bonusArtifact.uniqueName);
-        }
+        }*/
 
-        DataSaver.s.GetCurrentSave().currentRun.artifacts = saveArtifacts.ToArray();
+        //DataSaver.s.GetCurrentSave().currentRun.artifacts = saveArtifacts.ToArray();
         DataSaver.s.GetCurrentSave().xpProgress.bonusArtifact = "";
             
             

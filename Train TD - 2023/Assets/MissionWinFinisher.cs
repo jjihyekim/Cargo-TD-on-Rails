@@ -134,7 +134,7 @@ public class MissionWinFinisher : MonoBehaviour {
 		var allArtifacts = ArtifactsController.s.myArtifacts;
 
 		var eligibleBossArtifacts = new List<Artifact>();
-		for (int i = 1; i < allArtifacts.Count; i++) {
+		for (int i = 1; i < allArtifacts.Length; i++) {
 			if (allArtifacts[i].myRarity == UpgradesController.CartRarity.boss) {
 				eligibleBossArtifacts.Add(allArtifacts[i]);
 			}

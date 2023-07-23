@@ -250,7 +250,6 @@ public class DataSaver {
 		public CharacterData character = new CharacterData();
 
 		public TrainState myTrain = new TrainState();
-		public string[] artifacts = new string[0];
 
 		public int currentAct = 1;
 		
@@ -329,10 +328,14 @@ public class DataSaver {
 
 			public int health = -1;
 			public int ammo = -1;
+			public bool isFire = false;
+			public bool isSticky = false;
 
 			public int level = 0;
 
 			public CargoState cargoState;
+
+			public string attachedArtifact = "";
 			
 			[Serializable]
 			public class CargoState { // dont forget to update the copy function
@@ -382,6 +385,9 @@ public class DataSaver {
 				level = 0;
 				health = -1;
 				ammo = -1;
+				isFire = false;
+				isSticky = false;
+				attachedArtifact = "";
 				/*cargoCost = -1;
 				cargoReward = -1;*/
 			}
@@ -402,6 +408,9 @@ public class DataSaver {
 				copyState.level = level;
 				copyState.health = health;
 				copyState.ammo = ammo;
+				copyState.isFire = isFire;
+				copyState.isSticky = isSticky;
+				copyState.attachedArtifact = attachedArtifact;
 				copyState.cargoState = new CargoState(cargoState.cargoReward, cargoState.artifactReward, cargoState.isLeftCargo, cargoState.cargoLevel);
 				return copyState;
 			}
