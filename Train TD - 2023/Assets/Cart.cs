@@ -69,6 +69,8 @@ public class Cart : MonoBehaviour {
 
 
     public void ResetState() {
+        SetUpOverlays();
+        SetUpOutlines();
         genericParticlesParent.DeleteAllChildren();
         GetHealthModule().ResetState(level);
 
