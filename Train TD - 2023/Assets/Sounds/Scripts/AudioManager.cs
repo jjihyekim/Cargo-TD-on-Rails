@@ -25,12 +25,13 @@ public class AudioManager : MonoBehaviour
 
     #region FMOD Mixer
     [FoldoutGroup("FMOD Mixer")]
-    public Bus musicBus;
+    public Bus masterBus, musicBus;
 
     [FoldoutGroup("FMOD Mixer")]
-    [PropertyRange(-80f, 10f)] public float musicBusVolume;
+    [PropertyRange(-80f, 10f)] public float masterBusVolume, musicBusVolume;
     private void UpdateBus()
     {
+        masterBus.setVolume(masterBusVolume);
         musicBus.setVolume(musicBusVolume);
     }
     #endregion
@@ -85,6 +86,7 @@ public class AudioManager : MonoBehaviour
 
     private void Start()
     {
+        masterBus = RuntimeManager.GetBus("bus:/");
         musicBus = RuntimeManager.GetBus("bus:/Music");
     }
 
