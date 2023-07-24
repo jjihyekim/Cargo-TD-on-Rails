@@ -4,20 +4,32 @@ using UnityEngine;
 using FMODUnity;
 using FMOD.Studio;
 using FMOD;
+using Sirenix.OdinInspector;
 
 public class FMODAudioSource : MonoBehaviour
 {
+    [FoldoutGroup("Clip")]
     public EventReference clip;
+
+    [FoldoutGroup("Play settings")]
     public bool pauseOnGamePause = true;
+
+    [FoldoutGroup("Play settings")]
     public bool playOnStart = true;
-    [Range(0f, 3f)]public float volume = 1;
+
+    [FoldoutGroup("Play settings")]
+    public bool instantiateInstanceOnStart = true;
+
+    [FoldoutGroup("Play settings")]
+    [Range(0f, 3f)]
+    public float volume = 1;
 
     private EventInstance soundInstance;
     private int pausedPosition;
 
     private void Start()
     {
-        if(!clip.Equals(default(EventReference)))
+        if(!clip.Equals(default(EventReference)) && instantiateInstanceOnStart)
             soundInstance = AudioManager.CreateFmodEventInstance(clip);
 
         if (playOnStart)
