@@ -35,6 +35,7 @@ public class GatlingAnimator : MonoBehaviour {
         }
         
         _gunModule.startWarmUpEvent.AddListener(OnWarmUp);
+        _gunModule.stopShootingEvent.AddListener(OnStopFiring);
         _gunModule.gatlingCountZeroEvent.AddListener(OnGatlingCountZero);
     }
 
@@ -47,11 +48,17 @@ public class GatlingAnimator : MonoBehaviour {
         PlayGunShoot();
     }
 
-    void OnGatlingCountZero() {
-        isRotating = false;
+    void OnStopFiring() {
         introAudioSource.Stop();
         loopAudioSource.Stop();
         introAudioSource.PlayOneShot(stopClip);
+    }
+    
+    void OnGatlingCountZero() {
+        isRotating = false;
+        /*introAudioSource.Stop();
+        loopAudioSource.Stop();
+        introAudioSource.PlayOneShot(stopClip);*/
     }
 
     private void Update() {

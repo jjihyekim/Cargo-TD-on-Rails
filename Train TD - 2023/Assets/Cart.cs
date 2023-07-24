@@ -57,6 +57,7 @@ public class Cart : MonoBehaviour {
         PlayStateMaster.s.OnShopEntered.AddListener(SetComponentCombatShopMode);
         SetUpOverlays();
         SetUpOutlines();
+        ResetState();
     }
 
 
@@ -87,6 +88,12 @@ public class Cart : MonoBehaviour {
         for (int i = 0; i < boosterModules.Length; i++) {
             boosterModules[i].ResetState(level);
         }
+        
+        
+        var moduleAmmoProviders = GetComponentsInChildren<ModuleAmmoProvider>();
+        for (int i = 0; i < moduleAmmoProviders.Length; i++) {
+            moduleAmmoProviders[i].ResetState(level);
+        }
 
     }
 
@@ -115,11 +122,11 @@ public class Cart : MonoBehaviour {
                 }
             }
         
-            var attachedToTrain = GetComponentsInChildren<ActivateWhenAttachedToTrain>();
+            /*var attachedToTrain = GetComponentsInChildren<ActivateWhenAttachedToTrain>();
 
             for (int i = 0; i < attachedToTrain.Length; i++) {
                 attachedToTrain[i].DetachedFromTrain();
-            }
+            }*/
         
             var duringCombat = GetComponentsInChildren<IActiveDuringCombat>();
         
@@ -142,11 +149,11 @@ public class Cart : MonoBehaviour {
                 }
             }
         
-            var attachedToTrain = GetComponentsInChildren<ActivateWhenAttachedToTrain>();
+            /*var attachedToTrain = GetComponentsInChildren<ActivateWhenAttachedToTrain>();
 
             for (int i = 0; i < attachedToTrain.Length; i++) {
                 attachedToTrain[i].AttachedToTrain();
-            }
+            }*/
         
             var duringCombat = GetComponentsInChildren<IActiveDuringCombat>();
 
@@ -156,6 +163,8 @@ public class Cart : MonoBehaviour {
                 }
             }
         }
+        
+        Train.s.ArtifactsChanged();
 
     }
 
@@ -273,7 +282,7 @@ public class Cart : MonoBehaviour {
     public void SetAttachedToTrainModulesMode(bool isAttached) {
         var attachedToTrain = GetComponentsInChildren<ActivateWhenAttachedToTrain>();
         for (int i = 0; i < attachedToTrain.Length; i++) {
-            if (isAttached) {
+            if (isAttached && !isDestroyed) {
                 attachedToTrain[i].AttachedToTrain();
             } else {
                 attachedToTrain[i].DetachedFromTrain();

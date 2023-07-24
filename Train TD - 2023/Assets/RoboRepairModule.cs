@@ -139,15 +139,20 @@ public class RoboRepairModule : ActivateWhenAttachedToTrain, IActiveDuringCombat
     
     
     protected override void _AttachedToTrain() {
-        for (int i = 1; i < (baseRange+rangeBoost)+1; i++) {
+        for (int i = 1; i < (baseRange+rangeBoost*boostMultiplier)+1; i++) {
             ApplyBoost(Train.s.GetNextBuilding(i, GetComponentInParent<Cart>()), true);
             ApplyBoost(Train.s.GetNextBuilding(-i, GetComponentInParent<Cart>()), true);
         }
     }
 
     protected override bool CanApply(Cart target) {
-        var health = target.GetComponentInChildren<ModuleHealth>();
-        return health != null;
+        if (isRepair) {
+            var health = target.GetComponentInChildren<ModuleHealth>();
+            return health != null;
+        } else {
+            var ammo = target.GetComponentInChildren<ModuleAmmo>();
+            return ammo != null;
+        }
     }
 
     protected override void _ApplyBoost(Cart target, bool doApply) {

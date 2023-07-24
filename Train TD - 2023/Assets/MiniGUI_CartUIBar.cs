@@ -13,6 +13,7 @@ public class MiniGUI_CartUIBar : MonoBehaviour {
     public RectTransform ammoBar;
     public GameObject fireAmmo;
     public GameObject stickyAmmo;
+    public GameObject explosiveAmmo;
     public RectTransform healthBar;
     public Image healthFill;
     
@@ -115,7 +116,17 @@ public class MiniGUI_CartUIBar : MonoBehaviour {
             SetBoostBarValue();
     }
 
+    public float shield;
+    public float maxShield;
     void SetShieldBarValue() {
+        if (PlayStateMaster.s.isCombatInProgress()) {
+            shield = myHealth.currentShields;
+            maxShield = myHealth.maxShields;
+        } else {
+            shield = Mathf.Lerp(shield, myHealth.currentShields, 7 * Time.deltaTime);
+            maxShield = Mathf.Lerp(maxShield, myHealth.maxShields, 7 * Time.deltaTime);
+        }
+        
         if (myHealth.maxShields <= 0) {
             shieldBar.gameObject.SetActive(false);
             return;
@@ -123,24 +134,35 @@ public class MiniGUI_CartUIBar : MonoBehaviour {
             shieldBar.gameObject.SetActive(true);
         }
         
-        var percent = myHealth.GetShieldPercent();
+        var percent = shield/maxShield;
         percent = Mathf.Clamp(percent, 0, 1f);
 
         var totalLength = mainRect.sizeDelta.x;
         
         shieldBar.SetRight(totalLength*(1-percent));
-        shieldFill.material.SetFloat(Tiling, myHealth.currentShields/100f);
+        shieldFill.material.SetFloat(Tiling, shield/100f);
     }
-    
+
+
+    public float health;
+    public float maxHealth;
     void SetHealthBarValue() {
-        var percent = myHealth.GetHealthPercent();
+        if (PlayStateMaster.s.isCombatInProgress()) {
+            health = myHealth.currentHealth;
+            maxHealth = myHealth.maxHealth;
+        } else {
+            health = Mathf.Lerp(health, myHealth.currentHealth, 7 * Time.deltaTime);
+            maxHealth = Mathf.Lerp(maxHealth, myHealth.maxHealth, 7 * Time.deltaTime);
+        }
+
+        var percent = health/maxHealth;
         percent = Mathf.Clamp(percent, 0, 1f);
 
         var totalLength = mainRect.sizeDelta.x;
         
         healthBar.SetRight(totalLength*(1-percent));
         healthFill.color = GetHealthColor(percent);
-        healthFill.material.SetFloat(Tiling, myHealth.currentHealth/100f);
+        healthFill.material.SetFloat(Tiling, health/100f);
 
         if (showWarning) {
             warning.SetActive(percent < 0.5f);
@@ -156,6 +178,7 @@ public class MiniGUI_CartUIBar : MonoBehaviour {
         
         fireAmmo.gameObject.SetActive(myAmmo.isFire);
         stickyAmmo.gameObject.SetActive(myAmmo.isSticky);
+        explosiveAmmo.gameObject.SetActive(myAmmo.isExplosive);
     }
     
     void SetBoostBarValue() {

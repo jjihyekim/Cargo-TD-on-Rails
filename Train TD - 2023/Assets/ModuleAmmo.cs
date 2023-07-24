@@ -13,6 +13,7 @@ public class ModuleAmmo : MonoBehaviour, IActiveDuringCombat, IActiveDuringShopp
     public float maxAmmoMultiplier = 1f;
     public bool isFire;
     public bool isSticky;
+    public bool isExplosive;
     
     public int maxAmmo {
         get { return Mathf.RoundToInt(_maxAmmo * maxAmmoMultiplier); }
@@ -97,24 +98,34 @@ public class ModuleAmmo : MonoBehaviour, IActiveDuringCombat, IActiveDuringShopp
                     OnAmmoTypeChange?.Invoke();
                 }
                 break;
+            case PlayerWorldInteractionController.CursorState.reload_explosive:
+                if (!isExplosive) {
+                    Instantiate(LevelReferences.s.reloadEffect_explosive, transform);
+                    isExplosive = true;
+                    OnAmmoTypeChange?.Invoke();
+                }
+                break;
         }
         
         for (int i = 0; i < myGunModules.Length; i++) {
             myGunModules[i].isFire = isFire;
             myGunModules[i].isSticky = isSticky;
+            myGunModules[i].isExplosive = isExplosive;
         }
     }
     
-    public void SetAmmo(int amount, bool _isFire, bool _isSticky) {
+    public void SetAmmo(int amount, bool _isFire, bool _isSticky, bool _isExplosive) {
         curAmmo = amount;
         curAmmo = Mathf.Clamp(curAmmo, 0, maxAmmo);
 
         isFire = _isFire;
         isSticky = _isSticky;
+        isExplosive = _isExplosive;
         
         for (int i = 0; i < myGunModules.Length; i++) {
             myGunModules[i].isFire = isFire;
             myGunModules[i].isSticky = isSticky;
+            myGunModules[i].isExplosive = isExplosive;
         }
         
         
@@ -166,10 +177,12 @@ public class ModuleAmmo : MonoBehaviour, IActiveDuringCombat, IActiveDuringShopp
         if (!hasAmmo) {
             isFire = false;
             isSticky = false;
+            isExplosive = false;
             
             for (int i = 0; i < myGunModules.Length; i++) {
                 myGunModules[i].isFire = isFire;
                 myGunModules[i].isSticky = isSticky;
+                myGunModules[i].isExplosive = isExplosive;
             }
             OnAmmoTypeChange?.Invoke();
         }

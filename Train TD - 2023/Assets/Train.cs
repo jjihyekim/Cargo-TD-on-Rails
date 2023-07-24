@@ -84,12 +84,12 @@ public class Train : MonoBehaviour {
 
         UpdateCartPositions();
         
-        UpdateThingsAffectingOtherThings(true);
+        isTrainDrawn = true;
+        
+        Invoke(nameof(ArtifactsChanged),0.01f);
 
         trainUpdatedThroughNonBuildingActions?.Invoke();
         trainUpdated?.Invoke();
-
-        isTrainDrawn = true;
     }
 
 
@@ -140,6 +140,7 @@ public class Train : MonoBehaviour {
                 buildingState.ammo = (int)ammo.curAmmo;
                 buildingState.isFire = ammo.isFire;
                 buildingState.isSticky = ammo.isSticky;
+                buildingState.isExplosive = ammo.isExplosive;
             } else {
                 buildingState.ammo = -1;
             }
@@ -169,7 +170,7 @@ public class Train : MonoBehaviour {
         if (cartState.ammo >= 0) {
             var ammo = cart.GetComponentInChildren<ModuleAmmo>();
             if (ammo != null) 
-                ammo.SetAmmo(cartState.ammo, cartState.isFire, cartState.isSticky);
+                ammo.SetAmmo(cartState.ammo, cartState.isFire, cartState.isSticky, cartState.isExplosive);
             
         }/*else if (cartState.ammo == -2) {
             var ammo = cart.GetComponentInChildren<ModuleAmmo>();
@@ -439,8 +440,10 @@ public class Train : MonoBehaviour {
     }
 
     public void ArtifactsChanged() {
-        UpdateThingsAffectingOtherThings(false);
-        UpdateThingsAffectingOtherThings(true);
+        if (isTrainDrawn) {
+            UpdateThingsAffectingOtherThings(false);
+            UpdateThingsAffectingOtherThings(true);
+        }
     }
 
     public void CartUpgraded() {

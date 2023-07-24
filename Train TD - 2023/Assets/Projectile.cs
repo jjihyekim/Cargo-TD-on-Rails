@@ -15,7 +15,7 @@ public class Projectile : MonoBehaviour {
     public float projectileDamage = 20f;
     public float burnDamage = 0;
     //public float damage = 20f;
-    public float mortarRange = 2f;
+    public float explosionRange = 0; // 0.5f for rockets
 
     public bool isHeal = false;
     
@@ -37,6 +37,7 @@ public class Projectile : MonoBehaviour {
     public GunModule source;
 
     public GenericCallback onHitCallback;
+    public GenericCallback onMissCallback;
 
     public bool ballistaHitEffect = false;
     
@@ -56,10 +57,11 @@ public class Projectile : MonoBehaviour {
     public bool isPhaseThrough = false;
     //public bool isBurnDamage = false;
     public bool isSlowDamage = false;
+    public bool isHoming = false;
     private void Start() {
         Invoke("DestroySelf", lifetime);
 
-        if (Artifact_HomingBullets.isHomingBullets) {
+        if (isHoming) {
             seekStrength *= 5;
         }
         
@@ -86,7 +88,7 @@ public class Projectile : MonoBehaviour {
                     targetPos +=  Vector3.forward * enemyWave.currentSpeed * mortarAimPredictTime;
                 }
 
-                var randomOffset = Random.insideUnitSphere * mortarRange;
+                var randomOffset = Random.insideUnitSphere * explosionRange;
                 randomOffset.y = 0;
                 targetPos += randomOffset;
                 
@@ -179,8 +181,11 @@ public class Projectile : MonoBehaviour {
         }
     }
 
+    private bool didHit = false;
     void DestroySelf() {
         Destroy(gameObject);
+        if(!didHit)
+            onMissCallback?.Invoke();
     }
 
     void FixedUpdate() {
@@ -242,6 +247,9 @@ public class Projectile : MonoBehaviour {
             
             Destroy(instantDestroy);
             Destroy(gameObject);
+            
+            if(!didHit)
+                onMissCallback?.Invoke();
         }
     }
 
@@ -286,7 +294,6 @@ public class Projectile : MonoBehaviour {
 
     private void OnCollisionEnter(Collision other) {
         if (!isDead) {
-
             var train = other.transform.GetComponentInParent<ModuleHealth>();
 
             if (train != null && isPlayerBullet) {
@@ -300,10 +307,24 @@ public class Projectile : MonoBehaviour {
                 // make enemy projectiles not hit other enemies
                 return;
             }
+
+
+            if (!isPlayerBullet) {
+                if (train.reflectiveShields && train.currentShields > 0) {
+                    var copy = Instantiate(gameObject).GetComponent<Projectile>();
+                    copy.transform.rotation = Quaternion.Inverse(copy.transform.rotation);
+                    copy.target = copy.source.transform;
+                    copy.isPlayerBullet = true;
+                }
+            }
             
             switch (myHitType) {
                 case HitType.Bullet:
-                    ContactDamage(other);
+                    if (explosionRange > 0) {
+                        ExplosiveDamage(other);
+                    } else {
+                        ContactDamage(other);
+                    }
                     break;
                 case HitType.Rocket:
                     ExplosiveDamage(other);
@@ -365,10 +386,9 @@ public class Projectile : MonoBehaviour {
         GameObject hitPrefab = LevelReferences.s.mortarExplosionEffectPrefab;
         GameObject miniHitPrefab = LevelReferences.s.mortarMiniHitPrefab;
 
-        var targets = Physics.OverlapSphere(transform.position, mortarRange);
+        var targets = Physics.OverlapSphere(transform.position, explosionRange);
 
         var healthsInRange = new List<IHealth>();
-        var healthsInRangeGms = new List<GameObject>();
         for (int i = 0; i < targets.Length; i++) {
             var target = targets[i];
             
@@ -391,20 +411,43 @@ public class Projectile : MonoBehaviour {
     }
 
     private void ExplosiveDamage(Collision other) {
-        var contact = other.GetContact(0);
-        var pos = contact.point;
-        var rotation = Quaternion.LookRotation(contact.normal);
-
         GameObject hitPrefab = LevelReferences.s.rocketExplosionEffectPrefab;
+        GameObject miniHitPrefab = LevelReferences.s.mortarMiniHitPrefab;
 
-        var health = other.gameObject.GetComponentInParent<IHealth>();
-        
-        if (health != null) {
-            DealDamage(health);
-            ApplyHitForceToObject(health);
+        var effectiveRange = Mathf.Sqrt(explosionRange);
+        var targets = Physics.OverlapSphere(transform.position, effectiveRange);
+
+
+        var healthsInRange = new List<IHealth>();
+        for (int i = 0; i < targets.Length; i++) {
+            var target = targets[i];
+            
+            var health = target.gameObject.GetComponentInParent<IHealth>();
+            if (health != null && (
+                (!health.IsPlayer() && isPlayerBullet) ||
+                (health.IsPlayer() && !isPlayerBullet)
+                )) {
+                if (!healthsInRange.Contains(health)) {
+                    healthsInRange.Add(health);
+                }
+            }
         }
 
-        Instantiate(hitPrefab, pos, rotation);
+        var contactTarget = other.collider.GetComponentInParent<IHealth>();
+        if (contactTarget != null) {
+            if (!healthsInRange.Contains(contactTarget)) {
+                healthsInRange.Add(contactTarget);
+            }
+        }
+
+        foreach (var health in healthsInRange) {
+            DealDamage(health);
+            ApplyHitForceToObject(health);
+            var closestPoint = health.GetMainCollider().ClosestPoint(transform.position);
+            Instantiate(miniHitPrefab, closestPoint, Quaternion.identity);
+        }
+
+        Instantiate(hitPrefab, transform.position, Quaternion.identity).transform.localScale = Vector3.one*effectiveRange;
     }
 
     private void ContactDamage(Collision other) {
@@ -496,6 +539,7 @@ public class Projectile : MonoBehaviour {
                     .SetUp(target.GetUITransform(), (int)burnDamage, isPlayerBullet, armorProtected, true);
             }
 
+            didHit = true;
             onHitCallback?.Invoke();
         }
     }

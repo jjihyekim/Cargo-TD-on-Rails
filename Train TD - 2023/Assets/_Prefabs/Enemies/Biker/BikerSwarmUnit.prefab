@@ -47,9 +47,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1a7eab1db79f56c47b0647f898b7c2c9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  baseHealth: 20
+  baseHealth: 10
   maxHealth: 20
-  currentHealth: 20
+  currentHealth: 10
   scrapReward: 1
   ammoReward: 0
   fuelReward: 0
@@ -58,9 +58,13 @@ MonoBehaviour:
   isAlive: 1
   uiTransform: {fileID: 1998028121992200877}
   cartRewardTransform: {fileID: 0}
-  healthBar: {fileID: 0}
+  enemyUIBar: {fileID: 0}
   isArmored: 0
   isComponentEnemy: 0
+  maxShields: 0
+  currentShields: 0
+  curShieldDelay: 0
+  activeBurnEffects: []
   currentBurn: 0
   burnSpeed: 0
   rewardArtifactOnDeath: 0
@@ -203,6 +207,7 @@ MonoBehaviour:
   precomputeOutline: 0
   bakeKeys: []
   bakeValues: []
+  isInitialized: 0
 --- !u!1 &2246565702182830081
 GameObject:
   m_ObjectHideFlags: 0

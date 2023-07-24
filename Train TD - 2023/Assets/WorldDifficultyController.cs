@@ -14,9 +14,11 @@ public class WorldDifficultyController : MonoBehaviour {
     public float enemyDamageIncreasePerLevel = 0.2f;
     public float enemyHealthIncreasePerLevel = 0.2f;
 
-    [Unity.Collections.ReadOnly]
+
+    public float baseDamageIncrease = 0.6f;
+    [ReadOnly]
     public float currentDamageIncrease;
-    [Unity.Collections.ReadOnly]
+    [ReadOnly]
     public float currentHealthIncrease;
 
     public int playerAct;
@@ -32,7 +34,7 @@ public class WorldDifficultyController : MonoBehaviour {
     public void CalculateDifficulty() {
         playerAct = DataSaver.s.GetCurrentSave().currentRun.currentAct;
         playerStar = DataSaver.s.GetCurrentSave().currentRun.map.GetPlayerStar().starChunk;
-        currentDamageIncrease = ((playerAct-1)*5 + playerStar) * enemyDamageIncreasePerLevel;
+        currentDamageIncrease = ((playerAct-1)*5 + playerStar) * enemyDamageIncreasePerLevel + baseDamageIncrease;
         currentHealthIncrease = ((playerAct-1)*5 + playerStar) * enemyHealthIncreasePerLevel;
         OnDifficultyChanged?.Invoke();
     }

@@ -35,7 +35,7 @@ public class PlayerWorldInteractionController : MonoBehaviour {
     public InputActionReference clickGate;
 
     public enum CursorState {
-        empty, repair, shieldUp, reload_basic, reload_fire, reload_sticky 
+        empty, repair, shieldUp, reload_basic, reload_fire, reload_sticky, reload_explosive
     }
 
 
@@ -61,6 +61,7 @@ public class PlayerWorldInteractionController : MonoBehaviour {
     public void ResetValues() {
         repairAmountMultiplier = 1;
         reloadAmountMultiplier = 1;
+        reloadAmountPerClickBoost = 0;
         shieldUpAmountMultiplier = 1;
         canRepair = true;
         canReload = true;
@@ -109,14 +110,24 @@ public class PlayerWorldInteractionController : MonoBehaviour {
             if (showDetailClick.action.WasPerformedThisFrame() || clickCart.action.WasPerformedThisFrame()) {
                 HideInfo();
             }
+        } else {
+            if (PlayStateMaster.s.isCombatInProgress()) {
+                if (showDetailClick.action.WasPerformedThisFrame()) {
+                    SetCursorState(CursorState.repair,repairColor);
+                }
+            }
         }
 
         if (!isDragStarted && !infoCardActive) {
-            CastRayToOutlineCart();
+            if(PlayStateMaster.s.isShopOrEndGame())
+                CastRayToOutlineArtifact();
+            
+            if(selectedArtifact == null)
+                CastRayToOutlineCart();
+            
+            
             if(PlayStateMaster.s.isCombatInProgress())
                 CastRayToOutlineEnemy();
-            else
-                CastRayToOutlineArtifact();
         }
 
         if (PlayStateMaster.s.isCombatInProgress()) {
@@ -133,7 +144,7 @@ public class PlayerWorldInteractionController : MonoBehaviour {
             Deselect();
             cursorStateObject.gameObject.SetActive(false);
         } else {
-            SetCursorState(currentCursorState, activeCursorStateColor);
+            SetCursorState(currentCursorState, activeCursorStateColor, true);
         }
         
         
@@ -141,12 +152,12 @@ public class PlayerWorldInteractionController : MonoBehaviour {
 
     public void OnEnterCombat() {
         GamepadControlsHelper.s.RemovePossibleAction(GamepadControlsHelper.PossibleActions.clickGate);
-        SetCursorState(CursorState.repair, repairColor);
+        SetCursorState(CursorState.repair, repairColor, true);
     }
 
     public void OnLeaveCombat() {
         Deselect();
-        SetCursorState(CursorState.empty, cantActColor);
+        SetCursorState(CursorState.empty, cantActColor, true);
     }
 
     public void OnEnterShopScreen() {
@@ -271,6 +282,7 @@ public class PlayerWorldInteractionController : MonoBehaviour {
     public Cart swapCart;
     void CheckIfArtifactSnapping() {
         var carts = Train.s.carts;
+        var wasAttachedBefore = selectedArtifact.isAttached;
         if (Mathf.Abs(GetMousePositionOnPlane().x) < 0.3f) {
             isSnapping = false;
 
@@ -322,14 +334,12 @@ public class PlayerWorldInteractionController : MonoBehaviour {
                                 selectedArtifact.AttachToCart(cart);
                             }
                         }
+                        
+                        AudioManager.PlayOneShot(SfxTypes.OnCargoDrop2);
                     }
 
 
-                    // SFX
-                    if (isSnapping)
-                        AudioManager.PlayOneShot(SfxTypes.OnCargoDrop);
-                    else
-                        AudioManager.PlayOneShot(SfxTypes.OnCargoDrop2);
+                    
 
                     isSnapping = true;
                     return;
@@ -342,6 +352,11 @@ public class PlayerWorldInteractionController : MonoBehaviour {
         selectedArtifact.GetComponent<Rigidbody>().isKinematic = true;
         selectedArtifact.GetComponent<Rigidbody>().useGravity = false;
 
+        // SFX
+        if (wasAttachedBefore != selectedArtifact.isAttached) {
+            if (!selectedArtifact.isAttached)
+                AudioManager.PlayOneShot(SfxTypes.OnCargoDrop);
+        }
         
         if (swapArtifact != null) {
             swapArtifact.AttachToCart(swapCart);
@@ -657,12 +672,13 @@ public class PlayerWorldInteractionController : MonoBehaviour {
     public float repairAmountPerClick = 50f; // dont use this
     public float repairAmountMultiplier = 1; 
     public float reloadAmountPerClick = 2; // dont use this
+    public float reloadAmountPerClickBoost = 0; 
     public float reloadAmountMultiplier = 1;
     public float shieldUpAmountPerClick = 100f; // dont use this
     public float shieldUpAmountMultiplier = 1; 
 
     public float GetReloadAmount() {
-        return reloadAmountPerClick * reloadAmountMultiplier;
+        return (reloadAmountPerClick+reloadAmountPerClickBoost) * reloadAmountMultiplier;
     }
 
     public float GetRepairAmount() {
@@ -787,8 +803,8 @@ public class PlayerWorldInteractionController : MonoBehaviour {
     public Sprite cursorState_Reload_Fire;
     public Sprite cursorState_Reload_Sticky;
     
-    void SetCursorState(CursorState targetState, Color stateColor) {
-        if (currentCursorState != targetState) {
+    void SetCursorState(CursorState targetState, Color stateColor, bool isForced = false) {
+        if (currentCursorState != targetState || isForced) {
             var targetSprite = cursorState_Repair;
             cursorStateObject.gameObject.SetActive(true);
             switch (targetState) {
@@ -839,11 +855,11 @@ public class PlayerWorldInteractionController : MonoBehaviour {
     public float sphereCastRadiusGamepad = 0.3f;
     public float sphereCastRadiusMouse = 0.1f;
 
-    public float GetSphereCastRadius() {
+    public float GetSphereCastRadius(bool isArtifact = false) {
         if (SettingsController.GamepadMode()) {
             return sphereCastRadiusGamepad;
         } else {
-            return sphereCastRadiusMouse;
+            return sphereCastRadiusMouse * (isArtifact? 0.1f : 1f);
         }
     }
 
@@ -919,11 +935,13 @@ public class PlayerWorldInteractionController : MonoBehaviour {
 
         if (Physics.SphereCast(ray, GetSphereCastRadius(), out hit, 100f, LevelReferences.s.enemyLayer)) {
             var enemy = hit.collider.GetComponentInParent<EnemyHealth>();
-            if (enemy != selectedEnemy) {
-                SelectEnemy(enemy, true);
-            } else {
-                if (showDetailClick.action.WasPerformedThisFrame() /*|| (holdOverTimer > infoShowTime && !SettingsController.GamepadMode())*/) {
-                    ShowSelectedThingInfo();
+            if (enemy != null) {
+                if (enemy != selectedEnemy) {
+                    SelectEnemy(enemy, true);
+                } else {
+                    if (PlayStateMaster.s.isShopOrEndGame() && showDetailClick.action.WasPerformedThisFrame() /*|| (holdOverTimer > infoShowTime && !SettingsController.GamepadMode())*/) {
+                        ShowSelectedThingInfo();
+                    }
                 }
             }
 
@@ -938,19 +956,23 @@ public class PlayerWorldInteractionController : MonoBehaviour {
         RaycastHit hit;
         Ray ray = GetRay();
 
-        if (Physics.SphereCast(ray, GetSphereCastRadius(), out hit, 100f, LevelReferences.s.artifactLayer)) {
+        if (Physics.SphereCast(ray, GetSphereCastRadius(true), out hit, 100f, LevelReferences.s.artifactLayer)) {
             var artifact = hit.collider.GetComponentInParent<Artifact>();
-            if (artifact != selectedArtifact) {
-                SelectArtifact(artifact, true);
-            } else {
-                if (showDetailClick.action.WasPerformedThisFrame() /*|| (holdOverTimer > infoShowTime && !SettingsController.GamepadMode())*/) {
-                    ShowSelectedThingInfo();
+            //print($"{artifact} - {selectedArtifact}");
+            if (artifact != null) {
+                if (artifact != selectedArtifact) {
+                    SelectArtifact(artifact, true);
+                } else {
+                    if (showDetailClick.action.WasPerformedThisFrame() /*|| (holdOverTimer > infoShowTime && !SettingsController.GamepadMode())*/) {
+                        ShowSelectedThingInfo();
+                    }
                 }
             }
         } else {
-            if(selectedArtifact != null)
+            if (selectedArtifact != null)
                 Deselect();
         }
+        
     }
 
 
@@ -1067,6 +1089,7 @@ public class PlayerWorldInteractionController : MonoBehaviour {
     public UnityEvent<GateScript, bool> OnSelectGate = new UnityEvent<GateScript, bool>();
     void SelectBuilding(Cart building, bool isSelecting) {
         Deselect();
+        
         Outline outline = null;
         if(building != null)
             outline = building.GetComponentInChildren<Outline>();

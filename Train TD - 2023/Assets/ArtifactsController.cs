@@ -24,6 +24,7 @@ public class ArtifactsController : MonoBehaviour {
 	
 
 	public void OnDisarmArtifacts() {
+		myArtifacts = Train.s.GetComponentsInChildren<Artifact>();
 		for (int i = 0; i < myArtifacts.Length; i++) {
 			var effects = myArtifacts[i].GetComponentsInChildren<ActivateWhenOnArtifactRow>();
 			for (int j = 0; j < effects.Length; j++) {
@@ -34,10 +35,12 @@ public class ArtifactsController : MonoBehaviour {
 
 
 	public void OnArmArtifacts() {
+		myArtifacts = Train.s.GetComponentsInChildren<Artifact>();
 		for (int i = 0; i < myArtifacts.Length; i++) {
 			var effects = myArtifacts[i].GetComponentsInChildren<ActivateWhenOnArtifactRow>();
 			for (int j = 0; j < effects.Length; j++) {
-				effects[j].Arm();
+				if(!effects[j].GetComponentInParent<Cart>().isDestroyed)
+					effects[j].Arm();
 			}
 		}
 	}
@@ -125,7 +128,8 @@ public class ArtifactsController : MonoBehaviour {
 	
 	public void ModifyEnemy(EnemyHealth enemyHealth) {
 		for (int i = 0; i < myArtifacts.Length; i++) {
-			myArtifacts[i].GetComponent<ActivateWhenEnemySpawns>()?.ModifyEnemy(enemyHealth);
+			if(!myArtifacts[i].GetComponentInParent<Cart>().isDestroyed)
+				myArtifacts[i].GetComponent<ActivateWhenEnemySpawns>()?.ModifyEnemy(enemyHealth);
 		}
 	}
 
@@ -140,26 +144,16 @@ public class ArtifactsController : MonoBehaviour {
 
 public abstract class ActivateWhenOnArtifactRow : MonoBehaviour {
 
-	[ReadOnly]
-	public bool isArmed = false;
 
 	public void Arm() {
-		if (isArmed == false) {
-			isArmed = true;
-            
-			_Arm();
-		}
+		_Arm();
 	}
 
 	protected abstract void _Arm();
     
 
 	public void Disarm() {
-		if (isArmed == true) {
-			isArmed = false;
-
-			_Disarm();
-		}
+		_Disarm();
 	}
     
     

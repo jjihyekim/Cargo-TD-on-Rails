@@ -13,7 +13,7 @@ public class ShieldGeneratorModule : ActivateWhenAttachedToTrain {
 	}
 
 	protected override bool CanApply(Cart target) {
-		return true;
+		return target.GetHealthModule() != null;
 	}
 
 	protected override void _ApplyBoost(Cart target, bool doApply) {
@@ -29,6 +29,6 @@ public class ShieldGeneratorModule : ActivateWhenAttachedToTrain {
 	}
 
 	protected override void _DetachedFromTrain() {
-		//do nothing
+		
 	}
 }

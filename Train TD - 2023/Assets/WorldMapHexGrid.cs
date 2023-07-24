@@ -38,6 +38,7 @@ public class WorldMapHexGrid : MonoBehaviour {
 	}
 
 	public void CreateGridsOverAFewFrames(GenericCallback callback) {
+		gameObject.SetActive(true);
 		StartCoroutine(_CreateGridsOverAFewFrames(callback));
 	}
 

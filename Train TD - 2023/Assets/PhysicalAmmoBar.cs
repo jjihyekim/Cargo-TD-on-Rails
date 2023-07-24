@@ -43,12 +43,20 @@ public class PhysicalAmmoBar : MonoBehaviour {
 
     void OnAmmoTypeChange() {
         ammoChunk = LevelReferences.s.bullet_regular;
-        if (moduleAmmo.isFire && moduleAmmo.isSticky) {
+        if (moduleAmmo.isFire && moduleAmmo.isSticky && moduleAmmo.isExplosive) {
+            ammoChunk = LevelReferences.s.bullet_fire_sticky_explosive;
+        }else if (moduleAmmo.isFire && moduleAmmo.isSticky) {
             ammoChunk = LevelReferences.s.bullet_fire_sticky;
+        }else if (moduleAmmo.isFire && moduleAmmo.isExplosive) {
+            ammoChunk = LevelReferences.s.bullet_fire_explosive;
+        } else if (moduleAmmo.isSticky&& moduleAmmo.isExplosive) {
+            ammoChunk = LevelReferences.s.bullet_sticky_explosive;
         }else if (moduleAmmo.isFire) {
             ammoChunk = LevelReferences.s.bullet_fire;
         }else if (moduleAmmo.isSticky) {
             ammoChunk = LevelReferences.s.bullet_sticky;
+        }else if (moduleAmmo.isExplosive) {
+            ammoChunk = LevelReferences.s.bullet_explosive;
         }
 
         var oldAmmo = new List<GameObject>(allAmmoChunks);

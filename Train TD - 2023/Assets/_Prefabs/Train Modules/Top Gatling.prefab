@@ -418,7 +418,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   gunSprite: {fileID: 0}
   isGigaGatling: 1
-  maxFireRateReduction: 1
+  maxFireRateReduction: 0.92
   gatlingAmount: 0
   maxGatlingAmount: 4
   rotateTransforms:
@@ -446,6 +446,7 @@ MonoBehaviour:
   bonusBurnDamage: 0
   damageMultiplier: 1
   burnDamageMultiplier: 1
+  regularToBurnDamageConversionMultiplier: 0
   dontGetAffectByMultipliers: 0
   isHeal: 0
   rotateSpeed: 5

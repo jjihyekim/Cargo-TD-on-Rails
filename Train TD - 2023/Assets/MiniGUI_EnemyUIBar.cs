@@ -64,7 +64,7 @@ public class MiniGUI_EnemyUIBar : MonoBehaviour{
     void SetHealthBarValue() {
         var percent = myHealth.GetHealthPercent();
         percent = Mathf.Clamp(percent, 0, 1f);
-        percent = percent.Remap(0, 1, 0.05f, 1f);
+        percent = percent.Remap(0, 1, 0.1f, 1f);
 
         var totalLength = mainRect.sizeDelta.x;
         

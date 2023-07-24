@@ -330,11 +330,13 @@ public class DataSaver {
 			public int ammo = -1;
 			public bool isFire = false;
 			public bool isSticky = false;
+			public bool isExplosive = false;
 
 			public int level = 0;
 
 			public CargoState cargoState;
 
+			[ValueDropdown("GetAllArtifactNames")]
 			public string attachedArtifact = "";
 			
 			[Serializable]
@@ -361,6 +363,7 @@ public class DataSaver {
 				private static IEnumerable GetAllArtifactNames() {
 					var artifacts = GameObject.FindObjectOfType<DataHolder>().artifacts;
 					var artifactNames = new List<string>();
+					artifactNames.Add("");
 					for (int i = 0; i < artifacts.Length; i++) {
 						artifactNames.Add(artifacts[i].uniqueName);
 					}
@@ -387,6 +390,7 @@ public class DataSaver {
 				ammo = -1;
 				isFire = false;
 				isSticky = false;
+				isExplosive = false;
 				attachedArtifact = "";
 				/*cargoCost = -1;
 				cargoReward = -1;*/
@@ -401,6 +405,16 @@ public class DataSaver {
 				}
 				return buildingNames;
 			}
+			
+			private static IEnumerable GetAllArtifactNames() {
+				var artifacts = GameObject.FindObjectOfType<DataHolder>().artifacts;
+				var artifactNames = new List<string>();
+				artifactNames.Add("");
+				for (int i = 0; i < artifacts.Length; i++) {
+					artifactNames.Add(artifacts[i].uniqueName);
+				}
+				return artifactNames;
+			}
 
 			public CartState Copy() {
 				var copyState = new CartState();
@@ -410,6 +424,7 @@ public class DataSaver {
 				copyState.ammo = ammo;
 				copyState.isFire = isFire;
 				copyState.isSticky = isSticky;
+				copyState.isExplosive = isExplosive;
 				copyState.attachedArtifact = attachedArtifact;
 				copyState.cargoState = new CargoState(cargoState.cargoReward, cargoState.artifactReward, cargoState.isLeftCargo, cargoState.cargoLevel);
 				return copyState;

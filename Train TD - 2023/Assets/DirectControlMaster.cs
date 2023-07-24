@@ -56,7 +56,16 @@ public class DirectControlMaster : MonoBehaviour {
 		cancelDirectControlAction.action.performed -= DisableDirectControl;
 	}
 
+	public bool isSniper = false;
+	public float sniperMultiplier = 0;
+	public float sniperMultiplierGain = 0.2f;
+	public float sniperMultiplierLoss = 0.5f;
+	public float sniperMaxMultiplier = 5;
+
 	public float directControlLock = 0;
+	public bool enterDirectControlShootLock = false;
+
+	private CursorStateChanger[] bulletTypes;
 	public void AssumeDirectControl(DirectControllable source) {
 		if (!directControlInProgress && directControlLock <= 0) {
 			PlayerWorldInteractionController.s.canSelect = false;
@@ -68,7 +77,7 @@ public class DirectControlMaster : MonoBehaviour {
 			myGun = directControllable.GetComponentInParent<GunModule>();
 			//myAmmo = myGun.GetComponent<ModuleAmmo>();
 			//ammoSlider.gameObject.SetActive(myAmmo != null);
-			ammoSlider.gameObject.SetActive(myGun.isGigaGatling);
+			ammoSlider.gameObject.SetActive(myGun.isGigaGatling || myGun.gatlinificator);
 			/*if (myAmmo != null) {
 				hasAmmo = myAmmo.curAmmo > 0;
 			} else {*/
@@ -81,7 +90,8 @@ public class DirectControlMaster : MonoBehaviour {
 			doShake = myGun.gunShakeOnShoot;
 			myGun.beingDirectControlled = true;
 
-			curCooldown = myGun.GetFireDelay() - 0.1f; // so that we don't immediately shoot
+			curCooldown = myGun.GetFireDelay();
+			enterDirectControlShootLock = true;
 
 			DirectControlGameObject.SetActive(true);
 			directControlInProgress = true;
@@ -112,6 +122,44 @@ public class DirectControlMaster : MonoBehaviour {
 			
 			GamepadControlsHelper.s.AddPossibleActions(GamepadControlsHelper.PossibleActions.shoot);
 			GamepadControlsHelper.s.AddPossibleActions(GamepadControlsHelper.PossibleActions.exitDirectControl);
+
+
+			//sniperMultiplier = 0;
+			isSniper = myGun.isHoming;
+			if (isSniper) {
+				sniperAmount.text = $"Smart Bullets:\n+{sniperMultiplier*100:F0}%";
+				sniperAmount.gameObject.SetActive(true);
+				myGun.sniperDamageMultiplier = sniperMultiplier;
+			} else {
+				myGun.sniperDamageMultiplier = 1;
+				sniperAmount.gameObject.SetActive(false);
+				
+			}
+
+			
+			bulletTypes = Train.s.GetComponentsInChildren<CursorStateChanger>(true);
+			ApplyBulletTypes();
+		}
+	}
+
+	void ApplyBulletTypes() {
+		myGun.isExplosive = false;
+		myGun.isFire = false;
+		myGun.isSticky = false;
+		for (int i = 0; i < bulletTypes.Length; i++) {
+			if (!bulletTypes[i].GetComponentInParent<Cart>().isDestroyed) {
+				switch (bulletTypes[i].targetState) {
+					case PlayerWorldInteractionController.CursorState.reload_explosive:
+						myGun.isExplosive = true;
+						break;
+					case PlayerWorldInteractionController.CursorState.reload_fire:
+						myGun.isFire = true;
+						break;
+					case PlayerWorldInteractionController.CursorState.reload_sticky:
+						myGun.isSticky = true;
+						break;
+				}
+			}
 		}
 	}
 
@@ -138,6 +186,8 @@ public class DirectControlMaster : MonoBehaviour {
 
 			directControlLock = 0.2f;
 
+			isSniper = false;
+			myGun.sniperDamageMultiplier = 1;
 		}
 	}
 
@@ -166,6 +216,8 @@ public class DirectControlMaster : MonoBehaviour {
 	public DirectControllable.DirectControlMode currentMode;
 
 	private bool reticleIsGreen = false;
+
+	public TMP_Text sniperAmount;
 	private void Update() {
 		if (directControlInProgress && !Pauser.s.isPaused) {
 			if (directControlTrainBuilding == null || directControlTrainBuilding.isDead || myGun == null) {
@@ -188,8 +240,10 @@ public class DirectControlMaster : MonoBehaviour {
 				//Debug.DrawLine(ray.origin, ray.GetPoint(10));
 			}
 
+			float reTargetingTime = myGun.fireDelay - Mathf.Min(1, myGun.fireDelay / 2f);
+
 			if (currentMode == DirectControllable.DirectControlMode.LockOn) {
-				if (didHit && curCooldown > 1f) {
+				if (didHit && curCooldown > reTargetingTime) {
 					var possibleTarget = hit.collider.GetComponentInParent<PossibleTarget>();
 					if (possibleTarget == null) {
 						possibleTarget = hit.collider.GetComponent<PossibleTarget>();
@@ -220,7 +274,7 @@ public class DirectControlMaster : MonoBehaviour {
 						curRocketLockInTime = 0;
 						myGun.UnsetTarget();
 						hasTarget = true;
-						if (curCooldown > 1f) {
+						if (curCooldown > reTargetingTime) {
 							rocketLockStatus.text = "No Targets";
 						} else {
 							rocketLockStatus.text = "Waiting";
@@ -237,7 +291,7 @@ public class DirectControlMaster : MonoBehaviour {
 					curRocketLockInTime = 0;
 					myGun.UnsetTarget();
 					hasTarget = true;
-					if (curCooldown > 1f) {
+					if (curCooldown > reTargetingTime) {
 						rocketLockStatus.text = "No Targets";
 					} else {
 						rocketLockStatus.text = "Waiting";
@@ -259,29 +313,60 @@ public class DirectControlMaster : MonoBehaviour {
 			rocketCrosshairLock.transform.localScale = Vector3.one * Mathf.Lerp(1,0.5f,lockInPercent);
 
 
+			if (directControlShootAction.action.WasReleasedThisFrame()) {
+				enterDirectControlShootLock = false;
+			}
+
 			//if (hasAmmo) {
-				if (directControlShootAction.action.IsPressed() && 
-				    (currentMode != DirectControllable.DirectControlMode.LockOn || (curRocketLockInTime >= rocketLockOnTime && hasTarget))
-				    ) {
-					if (curCooldown >= myGun.GetFireDelay()) {
-						myGun.ShootBarrage(false, OnShoot, OnHit);
-						curCooldown = 0;
+			switch (currentMode) {
+					case DirectControllable.DirectControlMode.Gun:
+						if (curCooldown >= myGun.GetFireDelay() && directControlShootAction.action.IsPressed()&& !enterDirectControlShootLock) {
+							ApplyBulletTypes();
+							myGun.ShootBarrage(false, OnShoot, OnHit, OnMiss);
+							curCooldown = 0;
 
-						/*if (currentMode == DirectControlAction.DirectControlMode.LockOn) {
-							StopCoroutine(flashCoroutine);
-							reticleIsGreen = false;
-							StartCoroutine(FlashReticleOnShoot());
-						}*/
-					}
-				}
+							/*if (currentMode == DirectControlAction.DirectControlMode.LockOn) {
+								StopCoroutine(flashCoroutine);
+								reticleIsGreen = false;
+								StartCoroutine(FlashReticleOnShoot());
+							}*/
+						}
+						
+						if (directControlShootAction.action.IsPressed()&& !enterDirectControlShootLock) {
+							myGun.gatlingAmount += Time.deltaTime;
+							myGun.gatlingAmount = Mathf.Clamp(myGun.gatlingAmount, 0, myGun.maxGatlingAmount);
+						}else{
+							myGun.gatlingAmount -= Time.deltaTime;
+							myGun.gatlingAmount = Mathf.Clamp(myGun.gatlingAmount, 0, myGun.maxGatlingAmount);
+						}
+						
+						break;
+					case DirectControllable.DirectControlMode.LockOn:
+						if ((curRocketLockInTime >= rocketLockOnTime && hasTarget)) {
+							if (curCooldown >= myGun.GetFireDelay() && directControlShootAction.action.IsPressed()&& !enterDirectControlShootLock) {
+								ApplyBulletTypes();
+								myGun.ShootBarrage(false, OnShoot, OnHit, OnMiss);
+								curCooldown = 0;
 
-				if (directControlShootAction.action.IsPressed()) {
-					myGun.gatlingAmount += Time.deltaTime;
-					myGun.gatlingAmount = Mathf.Clamp(myGun.gatlingAmount, 0, myGun.maxGatlingAmount);
-				}else{
-					myGun.gatlingAmount -= Time.deltaTime*2f;
-					myGun.gatlingAmount = Mathf.Clamp(myGun.gatlingAmount, 0, myGun.maxGatlingAmount);
+								/*if (currentMode == DirectControlAction.DirectControlMode.LockOn) {
+									StopCoroutine(flashCoroutine);
+									reticleIsGreen = false;
+									StartCoroutine(FlashReticleOnShoot());
+								}*/
+							}
+						}
+
+						if (hasTarget) {
+							myGun.gatlingAmount += Time.deltaTime;
+							myGun.gatlingAmount = Mathf.Clamp(myGun.gatlingAmount, 0, myGun.maxGatlingAmount);
+						} else {
+							myGun.gatlingAmount -= Time.deltaTime;
+							myGun.gatlingAmount = Mathf.Clamp(myGun.gatlingAmount, 0, myGun.maxGatlingAmount);
+						}
+
+						break;
 				}
+					
 				ammoSlider.value = Mathf.Clamp01(myGun.gatlingAmount/myGun.maxGatlingAmount);
 			/*} else {
 				if (directControlShootAction.action.triggered) {
@@ -293,8 +378,8 @@ public class DirectControlMaster : MonoBehaviour {
 					curCooldown = myGun.GetFireDelay()*2;
 				}
 			}*/
-			
 
+			rocketLockOnTime = Mathf.Min(1, myGun.GetFireDelay() * (1 / 2f));
 			curCooldown += Time.deltaTime;
 			cooldownSlider.value = Mathf.Clamp01(1-(curCooldown / myGun.GetFireDelay()));
 
@@ -393,6 +478,22 @@ public class DirectControlMaster : MonoBehaviour {
 			hitAud.pitch = hitPitch + Random.Range(-hitPitchRandomness, hitPitchRandomness);
 			hitAud.PlayOneShot(hitAud.clip);
 			currentOnHit += 1;
+		}
+
+		if (isSniper) {
+			sniperMultiplier += sniperMultiplierGain;
+			sniperMultiplier = Mathf.Clamp(sniperMultiplier, 0, sniperMaxMultiplier);
+			myGun.sniperDamageMultiplier = 1+sniperMultiplier;
+			sniperAmount.text = $"Smart Bullets:\n+{sniperMultiplier*100:F0}%";
+		}
+	}
+
+	void OnMiss() {
+		if (isSniper) {
+			sniperMultiplier *= sniperMultiplierLoss;
+			sniperMultiplier = Mathf.Clamp(sniperMultiplier, 0, sniperMaxMultiplier);
+			myGun.sniperDamageMultiplier = 1+sniperMultiplier;
+			sniperAmount.text = $"Smart Bullets:\n+{sniperMultiplier*100:F0}%";
 		}
 	}
 }

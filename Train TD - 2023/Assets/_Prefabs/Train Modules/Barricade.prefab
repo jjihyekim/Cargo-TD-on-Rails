@@ -1771,6 +1771,10 @@ MonoBehaviour:
   attachmentThing: {fileID: 5231439669197304400}
   attachmentThings: []
   isAttached: 0
+  spawnAttachmentThings: 1
+  baseRange: 1
+  rangeBoost: 0
+  boostMultiplier: 1
 --- !u!1001 &5926245680219220562
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1836,7 +1840,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2564255422046077385, guid: 86c82cfee32788c49a35e2e0e34bf7b7, type: 3}
       propertyPath: damageReductionMultiplier
-      value: 0.5
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 3399934084524781478, guid: 86c82cfee32788c49a35e2e0e34bf7b7, type: 3}
       propertyPath: m_Name

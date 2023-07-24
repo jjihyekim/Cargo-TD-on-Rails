@@ -581,6 +581,7 @@ GameObject:
   m_Component:
   - component: {fileID: 5293774729734864379}
   - component: {fileID: 7814989514790184966}
+  - component: {fileID: 8766821215593242774}
   m_Layer: 11
   m_Name: Building Cargo
   m_TagString: Untagged
@@ -620,8 +621,29 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   tooltip:
-    text: Click on this to grab some ammo to reload your guns!
+    text: Click on this to grab some ammo to reload your guns! Upgrading or having
+      more than one copy of this increases how much you reload per click.
   info: Basic Ammo Cart
+--- !u!114 &8766821215593242774
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5749283440783117715}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dc386fed7cd799943af2d7a59fd7a478, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  attachmentThing: {fileID: 0}
+  attachmentThings: []
+  isAttached: 0
+  spawnAttachmentThings: 0
+  boostReloadCountPerLevel: 1
+  boostFireDamageBase: 0
+  boostFireDamagePercentPerLevel: 0
+  activeFireDamageBoost: 0
 --- !u!1 &6073088298320839589
 GameObject:
   m_ObjectHideFlags: 0
@@ -950,7 +972,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3399934084524781478, guid: 86c82cfee32788c49a35e2e0e34bf7b7, type: 3}
       propertyPath: m_Name
-      value: Basic Ammo Cart
+      value: Ammo Basic
       objectReference: {fileID: 0}
     - target: {fileID: 7427781900297684245, guid: 86c82cfee32788c49a35e2e0e34bf7b7, type: 3}
       propertyPath: avoid

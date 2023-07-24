@@ -581,6 +581,7 @@ GameObject:
   m_Component:
   - component: {fileID: 5293774729734864379}
   - component: {fileID: 7814989514790184966}
+  - component: {fileID: 7000413981894209334}
   m_Layer: 11
   m_Name: Building Cargo
   m_TagString: Untagged
@@ -621,8 +622,29 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   tooltip:
     text: Grab some Incendiary compound to apply fire effect to you bullets! Fire
-      bullets deal half their base damage as burn damage.
+      bullets deal half their base damage as burn damage. Upgrading or having more
+      than one copy of this converts more of the damage to burn damage.
   info: Fire Ammo Cart
+--- !u!114 &7000413981894209334
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5749283440783117715}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dc386fed7cd799943af2d7a59fd7a478, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  attachmentThing: {fileID: 0}
+  attachmentThings: []
+  isAttached: 0
+  spawnAttachmentThings: 0
+  boostReloadCountPerLevel: 0
+  boostFireDamageBase: 0.5
+  boostFireDamagePercentPerLevel: 0.25
+  activeFireDamageBoost: 0
 --- !u!1 &6073088298320839589
 GameObject:
   m_ObjectHideFlags: 0
@@ -960,7 +982,7 @@ PrefabInstance:
     - target: {fileID: 8139748349479078024, guid: 86c82cfee32788c49a35e2e0e34bf7b7, type: 3}
       propertyPath: Icon
       value: 
-      objectReference: {fileID: 21300000, guid: debc579f438548f42afa0985d6c94beb, type: 3}
+      objectReference: {fileID: 21300000, guid: df000548dfce8e54f8ca01488037c279, type: 3}
     - target: {fileID: 8139748349479078024, guid: 86c82cfee32788c49a35e2e0e34bf7b7, type: 3}
       propertyPath: level
       value: 0
@@ -971,7 +993,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8139748349479078024, guid: 86c82cfee32788c49a35e2e0e34bf7b7, type: 3}
       propertyPath: myRarity
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8139748349479078024, guid: 86c82cfee32788c49a35e2e0e34bf7b7, type: 3}
       propertyPath: uniqueName

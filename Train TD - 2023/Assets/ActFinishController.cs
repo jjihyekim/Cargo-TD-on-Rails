@@ -20,6 +20,7 @@ public class ActFinishController : MonoBehaviour {
     public GameObject act2WinUI;
     public GameObject act3WinUI;
     public void OpenActWinUI() {
+        PlayerWorldInteractionController.s.canSelect = false;
         if (DataSaver.s.GetCurrentSave().currentRun.currentAct == 1) {
             act1WinUI.SetActive(true);
             EventSystem.current.SetSelectedGameObject(act1WinUI.GetComponentInChildren<Button>().gameObject);
@@ -35,6 +36,7 @@ public class ActFinishController : MonoBehaviour {
 
     private bool movingToNextAct = false;
     public void StartNewAct() {
+        PlayerWorldInteractionController.s.canSelect = true;
         movingToNextAct = true;
         DataSaver.s.GetCurrentSave().currentRun.currentAct += 1;
         

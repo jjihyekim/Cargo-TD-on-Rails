@@ -19,15 +19,14 @@ public class PhysicalHealthBar : MonoBehaviour {
             enabled = false;
     }
 
+    public float healthPercent;
     private void Update() {
-        var newHealth = myHp.currentHealth / myHp.maxHealth;
-        if (newHealth != lastHealth) {
-            UpdateHealth(newHealth);
-            lastHealth = newHealth;
+        healthPercent = Mathf.Lerp(healthPercent, myHp.GetHealthPercent(), 10 * Time.deltaTime);
+        if (Mathf.Abs(healthPercent - myHp.GetHealthPercent()) > 0.01f) {
+            UpdateHealth(healthPercent);
         }
     }
 
-    private float lastHealth;
     public void UpdateHealth(float percentage) {
         for (int i = 0; i < bars.Length; i++) {
             var scale = bars[i].transform.localScale;

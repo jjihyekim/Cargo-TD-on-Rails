@@ -141,8 +141,8 @@ public class EnemyHealth : MonoBehaviour, IHealth {
 		}
 	}
 
-
-	float burnReduction = 0.5f;
+[NonSerialized]
+	public float burnReduction = 0.5f;
 	public float currentBurn = 0;
 	public float burnSpeed = 0;
 	private float lastBurn;
@@ -156,7 +156,7 @@ public class EnemyHealth : MonoBehaviour, IHealth {
 		if (currentBurn >= burnDistance) {
 			Instantiate(LevelReferences.s.damageNumbersPrefab, LevelReferences.s.uiDisplayParent)
 				.GetComponent<MiniGUI_DamageNumber>()
-				.SetUp(uiTransform, burnDistance, false, isArmored, true);
+				.SetUp(uiTransform, burnDistance, false, false, true);
 			DealDamage(burnDistance);
 
 			currentBurn -= burnDistance;
