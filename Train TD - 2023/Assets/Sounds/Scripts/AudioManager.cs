@@ -25,10 +25,10 @@ public class AudioManager : MonoBehaviour
         unityMixer.SetFloat("EnemyEngineVol", Mathf.Lerp(enemyEngineVol, TimeController.s.isPaused ? -80 : targetUnitySfxVolume, Time.unscaledDeltaTime * 20f));
         
         unityMixer.GetFloat("VoiceVol", out float voiceVol);
-        unityMixer.SetFloat("VoiceVol", Mathf.Lerp(voiceVol, TimeController.s.isPaused ? -80 : targetUnitySfxVolume, Time.unscaledDeltaTime * 20f));
+        unityMixer.SetFloat("VoiceVol", Mathf.Lerp(voiceVol, targetUnitySfxVolume, Time.unscaledDeltaTime * 20f));
         
         unityMixer.GetFloat("SfxVol", out float sfxVol);
-        unityMixer.SetFloat("SfxVol", Mathf.Lerp(sfxVol, TimeController.s.isPaused ? -80 : targetUnitySfxVolume, Time.unscaledDeltaTime * 20f));
+        unityMixer.SetFloat("SfxVol", Mathf.Lerp(sfxVol, targetUnitySfxVolume, Time.unscaledDeltaTime * 20f));
         
         unityMixer.GetFloat("PlayerEngineVol", out float playerEngineVol);
         unityMixer.SetFloat("PlayerEngineVol", Mathf.Lerp(playerEngineVol, TimeController.s.isPaused ? -80 : targetUnitySfxVolume, Time.unscaledDeltaTime * 20f));

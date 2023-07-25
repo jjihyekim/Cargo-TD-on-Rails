@@ -14225,6 +14225,7 @@ GameObject:
   - component: {fileID: 265263933}
   - component: {fileID: 265263936}
   - component: {fileID: 265263934}
+  - component: {fileID: 265263937}
   m_Layer: 0
   m_Name: _Enemy Spawner
   m_TagString: Untagged
@@ -14288,8 +14289,8 @@ MonoBehaviour:
   trackPrefab: {fileID: 7173583601030962652, guid: 0e72c568c40568341b6cbbc3c08b5397, type: 3}
   switchPrefab: {fileID: 5156142827500959826, guid: 7b9340e6a32ffa6439455a96b36f775f, type: 3}
   castleCityPrefab: {fileID: 7173583601030962652, guid: 9eb2ca156ebb3bd499f2f23610f9d88d, type: 3}
-  trainCrossingAudioSource: {fileID: 265263934}
-  trackSwitchSound: {fileID: 8300000, guid: c9031c03d754d3740841fd512adcfca1, type: 3}
+  trainCrossingSpeaker: {fileID: 0}
+  trackSwitchSpeaker: {fileID: 0}
   layoutGroup: {fileID: 76912223}
   currentSegment: 0
   trackSwitchAction: {fileID: -2773762359269686730, guid: 7dead05c54ca85b4681351aafd8bd03a, type: 3}
@@ -14304,7 +14305,7 @@ AudioSource:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 265263930}
-  m_Enabled: 1
+  m_Enabled: 0
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 6205370731591766685, guid: 660d07ac376d6214b99c5d084e20d01f, type: 2}
   m_audioClip: {fileID: 8300000, guid: 8b09ab811f33e9f44bad487bf195e69b, type: 3}
@@ -14436,6 +14437,29 @@ MonoBehaviour:
   OnDifficultyChanged:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &265263937
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 265263930}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7a93639f628cd29458963d75fae69986, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  clip:
+    Guid:
+      Data1: -2128468247
+      Data2: 1260965934
+      Data3: -1631552624
+      Data4: 344004999
+    Path: event:/SFX/Game SFX/RailRoadCrossing
+  pauseOnGamePause: 1
+  playOnStart: 0
+  instantiateInstanceOnStart: 1
+  volume: 1
 --- !u!1 &267940277
 GameObject:
   m_ObjectHideFlags: 0
