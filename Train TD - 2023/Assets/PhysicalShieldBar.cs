@@ -28,8 +28,12 @@ public class PhysicalShieldBar : MonoBehaviour {
         regularYSize = bars[0].transform.localScale.y;
     }
 
+    
+    
+    public float shieldPercent;
     private void Update() {
-        UpdateShield(myHp.GetShieldPercent());
+        shieldPercent = Mathf.Lerp(shieldPercent, myHp.GetShieldPercent(), 10 * Time.deltaTime);
+        UpdateShield(shieldPercent);
     }
 
     private static readonly int BaseColor = Shader.PropertyToID("_BaseColor");

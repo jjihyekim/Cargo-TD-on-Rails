@@ -23,6 +23,7 @@ public class Artifact : MonoBehaviour
     public Sprite mySprite;
 
 
+    public bool isAttached = false;
     private void Start() {
         ApplyNameAndSprite();
     }
@@ -51,6 +52,11 @@ public class Artifact : MonoBehaviour
         
         attachedToCartPart.SetActive(true);
         worldPart.SetActive(false);
+        
+        
+        Train.s.ArtifactsChanged();
+
+        isAttached = true;
     }
 
     public void DetachFromCart( bool doSave = true) {
@@ -68,6 +74,11 @@ public class Artifact : MonoBehaviour
         
         GetComponent<Rigidbody>().isKinematic = false;
         GetComponent<Rigidbody>().useGravity = true;
+        
+        
+        Train.s.ArtifactsChanged();
+        
+        isAttached = false;
     }
 
     /*public void InstantEquipArtifact() {

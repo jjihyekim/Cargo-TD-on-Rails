@@ -115,7 +115,7 @@ public class MysteriousCargoDeliveryArea : MonoBehaviour
     
     IEnumerator HideNonSelectedArtifacts() {
         isEngaged = true;
-        PlayerWorldInteractionController.s.Deselect();
+        //PlayerWorldInteractionController.s.Deselect();
 
         SetColliderStatus(rotatingPlatform.gameObject, false);
 

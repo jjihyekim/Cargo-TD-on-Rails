@@ -195,7 +195,8 @@ public class SpeedController : MonoBehaviour, IShowOnDistanceRadar {
                     realAcc += 0.2f; // we slow down faster than we speed up so that speed boost isn't cheaty
                 }
                 internalRealSpeed = Mathf.MoveTowards(internalRealSpeed, targetSpeed, realAcc * Time.deltaTime);
-                LevelReferences.s.speed = Mathf.Max(internalRealSpeed - slowAmount, 0f);
+                slowAmount = Mathf.Clamp(slowAmount, 0, 1.5f*(internalRealSpeed - 0.1f));
+                LevelReferences.s.speed = Mathf.Max(internalRealSpeed - (slowAmount/1.5f), 0f);
 
                 if (debugSpeedOverride > 0) {
                     LevelReferences.s.speed = debugSpeedOverride;

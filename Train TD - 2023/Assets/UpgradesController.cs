@@ -293,28 +293,42 @@ public class UpgradesController : MonoBehaviour {
 	void InitializeShop(DataSaver.RunState state) {
 		state.shopState = new ShopState();
 		var buildingCargoCount = fleaMarketLocationCount; 
+		
+		var didRollEpic = false;
+		var rollName = "";
+		var rollLevel = 0;
 
 		for (int i = 0; i < buildingCargoCount; i++) {
+			didRollEpic = false;
+			rollName = GetRandomBuildingCargoForFleaMarket(ref didRollEpic);
+			rollLevel = GetFleaMarketLevel(didRollEpic); 
+			
 			state.shopState.cartStates.Add(new WorldCartState() {
 				location =  CartLocation.market,
 				state = new DataSaver.TrainState.CartState() {
-					uniqueName = GetRandomBuildingCargoForFleaMarket(),
-					level = GetFleaMarketLevel() 
+					uniqueName = rollName,
+					level = rollLevel 
 				}
 			});
 		}
+		
+		rollName = GetRandomBuildingCargoForDestinationReward(ref didRollEpic);
+		rollLevel = GetDestinationCargoLevel(didRollEpic); 
 
 		state.shopState.leftCargo = new DataSaver.TrainState.CartState.CargoState(
-			GetRandomBuildingCargoForDestinationReward(),
+			rollName,
 			GetRandomRegularArtifact(),
 			true,
-			GetDestinationCargoLevel()
+			rollLevel
 		);
+		
+		rollName = GetRandomBuildingCargoForDestinationReward(ref didRollEpic);
+		rollLevel = GetDestinationCargoLevel(didRollEpic); 
 		state.shopState.rightCargo = new DataSaver.TrainState.CartState.CargoState(
-			GetRandomBuildingCargoForDestinationReward(),
+			rollName,
 			GetRandomRegularArtifact(),
 			false,
-			GetDestinationCargoLevel()
+			rollLevel
 		);
 
 		state.shopInitialized = true;
@@ -683,51 +697,50 @@ public class UpgradesController : MonoBehaviour {
 		DataSaver.s.GetCurrentSave().currentRun.artifactRarityBoost = artifactRarity.startingValue;
 	}
 
-	public string GetRandomBuildingCargoForDestinationReward() {
-		return _GetRandomBuildingCargo(tier1Buildings, ref DataSaver.s.GetCurrentSave().currentRun.destinationRarityBoost, destinationRarity);
+	public string GetRandomBuildingCargoForDestinationReward(ref bool didRollEpic) {
+		return _GetRandomBuildingCargo(tier1Buildings, ref DataSaver.s.GetCurrentSave().currentRun.destinationRarityBoost, destinationRarity, ref didRollEpic);
 	}
 	
 	
 
-	public string GetRandomBuildingCargoForFleaMarket() {
+	public string GetRandomBuildingCargoForFleaMarket(ref bool didRollEpic) {
 		List<string> rollSource = tier1Buildings;
 
 		if (DataSaver.s.GetCurrentSave().currentRun.map.GetPlayerStar().starChunk == 0) {
 			rollSource = firstShopCarts;
 		}
 		
-		return _GetRandomBuildingCargo(rollSource, ref DataSaver.s.GetCurrentSave().currentRun.fleaMarketRarityBoost, fleaMarketRarity);
+		return _GetRandomBuildingCargo(rollSource, ref DataSaver.s.GetCurrentSave().currentRun.fleaMarketRarityBoost, fleaMarketRarity, ref didRollEpic);
 	}
 
-	public int GetFleaMarketLevel() {
+	public int GetFleaMarketLevel(bool didRollEpic) { // epic carts will be 1 upgrade level lower than their normal counterparts
 		var roll = Random.value;
 		var act = DataSaver.s.GetCurrentSave().currentRun.currentAct - 1;
 		
 		if (roll < fleaMarketUpgradeChances.chances[act].level2) {
 			// rolled an epic cart
-
-			return 2;
+			return 2 + (didRollEpic? -1 : 0);
 		}else if ( roll < fleaMarketUpgradeChances.chances[act].level2 + fleaMarketUpgradeChances.chances[act].level1) {
 			//rolled a rare cart
 
-			return 1;
+			return 1 + (didRollEpic? -1 : 0);
 		} else {
 			return 0;
 		}
 	}
 
-	public int GetDestinationCargoLevel() {
+	public int GetDestinationCargoLevel(bool didRollEpic) { // epic carts will be 1 upgrade level lower than their normal counterparts
 		var roll = Random.value;
 		var act = DataSaver.s.GetCurrentSave().currentRun.currentAct - 1;
 		
 		if (roll < destinationCargoUpgradeChances.chances[act].level2) {
 			// rolled an epic cart
 
-			return 2;
+			return 2 + (didRollEpic? -1 : 0);
 		}else if ( roll < destinationCargoUpgradeChances.chances[act].level2 + destinationCargoUpgradeChances.chances[act].level1) {
 			//rolled a rare cart
 
-			return 1;
+			return 1 + (didRollEpic? -1 : 0);
 		} else {
 			return 0;
 		}
@@ -736,7 +749,7 @@ public class UpgradesController : MonoBehaviour {
 
 	private List<string> recentBuildings = new List<string>();
 
-	string _GetRandomBuildingCargo(List<string> rollSource, ref float rarityBoost, RarityPickChance rarityPickChance) {
+	string _GetRandomBuildingCargo(List<string> rollSource, ref float rarityBoost, RarityPickChance rarityPickChance, ref bool didRollEpic) {
 		var building = _GetRandomBuildingCargo(rollSource, ref rarityBoost, rarityPickChance, true);
 
 		for (int i = 0; i < 3; i++) {
@@ -751,8 +764,10 @@ public class UpgradesController : MonoBehaviour {
 			building = _GetRandomBuildingCargo(rollSource, ref rarityBoost, rarityPickChance, false);
 		}
 
+		didRollEpic = false;
 		if (DataHolder.s.GetCart(building).myRarity == CartRarity.epic) {
 			rarityBoost = rarityPickChance.startingValue;
+			didRollEpic = true;
 		} else {
 			rarityBoost += rarityPickChance.increaseValue;
 		}

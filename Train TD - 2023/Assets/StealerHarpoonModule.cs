@@ -145,7 +145,7 @@ public class StealerHarpoonModule : MonoBehaviour {
                         
                         Instantiate(harpoonStealEffect, harpoon.transform.position, harpoon.transform.rotation);
                     
-                        LevelReferences.s.SpawnResourceAtLocation(storageType, cargoStealPerInterval, target.transform.position, true, transform);
+                        //LevelReferences.s.SpawnResourceAtLocation(storageType, cargoStealPerInterval, target.transform.position, true, transform);
 
                         currentlyStolen += cargoStealPerInterval;
 

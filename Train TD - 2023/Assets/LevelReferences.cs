@@ -39,6 +39,8 @@ public class LevelReferences : MonoBehaviour {
     public Transform cartHealthParent;
     public GameObject damageNumbersPrefab;
     public Transform uiDisplayParent;
+
+    public GameObject luckyNegate;
     
     [Space]
     
@@ -50,6 +52,7 @@ public class LevelReferences : MonoBehaviour {
     public GameObject reloadEffect_regular;
     public GameObject reloadEffect_fire;
     public GameObject reloadEffect_sticky;
+    public GameObject reloadEffect_explosive;
     
     [Space]
 
@@ -102,20 +105,9 @@ public class LevelReferences : MonoBehaviour {
     }
 
     [Space]
-    public GameObject scrapPile;
-    public GameObject fuelPile;
-    public GameObject ammoPile;
-
-    [Space]
-    public static List<ScrapPile> allScraps = new List<ScrapPile>();
     public Train train;
 
-    
-    [Space]
-    public Material hologramBuildable;
-    public Material hologramCantBuild;
-    
-    
+
     [Space]
     public LayerMask groundLayer;
     public LayerMask enemyLayer;
@@ -141,19 +133,8 @@ public class LevelReferences : MonoBehaviour {
     public Sprite bossEnemyIcon;
 
     [Space]
-    public GameObject resourceParticleScraps;
-    public GameObject resourceParticleAmmo;
-    public GameObject resourceParticleFuel;
-
-    [Space]
     public GameObject enemyCartReward;
     public GameObject enemyHasArtifactStar;
-    
-    
-    [Space]
-    public GameObject resourceLostParticleScraps;
-    public GameObject resourceLostParticleAmmo;
-    public GameObject resourceLostParticleFuel;
 
     [Space]
     public GameObject emptyCart;
@@ -168,9 +149,13 @@ public class LevelReferences : MonoBehaviour {
     public GameObject bullet_regular;
     public GameObject bullet_fire;
     public GameObject bullet_sticky;
+    public GameObject bullet_explosive;
     public GameObject bullet_fire_sticky;
+    public GameObject bullet_fire_explosive;
+    public GameObject bullet_sticky_explosive;
+    public GameObject bullet_fire_sticky_explosive;
 
-    public GameObject GetResourceParticle(ResourceTypes types) {
+    /*public GameObject GetResourceParticle(ResourceTypes types) {
         switch (types) {
             case ResourceTypes.scraps:
                 return resourceParticleScraps;
@@ -186,7 +171,7 @@ public class LevelReferences : MonoBehaviour {
             default:
                 return null;
         }
-    }
+    }*/
     
     private void Awake() {
         s = this;
@@ -197,9 +182,9 @@ public class LevelReferences : MonoBehaviour {
 
     public void SpawnResourceAtLocation(ResourceTypes type, float amount, Vector3 location) {
         return;
-        SpawnResourceAtLocation(type, Mathf.RoundToInt(amount), location);
+        //SpawnResourceAtLocation(type, Mathf.RoundToInt(amount), location);
     }
-    public void SpawnResourceAtLocation(ResourceTypes type, int amount, Vector3 location, bool customCollectTarget = false, Transform customCollectTargetTransform = null) {
+    /*public void SpawnResourceAtLocation(ResourceTypes type, int amount, Vector3 location, bool customCollectTarget = false, Transform customCollectTargetTransform = null) {
         if (amount == 0)
             return;
         
@@ -209,7 +194,7 @@ public class LevelReferences : MonoBehaviour {
 
         switch (type) {
             case ResourceTypes.scraps:
-                prefab = scrapPile;
+                //prefab = scrapPile;
                 break;
         }
 
@@ -219,7 +204,7 @@ public class LevelReferences : MonoBehaviour {
 
         while(amount > 0) {
             //var random = Random.insideUnitCircle * (count / 4f);
-            var pile = Instantiate(prefab, location /*+ new Vector3(random.x, 0, random.y)*/, Quaternion.identity);
+            var pile = Instantiate(prefab, location /*+ new Vector3(random.x, 0, random.y)#1#, Quaternion.identity);
             var pileComp = pile.GetComponent<ScrapPile>();
             var targetAmount = maxMoneyPileCount;
             if (amount < maxMoneyPileCount)
@@ -230,11 +215,12 @@ public class LevelReferences : MonoBehaviour {
             StartCoroutine(ThrowPile(pile, customCollectTarget, customCollectTargetTransform));
         }
     }
+    */
     
     
-    [Space]
-    public float throwHorizontalSpeed = 0.1f;
-    public float throwVerticalSpeed = 0.2f;
+    /*[Space]
+    public float throwHorizontalSpeed = 1f;
+    public float throwVerticalSpeed = 3f;
     public float throwGravity = 9.81f;
 
     IEnumerator ThrowPile(GameObject pile, bool customCollectTarget = false, Transform customCollectTargetTransform = null) {
@@ -261,7 +247,7 @@ public class LevelReferences : MonoBehaviour {
         } else {
             pile.GetComponent<ScrapPile>().CollectPileWithTarget(customCollectTargetTransform);
         }
-    }
+    }*/
 
     private void Update() {
         if (allTargetValues.Length != allTargets.Count || targetsDirty) {

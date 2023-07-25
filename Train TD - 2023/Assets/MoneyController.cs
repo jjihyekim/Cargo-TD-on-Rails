@@ -67,10 +67,10 @@ public class MoneyController : MonoBehaviour {
                     break;
             }
 
-            if (amount < 0 && source != null) {
+            /*if (amount < 0 && source != null) {
                 Instantiate(LevelReferences.s.GetResourceParticle(type), ResourceParticleSpawnLocation.GetSpawnLocation(type))
                     .GetComponent<ResourceParticleScript>().SetUp(source);
-            }
+            }*/
 
             if (!PlayStateMaster.s.isCombatInProgress())
                 DataSaver.s.SaveActiveGame();

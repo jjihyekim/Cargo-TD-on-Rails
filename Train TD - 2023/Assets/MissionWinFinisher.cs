@@ -60,8 +60,6 @@ public class MissionWinFinisher : MonoBehaviour {
 		EnemyWavesController.s.Cleanup();
 		PlayerWorldInteractionController.s.canSelect = false;
 		//EnemyHealth.winSelfDestruct?.Invoke(false);
-
-		
 		
 		
 
@@ -130,7 +128,7 @@ public class MissionWinFinisher : MonoBehaviour {
 			EventSystem.current.SetSelectedGameObject(winContinueButton);
 	}
 
-	void OnGameWon() {
+	void OnActCleared(int current_act) {//eg if you finish act 1 this number will be equal to 1
 		var allArtifacts = ArtifactsController.s.myArtifacts;
 
 		var eligibleBossArtifacts = new List<Artifact>();
@@ -139,15 +137,19 @@ public class MissionWinFinisher : MonoBehaviour {
 				eligibleBossArtifacts.Add(allArtifacts[i]);
 			}
 		}
+		
+		eligibleBossArtifacts.Shuffle();
 
 		if (eligibleBossArtifacts.Count > 0) {
 			DataSaver.s.GetCurrentSave().xpProgress.bonusArtifact = eligibleBossArtifacts[Random.Range(0, eligibleBossArtifacts.Count)].uniqueName;
 		}
-
-		for (int i = 0; i < eligibleBossArtifacts.Count; i++) {
-			if (!DataSaver.s.GetCurrentSave().xpProgress.unlockedStarterArtifacts.Contains(eligibleBossArtifacts[i].uniqueName)) {
-				DataSaver.s.GetCurrentSave().xpProgress.unlockedStarterArtifacts.Add(eligibleBossArtifacts[i].uniqueName);
-				break;
+		
+		if (current_act >= 2) {
+			for (int i = 0; i < eligibleBossArtifacts.Count; i++) {
+				if (!DataSaver.s.GetCurrentSave().xpProgress.unlockedStarterArtifacts.Contains(eligibleBossArtifacts[i].uniqueName)) {
+					DataSaver.s.GetCurrentSave().xpProgress.unlockedStarterArtifacts.Add(eligibleBossArtifacts[i].uniqueName);
+					break;
+				}
 			}
 		}
 	}
@@ -206,8 +208,7 @@ public class MissionWinFinisher : MonoBehaviour {
 			
 			if (targetStar.isBoss) {
 				ActFinishController.s.OpenActWinUI();
-				if(DataSaver.s.GetCurrentSave().currentRun.currentAct == 3)
-					OnGameWon();
+				OnActCleared(DataSaver.s.GetCurrentSave().currentRun.currentAct);
 			} else {
 				PlayStateMaster.s.LeaveMissionRewardArea();
 			}

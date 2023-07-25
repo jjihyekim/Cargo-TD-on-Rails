@@ -251,9 +251,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   gunSprite: {fileID: 0}
   isGigaGatling: 0
-  fireDelayReductionPerGatlingAmount: 2
+  gatlinificator: 0
+  maxFireRateReduction: 0.875
   gatlingAmount: 0
-  maxGatlingAmount: 0
+  maxGatlingAmount: 8
   rotateTransforms:
   - transform: {fileID: 8783079532000522336}
   rotateTransform:
@@ -278,7 +279,10 @@ MonoBehaviour:
   burnDamage: 0.3
   bonusBurnDamage: 0
   damageMultiplier: 1
+  sniperDamageMultiplier: 1
   burnDamageMultiplier: 1
+  regularToBurnDamageConversionMultiplier: 0
+  regularToRangeConversionMultiplier: 0
   dontGetAffectByMultipliers: 0
   isHeal: 0
   rotateSpeed: 10
@@ -302,12 +306,19 @@ MonoBehaviour:
   stopShootingEvent:
     m_PersistentCalls:
       m_Calls: []
+  gatlingCountZeroEvent:
+    m_PersistentCalls:
+      m_Calls: []
   gunShakeOnShoot: 0
   beingDirectControlled: 0
+  isHoming: 0
   boostDamageOnUpgrade: 0.5
   waitTimer: 0
   isFire: 0
   isSticky: 0
+  isExplosive: 0
+  explosionRange: 0
+  explosionRangeBoost: 0
 --- !u!114 &7371494607064308679
 MonoBehaviour:
   m_ObjectHideFlags: 0

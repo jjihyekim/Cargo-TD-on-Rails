@@ -19,6 +19,8 @@ public class ModuleHealth : MonoBehaviour, IHealth, IActiveDuringCombat, IActive
     private float shieldRegenDelay = 1;
     public float curShieldDelay = 0;
 
+
+    public float baseShields = 0;
     public float baseHealth = 50;
     [ReadOnly]
     public float maxHealth = 50;
@@ -58,12 +60,27 @@ public class ModuleHealth : MonoBehaviour, IHealth, IActiveDuringCombat, IActive
 
     public float boostHealthOnUpgrade = 0.5f;
     
+    
+    [Header("These are the values artifacts change. They reset on their own")]
+    
     public float repairEfficiency = 1;
     public float shieldUpEfficiency = 1;
+
+    public float shieldDecayMultiplier = 1f;
+    public float burnReductionMultiplier = 1;
+    
+    public bool glassCart = false;
+    public bool reflectiveShields = false;
+    public bool luckyCart = false;
 
     public void ResetState(int level) {
         repairEfficiency = 1;
         shieldUpEfficiency = 1;
+        shieldDecayMultiplier = 1;
+        burnReductionMultiplier = 1;
+        
+        luckyCart = false;
+        reflectiveShields = false;
         
         damageDefenders.Clear();
         maxHealth = baseHealth * (1+(boostHealthOnUpgrade*level));
@@ -77,8 +94,10 @@ public class ModuleHealth : MonoBehaviour, IHealth, IActiveDuringCombat, IActive
                 
         }
         
-        maxShields = 0;
+        maxShields = baseShields;
         canHaveShields = true;
+
+        glassCart = false;
         
         UpdateHpState();
     }
@@ -88,6 +107,11 @@ public class ModuleHealth : MonoBehaviour, IHealth, IActiveDuringCombat, IActive
         Assert.IsTrue(damage > 0);
         if(isImmune || invincible)
             return;
+
+        if (Random.value < DataSaver.s.GetCurrentSave().currentRun.luck) {
+            Instantiate(LevelReferences.s.luckyNegate, transform.position, Quaternion.identity);
+            return;
+        }
 
         curShieldDelay = shieldRegenDelay;
 
@@ -110,6 +134,12 @@ public class ModuleHealth : MonoBehaviour, IHealth, IActiveDuringCombat, IActive
                     }
 
                     currentShields = 0;
+                }
+
+                if (currentShields > 0 && reflectiveShields) {
+                    currentShields -= damage;
+                    if (currentShields < 0)
+                        currentShields = 0;
                 }
             }
             
@@ -375,7 +405,7 @@ public class ModuleHealth : MonoBehaviour, IHealth, IActiveDuringCombat, IActive
             currentBurn += burnSpeed * Time.deltaTime;
         }
         
-        burnSpeed = Mathf.Lerp(burnSpeed,0,burnReduction*Time.deltaTime);
+        burnSpeed = Mathf.Lerp(burnSpeed,0,burnReductionMultiplier*burnReduction*Time.deltaTime);
 
 
         if (PlayStateMaster.s.isCombatInProgress()) {
@@ -397,7 +427,7 @@ public class ModuleHealth : MonoBehaviour, IHealth, IActiveDuringCombat, IActive
         isShieldActive = currentShields > 0;
         
         if (curShieldDelay <= 0) {
-            currentShields -= shieldDecayRatePer100Shields * Mathf.CeilToInt(currentShields/100) * Time.deltaTime;
+            currentShields -= shieldDecayRatePer100Shields * Mathf.CeilToInt(currentShields/100) * Time.deltaTime * shieldDecayMultiplier;
         } else {
             if (PlayStateMaster.s.isCombatInProgress()) {
                 curShieldDelay -= Time.deltaTime;
@@ -434,7 +464,9 @@ public class ModuleHealth : MonoBehaviour, IHealth, IActiveDuringCombat, IActive
             }
             myUIBar.SetUp(myCart, this, GetComponentInChildren<ModuleAmmo>());
         } else {
-            myUIBar.gameObject.SetActive(false);
+            if (myUIBar != null) {
+                myUIBar.gameObject.SetActive(false);
+            }
         }
     }
 

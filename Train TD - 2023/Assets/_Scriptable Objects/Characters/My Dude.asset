@@ -23,38 +23,62 @@ MonoBehaviour:
       - uniqueName: engine_nuclear
         health: -1
         ammo: -1
+        isFire: 0
+        isSticky: 0
         level: 0
         cargoState:
           cargoReward: 
           cargoLevel: 0
           artifactReward: 
           isLeftCargo: 0
+        attachedArtifact: starter_artifact
       - uniqueName: cargo_mystery_0
         health: -1
         ammo: -1
+        isFire: 0
+        isSticky: 0
         level: 0
         cargoState:
           cargoReward: 
           cargoLevel: 0
           artifactReward: 
           isLeftCargo: 0
+        attachedArtifact: 
       - uniqueName: top_avr
         health: -1
         ammo: -1
+        isFire: 0
+        isSticky: 0
         level: 0
         cargoState:
           cargoReward: 
           cargoLevel: 0
           artifactReward: 
           isLeftCargo: 0
+        attachedArtifact: 
+      - uniqueName: basic_ammo
+        health: -1
+        ammo: -1
+        isFire: 0
+        isSticky: 0
+        level: 0
+        cargoState:
+          cargoReward: 
+          cargoLevel: 0
+          artifactReward: 
+          isLeftCargo: 0
+        attachedArtifact: 
       - uniqueName: empty
         health: -1
         ammo: -1
+        isFire: 0
+        isSticky: 0
         level: 0
         cargoState:
           cargoReward: 
           cargoLevel: 0
           artifactReward: 
           isLeftCargo: 0
+        attachedArtifact: 
     starterResources:
       scraps: 0
