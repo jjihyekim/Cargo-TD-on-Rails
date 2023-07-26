@@ -215,7 +215,7 @@ public class DataSaver {
 		public bool isRealSaveFile = false;
 
 		public bool isInARun = false;
-		public RunState currentRun = new RunState(); // assumed to be never null
+		public RunState currentRun = new RunState("0.0.0.a"); // assumed to be never null
 
 		public XPProgress xpProgress = new XPProgress();
 		public TutorialProgress tutorialProgress = new TutorialProgress();
@@ -273,6 +273,13 @@ public class DataSaver {
 		public float artifactRarityBoost = -0.15f;
 
 		public float luck = 0;
+
+		public string runGameVersion;
+
+		public RunState(string version) {
+			runGameVersion = version;
+		}
+		
 		
 		public void SetCharacter(CharacterData characterData) {
 			character = characterData;
@@ -326,10 +333,15 @@ public class DataSaver {
 			[ValueDropdown("GetAllModuleNames")]
 			public string uniqueName = "";
 
+			[HideInInspector]
 			public int health = -1;
+			[HideInInspector]
 			public int ammo = -1;
+			[HideInInspector]
 			public bool isFire = false;
+			[HideInInspector]
 			public bool isSticky = false;
+			[HideInInspector]
 			public bool isExplosive = false;
 
 			public int level = 0;

@@ -75,7 +75,7 @@ public class CharacterSelector : MonoBehaviour {
     }
 
     public void SelectCharacter(CharacterData _data) {
-        DataSaver.s.GetCurrentSave().currentRun = new DataSaver.RunState();
+        DataSaver.s.GetCurrentSave().currentRun = new DataSaver.RunState(VersionDisplay.s.GetVersionNumber());
         DataSaver.s.GetCurrentSave().currentRun.currentAct = 1;
         DataSaver.s.GetCurrentSave().currentRun.SetCharacter(_data);
         DataSaver.s.GetCurrentSave().isInARun = true;
