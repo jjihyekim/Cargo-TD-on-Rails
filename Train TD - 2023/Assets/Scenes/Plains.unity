@@ -14290,7 +14290,6 @@ MonoBehaviour:
   switchPrefab: {fileID: 5156142827500959826, guid: 7b9340e6a32ffa6439455a96b36f775f, type: 3}
   castleCityPrefab: {fileID: 7173583601030962652, guid: 9eb2ca156ebb3bd499f2f23610f9d88d, type: 3}
   trainCrossingSpeaker: {fileID: 0}
-  trackSwitchSpeaker: {fileID: 0}
   layoutGroup: {fileID: 76912223}
   currentSegment: 0
   trackSwitchAction: {fileID: -2773762359269686730, guid: 7dead05c54ca85b4681351aafd8bd03a, type: 3}
@@ -28170,7 +28169,7 @@ MonoBehaviour:
   infiniteLevel: 0
   debugNoRegularSpawns: 0
   instantEnterPlayMode: 0
-  playerIsImmune: 0
+  playerIsImmune: 1
   playerDealMaxDamage: 0
   restartOnStart: 0
   autoRestartWithSelectedCharacter: 0

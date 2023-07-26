@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using UnityEngine;
 using FMODUnity;
 using FMOD.Studio;
-using FMOD;
 using Sirenix.OdinInspector;
 
 public class FMODAudioSource : MonoBehaviour
@@ -34,6 +33,11 @@ public class FMODAudioSource : MonoBehaviour
 
         if (playOnStart)
             Play();
+
+        if (pauseOnGamePause)
+        {
+            TimeController.PausedEvent.AddListener(OnPause);
+        }
     }
 
     private void Update()
@@ -43,15 +47,15 @@ public class FMODAudioSource : MonoBehaviour
 
     private void OnEnable()
     {
-        if(pauseOnGamePause)
-            TimeController.PausedEvent.AddListener(OnPause);
     }
 
-    private void OnDisable()
+    private void OnDestroy()
     {
         Stop(FMOD.Studio.STOP_MODE.IMMEDIATE);
-        if(pauseOnGamePause)
+        if (pauseOnGamePause)
+        {
             TimeController.PausedEvent.RemoveListener(OnPause);
+        }
     }
 
 
@@ -73,6 +77,17 @@ public class FMODAudioSource : MonoBehaviour
             UnPause();
         }
     }
+
+    [HorizontalGroup("Play control")]
+    [ShowInInspector]
+    private bool isPlaying { 
+        get {
+            soundInstance.getPlaybackState(out PLAYBACK_STATE state);
+            return state != PLAYBACK_STATE.STOPPED;
+                } }
+
+    [ButtonGroup("Play control/Pause")]
+    [Button]
     public void Pause()
     {
         soundInstance.setPaused(true);
@@ -83,6 +98,8 @@ public class FMODAudioSource : MonoBehaviour
         soundInstance.setPaused(true);
     }
 
+    [ButtonGroup("Play control/Pause")]
+    [Button]
     public void UnPause()
     {
         soundInstance.setPaused(false);
@@ -101,11 +118,15 @@ public class FMODAudioSource : MonoBehaviour
         return isPaused;
     }
 
+    [ButtonGroup("Play control/Play")]
+    [Button]
     public void Play()
     {
         soundInstance.start();
     }
 
+    [ButtonGroup("Play control/Play")]
+    [Button]
     public void Stop(FMOD.Studio.STOP_MODE stopMode = FMOD.Studio.STOP_MODE.ALLOWFADEOUT)
     {
         soundInstance.stop(stopMode);
