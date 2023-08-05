@@ -20,8 +20,7 @@ public class Train : MonoBehaviour {
 
     private int cargoCount = 0;
 
-    public UnityEvent trainUpdatedThroughNonBuildingActions = new UnityEvent();
-    public UnityEvent trainUpdated = new UnityEvent();
+    public UnityEvent onTrainCartsChanged = new UnityEvent();
 
     public bool isTrainDrawn = false;
 
@@ -88,8 +87,7 @@ public class Train : MonoBehaviour {
         
         Invoke(nameof(ArtifactsChanged),0.01f);
 
-        trainUpdatedThroughNonBuildingActions?.Invoke();
-        trainUpdated?.Invoke();
+        onTrainCartsChanged?.Invoke();
     }
 
 
@@ -411,6 +409,8 @@ public class Train : MonoBehaviour {
         }
 
         UpdateThingsAffectingOtherThings(true);
+        
+        onTrainCartsChanged?.Invoke();
     }
 
     public void AddCartAtIndex(int index, Cart cart) {
@@ -437,6 +437,8 @@ public class Train : MonoBehaviour {
         if (wasShaking) {
             RestartShake();
         }
+        
+        onTrainCartsChanged?.Invoke();
     }
 
     public void ArtifactsChanged() {
@@ -603,7 +605,7 @@ public class Train : MonoBehaviour {
     }
 
     public void TrainUpdated() {
-        trainUpdated?.Invoke();
+        onTrainCartsChanged?.Invoke();
     }
     
 

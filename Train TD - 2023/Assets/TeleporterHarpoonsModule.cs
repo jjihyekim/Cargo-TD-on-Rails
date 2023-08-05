@@ -300,10 +300,10 @@ public class TeleporterHarpoonsModule : MonoBehaviour
     }
 
     private void OnEnable() {
-        Train.s.trainUpdatedThroughNonBuildingActions.AddListener(OnCartDestroyed);
+        Train.s.onTrainCartsChanged.AddListener(OnCartDestroyed);
     }
 
     private void OnDisable() {
-        Train.s.trainUpdatedThroughNonBuildingActions.RemoveListener(OnCartDestroyed);
+        Train.s.onTrainCartsChanged.RemoveListener(OnCartDestroyed);
     }
 }

@@ -76,6 +76,9 @@ public class PathSelectorController : MonoBehaviour {
 
 		currentSegment = 0;
 		nextSegmentChangeDistance = activeLevel.mySegmentsA[0].segmentLength;
+		
+		//SplinePathMaster.s.GenerateInitialSegments();
+
 		HexGrid.s.ClearTrackSwitchDistances();
 		HexGrid.s.DoTrackSwitchAtDistance(nextSegmentChangeDistance);
 		
